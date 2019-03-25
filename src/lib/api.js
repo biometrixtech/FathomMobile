@@ -214,7 +214,61 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .then(async (rawRes) => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
-                let jsonRes = {};
+                // run through logic
+                if(rawRes && /20[012]/.test(`${rawRes.status}`)) {
+                    // success reset counters and send body
+                    unauthorizedCounter = 0;
+                    retryCounter = 0;
+                    return rawRes.json();
+                } else if(rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
+                    // unauthorized error encountered
+                    if(unauthorizedCounter === 0) {
+                        // update counter and re-authorize user
+                        unauthorizedCounter += 1;
+                        let userIdObj = {userId: currentState.user.id};
+                        let sessionTokenObj = {session_token: currentState.init.session_token};
+                        return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
+                            .then(res => {
+                                // successfully fetched, reset counter, update reducer, and resend API
+                                unauthorizedCounter = 0;
+                                store.dispatch({
+                                    type:    DispatchActions.LOGIN,
+                                    jwt:     res.authorization.jwt,
+                                    expires: res.authorization.expires,
+                                });
+                                return fetcher(method, endpoint, params, body, api_enum);
+                            })
+                            .catch(err => {
+                                // if we hit an unexpected error, logout user and route to login
+                                store.dispatch({
+                                    type: DispatchActions.LOGOUT
+                                });
+                                return Actions.login();
+                            });
+                    }
+                    // reached limit, reset timer and log user out
+                    unauthorizedCounter = 0;
+                    store.dispatch({
+                        type: DispatchActions.LOGOUT
+                    });
+                    return Actions.login();
+                } else if( (/500/.test(`${rawRes.status}`) || /429/.test(`${rawRes.status}`)) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey) ) {
+                    if(retryCounter < 2) {
+                        // update counter and retry api
+                        retryCounter += 1;
+                        return fetcher(method, endpoint, params, body, api_enum);
+                    }
+                    // reached limit, reset timer and show generic error message
+                    retryCounter = 0;
+                    throw handleError(rawRes);
+                } else {
+                    // error reset counters and send message
+                    unauthorizedCounter = 0;
+                    retryCounter = 0;
+                    throw handleError(rawRes);
+                }
+
+                /*let jsonRes = {};
 
                 try {
                     jsonRes = await rawRes.json();
@@ -269,11 +323,11 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 // Only continue if the header is successful
                 if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
 
-                throw rawRes.status === 404 ? { message: ErrorMessages.emailNotFound, } : jsonRes;
+                throw rawRes.status === 404 ? { message: ErrorMessages.emailNotFound, } : jsonRes;*/
             })
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl} @ ${moment()}`);
-
+                // log Fabric Answers
                 try {
                     // Don't send plaintext password to Answers logs
                     if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
@@ -300,13 +354,14 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 } catch (error) {
                     console.log(handleError(error));
                 }
+                // return resolve promise
                 return resolve(res);
             })
             .catch(err => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
                 debug(err, thisUrl);
-
+                // log Fabric Answers
                 try {
                     // Don't send plaintext password to Answers logs
                     if (endpoint === APIConfig.endpoints.get(APIConfig.tokenKey)) {
@@ -333,7 +388,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 } catch (error) {
                     console.log(handleError(error));
                 }
-
+                // return reject promise
                 return reject(err);
             });
     });
