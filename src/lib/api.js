@@ -267,63 +267,6 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     retryCounter = 0;
                     throw handleError(rawRes);
                 }
-
-                /*let jsonRes = {};
-
-                try {
-                    jsonRes = await rawRes.json();
-                } catch (error) {
-                    if (rawRes.status !== 200 || rawRes.status !== 201 || rawRes.status !== 202) {
-                        const err = { message: ErrorMessages.invalidJson };
-                        throw err;
-                    }
-                }
-
-                // if we get a 401 - authorization failed, re-authorizeUser
-                console.log('++++++++++',rawRes);
-                if (rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
-                    unauthorizedCounter += 1;
-                    if(unauthorizedCounter === 5 && /[/]authorize/.test(endpoint)) {
-                        unauthorizedCounter = 0;
-                        store.dispatch({
-                            type: DispatchActions.LOGOUT
-                        });
-                        return Actions.login();
-                    }
-                    let userIdObj = {userId: currentState.user.id};
-                    let sessionTokenObj = {session_token: currentState.init.session_token};
-                    return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
-                        .then((res) => {
-                            unauthorizedCounter = 0;
-                            store.dispatch({
-                                type:    DispatchActions.LOGIN,
-                                jwt:     res.authorization.jwt,
-                                expires: res.authorization.expires,
-                            });
-                            // re-send API
-                            return fetcher(method, endpoint, params, body, api_enum);
-                        })
-                        .catch((err) => {
-                            // logout user and route to login
-                            store.dispatch({
-                                type: DispatchActions.LOGOUT
-                            });
-                            return Actions.login();
-                        });
-                }
-
-                // retry fetcher if we get a server error
-                if(rawRes && rawRes.status >= 500 && retryCounter < 2) {
-                    retryCounter += 1;
-                    return fetcher(method, endpoint, params, body, api_enum);
-                }
-                // if we get here reset counter
-                retryCounter = 0;
-
-                // Only continue if the header is successful
-                if (rawRes && /20[012]/.test(`${rawRes.status}`)) { return jsonRes; }
-
-                throw rawRes.status === 404 ? { message: ErrorMessages.emailNotFound, } : jsonRes;*/
             })
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl} @ ${moment()}`);
