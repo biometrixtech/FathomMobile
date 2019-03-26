@@ -729,7 +729,8 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        this.setState({ loading: true, showLoadingText: true, });
+        let isLoading = Platform.OS === 'ios';
+        this.setState({ loading: isLoading, showLoadingText: true, });
         if (!this.state.isPostSessionSurveyModalOpen) {
             this.props.getSoreBodyParts()
                 .then(soreBodyParts => {

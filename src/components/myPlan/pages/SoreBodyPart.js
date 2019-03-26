@@ -193,15 +193,11 @@ class SoreBodyPart extends Component {
         } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
         let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain');
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
-        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return(
             <View
                 style={{
-                    height: (isFirst && isLast) || (!isFirst && isLast) ?
-                        (AppSizes.screen.height - (pillsHeight + backNextHeight))
-                        :
-                        (AppSizes.screen.height - pillsHeight),
-                    justifyContent: 'center',
+                    height:     (AppSizes.screen.height - pillsHeight),
+                    paddingTop: AppSizes.paddingMed,
                 }}
             >
                 { bodyPart.isClearCandidate && isPrevSoreness &&
@@ -219,7 +215,7 @@ class SoreBodyPart extends Component {
                             firstTimeExperience={firstTimeExperience}
                             handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
                             image={bodyPartMap.image[bodyPartSide]}
-                            style={{width: 150, height: 150}}
+                            style={{height: 125, width: 125,}}
                         />
                         :
                         null
@@ -357,7 +353,6 @@ class SoreBodyPart extends Component {
                         {'What\'s the difference?'}
                     </Text>
                 }
-                <Spacer size={isFirst && !isLast && !showScaleButtons ? pillsHeight : 0} />
             </View>
         )
     }

@@ -289,10 +289,7 @@ class PostSessionSurvey extends Component {
                                 <View
                                     key={i}
                                     onLayout={event => {
-                                        let yLocation = !(i === 0) && !(i === (newSoreBodyParts.length - 1)) ?
-                                            (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
-                                            :
-                                            event.nativeEvent.layout.y;
+                                        let yLocation = (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)));
                                         this.myPrevSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation};
                                     }}
                                 >
@@ -302,7 +299,7 @@ class PostSessionSurvey extends Component {
                                         firstTimeExperience={user.first_time_experience}
                                         handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll, isMovementValue) => {
                                             handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, bodyPart.isClearCandidate, isMovementValue);
-                                            if(shouldScroll && (i + 1) === (newSoreBodyParts.length - 1)) {
+                                            if(shouldScroll && (i + 1) === (newSoreBodyParts.length)) {
                                                 this._scrollToBottom(this.scrollViewPrevSorenessRef);
                                             } else if(shouldScroll) {
                                                 this._scrollTo(this.myPrevSorenessComponents[i + 1], this.scrollViewPrevSorenessRef);
@@ -403,10 +400,7 @@ class PostSessionSurvey extends Component {
                             <View
                                 key={`AreasOfSoreness1${i}`}
                                 onLayout={event => {
-                                    let yLocation = !(i === 0) && !(i === (areaOfSorenessClicked.length - 1)) ?
-                                        (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)))
-                                        :
-                                        event.nativeEvent.layout.y;
+                                    let yLocation = (event.nativeEvent.layout.y - ((AppSizes.statusBarHeight + AppSizes.progressPillsHeight)));
                                     this.myClickedSorenessComponents[i] = {x: event.nativeEvent.layout.x, y: yLocation, height: event.nativeEvent.layout.height,};
                                 }}
                             >
@@ -417,7 +411,7 @@ class PostSessionSurvey extends Component {
                                     handleFormChange={handleFormChange}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll, isMovementValue) => {
                                         handleFormChange(location, value, isPain, bodyPartMapIndex, bodyPartSide, false, isMovementValue);
-                                        if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll && (i + 1) === (areaOfSorenessClicked.length - 1)) {
+                                        if(!(i === (areaOfSorenessClicked.length)) && shouldScroll && (i + 1) === (areaOfSorenessClicked.length)) {
                                             this._scrollToBottom(this.scrollViewClickedSorenessRef);
                                         } else if(!(i === (areaOfSorenessClicked.length - 1)) && shouldScroll) {
                                             this._scrollTo(this.myClickedSorenessComponents[i + 1], this.scrollViewClickedSorenessRef);

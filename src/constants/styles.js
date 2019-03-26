@@ -443,10 +443,10 @@ export default {
     },
     sorenessPainButtons: {
         alignSelf:      'center',
-        borderRadius:   75 / 2,
-        height:         75,
+        borderRadius:   65 / 2,
+        height:         65,
         justifyContent: 'center',
-        width:          75,
+        width:          65,
     },
     backNextCircleButtons: {
         alignSelf:      'center',
