@@ -65,10 +65,7 @@ const updateUser = (payload, userId) => {
 const createUser = (payload) => {
     return dispatch => AppAPI.create_user.post(false, payload)
         .then(userData => Promise.resolve(userData))
-        .catch(err => {
-            console.log('err',err);
-            return Promise.reject(err);
-        });
+        .catch(err => Promise.reject(err));
 };
 
 /**
@@ -125,9 +122,7 @@ const clearUserData = () => {
             });
             return Promise.resolve(response);
         })
-        .catch(err => {
-            return Promise.reject(err);
-        });
+        .catch(err => Promise.reject(err));
 };
 
 /**

@@ -28,7 +28,7 @@ import { SoreBodyPartScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
-import Collapsible from 'react-native-collapsible';
+import * as Animatable from 'react-native-animatable';
 
 const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
     <View style={{padding: AppSizes.padding,}}>
@@ -201,7 +201,7 @@ class SoreBodyPart extends Component {
                         (AppSizes.screen.height - (pillsHeight + backNextHeight))
                         :
                         (AppSizes.screen.height - pillsHeight),
-                    paddingTop: AppSizes.padding,
+                    justifyContent: 'center',
                 }}
             >
                 { bodyPart.isClearCandidate && isPrevSoreness &&
@@ -290,62 +290,64 @@ class SoreBodyPart extends Component {
                         />
                     </View>
                 </Tooltip>
-                <Collapsible
-                    collapsed={!showScaleButtons}
-                    duration={1000}
-                    style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
-                >
-                    <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
-                        {'My '}
-                        <Text robotoMedium>{this.state.type}</Text>
-                        {' is...'}
-                    </Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingMed,}}>
-                        {_.map(sorenessPainMapping.soreness, (sorenessObj, key) => {
-                            let label = sorenessObj.label;
-                            let newValue = sorenessObj.value;
-                            let isSelected = this.state.painSorenessValue === newValue;
-                            let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
-                            return(
-                                <SoreBodyPartScaleButton
-                                    extraStyles={extraStyles}
-                                    isSelected={isSelected}
-                                    key={key}
-                                    label={label}
-                                    updateStateAndForm={() => this._handlePainSorenessValueBtnPressed(bodyPartMap, newValue)}
-                                />
-                            );
-                        })}
-                    </View>
-                </Collapsible>
-                <Collapsible
-                    collapsed={!this.state.showMotionScaleButtons}
-                    duration={1000}
-                    style={{paddingVertical: AppSizes.paddingMed,}}
-                >
-                    <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
-                        {'My '}
-                        <Text robotoMedium>{'range of motion'}</Text>
-                        {' is...'}
-                    </Text>
-                    <View style={[AppStyles.paddingVerticalMed, {flexDirection: 'row', justifyContent: 'center',}]}>
-                        {_.map(sorenessPainMapping.movement, (movementObj, key) => {
-                            let label = movementObj.label;
-                            let newValue = movementObj.value;
-                            let isSelected = this.state.movementValue === newValue;
-                            let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
-                            return(
-                                <SoreBodyPartScaleButton
-                                    extraStyles={extraStyles}
-                                    isSelected={isSelected}
-                                    key={key}
-                                    label={label}
-                                    updateStateAndForm={() => this._handleMovementValueBtnPressed(bodyPartMap, newValue)}
-                                />
-                            );
-                        })}
-                    </View>
-                </Collapsible>
+                { showScaleButtons &&
+                    <Animatable.View
+                        animation={'fadeInDown'}
+                        style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
+                    >
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'My '}
+                            <Text robotoMedium>{this.state.type}</Text>
+                            {' is...'}
+                        </Text>
+                        <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingMed,}}>
+                            {_.map(sorenessPainMapping.soreness, (sorenessObj, key) => {
+                                let label = sorenessObj.label;
+                                let newValue = sorenessObj.value;
+                                let isSelected = this.state.painSorenessValue === newValue;
+                                let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
+                                return(
+                                    <SoreBodyPartScaleButton
+                                        extraStyles={extraStyles}
+                                        isSelected={isSelected}
+                                        key={key}
+                                        label={label}
+                                        updateStateAndForm={() => this._handlePainSorenessValueBtnPressed(bodyPartMap, newValue)}
+                                    />
+                                );
+                            })}
+                        </View>
+                    </Animatable.View>
+                }
+                { this.state.showMotionScaleButtons &&
+                    <Animatable.View
+                        animation={'fadeInDown'}
+                        style={{paddingVertical: AppSizes.paddingMed,}}
+                    >
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'My '}
+                            <Text robotoMedium>{'range of motion'}</Text>
+                            {' is...'}
+                        </Text>
+                        <View style={[AppStyles.paddingVerticalMed, {flexDirection: 'row', justifyContent: 'center',}]}>
+                            {_.map(sorenessPainMapping.movement, (movementObj, key) => {
+                                let label = movementObj.label;
+                                let newValue = movementObj.value;
+                                let isSelected = this.state.movementValue === newValue;
+                                let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
+                                return(
+                                    <SoreBodyPartScaleButton
+                                        extraStyles={extraStyles}
+                                        isSelected={isSelected}
+                                        key={key}
+                                        label={label}
+                                        updateStateAndForm={() => this._handleMovementValueBtnPressed(bodyPartMap, newValue)}
+                                    />
+                                );
+                            })}
+                        </View>
+                    </Animatable.View>
+                }
                 { !showScaleButtons &&
                     <Text
                         onPress={() => toggleSlideUpPanel(false)}

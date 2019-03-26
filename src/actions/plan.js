@@ -63,10 +63,7 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 });
             }
             return Promise.resolve(response);
-        }).catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        }).catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -158,10 +155,7 @@ const postReadinessSurvey = dailyReadinessObj => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -178,10 +172,7 @@ const postSingleSensorData = dataObj => {
             });
             return Promise.resolve(data);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
 /**
@@ -197,10 +188,7 @@ const postSessionSurvey = postSessionObj => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -220,10 +208,7 @@ const getSoreBodyParts = () => {
                 data: response.typical_sessions,
             });
             return Promise.resolve(response);
-        }).catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        }).catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -245,10 +230,7 @@ const patchActiveRecovery = (completed_exercises, recovery_type) => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -266,10 +248,7 @@ const patchActiveTime = active_time => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -287,10 +266,7 @@ const noSessions = () => {
                 data: myPlanData.daily_plans,
             });
             return Promise.resolve(data);
-        }).catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        }).catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -311,10 +287,7 @@ const patchFunctionalStrength = completed_exercises => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -329,10 +302,7 @@ const activateFunctionalStrength = payload => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
 /**
@@ -344,10 +314,7 @@ const markStartedRecovery = (recovery_type, newMyPlan) => {
     bodyObj.recovery_type = recovery_type;
     return dispatch => AppAPI.active_recovery.post(false, bodyObj)
         .then(response => Promise.resolve(response))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -358,10 +325,7 @@ const markStartedFunctionalStrength = newMyPlan => {
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.functional_strength.post(false, bodyObj)
         .then(response => Promise.resolve(response))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -404,10 +368,7 @@ const getCoachesDashboardData = userId => {
                 date:   moment().format(),
             });
             return Promise.resolve(coachesDashboardData);
-        }).catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        }).catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -421,10 +382,7 @@ const setAppLogs = () => {
     bodyObj.app_version = Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion();
     return dispatch => AppAPI.app_logs.post(false, bodyObj)
         .then(response => Promise.resolve(response))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -433,10 +391,7 @@ const setAppLogs = () => {
 const postSurvey = (userId, payload) => {
     return dispatch => AppAPI.survey.post({userId}, payload)
         .then(data => Promise.resolve(data))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
 /**
@@ -445,10 +400,7 @@ const postSurvey = (userId, payload) => {
 const postHealthData = payload => {
     return AppAPI.health_data.post(false, payload)
         .then(data => Promise.resolve(data))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
 /**
@@ -457,10 +409,7 @@ const postHealthData = payload => {
 const patchSession = (session_id, payload) => {
     return AppAPI.patch_sessions.patch({session_id}, payload)
         .then(data => Promise.resolve(data))
-        .catch(err => {
-            const error = AppAPI.handleError(err);
-            return Promise.reject(error);
-        });
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
 export default {

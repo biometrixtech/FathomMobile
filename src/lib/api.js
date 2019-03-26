@@ -9,19 +9,20 @@
  * API Functions
  */
 /* global fetch console */
+import { Platform, } from 'react-native';
 
 // Consts and Libs
 import Fabric from 'react-native-fabric';
 import JWT from './jwt';
-import { AppConfig, ErrorMessages, APIConfig } from '../constants';
+import { APIConfig, Actions as DispatchActions, AppConfig, ErrorMessages, } from '../constants';
 import { store } from '../store';
-import { Actions as DispatchActions } from '../constants';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
-const { Answers } = Fabric;
+// setup consts
+const { Answers, Crashlytics, } = Fabric;
 
 // We'll use JWT for API Authentication
 // const Token = {};
@@ -258,15 +259,20 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         retryCounter += 1;
                         return fetcher(method, endpoint, params, body, api_enum);
                     }
-                    // reached limit, reset timer and show generic error message
+                    // reached limit, reset timer, send fabric error, and show generic error message
                     retryCounter = 0;
-                    throw handleError(rawRes);
-                } else {
-                    // error reset counters and send message
-                    unauthorizedCounter = 0;
-                    retryCounter = 0;
-                    throw handleError(rawRes);
+                    if(Platform.OS === 'ios') {
+                        Crashlytics.recordError(`${endpoint} - ${rawRes.message.toString()}`);
+                    } else {
+                        Crashlytics.logException(`${endpoint} - ${rawRes.message.toString()}`);
+                    }
+                    throw handleError({ message: ErrorMessages.systemError, });
                 }
+                // error reset counters and send message
+                unauthorizedCounter = 0;
+                retryCounter = 0;
+                /*eslint no-throw-literal: 0*/
+                throw {};
             })
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl} @ ${moment()}`);
