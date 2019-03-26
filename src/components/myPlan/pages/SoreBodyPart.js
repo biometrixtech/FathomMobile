@@ -100,7 +100,7 @@ class SoreBodyPart extends Component {
                     isPain = bodyPart.pain;
                 }
                 handleFormChange('soreness', value, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
-                handleFormChange('soreness', null, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false, true); // set movement to null
+                handleFormChange('soreness', null, isPain, bodyPartMap.index, bodyPartSide, false, true); // set movement to null
             });
         }
     }
