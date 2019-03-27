@@ -6,23 +6,18 @@
  */
 
 import React from 'react';
-import { Animated, Easing, Image, View, Text, } from 'react-native';
 
 // import third-party libraries
-import { ActionConst, Actions, Router, Scene, Stack } from 'react-native-router-flux';
+import { Actions, Router, Scene, Stack, } from 'react-native-router-flux';
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 // Consts, Libs, and Utils
-import { AppColors, AppSizes, AppStyles, } from '../constants';
-import { CustomMyPlanNavBar, CustomNavBar, TabIcon, } from '../components/custom';
+import { CustomMyPlanNavBar, CustomNavBar, } from '../components/custom';
 import { store } from '../store';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
 import LoginComponent from '../components/auth/Login';
-
-import SignUpContainer from '../containers/auth/SignUp';
-import SignUpComponent from '../components/auth/SignUp';
 
 import ForgotPasswordContainer from '../containers/auth/ForgotPassword';
 import ForgotPasswordComponent from '../components/auth/ForgotPassword';
@@ -41,15 +36,6 @@ import InviteCodeComponent from '../components/auth/InviteCode';
 
 import SettingsContainer from '../containers/settings/Settings';
 import SettingsComponent from '../components/settings/Settings';
-
-import KitManagementContainer from '../containers/kit/KitManagement';
-import KitManagementComponent from '../components/kit/KitManagement';
-
-import KitOwnerContainer from '../containers/kit/KitOwner';
-import KitOwnerComponent from '../components/kit/KitOwner';
-
-import KitAssignContainer from '../containers/kit/KitAssign';
-import KitAssignComponent from '../components/kit/KitAssign';
 
 import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
 import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
@@ -168,13 +154,6 @@ const Index = (
                 key={'inviteCode'}
                 panHandlers={null}
             />
-            {/*<Scene
-                Layout={SignUpComponent}
-                component={SignUpContainer}
-                hideNavBar={true}
-                key={'signUp'}
-                panHandlers={null}
-            />*/}
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
@@ -235,33 +214,6 @@ const Index = (
                 // title={'Bluetooth Connect'}
                 // {...DefaultProps.navbarProps}
             />
-            {/*<Stack>
-                <Scene
-                    Layout={KitManagementComponent}
-                    component={KitManagementContainer}
-                    hideNavBar={true}
-                    key={'kitManagement'}
-                    panHandlers={null}
-                    // title={'Kit Management'}
-                    // {...DefaultProps.navbarProps}
-                />
-                <Scene
-                    key={'kitOwner'}
-                    title={'Kit Owner'}
-                    component={KitOwnerContainer}
-                    Layout={KitOwnerComponent}
-                    // {...DefaultProps.navbarProps}
-                    panHandlers={null}
-                />
-                <Scene
-                    key={'kitAssign'}
-                    title={'Kit Assign'}
-                    component={KitAssignContainer}
-                    Layout={KitAssignComponent}
-                    // {...DefaultProps.navbarProps}
-                    panHandlers={null}
-                />
-            </Stack>*/}
         </Stack>
     </Router>
 );
