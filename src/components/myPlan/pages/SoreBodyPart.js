@@ -24,10 +24,11 @@ import { TouchableOpacity, View, } from 'react-native';
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { SVGImage, Spacer, TabIcon, Text, Tooltip, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
-import { ScaleButton } from './';
+import { SoreBodyPartScaleButton, } from './';
 
 // import third-party libraries
 import _ from 'lodash';
+import * as Animatable from 'react-native-animatable';
 
 const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
     <View style={{padding: AppSizes.padding,}}>
@@ -76,10 +77,100 @@ class SoreBodyPart extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isToolTipOpen: false,
-            type:          '',
-            value:         null,
+            isToolTipOpen:          false,
+            movementValue:          null,
+            painSorenessValue:      null,
+            showMotionScaleButtons: false,
+            type:                   '',
         };
+    }
+
+    _handleAllGoodBtnPressed = bodyPartMap => {
+        const { bodyPart, bodyPartSide, handleFormChange, } = this.props;
+        if(!this.state.isToolTipOpen) {
+            this.setState({
+                movementValue:          null,
+                painSorenessValue:      null,
+                showMotionScaleButtons: false,
+                type:                   this.state.type === 'all-good' ? '' : 'all-good',
+            }, () => {
+                let value = this.state.type === 'all-good' ? 0 : null;
+                let isPain = this.state.type === 'pain';
+                if(bodyPart.isClearCandidate) {
+                    isPain = bodyPart.pain;
+                }
+                handleFormChange('soreness', value, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
+                handleFormChange('soreness', null, isPain, bodyPartMap.index, bodyPartSide, false, true); // set movement to null
+            });
+        }
+    }
+
+    _handleSoreBtnPressed = bodyPartMap => {
+        const { bodyPartSide, firstTimeExperience, handleFormChange, } = this.props;
+        if(!this.state.isToolTipOpen) {
+            this.setState({
+                movementValue:          null,
+                painSorenessValue:      null,
+                showMotionScaleButtons: false,
+                type:                   this.state.type === 'soreness' ? '' : 'soreness',
+            }, () => {
+                if(this.state.type === 'soreness' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
+                    this.setState({ isToolTipOpen: true, });
+                }
+                handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
+            });
+        }
+    }
+
+    _handlePainBtnPressed = bodyPartMap => {
+        const { bodyPartSide, firstTimeExperience, handleFormChange, } = this.props;
+        if(!this.state.isToolTipOpen) {
+            this.setState({
+                movementValue:          null,
+                painSorenessValue:      null,
+                showMotionScaleButtons: false,
+                type:                   this.state.type === 'pain' ? '' : 'pain',
+            }, () => {
+                if(this.state.type === 'pain' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
+                    this.setState({ isToolTipOpen: true, });
+                }
+                handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
+            });
+        }
+    }
+
+    _handlePainSorenessValueBtnPressed = (bodyPartMap, key) => {
+        const { bodyPart, bodyPartSide, handleFormChange, } = this.props;
+        let newType = this.state.type === 'all-good' ? '' : this.state.type;
+        let newKey = key === this.state.painSorenessValue ? null : key;
+        let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
+        if(bodyPart.isClearCandidate) {
+            isPain = bodyPart.pain;
+        }
+        this.setState({
+            movementValue:          null,
+            painSorenessValue:      newKey,
+            showMotionScaleButtons: newKey ? true : false,
+            type:                   newType,
+        }, () => {
+            handleFormChange('soreness', newKey, isPain, bodyPartMap.index, bodyPartSide);
+        });
+    }
+
+    _handleMovementValueBtnPressed = (bodyPartMap, key) => {
+        const { bodyPart, bodyPartSide, handleFormChange, } = this.props;
+        let newType = this.state.type === 'all-good' ? '' : this.state.type;
+        let newKey = key === this.state.movementValue ? null : key;
+        let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
+        if(bodyPart.isClearCandidate) {
+            isPain = bodyPart.pain;
+        }
+        this.setState({
+            movementValue: key,
+            type:          newType,
+        }, () => {
+            handleFormChange('soreness', newKey, isPain, bodyPartMap.index, bodyPartSide, newKey === null ? false : true, true);
+        });
     }
 
     render = () => {
@@ -87,7 +178,6 @@ class SoreBodyPart extends Component {
             bodyPart,
             bodyPartSide,
             firstTimeExperience,
-            handleFormChange,
             handleUpdateFirstTimeExperience,
             isFirst,
             isLast,
@@ -95,54 +185,59 @@ class SoreBodyPart extends Component {
             toggleSlideUpPanel,
         } = this.props;
         let {
+            bodyPartGroup,
             bodyPartMap,
             bodyPartName,
-            bodyPartGroup,
             helpingVerb,
             sorenessPainMapping,
         } = PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, this.state.type);
-        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain' || bodyPartGroup === 'joint');
-        let showWhatsTheDifferenceLink = bodyPartGroup && bodyPartGroup === 'muscle';
-        let isBodyPartJoint = bodyPartGroup === 'joint';
+        let showScaleButtons = bodyPartGroup && (this.state.type === 'soreness' || this.state.type === 'pain');
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
-        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
         return(
             <View
                 style={{
-                    height: (isFirst && isLast) || (!isFirst && isLast) ?
-                        (AppSizes.screen.height - (pillsHeight + backNextHeight))
-                        :
-                        (AppSizes.screen.height - pillsHeight),
-                    justifyContent: 'center',
+                    height:     (AppSizes.screen.height - pillsHeight),
+                    paddingTop: AppSizes.paddingMed,
                 }}
             >
-                { bodyPart.isClearCandidate ?
-                    <View style={[AppStyles.paddingVerticalSml]}>
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
-                            {'You have\'t mentioned '}
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPart.pain ? 'pain' : 'soreness'}</Text>
-                            {' in your '}
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPartName}</Text>
-                            {' recently.'}
+                { bodyPart.isClearCandidate && isPrevSoreness &&
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                        {'You have\'t mentioned '}
+                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPart.pain ? 'pain' : 'soreness'}</Text>
+                        {' in your '}
+                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPartName}</Text>
+                        {' recently.'}
+                    </Text>
+                }
+                <View style={[AppStyles.containerCentered,]}>
+                    { bodyPartMap ?
+                        <SVGImage
+                            firstTimeExperience={firstTimeExperience}
+                            handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
+                            image={bodyPartMap.image[bodyPartSide]}
+                            style={{height: 125, width: 125,}}
+                        />
+                        :
+                        null
+                    }
+                </View>
+                { bodyPart.isClearCandidate && isPrevSoreness ?
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        {'How has it felt the last '}
+                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
+                            {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                         </Text>
-                        <Spacer size={AppSizes.padding} />
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
-                            {'How has it felt the last '}
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
-                                {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
-                            </Text>
-                        </Text>
-                    </View>
+                    </Text>
                     : isPrevSoreness ?
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                             {`How ${helpingVerb} your `}
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                                 {bodyPartName}
                             </Text>
                             {' felt?'}
                         </Text>
                         :
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                             {'My '}
                             <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                                 {bodyPartName}
@@ -150,18 +245,6 @@ class SoreBodyPart extends Component {
                             {` ${bodyPartName === 'Abdominals' ? 'feel...' : 'feels..'}`}
                         </Text>
                 }
-                <View style={[AppStyles.containerCentered]}>
-                    { bodyPartMap ?
-                        <SVGImage
-                            firstTimeExperience={firstTimeExperience}
-                            handleUpdateFirstTimeExperience={handleUpdateFirstTimeExperience}
-                            image={bodyPartMap.image[bodyPartSide]}
-                            style={{width: 150, height: 150}}
-                        />
-                        :
-                        null
-                    }
-                </View>
                 <Tooltip
                     animated
                     content={
@@ -181,184 +264,95 @@ class SoreBodyPart extends Component {
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
-                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
-                        { isPrevSoreness || bodyPartMap.bilateral ?
-                            <View>
-                                <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
-                                    icon={this.state.type === 'all-good' ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                                    iconStyle={[{color: this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                                    onPress={() => {
-                                        if(!this.state.isToolTipOpen) {
-                                            this.setState({
-                                                type:  this.state.type === 'all-good' ? '' : 'all-good',
-                                                value: null,
-                                            }, () => {
-                                                let value = this.state.type === 'all-good' ? 0 : null;
-                                                let isPain = this.state.type === 'pain';
-                                                if(bodyPart.isClearCandidate) {
-                                                    isPain = bodyPart.pain;
-                                                }
-                                                handleFormChange('soreness', value, isPain, bodyPartMap.index, bodyPartSide, value === 0 ? true : false);
-                                            });
-                                        }
-                                    }}
-                                    reverse={false}
-                                    size={45}
-                                    type={'material-community'}
-                                />
-                                <Text
-                                    oswaldMedium
-                                    style={[
-                                        AppStyles.textCenterAligned,
-                                        {
-                                            color:           this.state.type === 'all-good' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(12),
-                                            paddingVertical: AppSizes.paddingSml,
-                                        }
-                                    ]}
-                                >
-                                    {'ALL GOOD'}
-                                </Text>
-                            </View>
-                            :
-                            null
+                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.padding,}}>
+                        <SoreBodyPartScaleButton
+                            extraStyles={{marginRight: AppSizes.padding,}}
+                            isSelected={this.state.type === 'all-good'}
+                            label={'ALL\nGOOD'}
+                            updateStateAndForm={() => this._handleAllGoodBtnPressed(bodyPartMap)}
+                        />
+                        { bodyPartGroup !== 'joint' &&
+                            <SoreBodyPartScaleButton
+                                extraStyles={{marginRight: AppSizes.padding,}}
+                                isSelected={this.state.type === 'soreness'}
+                                label={'SORE'}
+                                updateStateAndForm={() => this._handleSoreBtnPressed(bodyPartMap)}
+                            />
                         }
-                        { isBodyPartJoint ?
-                            null
-                            :
-                            <View>
-                                <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
-                                    icon={this.state.type === 'soreness' ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                                    iconStyle={[{color: this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                                    onPress={() => {
-                                        if(!this.state.isToolTipOpen) {
-                                            this.setState({
-                                                type:  this.state.type === 'soreness' ? '' : 'soreness',
-                                                value: null,
-                                            }, () => {
-                                                if(this.state.type === 'soreness' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
-                                                    this.setState({ isToolTipOpen: true, });
-                                                }
-                                                handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
-                                            });
-                                        }
-                                    }}
-                                    reverse={false}
-                                    size={45}
-                                    type={'material-community'}
-                                />
-                                <Text
-                                    oswaldMedium
-                                    style={[
-                                        AppStyles.textCenterAligned,
-                                        {
-                                            color:           this.state.type === 'soreness' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(12),
-                                            paddingVertical: AppSizes.paddingSml,
-                                        }
-                                    ]}
-                                >
-                                    {'SORE'}
-                                </Text>
-                            </View>
-                        }
-                        { isBodyPartJoint ?
-                            null
-                            :
-                            <View>
-                                <TabIcon
-                                    containerStyle={[{alignSelf: 'center', justifyContent: 'center', height: 50, paddingHorizontal: AppSizes.padding,}]}
-                                    icon={this.state.type === 'pain' ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                                    iconStyle={[{color: this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent}]}
-                                    onPress={() => {
-                                        if(!this.state.isToolTipOpen) {
-                                            this.setState({
-                                                type:  this.state.type === 'pain' ? '' : 'pain',
-                                                value: null,
-                                            }, () => {
-                                                if(this.state.type === 'pain' && !firstTimeExperience.includes('soreness_pain_tooltip')) {
-                                                    this.setState({ isToolTipOpen: true, });
-                                                }
-                                                handleFormChange('soreness', null, this.state.type === 'pain', bodyPartMap.index, bodyPartSide);
-                                            });
-                                        }
-                                    }}
-                                    reverse={false}
-                                    size={45}
-                                    type={'material-community'}
-                                />
-                                <Text
-                                    oswaldMedium
-                                    style={[
-                                        AppStyles.textCenterAligned,
-                                        {
-                                            color:           this.state.type === 'pain' ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                                            fontSize:        AppFonts.scaleFont(12),
-                                            paddingVertical: AppSizes.paddingSml,
-                                        }
-                                    ]}
-                                >
-                                    {'PAINFUL'}
-                                </Text>
-                            </View>
-                        }
+                        <SoreBodyPartScaleButton
+                            isSelected={this.state.type === 'pain'}
+                            label={'PAINFUL'}
+                            updateStateAndForm={() => this._handlePainBtnPressed(bodyPartMap)}
+                        />
                     </View>
                 </Tooltip>
-                <View style={{flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding}}>
-                    { showScaleButtons ?
-                        _.map(sorenessPainMapping, (value, key) => {
-                            if(key === 0) { return; }
-                            let sorenessPainScaleMappingValue = (
-                                isBodyPartJoint
-                            ) ?
-                                MyPlanConstants.sorenessPainScaleMapping(false, key, true)
-                                :
-                                MyPlanConstants.sorenessPainScaleMapping(this.state.type, key);
-
-                            let isSelected = this.state.value === key;
-                            let opacity = isSelected ? 1 : (key * 0.2);
-                            /*eslint consistent-return: 0*/
-                            return(
-                                <ScaleButton
-                                    isSelected={isSelected}
-                                    key={value+key}
-                                    keyLabel={key}
-                                    opacity={opacity}
-                                    sorenessPainMappingLength={sorenessPainMapping.length}
-                                    updateStateAndForm={() => {
-                                        let newType = this.state.type === 'all-good' ? '' : this.state.type;
-                                        let newKey = sorenessPainScaleMappingValue === this.state.value ? null : key;
-                                        sorenessPainScaleMappingValue = sorenessPainScaleMappingValue === this.state.value ? null : sorenessPainScaleMappingValue;
-                                        let isPain = bodyPartMap.group === 'joint' || this.state.type === 'pain';
-                                        if(bodyPart.isClearCandidate) {
-                                            isPain = bodyPart.pain;
-                                        }
-                                        this.setState({
-                                            type:  newType,
-                                            value: newKey,
-                                        }, () => {
-                                            handleFormChange('soreness', sorenessPainScaleMappingValue, isPain, bodyPartMap.index, bodyPartSide, sorenessPainScaleMappingValue === null ? false : true);
-                                        });
-                                    }}
-                                    valueLabel={value}
-                                />
-                            )
-                        })
-                        : showWhatsTheDifferenceLink ?
-                            <Text
-                                onPress={() => toggleSlideUpPanel(false)}
-                                robotoLight
-                                style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline',}}
-                            >
-                                {'What\'s the difference?'}
-                            </Text>
-                            :
-                            null
-                    }
-                </View>
-                <Spacer size={isFirst && !isLast ? pillsHeight : 0} />
+                { showScaleButtons &&
+                    <Animatable.View
+                        animation={'fadeInDown'}
+                        style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
+                    >
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'My '}
+                            <Text robotoMedium>{this.state.type}</Text>
+                            {' is...'}
+                        </Text>
+                        <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingMed,}}>
+                            {_.map(sorenessPainMapping.soreness, (sorenessObj, key) => {
+                                let label = sorenessObj.label;
+                                let newValue = sorenessObj.value;
+                                let isSelected = this.state.painSorenessValue === newValue;
+                                let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
+                                return(
+                                    <SoreBodyPartScaleButton
+                                        extraStyles={extraStyles}
+                                        isSelected={isSelected}
+                                        key={key}
+                                        label={label}
+                                        updateStateAndForm={() => this._handlePainSorenessValueBtnPressed(bodyPartMap, newValue)}
+                                    />
+                                );
+                            })}
+                        </View>
+                    </Animatable.View>
+                }
+                { this.state.showMotionScaleButtons &&
+                    <Animatable.View
+                        animation={'fadeInDown'}
+                        style={{paddingVertical: AppSizes.paddingMed,}}
+                    >
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                            {'My '}
+                            <Text robotoMedium>{'range of motion'}</Text>
+                            {' is...'}
+                        </Text>
+                        <View style={[AppStyles.paddingVerticalMed, {flexDirection: 'row', justifyContent: 'center',}]}>
+                            {_.map(sorenessPainMapping.movement, (movementObj, key) => {
+                                let label = movementObj.label;
+                                let newValue = movementObj.value;
+                                let isSelected = this.state.movementValue === newValue;
+                                let extraStyles = key === 0 || key === 1 ? {marginRight: AppSizes.padding,} : {};
+                                return(
+                                    <SoreBodyPartScaleButton
+                                        extraStyles={extraStyles}
+                                        isSelected={isSelected}
+                                        key={key}
+                                        label={label}
+                                        updateStateAndForm={() => this._handleMovementValueBtnPressed(bodyPartMap, newValue)}
+                                    />
+                                );
+                            })}
+                        </View>
+                    </Animatable.View>
+                }
+                { !showScaleButtons &&
+                    <Text
+                        onPress={() => toggleSlideUpPanel(false)}
+                        robotoLight
+                        style={[AppStyles.textCenterAligned, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.yellow, textDecorationLine: 'underline',}]}
+                    >
+                        {'What\'s the difference?'}
+                    </Text>
+                }
             </View>
         )
     }

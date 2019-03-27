@@ -406,7 +406,6 @@ class HealthKitWorkouts extends PureComponent {
                                                                         isSelected={isSelected}
                                                                         keyLabel={key}
                                                                         opacity={opacity}
-                                                                        sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                         updateStateAndForm={() => {
                                                                             handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
                                                                             if(showAddContinueBtns) {

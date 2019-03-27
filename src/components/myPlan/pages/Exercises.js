@@ -29,6 +29,9 @@ import { ExercisesExercise, TimedExercise, } from './';
 import { PlanLogic, } from '../../../lib';
 import { Error, } from '../../general';
 
+const minActivatePercent = 0.15;
+const maxOtherExercisesPercet = (1 - minActivatePercent);
+
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     progressPillsWrapper: {
@@ -46,33 +49,46 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, listLength, }) => (
-    <View style={[styles.progressPillsWrapper, availableSectionsCount === 2 ? {paddingHorizontal: AppSizes.paddingLrg,} : {}]}>
-        {_.map(cleanedExerciseList, (exerciseList, index) => {
-            let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
-            let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
-            let wrapperWidth = (exerciseList.length / listLength);
-            return(
-                exerciseList.length > 0 ?
-                    <View
-                        key={index}
-                        style={{
-                            alignItems: 'center',
-                            flex:       wrapperWidth,
-                        }}
-                    >
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{index}</Text>
-                        <Spacer size={AppSizes.paddingXSml} />
-                        <View style={[styles.progressPill, {width: '90%',}]}>
-                            <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.seaBlue, width: `${progressWidth}%`,}]} />
+const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, listLength, }) => {
+    let wrapperWidths = {};
+    let isActivateTooShort = (cleanedExerciseList['ACTIVATE'].length / listLength) < minActivatePercent;
+    /*eslint dot-notation: 0*/
+    _.map(cleanedExerciseList, (exerciseList, index) => {
+        if(availableSectionsCount === 3 && isActivateTooShort) {
+            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercet;
+            let stretchLength = (cleanedExerciseList['STRETCH'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercet;
+            wrapperWidths['FOAM ROLL'] = foamRollLength;
+            wrapperWidths['STRETCH'] = stretchLength;
+            wrapperWidths['ACTIVATE'] = minActivatePercent;
+        } else {
+            wrapperWidths[index] = (exerciseList.length / listLength);
+        }
+    });
+    return (
+        <View style={[styles.progressPillsWrapper, availableSectionsCount === 2 ? {paddingHorizontal: AppSizes.paddingLrg,} : {}]}>
+            {_.map(cleanedExerciseList, (exerciseList, index) => {
+                let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
+                let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
+                return(
+                    exerciseList.length > 0 &&
+                        <View
+                            key={index}
+                            style={{
+                                alignItems: 'center',
+                                flex:       wrapperWidths[index],
+                            }}
+                        >
+                            <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{index}</Text>
+                            <Spacer size={AppSizes.paddingXSml} />
+                            <View style={[styles.progressPill, {width: '90%',}]}>
+                                <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.seaBlue, width: `${progressWidth}%`,}]} />
+                            </View>
                         </View>
-                    </View>
-                    :
-                    null
-            );
-        })}
-    </View>
-);
+                );
+            })}
+        </View>
+    );
+};
 
 class Exercises extends PureComponent {
     constructor(props) {
@@ -177,9 +193,7 @@ class Exercises extends PureComponent {
         let oldHeight = this.state.progressPillsHeight;
         let newHeight = parseInt(ev.nativeEvent.layout.height, 10);
         if(oldHeight !== newHeight) {
-            this.setState({
-                progressPillsHeight: newHeight,
-            });
+            this.setState({ progressPillsHeight: newHeight, });
         }
     }
 
@@ -191,8 +205,7 @@ class Exercises extends PureComponent {
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
-        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
-        return(
+        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
                 <View
                     onLayout={ev => this._resizeModal(ev)}

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
@@ -53,7 +53,7 @@ const PlanLogic = {
       * Updates to the state when the daily readiness & post session forms are changed
       * - MyPlan
       */
-    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state, isClearCandidate = false) => {
+    handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state, isClearCandidate = false, isMovementValue) => {
         // setup varibles
         let newFormFields;
         // logic
@@ -70,13 +70,21 @@ const PlanLogic = {
                 // body part already exists
                 let sorenessIndex = [_.findIndex(state.soreness, (o) => o.body_part === bodyPart && o.side === side)];
                 newSorenessFields[sorenessIndex].pain = isPain;
-                newSorenessFields[sorenessIndex].severity = value;
+                if(isMovementValue) {
+                    newSorenessFields[sorenessIndex].movement = value;
+                } else {
+                    newSorenessFields[sorenessIndex].severity = value;
+                }
             } else {
                 // doesn't exist, create new object
                 let newSorenessPart = {};
                 newSorenessPart.body_part = bodyPart;
                 newSorenessPart.pain = isPain;
-                newSorenessPart.severity = value;
+                if(isMovementValue) {
+                    newSorenessPart.movement = value;
+                } else {
+                    newSorenessPart.severity = value;
+                }
                 newSorenessPart.side = side ? side : 0;
                 newSorenessPart.isClearCandidate = isClearCandidate;
                 newSorenessFields.push(newSorenessPart);
@@ -299,8 +307,8 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = postSession.RPE >= 0 && postSession.event_date ? true : false;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === combinedSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)).length === combinedSoreBodyParts.length : true;
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)).length > 0;
         let isFormValid = areQuestionsValid && (areSoreBodyPartsValid || postSession.soreness.length === 0) && areAreasOfSorenessValid;
         let isFormValidItems = {
             areAreasOfSorenessValid,
@@ -335,8 +343,15 @@ const PlanLogic = {
             return doesItInclude.length > 0;
         });
         let areQuestionsValid = dailyReadiness.readiness > 0 && dailyReadiness.sleep_quality > 0;
-        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ? _.filter(filteredSoreBodyParts, o => o.severity > 0 || o.severity === 0).length === combinedSoreBodyParts.length : true;
-        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o => o.severity > 0 || o.severity === 0).length > 0;
+        let areSoreBodyPartsValid = filteredSoreBodyParts.length > 0 ?
+            _.filter(filteredSoreBodyParts, o =>
+                (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)
+            ).length === combinedSoreBodyParts.length
+            :
+            true;
+        let areAreasOfSorenessValid = _.filter(filteredAreasOfSoreness, o =>
+            (o.severity === 0 && o.movement === null) || (o.severity > 0 && o.movement > 0)
+        ).length > 0;
         let foundSport = _.find(MyPlanConstants.teamSports, o => o.index === dailyReadiness.current_sport_name);
         let selectedSportPositions = dailyReadiness.current_sport_name !== null && foundSport ? foundSport.positions : [];
         const isFunctionalStrengthEligible = soreBodyParts.functional_strength_eligible;
@@ -417,13 +432,7 @@ const PlanLogic = {
             :
             _.filter(MyPlanConstants.bodyPartMapping, ['index', bodyPart.index])[0];
         let bodyPartGroup = bodyPartMap ? bodyPartMap.group : false;
-        let sorenessPainMapping =
-            bodyPartGroup && bodyPartGroup === 'muscle' && pageStateType.length > 0 ?
-                MyPlanConstants.muscleLevels[pageStateType]
-                : bodyPartGroup && bodyPartGroup === 'joint' ?
-                    MyPlanConstants.jointLevels
-                    :
-                    [];
+        let sorenessPainMapping = MyPlanConstants.muscleJointLevels;
         let helpingVerb = bodyPartMap ? bodyPartMap.helping_verb : '';
         let mainBodyPartName = bodyPartMap ? bodyPartMap.label : '';
         if (mainBodyPartName.slice(-1) === 's' && bodyPartMap.bilateral && !!bodyPartSide) {
@@ -438,9 +447,9 @@ const PlanLogic = {
         }
         let bodyPartName = `${bodyPartMap.bilateral && bodyPartSide === 1 ? 'Left ' : bodyPartMap.bilateral && bodyPartSide === 2 ? 'Right ' : ''}${mainBodyPartName}`;
         return {
+            bodyPartGroup,
             bodyPartMap,
             bodyPartName,
-            bodyPartGroup,
             helpingVerb,
             sorenessPainMapping,
         };
@@ -875,7 +884,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (user_id, dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handleReadinessSurveySubmitLogic: (dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isActiveRecoveryCollapsed:  dailyReadiness.sessions_planned ? false : true,
             isReadinessSurveyCompleted: true,
@@ -885,7 +894,6 @@ const PlanLogic = {
         });
         let newDailyReadiness = {
             date_time:                 eventDate,
-            user_id:                   user_id,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
             sleep_quality:             dailyReadiness.sleep_quality,
@@ -946,10 +954,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (user_id, postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handlePostSessionSurveySubmitLogic: (postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
             event_date: eventDate,
-            user_id:    user_id,
             sessions:   [],
         };
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];

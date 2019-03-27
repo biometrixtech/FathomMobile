@@ -10,12 +10,12 @@
  */
 
 import jwtDecode from 'jwt-decode';
-import { Actions, ErrorMessages } from '../constants';
-import { AppAPI, AppUtil } from '../lib';
+import { Actions, ErrorMessages, } from '../constants';
+import { AppAPI, AppUtil, } from '../lib';
 import { store } from '../store';
 
 // Components
-import { Platform } from 'react-native';
+import { Platform, } from 'react-native';
 
 // import third-party libraries
 import moment from 'moment';
@@ -24,7 +24,7 @@ import moment from 'moment';
   * Ping Maintenance API
   * - to know of upcoming, current, and future maintenance windows
   */
-const getMaintenanceWindow = (updateReducer) => {
+const getMaintenanceWindow = updateReducer => {
     return AppAPI.maintenance_status.get()
         .then(response => {
             if(updateReducer) {
@@ -72,11 +72,9 @@ const authorizeUser = (authorization, user, userCreds) => {
             } catch (err) {
                 return Promise.reject('Token decode failed.');
             }
-
             if (!decodedToken || !decodedToken.sub) {
                 return Promise.reject('Token decode failed.');
             }
-
             dispatch({
                 type:          Actions.LOGIN,
                 email:         userCreds.Email,
@@ -85,7 +83,6 @@ const authorizeUser = (authorization, user, userCreds) => {
                 session_token: session_token,
                 expires:       response.authorization.expires,
             });
-
             return Promise.resolve(response);
         })
         .catch(err => {
@@ -116,14 +113,8 @@ const registerDevice = (certificate, device, user) => {
         if(certificate && certificate.id && device) {
             bodyObj.owner_id = user.id;
             return AppAPI.register_device.patch({ device_uuid: uniqueId }, bodyObj)
-                .then(response => {
-                    return resolve(response);
-                })
+                .then(response => resolve(response))
                 .catch(err => {
-                    if (err && err.message && err.message === ErrorMessages.deviceRegistered) {
-                        return resolve();
-                    }
-                    console.log('err',err);
                     dispatch({
                         type: Actions.STOP_REQUEST
                     })
@@ -140,10 +131,6 @@ const registerDevice = (certificate, device, user) => {
                 return resolve(response);
             })
             .catch(err => {
-                if (err && err.message && err.message === ErrorMessages.deviceRegistered) {
-                    return resolve();
-                }
-                console.log('err',err);
                 dispatch({
                     type: Actions.STOP_REQUEST
                 })
@@ -166,7 +153,6 @@ const finalizeLogin = (user, userCreds, authorization) => {
             session_token: authorization.session_token,
             expires:       authorization.expires,
         });
-
         // Get user details from API, using my token
         dispatch({
             type: Actions.USER_REPLACE,
@@ -175,7 +161,6 @@ const finalizeLogin = (user, userCreds, authorization) => {
         dispatch({
             type: Actions.STOP_REQUEST
         });
-
         return resolve(user);
     });
 };
@@ -189,7 +174,6 @@ const startLogin = (credentials, reload) => {
         dispatch({
             type: Actions.START_REQUEST,
         });
-
         // Get a new token from API or use the stored one
         return (reload ? Promise.resolve({ user: userCreds }) : AppAPI.getToken(userCreds))
             .then(response => {
@@ -200,11 +184,9 @@ const startLogin = (credentials, reload) => {
                 } catch (err) {
                     return reject('Token decode failed.');
                 }
-
                 if (!decodedToken || !decodedToken.sub) {
                     return reject('Token decode failed.');
                 }
-
                 // update accessory details
                 let cleanedResult = {};
                 cleanedResult.sensor_pid = response.user.sensor_pid;
@@ -220,7 +202,6 @@ const startLogin = (credentials, reload) => {
                     password: userCreds.password,
                     jwt:      token,
                 });
-
                 return resolve(response);
             }).catch(err => {
                 dispatch({
@@ -234,32 +215,26 @@ const startLogin = (credentials, reload) => {
 /**
   * Logout
   */
-const logout = user_id => {
+const logout = userId => {
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.logout.post({ user_id })
-            .then(() => {
-                return resolve(
-                    dispatch({
-                        type: Actions.LOGOUT
-                    })
-                );
-            })
-            .catch(err => {
-                console.log('err',err);
-                // return reject(err);
-                return resolve(
-                    dispatch({
-                        type: Actions.LOGOUT
-                    })
-                );
-            });
+        return AppAPI.logout.post({userId})
+            .then(() => resolve(
+                dispatch({
+                    type: Actions.LOGOUT
+                })
+            ))
+            .catch(err => resolve(
+                dispatch({
+                    type: Actions.LOGOUT
+                })
+            ));
     });
 };
 
 /**
   * POST Forgot Password Email
   */
-const forgotPassword = (email) => {
+const forgotPassword = email => {
     return dispatch => AppAPI.forgot_password.post(false, { personal_data: email })
         .then(result => {
             dispatch({
@@ -275,7 +250,6 @@ const forgotPassword = (email) => {
                 data:         err,
                 emailAddress: email,
             });
-            console.log('error', err)
             return Promise.reject(err);
         });
 };
@@ -298,7 +272,6 @@ const resetPassword = dataObj => {
                 type: Actions.RESET_PASSWORD_FAILED,
                 data: err,
             });
-            console.log('error', err)
             return Promise.reject(err);
         });
 };
@@ -306,7 +279,7 @@ const resetPassword = dataObj => {
 /**
   * POST SignUp form data
   */
-const signUp = (credentials) => {
+const signUp = credentials => {
     return dispatch => AppAPI.user.post(credentials)
         .then(result => {
             dispatch({
@@ -335,7 +308,7 @@ const setAccountCode = (accountCode, accountRole = 'athlete') => {
  *
  * @param {new environment to be used} environment
  */
-const setEnvironment = (environment) => {
+const setEnvironment = environment => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SET_ENVIRONMENT,
         environment
@@ -346,7 +319,7 @@ const setEnvironment = (environment) => {
  *
  * @param {push notification token for device} token
  */
-const sendDeviceToken = (token) => {
+const sendDeviceToken = token => {
     return dispatch => Promise.resolve(dispatch({
         type: Actions.SEND_DEVICE_TOKEN,
         token
