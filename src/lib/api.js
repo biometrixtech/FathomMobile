@@ -271,8 +271,18 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                 // error reset counters and send message
                 unauthorizedCounter = 0;
                 retryCounter = 0;
+                // setup res
+                let jsonRes = {};
+                try {
+                    jsonRes = await rawRes.json();
+                } catch (error) {
+                    if (rawRes && /20[012]/.test(`${rawRes.status}`)) {
+                        const err = { message: ErrorMessages.default };
+                        throw err;
+                    }
+                }
                 /*eslint no-throw-literal: 0*/
-                throw {};
+                throw jsonRes;
             })
             .then(res => {
                 debug(res, `API Response #${requestNum} from ${thisUrl} @ ${moment()}`);
