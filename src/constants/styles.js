@@ -441,6 +441,13 @@ export default {
         justifyContent: 'center',
         width:          45,
     },
+    sorenessPainButtons: {
+        alignSelf:      'center',
+        borderRadius:   65 / 2,
+        height:         65,
+        justifyContent: 'center',
+        width:          65,
+    },
     backNextCircleButtons: {
         alignSelf:      'center',
         borderRadius:   Sizes.backNextButtonsHeight / 2,
@@ -477,5 +484,11 @@ export default {
         shadowOffset:  { width: 0, height: 2 },
         shadowOpacity: 1,
         shadowRadius:  20,
+    },
+    scaleButtonShadowEffect: {
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { width: 0, height: 3 },
+        shadowOpacity: 1,
+        shadowRadius:  6,
     }
 };

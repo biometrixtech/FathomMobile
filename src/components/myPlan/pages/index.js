@@ -22,6 +22,7 @@ import ScaleButton from './ScaleButton';
 import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
 import SoreBodyPart from './SoreBodyPart';
+import SoreBodyPartScaleButton from './SoreBodyPartScaleButton';
 import SportBlock from './SportBlock';
 import SportScheduleBuilder from './SportScheduleBuilder';
 import SurveySlideUpPanel from './SurveySlideUpPanel';
@@ -48,6 +49,7 @@ export {
     SessionsCompletionModal,
     SingleExerciseItem,
     SoreBodyPart,
+    SoreBodyPartScaleButton,
     SportBlock,
     SportScheduleBuilder,
     SurveySlideUpPanel,

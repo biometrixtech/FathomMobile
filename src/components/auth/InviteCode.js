@@ -114,12 +114,12 @@ class InviteCode extends Component {
                         })
                         .catch(err => {
                             this.setState({ isVerifyingOpen: false, });
-                            this._handleUpdateResultMsg('error', 'invalid code, please try again');
+                            this._handleUpdateResultMsg('error', err.message);
                         });
                 }
             );
         } else {
-            this._handleUpdateResultMsg('error', 'please enter a valid code');
+            this._handleUpdateResultMsg('error', 'please enter a valid account code.');
         }
     }
 

@@ -625,9 +625,9 @@ const helperFunctions = {
 
     soreBodyPartRenderLogicExpectedResult: (bodyPartMap, bodyPartName, bodyPartGroup, helpingVerb, sorenessPainMapping) => {
         return {
+            bodyPartGroup,
             bodyPartMap,
             bodyPartName,
-            bodyPartGroup,
             helpingVerb,
             sorenessPainMapping,
         };
@@ -645,24 +645,18 @@ const helperFunctions = {
     },
 
     muscleLevelsOfSorenessAndPain: isSoreness => {
-        if(isSoreness) {
-            return [
-                '',
-                'Tight',
-                'Sore',
-                'Movement Limited',
-                'Struggling to Move',
-                'Cannot Move',
-            ];
-        }
-        return [
-            '',
-            'Barely Noticeable',
-            'Dull Pain',
-            'Sharp Pain',
-            'Pain Limits Movement ',
-            'Too Painful to Move',
-        ];
+        return {
+            soreness: [
+                { label: 'MILD', value: 1,},
+                { label: 'MODERATE', value: 3,},
+                { label: 'SEVERE', value: 5,},
+            ],
+            movement: [
+                { label: 'NOT\nLIMITED', value: 1,},
+                { label: 'LIMITED', value: 3,},
+                { label: 'VERY\nLIMITED', value: 5,},
+            ],
+        };
     },
 
     readinessSurveyRenderLogicExpectedResult: (functionalStrengthTodaySubtext, isFirstFunctionalStrength, isFormValid, isFormValidItems, isSecondFunctionalStrength, newSoreBodyParts, partOfDay, selectedSportPositions) => {
@@ -1697,7 +1691,7 @@ it('Sore Body Part Render Logic - On Enter, Lower Back (SORE Selected)', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(12, 0).body_parts[0];
     let bodyPartSide = 0;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'muscle', 'has', []);
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLowerBack(), 'Lower Back', 'muscle', 'has', helperFunctions.muscleLevelsOfSorenessAndPain());
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
@@ -1705,7 +1699,7 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
     let bodyPart = helperFunctions.handleSoreBodyParts(14, 1).body_parts[0];
     let bodyPartSide = 1;
     let pageStateType = '';
-    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLeftGlute(), 'Left Glute', 'muscle', 'has', []);
+    let expectedResult = helperFunctions.soreBodyPartRenderLogicExpectedResult(helperFunctions.soreBodyPartLeftGlute(), 'Left Glute', 'muscle', 'has', helperFunctions.muscleLevelsOfSorenessAndPain());
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 

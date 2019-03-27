@@ -11,7 +11,7 @@ import fetch from 'isomorphic-fetch';
 import moment from 'moment';
 
 // import logic file(s)
-import { AppAPI, PlanLogic, } from '../';
+import { PlanLogic, } from '../';
 import { APIConfig, AppConfig, } from '../../constants';
 import defaultPlanState from '../../states/plan';
 
@@ -59,7 +59,7 @@ const helperFunctions = {
         };
     },
 
-    newNewDailyReadinessExpectedResult: (loginRes, sessions_planned, sessionsArray = [], sorenessArray, clearCandidatesArray) => {
+    newNewDailyReadinessExpectedResult: (sessions_planned, sessionsArray = [], sorenessArray, clearCandidatesArray) => {
         return {
             sessions_planned,
             clear_candidates:          clearCandidatesArray,
@@ -68,16 +68,14 @@ const helperFunctions = {
             sleep_data:                [],
             sleep_quality:             null,
             soreness:                  sorenessArray,
-            user_id:                   loginRes.user.id,
             wants_functional_strength: null,
         };
     },
 
-    newPostSessionExpectedResult: (loginRes, eventDate, sessionsArray = []) => {
+    newPostSessionExpectedResult: (eventDate, sessionsArray = []) => {
         return {
             event_date: eventDate,
             sessions:   sessionsArray,
-            user_id:    loginRes.user.id,
         };
     },
 
@@ -102,7 +100,6 @@ describe('Systems Tests for Persona 1', () => {
         expect(copyDataRes.message).toEqual('success');
         // get myPlan
         let myPlanObj = {
-            user_id:    loginRes.user.id,
             start_date: moment().format('YYYY-MM-DD'),
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
         };
@@ -129,22 +126,23 @@ describe('Systems Tests for Persona 1', () => {
         });
         // submit readiness survey
         let prepareObj = { isReadinessSurveyCompleted: false, };
+        let recoverObj = { isActiveRecoveryCollapsed: false, };
         let healthData = {
             ignoredWorkouts: [],
             sleep:           [],
             workouts:        [],
         };
-        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
+        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadinessObj, prepareObj, recoverObj, healthData);
         // check newDailyReadiness is correct before sending
         let newNewDailyReadiness = _.cloneDeep(newDailyReadiness);
         delete newNewDailyReadiness.date_time;
         let sorenessArray = [
-            {body_part: 7, pain: true, side: 1, status: 'almost_persistent_2_pain_acute', severity: 3}
+            {body_part: 7, pain: true, side: 1, status: 'acute_pain', severity: 3}
         ];
         let clearCandidatesArray = [
             {body_part: 7, pain: true, side: 2, status: 'persistent_2_pain', isClearCandidate: true, severity: 1}
         ];
-        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, [], sorenessArray, clearCandidatesArray));
+        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(true, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         let dailyPlanObj = readinessSurveyRes.daily_plans[0];
@@ -170,7 +168,6 @@ describe('Systems Tests for Persona 1', () => {
         let completedExercises = [`${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-0`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-1`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`];
         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
         let patchActiveRecoveryObj = {
-            user_id:             loginRes.user.id,
             event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
             recovery_type:       'pre',
             completed_exercises: newCompletedExercises,
@@ -188,7 +185,7 @@ describe('Systems Tests for Persona 1', () => {
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].post_session_survey.event_date', `${moment().toISOString(true).split('.')[0]}Z`, null, null, null, postSessionObj);
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].duration', 65, null, null, null, postSessionObj);
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('sessions[0].post_session_survey.RPE', 3, null, null, null, postSessionObj);
-        let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(loginRes.user.id, postSessionObj, trainObj, healthData);
+        let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(postSessionObj, trainObj, recoverObj, healthData);
         const postSessionSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_session_survey'), helperFunctions.apiReqs('post', newPostSession, loginRes.authorization.jwt));
         let thirdDailyPlanObj = postSessionSurveyRes.daily_plans[0];
         let newExerciseList = _.concat(thirdDailyPlanObj.pre_recovery.inhibit_exercises, thirdDailyPlanObj.pre_recovery.lengthen_exercises, thirdDailyPlanObj.pre_recovery.activate_exercises);
@@ -202,7 +199,6 @@ describe('Systems Tests for Persona 1', () => {
         let anotherCompletedExercises = [`${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-0`, `${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-1`, `${newExerciseList[_.random(0, (newExerciseList.length - 1))].library_id}-2`];
         let { newNewCompletedExercises, } = PlanLogic.handleCompletedExercises(anotherCompletedExercises);
         let newPatchActiveRecoveryObj = {
-            user_id:             loginRes.user.id,
             event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
             recovery_type:       'post',
             completed_exercises: newNewCompletedExercises,
@@ -226,7 +222,6 @@ describe('Systems Tests for Persona 1', () => {
         expect(copyDataRes.message).toEqual('success');
         // get myPlan
         let myPlanObj = {
-            user_id:    loginRes.user.id,
             start_date: moment().format('YYYY-MM-DD'),
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
         };
@@ -253,22 +248,23 @@ describe('Systems Tests for Persona 1', () => {
         });
         // submit readiness survey
         let prepareObj = { isReadinessSurveyCompleted: false, };
+        let recoverObj = { isActiveRecoveryCollapsed: false, };
         let healthData = {
             ignoredWorkouts: [],
             sleep:           [],
             workouts:        [],
         };
-        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
+        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadinessObj, prepareObj, recoverObj, healthData);
         // check newDailyReadiness is correct before sending
         let newNewDailyReadiness = _.cloneDeep(newDailyReadiness);
         delete newNewDailyReadiness.date_time;
         let sorenessArray = [
-            {body_part: 7, pain: true, side: 1, status: 'almost_persistent_2_pain_acute', severity: 4}
+            {body_part: 7, pain: true, side: 1, status: 'acute_pain', severity: 4}
         ];
         let clearCandidatesArray = [
             {body_part: 7, pain: true, side: 2, status: 'persistent_2_pain', isClearCandidate: true, severity: 1}
         ];
-        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, [], sorenessArray, clearCandidatesArray));
+        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(true, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         let dailyPlanObj = readinessSurveyRes.daily_plans[0];
@@ -304,7 +300,6 @@ describe('Systems Tests for Persona 1', () => {
         expect(copyDataRes.message).toEqual('success');
         // get myPlan
         let myPlanObj = {
-            user_id:    loginRes.user.id,
             start_date: moment().format('YYYY-MM-DD'),
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
         };
@@ -331,22 +326,23 @@ describe('Systems Tests for Persona 1', () => {
         });
         // submit readiness survey
         let prepareObj = { isReadinessSurveyCompleted: false, };
+        let recoverObj = { isActiveRecoveryCollapsed: false, };
         let healthData = {
             ignoredWorkouts: [],
             sleep:           [],
             workouts:        [],
         };
-        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
+        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadinessObj, prepareObj, recoverObj, healthData);
         // check newDailyReadiness is correct before sending
         let newNewDailyReadiness = _.cloneDeep(newDailyReadiness);
         delete newNewDailyReadiness.date_time;
         let sorenessArray = [
-            {body_part: 7, pain: true, side: 1, status: 'almost_persistent_2_pain_acute', severity: 3}
+            {body_part: 7, pain: true, side: 1, status: 'acute_pain', severity: 3}
         ];
         let clearCandidatesArray = [
             {body_part: 7, pain: true, side: 2, status: 'persistent_2_pain', isClearCandidate: true, severity: 0}
         ];
-        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, false, [], sorenessArray, clearCandidatesArray));
+        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(false, [], sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         let dailyPlanObj = readinessSurveyRes.daily_plans[0];
@@ -369,7 +365,6 @@ describe('Systems Tests for Persona 1', () => {
         let completedExercises = [`${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-0`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-1`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`, `${exerciseList[_.random(0, (exerciseList.length - 1))].library_id}-2`];
         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(completedExercises);
         let patchActiveRecoveryObj = {
-            user_id:             loginRes.user.id,
             event_date:          `${moment().toISOString(true).split('.')[0]}Z`,
             recovery_type:       'post',
             completed_exercises: newCompletedExercises,
@@ -394,7 +389,6 @@ describe('Systems Tests for Persona 1', () => {
         expect(copyDataRes.message).toEqual('success');
         // get myPlan
         let myPlanObj = {
-            user_id:    loginRes.user.id,
             start_date: moment().format('YYYY-MM-DD'),
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
         };
@@ -428,12 +422,13 @@ describe('Systems Tests for Persona 1', () => {
         dailyReadinessObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', 2, false, 21, 1, dailyReadinessObj, false);
         // submit readiness survey
         let prepareObj = { isReadinessSurveyCompleted: false, };
+        let recoverObj = { isActiveRecoveryCollapsed: false, };
         let healthData = {
             ignoredWorkouts: [],
             sleep:           [],
             workouts:        [],
         };
-        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(loginRes.user.id, dailyReadinessObj, prepareObj, healthData);
+        let { newDailyReadiness, } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadinessObj, prepareObj, recoverObj, healthData);
         // check newDailyReadiness is correct before sending
         let newNewDailyReadiness = _.cloneDeep(newDailyReadiness);
         delete newNewDailyReadiness.date_time;
@@ -446,7 +441,7 @@ describe('Systems Tests for Persona 1', () => {
         let sessionsArray = [
             {description: '', ignored: false, deleted: false, sport_name: 70, session_type: 6, event_date: eventDate, duration: 45, post_session_survey: {event_date: eventDate, RPE: 4, soreness: []}, strength_and_conditioning_type: null}
         ];
-        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(loginRes, true, sessionsArray, sorenessArray, clearCandidatesArray));
+        expect(newNewDailyReadiness).toEqual(helperFunctions.newNewDailyReadinessExpectedResult(true, sessionsArray, sorenessArray, clearCandidatesArray));
         // make sure we are successful & valid - Readiness Survey Submit
         const readinessSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_readiness_survey'), helperFunctions.apiReqs('post', newDailyReadiness, loginRes.authorization.jwt));
         let dailyPlanObj = readinessSurveyRes.daily_plans[0];
@@ -464,11 +459,12 @@ describe('Systems Tests for Persona 1', () => {
         const previousSorenessRes = await helperFunctions.fetcher(helperFunctions.getURL('get_sore_body_parts'), helperFunctions.apiReqs('post', previousSorenessObj, loginRes.authorization.jwt));
         expect(previousSorenessRes.readiness.hist_sore_status.length).toEqual(1);
         expect(previousSorenessRes.readiness.body_parts.length).toEqual(1);
-        expect(previousSorenessRes.typical_sessions.length).toEqual(1);
+        expect(previousSorenessRes.typical_sessions.length).toEqual(2);
         _.map(previousSorenessRes.readiness.hist_sore_status, soreBodyPart => {
             expect(
                 soreBodyPart.status === 'persistent_2_pain' ||
-                soreBodyPart.status === 'almost_persistent_2_pain_acute'
+                soreBodyPart.status === 'almost_persistent_2_pain_acute' ||
+                soreBodyPart.status === 'acute_pain'
             ).toBe(true);
         });
         // Submit PSS with 1 Session (Screen on Recover)
@@ -503,7 +499,7 @@ describe('Systems Tests for Persona 1', () => {
         });
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', 2, false, 21, 2, postSessionObj, false);
         postSessionObj = PlanLogic.handleDailyReadinessAndPostSessionFormChange('soreness', 2, true, 12, 0, postSessionObj, false);
-        let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(loginRes.user.id, postSessionObj, trainObj, healthData, eventDate);
+        let { newPostSession, } = PlanLogic.handlePostSessionSurveySubmitLogic(postSessionObj, trainObj, recoverObj, healthData, eventDate);
         // check newPostSession is correct before sending
         let newSorenessArray = [
             {body_part: 21, side: 2, pain: false, severity: 2, isClearCandidate: false,},
@@ -514,7 +510,7 @@ describe('Systems Tests for Persona 1', () => {
             {description: '', ignored: false, deleted: false, sport_name: previousSorenessRes.typical_sessions[0].sport_name, session_type: previousSorenessRes.typical_sessions[0].session_type, event_date: eventDate, duration: 65, post_session_survey: {event_date: eventDate, RPE: 3, soreness: []}, strength_and_conditioning_type: null},
             {description: '', ignored: false, deleted: false, sport_name: 4, session_type: 6, event_date: eventDate, duration: 45, post_session_survey: {event_date: eventDate, RPE: 5, soreness: newSorenessArray, clear_candidates: newClearCandidatesArray}, strength_and_conditioning_type: null},
         ];
-        expect(newPostSession).toEqual(helperFunctions.newPostSessionExpectedResult(loginRes, eventDate, newSessionsArray));
+        expect(newPostSession).toEqual(helperFunctions.newPostSessionExpectedResult(eventDate, newSessionsArray));
         const postSessionSurveyRes = await helperFunctions.fetcher(helperFunctions.getURL('post_session_survey'), helperFunctions.apiReqs('post', newPostSession, loginRes.authorization.jwt));
         let thirdDailyPlanObj = postSessionSurveyRes.daily_plans[0];
         let thirdExerciseList = _.concat(thirdDailyPlanObj.post_recovery.inhibit_exercises, thirdDailyPlanObj.post_recovery.lengthen_exercises, thirdDailyPlanObj.post_recovery.activate_exercises);

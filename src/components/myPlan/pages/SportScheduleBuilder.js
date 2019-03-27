@@ -478,7 +478,6 @@ class SportScheduleBuilder extends PureComponent {
                                                                 isSelected={isSelected}
                                                                 keyLabel={key}
                                                                 opacity={opacity}
-                                                                sorenessPainMappingLength={MyPlanConstants.postSessionFeel.length}
                                                                 updateStateAndForm={() => {
                                                                     handleFormChange('post_session_survey.RPE', key);
                                                                     if(key === 0 || key >= 1) {

@@ -2,13 +2,15 @@
  * ScaleButton
  *
      <ScaleButton
-         isSelected={this.state.value === key}
-         key={value+key}
-         keyLabel={key}
-         opacity={0.25}
-         sorenessPainMappingLength={sorenessPainMapping.length}
-         updateStateAndForm={this._updateStateAndForm}
-         valueLabel={value}
+        isSelected={isSelected}
+        keyLabel={key}
+        opacity={opacity}
+        updateStateAndForm={() => {
+            handleFormChange('post_session_survey.RPE', key);
+            if(key === 0 || key >= 1) {
+                this._scrollToBottom();
+            }
+        }}
      />
  *
  */
@@ -17,7 +19,7 @@ import PropTypes from 'prop-types';
 import { TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
+import { AppColors, AppFonts, AppStyles, } from '../../../constants';
 import { Text, } from '../../custom';
 
 /* Component ==================================================================== */
@@ -25,9 +27,7 @@ const ScaleButton = ({
     isSelected,
     keyLabel,
     opacity,
-    sorenessPainMappingLength,
     updateStateAndForm,
-    valueLabel,
 }) => (
     <View style={{flex: 1, justifyContent: 'flex-start',}}>
         <TouchableHighlight
@@ -50,40 +50,17 @@ const ScaleButton = ({
                 {keyLabel}
             </Text>
         </TouchableHighlight>
-        { valueLabel ?
-            <Text
-                oswaldMedium
-                style={[
-                    AppStyles.textCenterAligned,
-                    {
-                        color:             isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.primary.grey.fiftyPercent,
-                        fontSize:          AppFonts.scaleFont(12),
-                        paddingHorizontal: AppSizes.paddingXSml,
-                        paddingVertical:   AppSizes.paddingSml,
-                    }
-                ]}
-            >
-                {valueLabel.toUpperCase()}
-            </Text>
-            :
-            null
-        }
     </View>
 );
 
 ScaleButton.propTypes = {
-    isSelected:                PropTypes.bool.isRequired,
-    keyLabel:                  PropTypes.number.isRequired,
-    opacity:                   PropTypes.number,
-    sorenessPainMappingLength: PropTypes.number.isRequired,
-    updateStateAndForm:        PropTypes.func.isRequired,
-    valueLabel:                PropTypes.string,
+    isSelected:         PropTypes.bool.isRequired,
+    keyLabel:           PropTypes.number.isRequired,
+    opacity:            PropTypes.number.isRequired,
+    updateStateAndForm: PropTypes.func.isRequired,
 };
 
-ScaleButton.defaultProps = {
-    opacity:    1,
-    valueLabel: null,
-};
+ScaleButton.defaultProps = {};
 
 ScaleButton.componentName = 'ScaleButton';
 

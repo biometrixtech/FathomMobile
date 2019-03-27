@@ -18,6 +18,7 @@ Installed React-Native libraries that we're utilizing
 | [Apple HealthKit](https://github.com/AFGhazy/rn-apple-healthkit) | A React-Native bridge module for interacting with Apple HealthKit data. Forked from [RN-Apple-HealthKit](https://github.com/terrillo/rn-apple-healthkit). | Start, Login, On-boarding, Settings |
 | [BLE Manager](https://github.com/innoveit/react-native-ble-manager) | React-Native BLE communication module. | Pair with sensor and sync data |
 | [Accordion](https://github.com/oblador/react-native-collapsible) | Animated collapsible component for React-Native, good for accordions, toggles etc | 1. Athlete Compliance Modal<br/>2. User Account (Account Information & About You sections) |
+| [Animatable](https://github.com/oblador/react-native-animatable) | Standard set of easy to use animations and declarative transitions for React-Native. | SoreBodyPart |
 | [Date Picker](https://github.com/xgfe/react-native-datepicker) | React-Native datePicker component for both Android and IOS, using DatePickerAndroid, TimePickerAndroid and DatePickerIOS | On-boarding User Account About (Date of Birth) |
 | [Dropdown Alert](https://github.com/testshallpass/react-native-dropdownalert) | A simple alert to notify users about new chat messages, something went wrong or everything is ok. | When we lose internet connection |
 | [Easy Toast](https://github.com/crazycodeboy/react-native-easy-toast) | A React-Native module to show toast like android, it works on iOS and Android. | Toast message to user (mainly internal) |

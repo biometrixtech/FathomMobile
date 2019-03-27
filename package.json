@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "private": true,
   "author": "Mazen Chami",
   "scripts": {
@@ -31,6 +31,7 @@
     "react-native": "0.56.0",
     "react-native-action-button": "^2.8.5",
     "react-native-android-location-services-dialog-box": "2.6.0",
+    "react-native-animatable": "^1.3.2",
     "react-native-app-intro-slider": "^1.0.1",
     "react-native-ble-manager": "6.5.0",
     "react-native-calendar-strip": "^1.3.3",
