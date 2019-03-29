@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:28:39
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-08-09 19:58:20
- */
-
 /**
  * Buttons
  *
@@ -13,64 +6,66 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'react-native-elements';
+import { Button, } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes } from '../../constants';
+// import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { AppFonts, } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomButton extends Component {
     static propTypes = {
-        small:           PropTypes.bool,
-        large:           PropTypes.bool,
-        outlined:        PropTypes.bool,
-        backgroundColor: PropTypes.string,
-        onPress:         PropTypes.func.isRequired,
-        icon:            PropTypes.shape({
-            name: PropTypes.string,
-        }),
-        raised: PropTypes.bool,
+        // small:           PropTypes.bool,
+        // large:           PropTypes.bool,
+        // outlined:        PropTypes.bool,
+        // backgroundColor: PropTypes.string,
+        onPress: PropTypes.func.isRequired,
+        // icon:            PropTypes.shape({
+        //     name: PropTypes.string,
+        // }),
+        // raised: PropTypes.bool,
+        title:   PropTypes.string.isRequired,
     }
 
     static defaultProps = {
-        small:           false,
-        large:           false,
-        outlined:        false,
-        icon:            {},
-        backgroundColor: null,
-        raised:          true,
+        // small:           false,
+        // large:           false,
+        // outlined:        false,
+        // icon:            {},
+        // backgroundColor: null,
+        // raised:          true,
     }
 
     buttonProps = () => {
         // Defaults
         const props = {
-            ...AppFonts.oswaldBold,
-            title:              this.props.title || 'Coming Soon...',
-            color:              this.props.textColor || '#fff',
-            onPress:            this.props.onPress,
-            fontSize:           AppFonts.base.size,
-            borderRadius:       AppSizes.borderRadius,
-            containerViewStyle: { borderRadius: AppSizes.borderRadius },
-            raised:             this.props.raised,
-            buttonStyle:        {
-                padding:     AppFonts.scaleFont(12),
-                marginLeft:  0,
-                marginRight: 0,
-            },
+        //     ...AppFonts.oswaldBold,
+        //     title:              this.props.title || 'Coming Soon...',
+        //     color:              this.props.textColor || '#fff',
+        //     onPress:            this.props.onPress,
+        //     fontSize:           AppFonts.base.size,
+        //     borderRadius:       AppSizes.borderRadius,
+        //     containerViewStyle: { borderRadius: AppSizes.borderRadius },
+        //     raised:             this.props.raised,
+        //     buttonStyle:        {
+        //         padding:     AppFonts.scaleFont(12),
+        //         marginLeft:  0,
+        //         marginRight: 0,
+        //     },
             ...this.props,
-            backgroundColor: this.props.backgroundColor || AppColors.secondary.blue.hundredPercent,
-            small:           false,
-            large:           false,
-            icon:            (this.props.icon && this.props.icon.name)
-                ? {
-                    size: AppFonts.scaleFont(14),
-                    ...this.props.icon,
-                } : null,
+        //     backgroundColor: this.props.backgroundColor || AppColors.secondary.blue.hundredPercent,
+        //     small:           false,
+        //     large:           false,
+        //     icon:            (this.props.icon && this.props.icon.name)
+        //         ? {
+        //             size: AppFonts.scaleFont(14),
+        //             ...this.props.icon,
+        //         } : null,
         };
 
         // Overrides
         // Size
-        if (this.props.small) {
+        /*if (this.props.small) {
             props.fontSize = AppFonts.scaleFont(12);
             props.buttonStyle.padding = AppFonts.scaleFont(8);
 
@@ -107,7 +102,10 @@ class CustomButton extends Component {
                     ...props.icon,
                 };
             }
-        }
+        }*/
+
+        props.buttonStyle = { borderRadius: 4, ...props.buttonStyle, };
+        props.titleStyle = { textAlign: 'center', ...props.titleStyle, ...AppFonts.robotoRegular, };
 
         return props;
     }

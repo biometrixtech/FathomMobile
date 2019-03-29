@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:28:53
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-08-09 19:58:57
- */
-
 /**
  * Text Input
  *
@@ -13,13 +6,13 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormInput } from 'react-native-elements';
+import { Input, } from 'react-native-elements';
 
 // Consts and Libs
 import { AppColors, AppFonts, } from '../../constants';
 
 /* Component ==================================================================== */
-class CustomFormInput extends Component {
+class FormInput extends Component {
     static propTypes = {
         containerStyle: PropTypes.oneOfType([
             PropTypes.array,
@@ -41,11 +34,14 @@ class CustomFormInput extends Component {
         const props = {
             ...this.props,
             containerStyle: [{
-                borderBottomColor: AppColors.border,
+                borderBottomColor: AppColors.zeplin.light,
                 borderBottomWidth: 1,
-                backgroundColor:   'rgba(255,255,255,0.05)',
+                backgroundColor:   AppColors.transparent,
                 marginLeft:        20,
                 marginRight:       20,
+            }],
+            inputContainerStyle: [{
+                borderBottomWidth: 0,
             }],
             inputStyle: [{
                 ...AppFonts.robotoRegular,
@@ -54,6 +50,7 @@ class CustomFormInput extends Component {
                 paddingHorizontal: 10,
                 paddingVertical:   3,
             }],
+            ref: this.props.inputRef,
         };
 
         if (this.props.containerStyle) {
@@ -67,8 +64,8 @@ class CustomFormInput extends Component {
         return props;
     }
 
-    render = () => <FormInput {...this.inputProps()} />
+    render = () => <Input {...this.inputProps()} />
 }
 
 /* Export Component ==================================================================== */
-export default CustomFormInput;
+export default FormInput;

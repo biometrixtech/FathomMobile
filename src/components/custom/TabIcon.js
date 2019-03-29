@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:30:20
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-28 18:17:17
- */
-
 /**
  * Tabbar Icon
  *

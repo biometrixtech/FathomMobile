@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -18,7 +18,7 @@ import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { ProgressBar, } from '../custom/';
-import { EnableAppleHealthKit, PrivacyPolicyModal, } from '../general';
+import { EnableAppleHealthKit, Loading, PrivacyPolicyModal, } from '../general';
 import { UserAccount, } from './pages/';
 
 /* Styles ==================================================================== */
@@ -493,7 +493,7 @@ class Onboarding extends Component {
                     currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
                     totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
                 />
-                <ScrollView>
+                <ScrollView contentContainerStyle={{flex: 1,}}>
                     <UserAccount
                         componentStep={2}
                         currentStep={step}
@@ -507,11 +507,9 @@ class Onboarding extends Component {
                     />
                 </ScrollView>
                 { this.state.loading ?
-                    <ActivityIndicator
-                        color={AppColors.zeplin.yellow}
-                        size={'large'}
-                        style={[AppStyles.activityIndicator]}
-                    /> : null
+                    <Loading />
+                    :
+                    null
                 }
                 <EnableAppleHealthKit
                     handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}

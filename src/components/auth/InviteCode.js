@@ -159,7 +159,7 @@ class InviteCode extends Component {
                         <View style={[AppStyles.containerCentered, {flex: 7,}]}>
                             <ProgressCircle
                                 borderWidth={5}
-                                color={AppColors.primary.yellow.hundredPercent}
+                                color={AppColors.zeplin.yellow}
                                 formatText={'Verifying'}
                                 indeterminate={true}
                                 showsText={true}
@@ -176,7 +176,7 @@ class InviteCode extends Component {
                                 <Spacer size={10} />
                                 <TabIcon
                                     icon={'arrow-right-circle'}
-                                    iconStyle={[{color: AppColors.primary.yellow.hundredPercent,}]}
+                                    iconStyle={[{color: AppColors.zeplin.yellow,}]}
                                     onPress={() => this._handleOnSuccesClicked()}
                                     reverse={false}
                                     size={45}
@@ -201,11 +201,13 @@ class InviteCode extends Component {
                                     autoCapitalize={'none'}
                                     blurOnSubmit={true}
                                     clearButtonMode={'while-editing'}
-                                    inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, paddingTop: 25, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                                    containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                                    inputStyle = {[{color: AppColors.zeplin.yellow, paddingTop: 25, textAlign: 'center',}]}
                                     keyboardType={'default'}
                                     onChangeText={(text) => this._handleFormChange('code', text)}
+                                    onSubmitEditing={() => this._handleFormSubmit()}
                                     placeholder={'code'}
-                                    placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                                    placeholderTextColor={AppColors.zeplin.yellow}
                                     returnKeyType={'done'}
                                     value={this.state.form_values.code}
                                 />
@@ -213,16 +215,10 @@ class InviteCode extends Component {
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7,}]}>{'case sensitive'}</Text>
                                 <Spacer size={30} />
                                 <Button
-                                    backgroundColor={AppColors.white}
-                                    buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderRadius: 0, justifyContent: 'center', width: '85%',}]}
-                                    containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    buttonStyle={{backgroundColor: AppColors.white, alignSelf: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: '85%',}}
                                     onPress={() => this._handleFormSubmit()}
-                                    raised={false}
-                                    textColor={AppColors.primary.yellow.hundredPercent}
-                                    textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                                     title={'Join'}
+                                    titleStyle={{ color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), }}
                                 />
                                 <Spacer size={20} />
                                 <Text onPress={() => Actions.onboarding()} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), opacity: 0.7, textDecorationLine: 'none',}}>{'I do not have an invite code.'}</Text>

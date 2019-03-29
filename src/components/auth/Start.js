@@ -242,7 +242,7 @@ class Start extends Component {
                         />
                         <Spacer size={80} />
                         <ActivityIndicator
-                            color={AppColors.primary.yellow.hundredPercent}
+                            color={AppColors.zeplin.yellow}
                             size={'large'}
                         />
                         <Spacer size={30} />
@@ -265,15 +265,11 @@ class Start extends Component {
                     </View>
                     <Spacer size={this.state.displayMessage ? 0 : 15} />
                     <Button
-                        backgroundColor={AppColors.white}
-                        buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
+                        buttonStyle={{backgroundColor: AppColors.white, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed,}}
                         disabled={this.state.displayMessage}
-                        fontFamily={AppStyles.robotoBold.fontFamily}
-                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={() => this._routeToAccountType()}
-                        textColor={AppColors.primary.yellow.hundredPercent}
-                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={'Create Account'}
+                        titleStyle={{ color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(16), }}
                     />
                 </ImageBackground>
                 <TouchableOpacity
@@ -281,7 +277,7 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
                 >
                     <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>
-                    <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(18)}}>{'Let\'s login now.'}</Text>
+                    <Text p robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18)}}>{'Let\'s login now.'}</Text>
                 </TouchableOpacity>
             </View>
     }
