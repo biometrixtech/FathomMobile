@@ -5,7 +5,7 @@
 import React from 'react';
 import { AppRegistry, YellowBox } from 'react-native';
 import Root from './src';
-import {configureStore} from './src/store';
+import { configureStore, } from './src/store';
 
 YellowBox.ignoreWarnings([
     'Warning: isMounted(...) is deprecated',
