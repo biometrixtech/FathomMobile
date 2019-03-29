@@ -14,7 +14,13 @@
     "test-system": "jest --config ./jest-config-system.js",
     "test-watch": "jest --watch"
   },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts"
+    ]
+  },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.2.2",
     "es6-promise": "^4.2.6",
     "isomorphic-fetch": "^2.2.1",
     "jwt-decode": "^2.2.0",
@@ -37,10 +43,10 @@
     "react-native-easy-toast": "^1.2.0",
     "react-native-egg": "^1.0.1",
     "react-native-elements": "^1.1.0",
-    "react-native-fabric": "^0.5.2",
+    "react-native-fabric": "0.5.1",
     "react-native-google-analytics-bridge": "^7.1.0",
     "react-native-keep-awake": "^4.0.0",
-    "react-native-keyboard-aware-scroll-view": "^0.8.0",
+    "react-native-keyboard-aware-scrollview": "^2.0.0",
     "react-native-linear-gradient": "^2.5.4",
     "react-native-modal-dropdown": "^0.6.2",
     "react-native-modalbox": "^1.7.1",
@@ -68,13 +74,16 @@
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
+    "@babel/preset-flow": "^7.0.0",
     "@babel/runtime": "^7.4.2",
     "@react-native-community/eslint-config": "^0.0.3",
-    "babel-jest": "^24.5.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.4.2",
     "eslint": "^5.15.3",
     "jest": "^24.5.0",
     "metro-react-native-babel-preset": "^0.53.1",
-    "react-test-renderer": "16.8.3"
+    "react-test-renderer": "16.8.3",
+    "redux-logger": "^3.0.6"
   },
   "jest": {
     "preset": "react-native"

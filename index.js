@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { AppRegistry, YellowBox } from 'react-native';
+import { AppRegistry, YellowBox, } from 'react-native';
 import Root from './src';
 import { configureStore, } from './src/store';
 
@@ -13,7 +13,8 @@ YellowBox.ignoreWarnings([
     'Remote debugger',
     'Did not receive response to shouldStartLoad in time, defaulting to YES',
     'Required dispatch_sync to load constants for RNDeviceInfo. This may lead to deadlocks',
-    'startLoadWithResult invoked with invalid lockIdentifier'
+    'startLoadWithResult invoked with invalid lockIdentifier',
+    'Require cycle:'
 ]);
 
 const { persistor, store } = configureStore();

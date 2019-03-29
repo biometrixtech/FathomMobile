@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
-import { Alert, AsyncStorage, Platform, } from 'react-native';
+import { Alert, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -13,6 +13,7 @@ import { Actions as DispatchActions, MyPlan as MyPlanConstants, } from '../const
 import { Actions as RouterActions, } from 'react-native-router-flux';
 import { AppColors, AppStyles } from '../constants';
 import { store } from '../store';
+import AsyncStorage from '@react-native-community/async-storage';
 import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';

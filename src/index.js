@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Image, NetInfo, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
+import { Image, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
 
 // import components
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
