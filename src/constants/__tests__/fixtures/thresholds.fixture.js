@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:31:04 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 17:44:23
- */
-
 /**
  * Threshold Config
  */
