@@ -3,6 +3,19 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/fathomYellow</item>
+        <!-- Details color -->
+        <item name="colorAccent">@color/blueHundred</item>
+        <!--<item name="android:clipChildren">false</item>-->
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:statusBarColor">@color/blueHundred</item>
+    </style>
+
+    <style name="GoldAccent" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">@color/fathomYellow</item>
     </style>
 
 </resources>
