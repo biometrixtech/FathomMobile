@@ -1,8 +1,16 @@
 /* global it expect jest */
+/* global it expect beforeAll */
 import 'react-native';
 
-import { onboardingUtils } from '../../constants/utils';
+// import consts
+import { onboardingUtils, } from '../../constants/utils';
 
+// mock async-storage
+beforeAll(() => {
+    jest.mock('@react-native-community/async-storage');
+});
+
+// setup tests
 it('Password Validation - Empty String', () => {
     let passwordString = '';
     expect(onboardingUtils.isPasswordValid(passwordString).isValid).toEqual(false);

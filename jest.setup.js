@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:17:54 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:17:54
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-09 00:58:36
  */
@@ -19,15 +19,32 @@ jest.mock('react-native-fabric', () => {
     }
 });
 
-// jest.mock('Linking', () =>{
-//     return {
-//         addEventListener:    jest.fn(),
-//         removeEventListener: jest.fn(),
-//         openURL:             jest.fn(),
-//         canOpenURL:          jest.fn(),
-//         getInitialURL:       jest.fn(),
-//     };
-// });
+jest.mock('NativeModules', () => {
+    return {
+        BleManager: jest.fn(),
+    };
+});
+
+jest.mock('redux-persist/lib/storage', () => {
+    return {
+        storage: jest.fn(),
+    };
+});
+
+jest.mock('PushNotificationIOS', () => ({
+    addEventListener:   jest.fn(),
+    requestPermissions: jest.fn(),
+}));
+
+jest.mock('Linking', () =>{
+    return {
+        addEventListener:    jest.fn(),
+        canOpenURL:          jest.fn(),
+        getInitialURL:       jest.fn(),
+        openURL:             jest.fn(),
+        removeEventListener: jest.fn(),
+    };
+});
 
 // jest.mock('react-native-fabric', () => {
 //     return {
