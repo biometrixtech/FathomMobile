@@ -17,7 +17,7 @@ YellowBox.ignoreWarnings([
     'Require cycle:'
 ]);
 
-const { persistor, store } = configureStore();
+const { persistor, store, } = configureStore();
 
 const App = () => <Root store={store} persistor={persistor}/>;
 

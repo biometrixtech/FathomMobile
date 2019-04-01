@@ -37,7 +37,7 @@ const ModalData = ({
     <View style={[AppStyles.containerCentered]}>
         <ProgressCircle
             borderWidth={5}
-            color={AppColors.primary.yellow.hundredPercent}
+            color={AppColors.zeplin.yellow}
             formatText={'Verifying'}
             indeterminate={true}
             showsText={true}
@@ -55,7 +55,7 @@ const ModalData = ({
             <Spacer size={10} />
             <TabIcon
                 icon={'arrow-right-circle'}
-                iconStyle={[{color: AppColors.primary.yellow.hundredPercent,}]}
+                iconStyle={[{color: AppColors.zeplin.yellow,}]}
                 onPress={handleToggleModal}
                 reverse={false}
                 size={45}
@@ -81,11 +81,13 @@ const ModalData = ({
                     autoCapitalize={'none'}
                     blurOnSubmit={true}
                     clearButtonMode={'while-editing'}
-                    inputStyle = {[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                    containerStyle={{paddingTop: 25, width: AppSizes.screen.widthTwoThirds,}}
+                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
                     keyboardType={'default'}
-                    onChangeText={(text) => handleFormChange('code', text)}
+                    onChangeText={text => handleFormChange('code', text)}
+                    onSubmitEditing={() => this.handleFormSubmit()}
                     placeholder={'code'}
-                    placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                    placeholderTextColor={AppColors.zeplin.yellow}
                     returnKeyType={'done'}
                     value={code}
                 />
@@ -93,16 +95,11 @@ const ModalData = ({
                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12), opacity: 0.5,}]}>{'case sensitive'}</Text>
                 <Spacer size={30} />
                 <Button
-                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                    buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontal, {borderRadius: 0, justifyContent: 'center', width: '85%',}]}
-                    containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
-                    fontFamily={AppStyles.robotoBold.fontFamily}
-                    fontWeight={AppStyles.robotoBold.fontWeight}
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, justifyContent: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}
+                    containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
                     onPress={() => handleFormSubmit()}
-                    raised={false}
-                    textColor={AppColors.white}
-                    textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                     title={'Join'}
+                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%',}}
                 />
                 <Spacer size={50} />
             </View>
@@ -127,6 +124,7 @@ const JoinATeamModal = ({
         position={'top'}
         style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
         swipeToClose={false}
+        useNativeDriver={false}
     >
         <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         width:           35,
     },
     progressPillCurrent: {
-        backgroundColor: AppColors.primary.yellow.hundredPercent,
+        backgroundColor: AppColors.zeplin.yellow,
     },
     progressPillWrapper: {
         alignItems:     'center',

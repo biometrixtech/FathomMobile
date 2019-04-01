@@ -172,7 +172,7 @@ class CustomText extends Component {
                         <Text
                             allowFontScaling={false}
                             onPress={this._toggleTruncatedText}
-                            style={{color: AppColors.primary.yellow.hundredPercent, textDecorationLine: 'underline'}}
+                            style={{color: AppColors.zeplin.yellow, textDecorationLine: 'underline'}}
                         >
                             {this.state.isTextExpanded ? '\nsee less' : '\nsee more'}
                         </Text>

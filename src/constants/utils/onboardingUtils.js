@@ -242,7 +242,7 @@ const onboardingUtils = {
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-5',
-                    linkStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoMedium, color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',},
+                    linkStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoMedium, color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',},
                     linkText:        'No, I\'ll do it later in Settings.',
                     subtext:         'This will only take 1min and must be completed to sync your activity.',
                     subtextStyle:    {...AppStyles.textCenterAligned, ...AppStyles.robotoRegular, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),},
@@ -303,13 +303,13 @@ const onboardingUtils = {
             slides:         [
                 {
                     backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
                     title:           'Let\'s Take a Tour of Fathom!',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
                     text:            'It\'s important that athletes do pre & post training surveys regularly to ensure your dashboard has the most accurate insights.',
@@ -341,7 +341,7 @@ const onboardingUtils = {
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/coachinsight.mp4',
                 },
                 {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-5',
                     text:            'Encourage athletes to complete Fathom\'s Active Recovery to improve their training readiness & reduce chronic soreness & injury risk.',
@@ -358,7 +358,7 @@ const onboardingUtils = {
                 },
                 {
                     backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-9',
                     title:           'Now Let\'s Go To The Dashboard!',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},

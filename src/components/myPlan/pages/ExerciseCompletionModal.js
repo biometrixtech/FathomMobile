@@ -202,58 +202,37 @@ class ExerciseCompletionModal extends Component {
                             <Spacer size={AppSizes.padding} />
                             { !isCompleted ?
                                 <Button
-                                    backgroundColor={AppColors.zeplin.yellow}
-                                    buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                    containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                    color={AppColors.white}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                    leftIcon={{
-                                        color: AppColors.zeplin.yellow,
-                                        name:  'chevron-right',
-                                        size:  AppFonts.scaleFont(24),
-                                        style: {flex: 1,},
-                                    }}
-                                    outlined={false}
-                                    onPress={() => this._closeModal(() => onClose())}
-                                    raised={false}
-                                    rightIcon={{
+                                    buttonStyle={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                    containerStyle={{marginLeft: 0, marginRight: 0,}}
+                                    icon={{
                                         color: AppColors.white,
                                         name:  'chevron-right',
                                         size:  AppFonts.scaleFont(24),
                                         style: {flex: 1,},
                                     }}
-                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                    iconRight={true}
+                                    onPress={() => this._closeModal(() => onClose())}
                                     title={'Finish what I started'}
+                                    titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                 />
                                 :
                                 null
                             }
                             <Spacer size={isCompleted ? 0 : AppSizes.padding} />
                             <Button
-                                backgroundColor={isCompleted ? AppColors.zeplin.yellow : AppColors.transparent}
-                                buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                color={isCompleted ? AppColors.white : AppColors.zeplin.yellow}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
-                                    color: AppColors.transparent,
+                                buttonStyle={{alignSelf: 'center', backgroundColor: isCompleted ? AppColors.zeplin.yellow : AppColors.transparent, borderColor: isCompleted ? AppColors.transparent : AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                containerStyle={{marginLeft: 0, marginRight: 0,}}
+                                icon={isCompleted ? {
+                                    color: AppColors.white,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
                                     style: {flex: 1,},
-                                }}
-                                outline={isCompleted ? false : true}
+                                } : null}
+                                iconRight={true}
                                 onPress={() => this._closeModal(() => onComplete())}
-                                raised={false}
-                                rightIcon={{
-                                    color: isCompleted ? AppColors.white : AppColors.transparent,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                 title={'Complete'}
+                                titleStyle={{color: isCompleted ? AppColors.white : AppColors.zeplin.yellow, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                type={isCompleted ? 'solid' : 'outline'}
                             />
                             <Spacer size={AppSizes.paddingXLrg} />
                         </View>

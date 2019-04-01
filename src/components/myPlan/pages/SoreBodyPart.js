@@ -47,7 +47,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >
@@ -61,7 +61,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >

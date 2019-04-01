@@ -71,24 +71,17 @@ class Start extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             isLoggingIn:  false,
             splashScreen: true,
         };
     }
 
-    componentWillMount = () => {
-        if (Platform.OS === 'ios') {
-            SplashScreen.hide();
-        }
-    }
-
     componentDidMount = () => {
         this.setState(
             { isLoggingIn: true, },
             () => {
-                setTimeout(() => {
+                _.delay(() => {
                     if(
                         this.props.email !== null &&
                         this.props.password !== null &&
@@ -112,7 +105,7 @@ class Start extends Component {
                             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
                         }
                     }
-                }, 10);
+                }, 250);
             },
         );
     }
@@ -121,25 +114,20 @@ class Start extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
-    hideSplash = () => {
-        this.setState({ splashScreen: false, });
+    hideSplash = callback => {
+        this.setState({ isLoggingIn: false, splashScreen: false, });
         SplashScreen.hide();
+        if(callback) {
+            callback();
+        }
     }
 
     _routeToLogin = () => {
         Actions.login();
     }
 
-    _routeToOnboarding = () => {
-        Actions.onboarding();
-    }
-
     _routeToAccountType = () => {
         Actions.accountType();
-    }
-
-    _routeToMyPlan = () => {
-        Actions.myPlan();
     }
 
     login = () => {
@@ -200,26 +188,22 @@ class Start extends Component {
                         return response;
                     })
                     .catch(error => {
-                        this.setState({ isLoggingIn: false, });
+                        AppUtil.handleAPIErrorAlert(error);
                         this.hideSplash();
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() => {
-                this.setState(
-                    { isLoggingIn: false, },
-                    () => AppUtil.routeOnLogin(userObj),
-                );
-                setTimeout(() => {
-                    SplashScreen.hide();
-                }, 500);
-            })
-            .catch((err) => {
+            .then(() =>
+                _.delay(() => {
+                    this.hideSplash(() => AppUtil.routeOnLogin(userObj));
+                }, 500)
+            )
+            .catch(err => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
-                this.setState({ isLoggingIn: false, });
                 // this._routeToLogin();
+                AppUtil.handleAPIErrorAlert(error);
             });
     }
 

@@ -380,7 +380,7 @@ class BluetoothConnectView extends Component {
                     </View>
                     <View style={{flex: 1,}}>
                         <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            backgroundColor={AppColors.zeplin.yellow}
                             buttonStyle={{borderRadius: 0, height: '100%', width: AppSizes.screen.width}}
                             color={AppColors.white}
                             fontFamily={AppStyles.robotoBold.fontFamily}
@@ -405,7 +405,7 @@ class BluetoothConnectView extends Component {
                 <View style={[AppStyles.containerCentered, { flex: 1 }]}>
                     <Text robotoRegular style={[AppStyles.paddingHorizontal, {color: AppColors.primary.grey.hundredPercent, fontSize: AppFonts.scaleFont(16),}]}>{'START BLUETOOTH SCAN'}</Text>
                     <TabIcon
-                        containerStyle={[{ alignSelf: 'center', backgroundColor: AppColors.primary.yellow.hundredPercent }]}
+                        containerStyle={[{ alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow }]}
                         icon={'bluetooth'}
                         iconStyle={[{color: AppColors.white}]}
                         onPress={() => {
@@ -451,7 +451,7 @@ class BluetoothConnectView extends Component {
                             { this.props.bluetooth.scanning ?
                                 <ActivityIndicator
                                     animating={true}
-                                    color={AppColors.primary.yellow.hundredPercent}
+                                    color={AppColors.zeplin.yellow}
                                     size={'small'}
                                 />
                                 :
@@ -462,12 +462,12 @@ class BluetoothConnectView extends Component {
                             contentContainerStyle={{flex: 1, borderTopWidth: 1, borderBottomWidth: 1, borderColor: AppColors.border,}}
                             refreshControl={
                                 <RefreshControl
-                                    colors={[AppColors.primary.yellow.hundredPercent]}
+                                    colors={[AppColors.zeplin.yellow]}
                                     onRefresh={() => this.toggleScanning(true)}
                                     refreshing={false}
                                     title={'Refreshing...'}
-                                    titleColor={AppColors.primary.yellow.hundredPercent}
-                                    tintColor={AppColors.primary.yellow.hundredPercent}
+                                    titleColor={AppColors.zeplin.yellow}
+                                    tintColor={AppColors.zeplin.yellow}
                                 />
                             }
                         >
@@ -490,7 +490,7 @@ class BluetoothConnectView extends Component {
                                 : this.props.bluetooth.devicesFound.length === 0 && !this.props.bluetooth.scanning ?
                                     <View style={[AppStyles.containerCentered, {flex: 1}]}>
                                         <Button
-                                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                            backgroundColor={AppColors.zeplin.yellow}
                                             buttonStyle={{borderRadius: 3}}
                                             color={AppColors.white}
                                             fontFamily={AppStyles.robotoBold.fontFamily}
@@ -513,7 +513,7 @@ class BluetoothConnectView extends Component {
                         <Button
                             backgroundColor={AppColors.white}
                             buttonStyle={{borderRadius: 0, flex: 1, width: AppSizes.screen.width}}
-                            color={AppColors.primary.yellow.hundredPercent}
+                            color={AppColors.zeplin.yellow}
                             fontFamily={AppStyles.robotoBold.fontFamily}
                             fontWeight={AppStyles.robotoBold.fontWeight}
                             onPress={() => {
@@ -529,7 +529,7 @@ class BluetoothConnectView extends Component {
                     </View>
                 </View>
 
-                <View style={[AppStyles.paddingMed, {backgroundColor: AppColors.primary.yellow.hundredPercent, flex: 1}]}>
+                <View style={[AppStyles.paddingMed, {backgroundColor: AppColors.zeplin.yellow, flex: 1}]}>
                     <TabIcon
                         containerStyle={[{alignSelf: 'flex-end', paddingTop: 20,}]}
                         icon={'close'}

@@ -355,29 +355,17 @@ class ReadinessSurvey extends Component {
                                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
                                         <Button
-                                            backgroundColor={AppColors.zeplin.yellow}
-                                            buttonStyle={{borderRadius: 5, width: '100%',}}
-                                            containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                            color={AppColors.white}
-                                            fontFamily={AppStyles.robotoBold.fontFamily}
-                                            fontWeight={AppStyles.robotoBold.fontWeight}
-                                            leftIcon={{
-                                                color: AppColors.zeplin.yellow,
-                                                name:  'chevron-right',
-                                                size:  AppFonts.scaleFont(24),
-                                                style: {flex: 1,},
-                                            }}
-                                            outlined={false}
+                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                            containerStyle={{alignItems: 'center',}}
                                             onPress={() => this._renderNextPage(0, isFormValidItems)}
-                                            raised={false}
-                                            rightIcon={{
+                                            icon={{
                                                 color: AppColors.white,
                                                 name:  'chevron-right',
                                                 size:  AppFonts.scaleFont(24),
-                                                style: {flex: 1,},
                                             }}
-                                            textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                            iconRight={true}
                                             title={'Begin'}
+                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '75%',}}
                                         />
                                     </View>
                                 </View>

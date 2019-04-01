@@ -19,6 +19,7 @@ import { store } from '../store';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import moment from 'moment';
 
 // setup consts
@@ -121,9 +122,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
         // After x seconds, let's call it a day!
         const timeoutAfter = 25;
-        const apiTimedOut = setTimeout(() => (
-            reject(ErrorMessages.timeout)
-        ), timeoutAfter * 1000);
+        const apiTimedOut = _.delay(() => reject(handleError({ message: ErrorMessages.timeout, })), timeoutAfter * 1000);
 
         if (!method || !endpoint) { return reject('Missing params (AppAPI.fetcher).'); }
 

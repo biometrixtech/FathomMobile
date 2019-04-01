@@ -611,12 +611,12 @@ class CoachesDashboard extends Component {
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
-                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        colors={[AppColors.zeplin.yellow]}
                         onRefresh={() => this._handleEnteringApp()}
                         refreshing={isPageLoading}
                         title={'Updating...'}
-                        titleColor={AppColors.primary.yellow.hundredPercent}
-                        tintColor={AppColors.primary.yellow.hundredPercent}
+                        titleColor={AppColors.zeplin.yellow}
+                        tintColor={AppColors.zeplin.yellow}
                     />
                 }
                 tabLabel={tabs[index]}
@@ -646,7 +646,7 @@ class CoachesDashboard extends Component {
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{todayPopupText}</Text>
                                 <Spacer size={20} />
                                 <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={AppColors.zeplin.yellow}
                                     buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
                                     fontFamily={AppStyles.oswaldRegular.fontFamily}
                                     fontWeight={AppStyles.oswaldRegular.fontWeight}
@@ -684,12 +684,12 @@ class CoachesDashboard extends Component {
                 contentContainerStyle={{ backgroundColor: AppColors.white, }}
                 refreshControl={
                     <RefreshControl
-                        colors={[AppColors.primary.yellow.hundredPercent]}
+                        colors={[AppColors.zeplin.yellow]}
                         onRefresh={() => this._handleEnteringApp()}
                         refreshing={isPageLoading}
                         title={'Updating...'}
-                        titleColor={AppColors.primary.yellow.hundredPercent}
-                        tintColor={AppColors.primary.yellow.hundredPercent}
+                        titleColor={AppColors.zeplin.yellow}
+                        tintColor={AppColors.zeplin.yellow}
                     />
                 }
                 tabLabel={tabs[index]}
@@ -719,7 +719,7 @@ class CoachesDashboard extends Component {
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekPopupText}</Text>
                                 <Spacer size={20} />
                                 <Button
-                                    backgroundColor={AppColors.primary.yellow.hundredPercent}
+                                    backgroundColor={AppColors.zeplin.yellow}
                                     buttonStyle={[AppStyles.paddingVerticalSml, AppStyles.paddingHorizontalLrg, {borderRadius: 5,}]}
                                     fontFamily={AppStyles.oswaldRegular.fontFamily}
                                     fontWeight={AppStyles.oswaldRegular.fontWeight}

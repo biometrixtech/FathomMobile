@@ -49,7 +49,7 @@ const FathomSlider = ({
                     oswaldMedium
                     key={val+key}
                     style={{
-                        color:    key === value ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                         fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
                     }}
                 >
@@ -60,7 +60,7 @@ const FathomSlider = ({
         <View style={{flex: 2, justifyContent: 'center',}}>
             <Slider
                 maximumValue={maximumValue}
-                minimumTrackTintColor={AppColors.primary.yellow.hundredPercent}
+                minimumTrackTintColor={AppColors.zeplin.yellow}
                 minimumValue={minimumValue}
                 onSlidingComplete={val => handleFormChange(val)}
                 orientation={orientation}
@@ -68,7 +68,7 @@ const FathomSlider = ({
                 style={{backgroundColor: 'green',}}
                 thumbTintColor={thumbTintColor}
                 // thumbTouchSize={{height: 75, width: 75}}
-                thumbStyle={{backgroundColor: AppColors.primary.yellow.hundredPercent,}}
+                thumbStyle={{backgroundColor: AppColors.zeplin.yellow,}}
                 trackStyle={{backgroundColor: AppColors.border,}}
                 value={value}
             />
@@ -80,7 +80,7 @@ const FathomSlider = ({
                     oswaldMedium
                     key={val+key}
                     style={{
-                        color:    key === value ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                         fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
                     }}
                 >
@@ -106,7 +106,7 @@ FathomSlider.propTypes = {
 FathomSlider.defaultProps = {
     orientation:    'vertical',
     step:           1,
-    thumbTintColor: AppColors.primary.yellow.hundredPercent,
+    thumbTintColor: AppColors.zeplin.yellow,
 };
 
 /* Export Component ==================================================================== */

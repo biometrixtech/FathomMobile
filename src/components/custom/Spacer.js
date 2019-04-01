@@ -13,10 +13,18 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, } from 'react-native';
+
+// import third-party libraries
+import { Divider, } from 'react-native-elements';
+
+// Consts and Libs
+import { AppColors, } from '../../constants';
 
 /* Component ==================================================================== */
-const Spacer = ({ size }) => (
+const Spacer = ({ isDivider, size }) => isDivider ?
+    <Divider size={{backgroundColor: AppColors.zeplin.light, size: 1,}} />
+    :
     <View
         style={{
             left:      0,
@@ -24,11 +32,16 @@ const Spacer = ({ size }) => (
             height:    1,
             marginTop: size - 1,
         }}
-    />
-);
+    />;
 
-Spacer.propTypes = { size: PropTypes.number };
-Spacer.defaultProps = { size: 10 };
+Spacer.propTypes = {
+    isDivider: PropTypes.bool,
+    size:      PropTypes.number,
+};
+Spacer.defaultProps = {
+    isDivider: false,
+    size:      10,
+};
 Spacer.componentName = 'Spacer';
 
 /* Export Component ==================================================================== */

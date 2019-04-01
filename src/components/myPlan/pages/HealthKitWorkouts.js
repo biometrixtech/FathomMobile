@@ -17,7 +17,7 @@ import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableO
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, FormInput, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { FormInput, Pages, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, } from './';
 
@@ -283,6 +283,7 @@ class HealthKitWorkouts extends PureComponent {
                             return(<View key={index} />)
                         }
                         let { sportDuration, sportImage, sportName, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout);
+                        /*eslint no-return-assign: 0*/
                         return(
                             <ScrollView
                                 contentContainerStyle={{flexGrow: 1,}}
@@ -305,15 +306,15 @@ class HealthKitWorkouts extends PureComponent {
                                             blurOnSubmit={true}
                                             clearButtonMode={'never'}
                                             clearTextOnFocus={true}
-                                            containerStyle={[{display: 'none',}]}
-                                            inputStyle={[{display: 'none',}]}
+                                            containerStyle={{display: 'none',}}
+                                            inputRef={ref => this.textInput[index] = ref}
+                                            inputStyle={{display: 'none',}}
                                             keyboardType={'numeric'}
                                             onChangeText={value => handleHealthDataFormChange((pageIndex - 1), 'duration', parseInt(value, 10))}
                                             onEndEditing={() => this.setState({ isEditingDuration: false, })}
                                             placeholder={''}
                                             placeholderTextColor={AppColors.transparent}
                                             returnKeyType={'done'}
-                                            textInputRef={input => {this.textInput[index] = input;}}
                                             value={''}
                                         />
                                         <Spacer size={AppSizes.paddingSml} />
@@ -420,7 +421,7 @@ class HealthKitWorkouts extends PureComponent {
                                                                     <Text
                                                                         oswaldMedium
                                                                         style={{
-                                                                            color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                                                                            color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                                                                             fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
                                                                         }}
                                                                     >

@@ -64,18 +64,15 @@ class ExerciseList extends Component {
                             null
                     )}
                     <Button
-                        backgroundColor={buttonBackgroundColor}
-                        buttonStyle={{borderRadius: 0, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed}}
-                        color={isButtonDisabled ? AppColors.zeplin.greyText : buttonColor}
+                        buttonStyle={{backgroundColor: buttonBackgroundColor, marginVertical: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}}
+                        containerStyle={{marginHorizontal: AppSizes.padding,}}
                         disabledStyle={buttonDisabledStyle}
                         disabled={isButtonDisabled}
-                        fontFamily={AppStyles.robotoBold.fontFamily}
-                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={toggleCompletedAMPMRecoveryModal}
                         outlined={isButtonOutlined}
-                        raised={false}
-                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
                         title={buttonTitle}
+                        titleStyle={{color: isButtonDisabled ? AppColors.zeplin.greyText : buttonColor, fontSize: AppFonts.scaleFont(16),}}
+                        type={isButtonDisabled ? 'outline' : 'solid'}
                     />
                 </View>
             </View>

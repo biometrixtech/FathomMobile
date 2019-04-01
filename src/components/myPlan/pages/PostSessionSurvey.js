@@ -437,7 +437,7 @@ class PostSessionSurvey extends Component {
 
                 { isFABVisible ?
                     <ActionButton
-                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        buttonColor={AppColors.zeplin.yellow}
                         degrees={0}
                         hideShadow
                         onPress={() => {this._scrollToBottom(this.myAreasOfSorenessComponent); this.setState({ isActionButtonVisible: false, isCloseToBottom: true, });}}

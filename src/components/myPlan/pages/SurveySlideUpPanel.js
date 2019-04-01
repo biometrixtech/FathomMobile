@@ -67,7 +67,7 @@ const SurveySlideUpPanel = ({
                                 <Text
                                     robotoMedium
                                     style={{
-                                        color:    AppColors.primary.yellow.hundredPercent,
+                                        color:    AppColors.zeplin.yellow,
                                         fontSize: AppFonts.scaleFont(15),
                                     }}
                                 >
@@ -83,7 +83,7 @@ const SurveySlideUpPanel = ({
                             <Text
                                 robotoBold
                                 style={{
-                                    color:              AppColors.primary.yellow.hundredPercent,
+                                    color:              AppColors.zeplin.yellow,
                                     fontSize:           AppFonts.scaleFont(12),
                                     textAlign:          'center',
                                     textDecorationLine: 'none',
@@ -94,7 +94,7 @@ const SurveySlideUpPanel = ({
                             <Spacer size={10} />
                             <TabIcon
                                 icon={'chevron-down'}
-                                iconStyle={[{color: AppColors.primary.yellow.hundredPercent}]}
+                                iconStyle={[{color: AppColors.zeplin.yellow}]}
                                 onPress={() => expandSlideUpPanel()}
                                 reverse={false}
                                 size={AppFonts.scaleFont(12)}
