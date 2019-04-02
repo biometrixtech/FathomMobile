@@ -271,7 +271,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -301,7 +301,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleDebug
                 cd ..

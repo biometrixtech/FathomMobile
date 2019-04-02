@@ -408,13 +408,6 @@
 			remoteGlobalIDString = 84FE12EF1E4C1485009B157C;
 			remoteInfo = LottieLibraryIOS;
 		};
-		72E985A3224D5E9E008C003A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BD34AEDF2EA540F2B865C6C8 /* Lottie.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6445B0D5207E0D4D00D84F6A;
-			remoteInfo = LottieLibraryMacOS;
-		};
 		72E985A6224D5E9E008C003A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F244EABE56A84406B0CA54D5 /* LottieReactNative.xcodeproj */;
@@ -678,6 +671,7 @@
 		728B6D13224E6F8B006611E8 /* Roboto-RegularItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-RegularItalic.ttf"; path = "../assets/fonts/Roboto-RegularItalic.ttf"; sourceTree = "<group>"; };
 		728B6D14224E6F8B006611E8 /* Oswald-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Oswald-LightItalic.ttf"; path = "../assets/fonts/Oswald-LightItalic.ttf"; sourceTree = "<group>"; };
 		728B6D31224E7003006611E8 /* ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = ding.mp3; path = ../../backups/FathomMobile/ios/ding.mp3; sourceTree = "<group>"; };
+		72BFBB9D2253F12C00B7543F /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
 		72E9868A224D6069008C003A /* Fathom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Fathom.entitlements; path = Fathom/Fathom.entitlements; sourceTree = "<group>"; };
 		72E9868B224D6069008C003A /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		72E987B1224D626D008C003A /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
@@ -1037,7 +1031,6 @@
 				72E9859E224D5E9E008C003A /* Lottie.framework */,
 				72E985A0224D5E9E008C003A /* Lottie.framework */,
 				72E985A2224D5E9E008C003A /* libLottie.a */,
-				72E985A4224D5E9E008C003A /* libLottie.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1225,6 +1218,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				72BFBB9D2253F12C00B7543F /* Fathom-Bridging-Header.h */,
 				72E98916224D6802008C003A /* Crashlytics.framework */,
 				72E98915224D6802008C003A /* Fabric.framework */,
 				13B07FAE1A68108700A75B9A /* Fathom */,
@@ -1795,13 +1789,6 @@
 			remoteRef = 72E985A1224D5E9E008C003A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		72E985A4224D5E9E008C003A /* libLottie.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libLottie.a;
-			remoteRef = 72E985A3224D5E9E008C003A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		72E985A7224D5E9E008C003A /* libLottieReactNative.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2312,6 +2299,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/react-native-webview/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native/React",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2359,6 +2347,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/react-native-webview/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native/React",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2710,6 +2699,7 @@
 					"$(SRCROOT)/../node_modules/react-native-fabric/ios/SMXCrashlytics",
 					"$(SRCROOT)/../node_modules/react-native-webview/ios",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/react-native/React",
 				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

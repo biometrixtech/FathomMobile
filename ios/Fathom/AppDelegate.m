@@ -42,6 +42,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [Fabric with:@[[Crashlytics class]]];
+  RCTSetLogThreshold(RCTLogLevelInfo);
+  RCTSetLogFunction(CrashlyticsReactLogFunction);
+  
+  NSURL *jsCodeLocation;
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
@@ -56,6 +60,7 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
   [RNSplashScreen show];
   return YES;
 }
@@ -95,5 +100,46 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
+
+RCTLogFunction CrashlyticsReactLogFunction = ^(
+                                               RCTLogLevel level,
+                                               __unused RCTLogSource source,
+                                               NSString *fileName,
+                                               NSNumber *lineNumber,
+                                               NSString *message
+                                               )
+{
+  NSString *log = RCTFormatLog([NSDate date], level, fileName, lineNumber, message);
+  
+#ifdef DEBUG
+  fprintf(stderr, "%s\n", log.UTF8String);
+  fflush(stderr);
+#else
+  CLS_LOG(@"REACT LOG: %s", log.UTF8String);
+#endif
+  
+  int aslLevel;
+  switch(level) {
+    case RCTLogLevelTrace:
+      aslLevel = ASL_LEVEL_DEBUG;
+      break;
+    case RCTLogLevelInfo:
+      aslLevel = ASL_LEVEL_NOTICE;
+      break;
+    case RCTLogLevelWarning:
+      aslLevel = ASL_LEVEL_WARNING;
+      break;
+    case RCTLogLevelError:
+      aslLevel = ASL_LEVEL_ERR;
+      break;
+    case RCTLogLevelFatal:
+      aslLevel = ASL_LEVEL_CRIT;
+      break;
+  }
+  asl_log(NULL, NULL, aslLevel, "%s", message.UTF8String);
+  
+  
+};
+
 
 @end
