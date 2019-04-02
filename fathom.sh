@@ -21,7 +21,6 @@ if test -t 1; then
     fi
 fi
 
-
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -88,7 +87,6 @@ initialize() {
             else
                 nvm install
             fi
-
 
             echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
             echo "🚀\t${green}✔︎${normal} ${yellow}Xcode installed${normal}\t🚀"
@@ -288,7 +286,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
