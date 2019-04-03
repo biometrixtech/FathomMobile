@@ -31,7 +31,7 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  
+
   [RNSplashScreen show];
   [Fabric with:@[[Crashlytics class]]];
   return YES;

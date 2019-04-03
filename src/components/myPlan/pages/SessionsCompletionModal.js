@@ -243,29 +243,18 @@ class SessionsCompletionModal extends Component {
                                 speed={3}
                             />
                             <Button
-                                backgroundColor={AppColors.zeplin.yellow}
-                                buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0, zIndex: 10,}}
-                                color={AppColors.white}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
-                                    color: AppColors.zeplin.yellow,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                outlined={false}
-                                onPress={() => this._onClose()}
-                                raised={false}
-                                rightIcon={{
+                                buttonStyle={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                containerStyle={{marginLeft: 0, marginRight: 0, zIndex: 10,}}
+                                icon={{
                                     color: AppColors.white,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
                                     style: {flex: 1,},
                                 }}
-                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                iconRight={true}
+                                onPress={() => this._onClose()}
                                 title={'Continue'}
+                                titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                             />
                             <Spacer size={AppSizes.paddingXLrg} />
                         </View>
