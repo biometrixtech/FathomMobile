@@ -3,25 +3,28 @@ package com.fathom;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.brentvatne.react.ReactVideoPackage;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
-import com.corbt.keepawake.KCKeepAwakePackage;
-import com.zmxv.RNSound.RNSoundPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import it.innove.BleManagerPackage;
-import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.airbnb.android.react.lottie.LottiePackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
+import it.innove.BleManagerPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
+import com.corbt.keepawake.KCKeepAwakePackage;
+import com.zmxv.RNSound.RNSoundPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.brentvatne.react.ReactVideoPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.smixx.fabric.FabricPackage;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,21 +41,21 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new FabricPackage(),
-            new AsyncStoragePackage(),
-            new RNCWebViewPackage(),
-            new SplashScreenReactPackage(),
-            new VectorIconsPackage(),
-            new ReactVideoPackage(),
-            new ReactNativePushNotificationPackage(),
-            new LinearGradientPackage(),
-            new GoogleAnalyticsBridgePackage(),
-            new KCKeepAwakePackage(),
-            new RNSoundPackage(),
-            new RNDeviceInfo(),
-            new BleManagerPackage(),
-            new LocationServicesDialogBoxPackage(),
-            new LottiePackage()
+          new AsyncStoragePackage(),
+          new LottiePackage(),
+          new VectorIconsPackage(),
+          new LocationServicesDialogBoxPackage(),
+          new BleManagerPackage(),
+          new RNDeviceInfo(),
+          new RNCWebViewPackage(),
+          new GoogleAnalyticsBridgePackage(),
+          new KCKeepAwakePackage(),
+          new RNSoundPackage(),
+          new SplashScreenReactPackage(),
+          new ReactVideoPackage(),
+          new LinearGradientPackage(),
+          new ReactNativePushNotificationPackage(),
+          new FabricPackage()
       );
     }
 
@@ -70,6 +73,7 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    Fabric.with(this, new Crashlytics());
     SoLoader.init(this, /* native exopackage */ false);
   }
 }

@@ -1,12 +1,9 @@
 package com.fathom;
 
-import com.facebook.common.logging.FLog;
 import com.facebook.react.ReactActivity;
+
 import android.os.Bundle;
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
-// react-native-splash-screen >= 0.3.1
-import org.devio.rn.splashscreen.SplashScreen; // here
+import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainActivity extends ReactActivity {
 
@@ -23,15 +20,6 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.show(this);
         super.onCreate(savedInstanceState);
-        // Fabrics
-        Fabric.with(this, new Crashlytics());
-        FLog.setLoggingDelegate(ReactNativeFabricLogger.getInstance());
     }
 
-    // my new code here
-    @Override
-    protected void onPause() {
-        SplashScreen.hide(this);
-        super.onPause();
-    }
 }

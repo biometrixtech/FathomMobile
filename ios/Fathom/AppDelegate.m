@@ -6,49 +6,20 @@
  */
 
 #import "AppDelegate.h"
-#import <AVFoundation/AVFoundation.h>
+
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
-#import <asl.h>
-#import <React/RCTLog.h>
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <React/RCTLinkingManager.h>
-#if RCT_DEV
-#import <React/RCTDevLoadingView.h>
-#endif
 #import "RNSplashScreen.h"
 #import <React/RCTPushNotificationManager.h>
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-  return [RCTLinkingManager application:application openURL:url
-                      sourceApplication:sourceApplication annotation:annotation];
-}
-
-// Only if your app is using [Universal Links](https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
-{
-  return [RCTLinkingManager application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
-}
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [Fabric with:@[[Crashlytics class]]];
-  RCTSetLogThreshold(RCTLogLevelInfo);
-  RCTSetLogFunction(CrashlyticsReactLogFunction);
-  
-  NSURL *jsCodeLocation;
-
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"Fathom"
                                             initialProperties:nil];
@@ -62,6 +33,7 @@
   [self.window makeKeyAndVisible];
   
   [RNSplashScreen show];
+  [Fabric with:@[[Crashlytics class]]];
   return YES;
 }
 
@@ -100,45 +72,5 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
-
-RCTLogFunction CrashlyticsReactLogFunction = ^(
-                                               RCTLogLevel level,
-                                               __unused RCTLogSource source,
-                                               NSString *fileName,
-                                               NSNumber *lineNumber,
-                                               NSString *message
-                                               )
-{
-  NSString *log = RCTFormatLog([NSDate date], level, fileName, lineNumber, message);
-  
-#ifdef DEBUG
-  fprintf(stderr, "%s\n", log.UTF8String);
-  fflush(stderr);
-#else
-  CLS_LOG(@"REACT LOG: %s", log.UTF8String);
-#endif
-  
-  int aslLevel;
-  switch(level) {
-    case RCTLogLevelTrace:
-      aslLevel = ASL_LEVEL_DEBUG;
-      break;
-    case RCTLogLevelInfo:
-      aslLevel = ASL_LEVEL_NOTICE;
-      break;
-    case RCTLogLevelWarning:
-      aslLevel = ASL_LEVEL_WARNING;
-      break;
-    case RCTLogLevelError:
-      aslLevel = ASL_LEVEL_ERR;
-      break;
-    case RCTLogLevelFatal:
-      aslLevel = ASL_LEVEL_CRIT;
-      break;
-  }
-  asl_log(NULL, NULL, aslLevel, "%s", message.UTF8String);
-  
-  
-};
 
 @end

@@ -12,7 +12,7 @@
 import { Platform, } from 'react-native';
 
 // Consts and Libs
-import Fabric from 'react-native-fabric';
+import * as Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { APIConfig, Actions as DispatchActions, AppConfig, ErrorMessages, } from '../constants';
 import { store } from '../store';
@@ -23,7 +23,8 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // setup consts
-const { Answers, Crashlytics, } = Fabric;
+const Answers = Fabric.Answers;
+const Crashlytics = Fabric.Crashlytics;
 
 // We'll use JWT for API Authentication
 // const Token = {};

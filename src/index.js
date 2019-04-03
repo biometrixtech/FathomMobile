@@ -16,11 +16,11 @@ import { Actions as RouterActions, Router, Stack, } from 'react-native-router-fl
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
-import Fabric from 'react-native-fabric';
+import * as Fabric from 'react-native-fabric';
 import PushNotification from 'react-native-push-notification';
 
 // setup consts
-const { Crashlytics } = Fabric;
+const Crashlytics = Fabric.Crashlytics;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
