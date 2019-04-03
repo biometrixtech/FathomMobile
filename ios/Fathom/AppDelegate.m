@@ -141,5 +141,4 @@ RCTLogFunction CrashlyticsReactLogFunction = ^(
   
 };
 
-
 @end

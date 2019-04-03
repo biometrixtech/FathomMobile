@@ -77,6 +77,12 @@ class Start extends Component {
         };
     }
 
+    componentWillMount = () => {
+        if (Platform.OS === 'ios') {
+            SplashScreen.hide();
+        }
+    }
+
     componentDidMount = () => {
         this.setState(
             { isLoggingIn: true, },
