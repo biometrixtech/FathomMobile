@@ -10,6 +10,6 @@ import Root from '../src';
 import renderer from 'react-test-renderer';
 
 // setup tests
-it('renders correctly', () => {
+it('App Renders Correctly', () => {
     renderer.create(<Root />);
 });
