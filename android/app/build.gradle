@@ -74,6 +74,19 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
+    bundleInDebug: false,
+    bundleInRelease: true,
+    // where to put the JS bundle asset in debug mode
+    jsBundleDirDebug: "$buildDir/intermediates/merged_assets/debug/mergeDebugAssets/out/",
+    // where to put the JS bundle asset in release mode
+    jsBundleDirRelease: "$buildDir/intermediates/assets/release/",
+    // where to put drawable resources / React Native assets, e.g. the ones you use via
+    // require('./image.png')), in debug mode
+    resourcesDirDebug: "$buildDir/intermediates/res/merged/debug",
+    // where to put drawable resources / React Native assets, e.g. the ones you use via
+    // require('./image.png')), in release mode
+    resourcesDirRelease: "$buildDir/intermediates/res/merged/release",
+    nodeExecutableAndArgs: ["/Users/mazenchami/.nvm/versions/node/v10.4.1/bin/node"],
     entryFile: "index.js"
 ]
 
@@ -96,6 +109,16 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    signingConfigs {
+        release {
+            storeFile file("./fathom.jks")
+            storePassword "fathom"
+            keyAlias "FathomKey"
+            keyPassword "fathom"
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -103,11 +126,16 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.fathom"
+        applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 28
+        versionName "2.12.0-beta.0"
+    }
+    configurations.all {
+        resolutionStrategy {
+            force 'com.airbnb.android:lottie:2.5.5'
+        }
     }
     splits {
         abi {
@@ -118,9 +146,17 @@ android {
         }
     }
     buildTypes {
+        debug {}
+        releaseStaging {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+            matchingFallbacks = ['release', 'debug']
+        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -134,6 +170,19 @@ android {
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
+            //if (variant.buildType.name == "release") {
+            //    outputFileName = "FathomAI.apk"
+            //}
+        }
+        variant.outputs.all {
+            outputFileName = "${parent.name}-${variant.name}-${variant.versionName}.apk"
+        }
+    }
+    sourceSets {
+        // Android includes "main" in all application variants
+        main {
+            assets.srcDirs += "../../src/"
+            res.srcDirs += "../../assets/images/standard/"
         }
     }
 }
