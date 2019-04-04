@@ -16,11 +16,11 @@ import { store } from '../store';
 // import third-party libraries
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
-import Fabric from 'react-native-fabric';
+import * as Fabric from 'react-native-fabric';
 import moment from 'moment';
 
 // Fabric specific
-const { Answers } = Fabric;
+const Answers = Fabric.Answers;
 
 // constants
 const commands = BLEConfig.commands;

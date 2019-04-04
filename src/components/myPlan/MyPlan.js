@@ -927,7 +927,7 @@ class MyPlan extends Component {
         } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj);
         return (
             <ScrollView
-                contentContainerStyle={{ backgroundColor: AppColors.white, }}
+                contentContainerStyle={{backgroundColor: AppColors.white,}}
                 refreshControl={
                     isFSCalculating || isPrepCalculating || isRecoverCalculating ?
                         null
@@ -947,11 +947,10 @@ class MyPlan extends Component {
                 { isReadinessSurveyCompleted ?
                     <View>
                         <ListItem
-                            containerStyle={{ borderBottomWidth: 0 }}
                             disabled={false}
                             hideChevron={true}
                             leftIcon={
-                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
                                     <LottieView
                                         autoPlay={true}
                                         loop={false}
@@ -960,7 +959,7 @@ class MyPlan extends Component {
                                 </View>
                             }
                             title={'READINESS SURVEY'}
-                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                         />
                         <DefaultListGap
                             size={24}
@@ -970,12 +969,11 @@ class MyPlan extends Component {
                     null
                 }
                 <ListItem
-                    containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
                         isCompleted ?
-                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                            <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
                                 <LottieView
                                     autoPlay={true}
                                     loop={false}
@@ -985,48 +983,44 @@ class MyPlan extends Component {
                             :
                             <TabIcon
                                 color={isCompleted ? AppColors.zeplin.yellow : AppColors.black}
-                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                containerStyle={[{marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}
                                 icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                                 size={isCompleted ? AppFonts.scaleFont(24) : AppFonts.scaleFont(20)}
                             />
                     }
                     title={'MOBILIZE'}
-                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                 />
                 {
                     /* eslint-disable indent */
                     disabled && !isPrepCalculating ?
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                            <View style={{flex: 1, paddingLeft: 20, paddingRight: 15 }}>
                                 <ActiveRecoveryBlocks />
                             </View>
                         </View>
                     : disabled || isPrepCalculating ?
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                            <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                 <ActiveRecoveryBlocks />
                                 <Spacer size={12}/>
                                 <Button
-                                    backgroundColor={AppColors.white}
-                                    buttonStyle={{width: '100%',}}
-                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.zeplin.yellow}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    buttonStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.yellow, width: '100%',}}
+                                    containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                     loading={isPrepCalculating}
-                                    loadingRight={true}
-                                    outlined
+                                    loadingProps={{color: AppColors.zeplin.yellow,}}
                                     onPress={() => null}
-                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                     title={'Calculating...'}
+                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                    type={'outline'}
                                 />
                             </View>
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, }}>
+                            <View style={{flex: 1,}}>
                                 <Spacer size={10} />
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
@@ -1042,45 +1036,28 @@ class MyPlan extends Component {
                                 </View>
                             </View>
                         : prepare.isActiveRecoveryCollapsed ?
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                            <View style={{flex: 1, flexDirection: 'row',}}>
+                                <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                                <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                     <ActiveRecoveryBlocks
                                         recoveryObj={recoveryObj}
                                         toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
                                     />
                                     <Spacer size={12}/>
                                     <Button
-                                        backgroundColor={AppColors.zeplin.yellow}
-                                        buttonStyle={{width: '100%',}}
-                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                        color={AppColors.white}
-                                        fontFamily={AppStyles.robotoBold.fontFamily}
-                                        fontWeight={AppStyles.robotoBold.fontWeight}
-                                        leftIcon={{
-                                            color: AppColors.zeplin.yellow,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        outlined
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                        containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                         onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
-                                        rightIcon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
+                                        titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     />
                                 </View>
                             </View>
                             :
                             <View style={{flex: 1}}>
                                 <View style={{flexDirection: 'row',}}>
-                                    <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                    <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
+                                    <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                                    <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                         <ActiveRecoveryBlocks
                                             recoveryObj={recoveryObj}
                                             toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
@@ -1112,19 +1089,19 @@ class MyPlan extends Component {
                                 />
                             </View>
                     : isCompleted ?
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{flex: 1, paddingLeft: 30, paddingRight: 15}}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.white, borderRightWidth: 1,paddingLeft: 22,}} />
+                            <View style={{flex: 1, paddingLeft: 30, paddingRight: 15,}}>
                                 <ActiveRecoveryBlocks
                                     recoveryObj={recoveryObj}
                                 />
                             </View>
                         </View>
                     :
-                    <View style={{ flex: 1, flexDirection: 'row', }}>
-                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                    <View style={{flex: 1, flexDirection: 'row',}}>
+                        <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                        <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>{errorInARAPMessage}</Text>
                         </View>
                     </View>
                 }
@@ -1283,7 +1260,7 @@ class MyPlan extends Component {
         } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj);
         return (
             <ScrollView
-                contentContainerStyle={{ backgroundColor: AppColors.white, }}
+                contentContainerStyle={{backgroundColor: AppColors.white,}}
                 refreshControl={
                     isFSCalculating || isPrepCalculating || isRecoverCalculating ?
                         null
@@ -1301,12 +1278,11 @@ class MyPlan extends Component {
             >
                 <Spacer size={30} />
                 <ListItem
-                    containerStyle={{ borderBottomWidth: 0 }}
                     disabled={disabled}
                     hideChevron={true}
                     leftIcon={
                         isCompleted ?
-                            <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                            <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
                                 <LottieView
                                     autoPlay={true}
                                     loop={false}
@@ -1316,21 +1292,21 @@ class MyPlan extends Component {
                             :
                             <TabIcon
                                 color={isCompleted ? AppColors.zeplin.yellow : AppColors.black}
-                                containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                containerStyle={[{marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}
                                 icon={isCompleted ? 'check-circle' : disabled ? 'lock' : 'fiber-manual-record'}
                                 size={isCompleted ? AppFonts.scaleFont(24) : 20}
                             />
                     }
                     title={'ACTIVE RECOVERY'}
-                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                 />
                 {
                     /* eslint-disable indent */
                     disabled && !isRecoverCalculating ?
                         <View>
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                            <View style={{flex: 1, flexDirection: 'row',}}>
+                                <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                                <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                     <ActiveRecoveryBlocks
                                         after={true}
                                     />
@@ -1351,32 +1327,28 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     : disabled || isRecoverCalculating ?
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{ flex: 1, paddingLeft: 20, paddingRight: 15 }}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                            <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                 <ActiveRecoveryBlocks
                                     after={true}
                                 />
                                 <Spacer size={12}/>
                                 <Button
-                                    backgroundColor={AppColors.white}
-                                    buttonStyle={{width: '100%',}}
-                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                    color={AppColors.zeplin.yellow}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
+                                    buttonStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.yellow, width: '100%',}}
+                                    containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                     loading={isRecoverCalculating}
-                                    loadingRight={true}
-                                    outlined
+                                    loadingProps={{color: AppColors.zeplin.yellow,}}
                                     onPress={() => null}
-                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                     title={'Calculating...'}
+                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                    type={'outline'}
                                 />
                             </View>
                         </View>
                     : isActive ?
                         exerciseList.totalLength === 0 ?
-                            <View style={{ flex: 1, }}>
+                            <View style={{flex: 1,}}>
                                 <Spacer size={10} />
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
                                     <TabIcon
@@ -1392,9 +1364,9 @@ class MyPlan extends Component {
                                 </View>
                             </View>
                         : recover.isActiveRecoveryCollapsed ?
-                            <View style={{ flex: 1, flexDirection: 'row', }}>
-                                <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                                <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                            <View style={{flex: 1, flexDirection: 'row',}}>
+                                <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                                <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
                                     <ActiveRecoveryBlocks
                                         after={true}
                                         recoveryObj={recoveryObj}
@@ -1402,34 +1374,18 @@ class MyPlan extends Component {
                                     />
                                     <Spacer size={12}/>
                                     <Button
-                                        backgroundColor={AppColors.zeplin.yellow}
-                                        color={AppColors.white}
-                                        containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                        fontFamily={AppStyles.robotoBold.fontFamily}
-                                        fontWeight={AppStyles.robotoBold.fontWeight}
-                                        leftIcon={{
-                                            color: AppColors.zeplin.yellow,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        outlined
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                        containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                         onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
-                                        rightIcon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
+                                        titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     />
                                 </View>
                             </View>
                             :
                             <View style={{flex: 1}}>
                                 <View style={{flexDirection: 'row',}}>
-                                    <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
+                                    <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             after={true}
@@ -1462,9 +1418,9 @@ class MyPlan extends Component {
                                 />
                             </View>
                     : isCompleted ?
-                        <View style={{ flex: 1, flexDirection: 'row', }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                            <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.white, borderRightWidth: 1,paddingLeft: 22,}} />
+                            <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
                                 <ActiveRecoveryBlocks
                                     after={true}
                                     recoveryObj={recoveryObj}
@@ -1472,10 +1428,10 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     :
-                    <View style={{ flex: 1, flexDirection: 'row', }}>
-                        <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.white }}/>
-                        <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, { fontSize: AppFonts.scaleFont(18), }]}>{errorInARAPMessage}</Text>
+                    <View style={{flex: 1, flexDirection: 'row',}}>
+                        <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                        <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(18),}]}>{errorInARAPMessage}</Text>
                         </View>
                     </View>
                 }
@@ -1581,16 +1537,16 @@ class MyPlan extends Component {
 
     renderTrain = index => {
         let {
-          healthData,
-          isFSCalculating,
-          isFSExerciseCompletionModalOpen,
-          isFunctionalStrengthCollapsed,
-          isFunctionalStrengthModalOpen,
-          isPostSessionSurveyModalOpen,
-          isSelectedExerciseModalOpen,
-          isTrainSessionsCompletionModalOpen,
-          postSession,
-          selectedExercise,
+            healthData,
+            isFSCalculating,
+            isFSExerciseCompletionModalOpen,
+            isFunctionalStrengthCollapsed,
+            isFunctionalStrengthModalOpen,
+            isPostSessionSurveyModalOpen,
+            isSelectedExerciseModalOpen,
+            isTrainSessionsCompletionModalOpen,
+            postSession,
+            selectedExercise,
         } = this.state;
         let { plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -1610,18 +1566,17 @@ class MyPlan extends Component {
         } = PlanLogic.handleMyPlanRenderTrainTabLogic(dailyPlanObj, store.getState().plan);
         return (
             <ScrollView
-                contentContainerStyle={{ backgroundColor: AppColors.white, }}
+                contentContainerStyle={{backgroundColor: AppColors.white,}}
                 tabLabel={tabs[index]}
             >
                 <Spacer size={30} />
                 { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
                     <View>
                         <ListItem
-                            containerStyle={{ borderBottomWidth: 0 }}
                             disabled={!isDailyReadinessSurveyCompleted}
                             hideChevron={true}
                             leftIcon={
-                                <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
                                     <LottieView
                                         autoPlay={true}
                                         loop={false}
@@ -1630,11 +1585,11 @@ class MyPlan extends Component {
                                 </View>
                             }
                             title={'OFF DAY'}
-                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                         />
-                        <View style={{ flexDirection: 'row', }}>
-                            <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: AppColors.primary.grey.thirtyPercent }}/>{/* standard padding of 10 and 5 for half the default size of icons */}
-                            <View style={{ flex: 1, margin: 20, }}>
+                        <View style={{flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.primary.grey.thirtyPercent, borderRightWidth: 1, paddingLeft: 22,}} />{/* standard padding of 10 and 5 for half the default size of icons */}
+                            <View style={{flex: 1, margin: 20,}}>
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(16),}]}>{offDayLoggedText}</Text>
                             </View>
                         </View>
@@ -1645,23 +1600,22 @@ class MyPlan extends Component {
                 { isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed ?
                       <View>
                           <ListItem
-                              containerStyle={{ borderBottomWidth: 0 }}
                               disabled={false}
                               hideChevron={true}
                               leftIcon={
                                   <TabIcon
                                       color={AppColors.black}
-                                      containerStyle={[{ width: AppFonts.scaleFont(24), height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, }]}
+                                      containerStyle={[{marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}
                                       icon={'fiber-manual-record'}
                                       size={20}
                                   />
                               }
                               title={'FUNCTIONAL STRENGTH'}
-                              titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                              titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                           />
-                          <View style={{ flex: 1, flexDirection: 'row', }}>
-                              <View style={{ paddingLeft: 22, borderRightWidth: 1, borderRightColor: isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, }}/>
-                              <View style={{ flex: 1, marginLeft: 20, marginRight: 15, marginBottom: 30 }}>
+                        <View style={{flex: 1, flexDirection: 'row',}}>
+                              <View style={{borderRightColor: isFunctionalStrengthCollapsed ? AppColors.zeplin.lightGrey : AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
+                              <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
                                   <ActiveRecoveryBlocks
                                       isFunctionalStrength={true}
                                       recoveryObj={isFSCalculating ? false : functionalStrength}
@@ -1669,20 +1623,10 @@ class MyPlan extends Component {
                                   <Spacer size={isFunctionalStrengthCollapsed ? 12 : 20}/>
                                   { isFunctionalStrengthCollapsed ?
                                       <Button
-                                          backgroundColor={isFSCalculating ? AppColors.white : AppColors.zeplin.yellow}
-                                          color={isFSCalculating ? AppColors.zeplin.yellow : AppColors.white}
-                                          containerViewStyle={{flex: 1, marginLeft: 0, marginRight: 10}}
-                                          fontFamily={AppStyles.robotoBold.fontFamily}
-                                          fontWeight={AppStyles.robotoBold.fontWeight}
-                                          leftIcon={{
-                                              color: isFSCalculating ? AppColors.white : AppColors.zeplin.yellow,
-                                              name:  'chevron-right',
-                                              size:  AppFonts.scaleFont(24),
-                                              style: {flex: 1,},
-                                          }}
+                                          buttonStyle={{backgroundColor: isFSCalculating ? AppColors.white : AppColors.zeplin.yellow, borderColor: AppColors.zeplin.yellow, }}
+                                          containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                           loading={isFSCalculating}
-                                          loadingRight={true}
-                                          outlined
+                                          loadingProps={{color: AppColors.zeplin.yellow,}}
                                           onPress={() => isFSCalculating ?
                                               null
                                               : (isFSEligible && functionalStrength && Object.keys(functionalStrength).length === 0) ?
@@ -1690,18 +1634,9 @@ class MyPlan extends Component {
                                                   :
                                                   this.setState({ isFunctionalStrengthCollapsed: false, })
                                           }
-                                          rightIcon={isFSCalculating ?
-                                              {}
-                                              :
-                                              {
-                                                  color: AppColors.white,
-                                                  name:  'chevron-right',
-                                                  size:  AppFonts.scaleFont(24),
-                                                  style: {flex: 1,},
-                                              }
-                                          }
-                                          textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                           title={isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
+                                          titleStyle={{color: isFSCalculating ? AppColors.zeplin.yellow : AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                          type={'outline'}
                                       />
                                       :
                                       <Text
@@ -1744,11 +1679,10 @@ class MyPlan extends Component {
                         return(
                             <View key={`postPracticeSurveys${i}`}>
                                 <ListItem
-                                    containerStyle={{ borderBottomWidth: 0 }}
                                     disabled={!isDailyReadinessSurveyCompleted}
                                     hideChevron={true}
                                     leftIcon={
-                                        <View style={[{ height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, marginRight: 10, width: AppFonts.scaleFont(24), }]}>
+                                        <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
                                             <LottieView
                                                 autoPlay={true}
                                                 loop={false}
@@ -1757,7 +1691,7 @@ class MyPlan extends Component {
                                         </View>
                                     }
                                     title={cleanedPostSessionName}
-                                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, { color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24) }]}
+                                    titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                                 />
                                 <DefaultListGap
                                     size={24}
@@ -1772,52 +1706,32 @@ class MyPlan extends Component {
                 { isFunctionalStrengthCollapsed ?
                     <View>
                         <Button
-                            backgroundColor={logActivityButtonBackgroundColor}
-                            buttonStyle={{justifyContent: 'space-between',}}
-                            color={logActivityButtonColor}
-                            containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                            fontFamily={AppStyles.robotoBold.fontFamily}
-                            fontWeight={AppStyles.robotoBold.fontWeight}
-                            leftIcon={{
+                            buttonStyle={{backgroundColor: logActivityButtonBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? logActivityButtonBackgroundColor : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
+                            containerStyle={{marginLeft: 22, marginRight: 22,}}
+                            icon={{
                                 color: logActivityButtonColor,
                                 name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                                 size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                             }}
                             onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
-                            outlined={logActivityButtonOutlined}
-                            raised={false}
-                            rightIcon={{
-                                color: logActivityRightIconColor,
-                                name:  'chevron-right',
-                                size:  AppFonts.scaleFont(30),
-                            }}
-                            textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                             title={'Log completed activity'}
+                            titleStyle={{color: logActivityButtonColor, flex: 8, fontSize: AppFonts.scaleFont(18), textAlign: 'left',}}
+                            type={logActivityButtonOutlined ? 'outline' : 'solid'}
                         />
                         <Spacer size={10} />
                         { !offDaySelected ?
                             <Button
-                                backgroundColor={AppColors.white}
-                                buttonStyle={{justifyContent: 'space-between',}}
-                                color={isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText}
-                                containerViewStyle={{marginLeft: 22, marginRight: 22,}}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
+                                buttonStyle={{backgroundColor: AppColors.white, borderColor: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
+                                containerStyle={{marginLeft: 22, marginRight: 22,}}
+                                icon={{
                                     color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText,
                                     name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
                                     size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
                                 }}
                                 onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)) : null}
-                                outlined
-                                raised={false}
-                                rightIcon={{
-                                    color: isDailyReadinessSurveyCompleted ? AppColors.white : AppColors.zeplin.greyText,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(30),
-                                }}
-                                textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), }}
                                 title={'Off day'}
+                                titleStyle={{color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText, flex: 8, fontSize: AppFonts.scaleFont(18), textAlign: 'left',}}
+                                type={'outline'}
                             />
                             :
                             null
@@ -1946,7 +1860,7 @@ class MyPlan extends Component {
                     style={{backgroundColor: AppColors.white,}}
                     tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
-                    tabBarUnderlineStyle={{ height: 0 }}
+                    tabBarUnderlineStyle={{height: 0,}}
                 >
                     {this.renderPrepare(0)}
                     {this.renderTrain(1)}

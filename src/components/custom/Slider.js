@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         width:            (CIRCLE_DIAMETER),
     },
     circle: {
-        backgroundColor: AppColors.primary.yellow.hundredPercent,
+        backgroundColor: AppColors.zeplin.yellow,
         borderRadius:    (CIRCLE_DIAMETER / 2),
         height:          (CIRCLE_DIAMETER),
         position:        'absolute',

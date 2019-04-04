@@ -12,17 +12,19 @@
 import { Platform, } from 'react-native';
 
 // Consts and Libs
-import Fabric from 'react-native-fabric';
+import * as Fabric from 'react-native-fabric';
 import JWT from './jwt';
 import { APIConfig, Actions as DispatchActions, AppConfig, ErrorMessages, } from '../constants';
 import { store } from '../store';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 import moment from 'moment';
 
 // setup consts
-const { Answers, Crashlytics, } = Fabric;
+const Answers = Fabric.Answers;
+const Crashlytics = Fabric.Crashlytics;
 
 // We'll use JWT for API Authentication
 // const Token = {};
@@ -121,9 +123,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
         // After x seconds, let's call it a day!
         const timeoutAfter = 25;
-        const apiTimedOut = setTimeout(() => (
-            reject(ErrorMessages.timeout)
-        ), timeoutAfter * 1000);
+        const apiTimedOut = _.delay(() => reject(handleError({ message: ErrorMessages.timeout, })), timeoutAfter * 1000);
 
         if (!method || !endpoint) { return reject('Missing params (AppAPI.fetcher).'); }
 

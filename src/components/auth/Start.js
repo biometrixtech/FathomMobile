@@ -71,7 +71,6 @@ class Start extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             isLoggingIn:  false,
             splashScreen: true,
@@ -88,7 +87,7 @@ class Start extends Component {
         this.setState(
             { isLoggingIn: true, },
             () => {
-                setTimeout(() => {
+                _.delay(() => {
                     if(
                         this.props.email !== null &&
                         this.props.password !== null &&
@@ -112,7 +111,7 @@ class Start extends Component {
                             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
                         }
                     }
-                }, 10);
+                }, 250);
             },
         );
     }
@@ -121,25 +120,20 @@ class Start extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
-    hideSplash = () => {
-        this.setState({ splashScreen: false, });
+    hideSplash = callback => {
+        this.setState({ isLoggingIn: false, splashScreen: false, });
         SplashScreen.hide();
+        if(callback) {
+            callback();
+        }
     }
 
     _routeToLogin = () => {
         Actions.login();
     }
 
-    _routeToOnboarding = () => {
-        Actions.onboarding();
-    }
-
     _routeToAccountType = () => {
         Actions.accountType();
-    }
-
-    _routeToMyPlan = () => {
-        Actions.myPlan();
     }
 
     login = () => {
@@ -200,26 +194,22 @@ class Start extends Component {
                         return response;
                     })
                     .catch(error => {
-                        this.setState({ isLoggingIn: false, });
+                        AppUtil.handleAPIErrorAlert(error);
                         this.hideSplash();
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() => {
-                this.setState(
-                    { isLoggingIn: false, },
-                    () => AppUtil.routeOnLogin(userObj),
-                );
-                setTimeout(() => {
-                    SplashScreen.hide();
-                }, 500);
-            })
-            .catch((err) => {
+            .then(() =>
+                _.delay(() => {
+                    this.hideSplash(() => AppUtil.routeOnLogin(userObj));
+                }, 500)
+            )
+            .catch(err => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
-                this.setState({ isLoggingIn: false, });
                 // this._routeToLogin();
+                AppUtil.handleAPIErrorAlert(error);
             });
     }
 
@@ -229,7 +219,7 @@ class Start extends Component {
             <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
-                    style={[AppStyles.containerCentered, { height: AppSizes.screen.height, width: AppSizes.screen.width }]}
+                    style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
                 >
                     <LinearGradient
                         colors={['rgba(51, 64, 85, 0.89)', 'rgba(11, 26, 52, 0.97)', 'black']}
@@ -242,7 +232,7 @@ class Start extends Component {
                         />
                         <Spacer size={80} />
                         <ActivityIndicator
-                            color={AppColors.primary.yellow.hundredPercent}
+                            color={AppColors.zeplin.yellow}
                             size={'large'}
                         />
                         <Spacer size={30} />
@@ -251,38 +241,45 @@ class Start extends Component {
                 </ImageBackground>
             </View>
             :
-            <View>
+            <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/start.png')}
-                    style={[AppStyles.containerCentered, {height: AppSizes.screen.heightTwoThirds, width: AppSizes.screen.width,}]}
+                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}]}
                 >
-                    <Text h1 oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38)}}>{'JOIN FATHOM'}</Text>
-                    <Spacer size={this.state.displayMessage ? 20 : 15} />
-                    <View style={{width: AppSizes.screen.widthThreeQuarters}}>
-                        <Alerts
-                            error={this.state.displayMessage ? this.state.networkMessage: ''}
+                    <View style={{alignItems: 'center', flex: 7, justifyContent: 'center',}}>
+                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38),}}>{'JOIN FATHOM'}</Text>
+                        <Spacer size={this.state.displayMessage ? 20 : 15} />
+                        <View style={{width: AppSizes.screen.widthThreeQuarters,}}>
+                            <Alerts
+                                error={this.state.displayMessage ? this.state.networkMessage: ''}
+                            />
+                        </View>
+                        <Spacer size={this.state.displayMessage ? 0 : 15} />
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed,}}
+                            disabled={this.state.displayMessage}
+                            onPress={() => this._routeToAccountType()}
+                            title={'Create Account'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
                         />
                     </View>
-                    <Spacer size={this.state.displayMessage ? 0 : 15} />
-                    <Button
-                        backgroundColor={AppColors.white}
-                        buttonStyle={[AppStyles.paddingVerticalMed, AppStyles.paddingHorizontalLrg]}
-                        disabled={this.state.displayMessage}
-                        fontFamily={AppStyles.robotoBold.fontFamily}
-                        fontWeight={AppStyles.robotoBold.fontWeight}
-                        onPress={() => this._routeToAccountType()}
-                        textColor={AppColors.primary.yellow.hundredPercent}
-                        textStyle={{ fontSize: AppFonts.scaleFont(16) }}
-                        title={'Create Account'}
-                    />
+                    <View style={{flex: 3,}}>
+                        <LinearGradient
+                            colors={['rgba(8, 24, 50, 0.0)', 'rgb(15, 19, 32)']}
+                            start={{x: 0.0, y: 0.0}}
+                            end={{x: 0.0, y: 0.99}}
+                            style={[styles.linearGradientStyle, {flex: 1,}]}
+                        >
+                            <TouchableOpacity
+                                onPress={this.state.displayMessage ? null : () => this._routeToLogin()}
+                                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, width: AppSizes.screen.width,}]}
+                            >
+                                <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingSml,}}>{'ALREADY A MEMBER?'}</Text>
+                                <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18),}}>{'Let\'s login now.'}</Text>
+                            </TouchableOpacity>
+                        </LinearGradient>
+                    </View>
                 </ImageBackground>
-                <TouchableOpacity
-                    onPress={this.state.displayMessage ? null : () => this._routeToLogin()}
-                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.primary.grey.twentyPercent, height: AppSizes.screen.heightOneThird, width: AppSizes.screen.width,}]}
-                >
-                    <Text h5 oswaldMedium style={[AppStyles.paddingBottom, {color: AppColors.black, fontSize: AppFonts.scaleFont(24)}]}>{'ALREADY A MEMBER?'}</Text>
-                    <Text p robotoRegular style={{color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(18)}}>{'Let\'s login now.'}</Text>
-                </TouchableOpacity>
             </View>
     }
 }

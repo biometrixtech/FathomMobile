@@ -201,14 +201,14 @@ class AthleteComplianceModal extends Component {
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <TouchableHighlight
                             onPress={() => this._togglePage('readiness')}
-                            style={{borderBottomColor: page === 'readiness' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
+                            style={{borderBottomColor: page === 'readiness' ? AppColors.zeplin.yellow : AppColors.white, borderBottomWidth: 2,}}
                             underlayColor={AppColors.transparent}
                         >
                             <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={() => this._togglePage('training')}
-                            style={{borderBottomColor: page === 'training' ? AppColors.primary.yellow.hundredPercent : AppColors.white, borderBottomWidth: 2,}}
+                            style={{borderBottomColor: page === 'training' ? AppColors.zeplin.yellow : AppColors.white, borderBottomWidth: 2,}}
                             underlayColor={AppColors.transparent}
                         >
                             <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>

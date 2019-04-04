@@ -21,7 +21,6 @@ if test -t 1; then
     fi
 fi
 
-
 # install_java() {
 #     current_location=`pwd`
 #     cd ~/Downloads
@@ -88,7 +87,6 @@ initialize() {
             else
                 nvm install
             fi
-
 
             echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
             echo "🚀\t${green}✔︎${normal} ${yellow}Xcode installed${normal}\t🚀"
@@ -174,11 +172,6 @@ initialize() {
                 ../../scripts/ios-configure-glog.sh
                 cd ../../../../
             } || continue
-
-            # extra iOS HealthKit patches
-            yes | cp ./custom/javascript/Activities.js ./node_modules/rn-apple-healthkit/Constants/Activities.js
-            yes | cp ./custom/ios/RCTAppleHealthKit+Queries.m ./node_modules/rn-apple-healthkit/RCTAppleHealthKit/RCTAppleHealthKit+Queries.m
-            yes | cp ./custom/ios/RCTAppleHealthKit+TypesAndPermissions.m ./node_modules/rn-apple-healthkit/RCTAppleHealthKit/RCTAppleHealthKit+TypesAndPermissions.m
 
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
@@ -278,7 +271,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -293,7 +286,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -308,7 +301,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleDebug
                 cd ..

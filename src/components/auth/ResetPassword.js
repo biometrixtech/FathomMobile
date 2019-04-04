@@ -280,6 +280,7 @@ class ResetPassword extends Component {
     }
 
     render = () => {
+        /*eslint no-return-assign: 0*/
         return (
             <Wrapper>
                 <View>
@@ -297,7 +298,7 @@ class ResetPassword extends Component {
                         {'Set New Password'}
                     </Text>
                     <Spacer size={20} />
-                    <View style={[AppStyles.containerCentered]}>
+                    <View style={[AppStyles.containerCentered,]}>
                         <View style={{width: AppSizes.screen.widthFourFifths}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
                                 {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
@@ -305,93 +306,83 @@ class ResetPassword extends Component {
                         </View>
                     </View>
                     <Spacer size={20} />
-                    <View style={[AppStyles.containerCentered]}>
+                    <View style={[AppStyles.containerCentered,]}>
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode={'while-editing'}
-                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.email = ref}
+                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('Email', text)}
                             onSubmitEditing={() => {
                                 this._focusNextField('verification_code');
                             }}
                             placeholder={'email'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'next'}
-                            textInputRef={input => {
-                                this.inputs.email = input;
-                            }}
                             value={this.state.form_values.Email}
                         />
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode={'while-editing'}
-                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.verification_code = ref}
+                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('VerificationCode', text)}
                             onSubmitEditing={() => {
                                 this._focusNextField('new_password');
                             }}
                             placeholder={'6-digit PIN'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'next'}
-                            textInputRef={input => {
-                                this.inputs.verification_code = input;
-                            }}
                             value={this.state.form_values.VerificationCode}
                         />
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ false }
                             clearButtonMode={'while-editing'}
-                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.new_password = ref}
+                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('NewPassword', text)}
                             onSubmitEditing={() => {
                                 this._focusNextField('confirm_password');
                             }}
                             placeholder={'new password'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'next'}
                             secureTextEntry={true}
-                            textInputRef={input => {
-                                this.inputs.new_password = input;
-                            }}
                             value={this.state.form_values.NewPassword}
                         />
                         <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
                             clearButtonMode={'while-editing'}
-                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.confirm_password = ref}
+                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
                             keyboardType={'default'}
                             onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
                             placeholder={'confirm new password'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'done'}
                             secureTextEntry={true}
-                            textInputRef={input => {
-                                this.inputs.confirm_password = input;
-                            }}
                             value={this.state.form_values.ConfirmPassword}
                         />
 
                     </View>
                 </View>
                 <Button
-                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                    buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
-                    containerViewStyle={{marginLeft: 0, width: '100%',}}
-                    color={AppColors.white}
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
                     disabled={this.state.isSubmitting}
-                    fontFamily={AppStyles.robotoBold.fontFamily}
-                    fontWeight={AppStyles.robotoBold.fontWeight}
                     onPress={() => this._handleFormSubmit()}
-                    raised={false}
-                    textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                     title={'Confirm'}
+                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(16), }}
                 />
             </Wrapper>
         );

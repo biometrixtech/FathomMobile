@@ -107,7 +107,7 @@ const RenderMyPlanTab = ({
                                 containerStyle={[AppStyles.indicatorContainerStyles, extraIconContainerStyle, {paddingLeft: iconLeftPadding,}]}
                                 size={iconSize}
                                 selected
-                                color={AppColors.primary.yellow.hundredPercent}
+                                color={AppColors.zeplin.yellow}
                                 icon={'fiber-manual-record'}
                             />
                             :

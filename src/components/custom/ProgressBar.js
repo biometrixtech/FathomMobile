@@ -31,7 +31,7 @@ const ProgressBar = ({ currentStep, totalSteps }) => (
     >
         <View
             style={{
-                backgroundColor: AppColors.primary.yellow.hundredPercent,
+                backgroundColor: AppColors.zeplin.yellow,
                 width:           `${(currentStep / totalSteps) * 100}%`,
                 height:          AppSizes.screen.progressBarHeight,
             }}

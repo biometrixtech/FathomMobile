@@ -346,7 +346,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             scrollEnabled={false}
@@ -360,7 +360,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hours}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             selectedIndex={durationValueGroups.hours}
@@ -374,7 +374,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hourLabel}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             scrollEnabled={false}
@@ -388,7 +388,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minutes}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             selectedIndex={durationValueGroups.minutes}
@@ -402,7 +402,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minLabel}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             scrollEnabled={false}
@@ -416,7 +416,7 @@ class SportScheduleBuilder extends PureComponent {
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
-                                            highlightColor={AppColors.primary.yellow.hundredPercent}
+                                            highlightColor={AppColors.zeplin.yellow}
                                             itemColor={AppColors.primary.grey.fiftyPercent}
                                             itemHeight={AppFonts.scaleFont(18) + 10}
                                             scrollEnabled={false}
@@ -430,22 +430,16 @@ class SportScheduleBuilder extends PureComponent {
                             </View>
                             <Spacer size={30} />
                             <Button
-                                backgroundColor={isFormValid ? AppColors.primary.yellow.hundredPercent : AppColors.white}
                                 buttonStyle={{
-                                    borderColor:  isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
-                                    borderRadius: 10,
-                                    borderWidth:  1,
-                                    width:        AppSizes.screen.widthThird,
+                                    backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
+                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                                    borderWidth:     1,
+                                    width:           AppSizes.screen.widthThird,
                                 }}
-                                color={isFormValid ? AppColors.white : AppColors.zeplin.lightGrey}
-                                containerViewStyle={{alignItems: 'center', justifyContent: 'center',}}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
+                                containerStyle={{alignItems: 'center', justifyContent: 'center',}}
                                 onPress={() => isFormValid ? this._scrollTo(this._activityRPERef) : null}
-                                outlined
-                                raised={false}
-                                textStyle={{ fontSize: AppFonts.scaleFont(14) }}
                                 title={'Next'}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(14),}}
                             />
                             <Spacer size={30} />
                             { isFormValid ?
@@ -490,7 +484,7 @@ class SportScheduleBuilder extends PureComponent {
                                                             <Text
                                                                 oswaldMedium
                                                                 style={{
-                                                                    color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                                                                    color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                                                                     fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
                                                                 }}
                                                             >

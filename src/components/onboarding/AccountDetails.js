@@ -68,7 +68,7 @@ class AccountDetails extends Component {
                     </View>
                     <View style={{flex: 4, justifyContent: 'center',}}>
                         <TabIcon
-                            color={isEmailVerified ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.lightGrey}
+                            color={isEmailVerified ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
                             icon={'arrow-right-circle'}
                             onPress={() => isEmailVerified ? AppUtil.routeOnLogin(this.props.user) : null}
                             size={44}
@@ -94,14 +94,14 @@ class AccountDetails extends Component {
                                 <Text
                                     onPress={() => this._handleResendButtonClicked()}
                                     robotoMedium
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',}]}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',}]}
                                 >
                                     {'resend email'}
                                 </Text>
                                 <Text
                                     onPress={() => this._handleChangeButtonClicked()}
                                     robotoMedium
-                                    style={[AppStyles.textCenterAligned, {color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',}]}
+                                    style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',}]}
                                 >
                                     {'change email'}
                                 </Text>

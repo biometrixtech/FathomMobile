@@ -47,7 +47,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >
@@ -61,7 +61,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >
@@ -166,7 +166,7 @@ class SoreBodyPart extends Component {
             isPain = bodyPart.pain;
         }
         this.setState({
-            movementValue: key,
+            movementValue: newKey,
             type:          newType,
         }, () => {
             handleFormChange('soreness', newKey, isPain, bodyPartMap.index, bodyPartSide, newKey === null ? false : true, true);
@@ -289,6 +289,7 @@ class SoreBodyPart extends Component {
                 { showScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}
+                        duration={500}
                         style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
                     >
                         <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
@@ -318,6 +319,7 @@ class SoreBodyPart extends Component {
                 { this.state.showMotionScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}
+                        duration={500}
                         style={{paddingVertical: AppSizes.paddingMed,}}
                     >
                         <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>

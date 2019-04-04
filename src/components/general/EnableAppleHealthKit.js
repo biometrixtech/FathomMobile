@@ -97,23 +97,11 @@ const EnableAppleHealthKit = ({
                                         style={[styles.linearGradientStyle, {justifyContent: 'flex-end', overflow: 'hidden',}]}
                                     />
                                     <Button
-                                        backgroundColor={AppColors.zeplin.yellow}
-                                        buttonStyle={{borderRadius: 5, width: '100%',}}
-                                        containerViewStyle={{marginLeft: 0, marginRight: 0, width: '100%',}}
-                                        color={AppColors.white}
-                                        fontFamily={AppStyles.robotoBold.fontFamily}
-                                        fontWeight={AppStyles.robotoBold.fontWeight}
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                         loading={isLoading}
-                                        loadingRight={isLoading}
-                                        outlined={false}
-                                        onPress={() => {
-                                            if(!isLoading) {
-                                                handleEnableAppleHealthKit('apple_healthkit', true);
-                                            }
-                                        }}
-                                        raised={false}
-                                        textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                        onPress={() => !isLoading ? handleEnableAppleHealthKit('apple_healthkit', true) : {}}
                                         title={'Enable Apple Health'}
+                                        titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(16), }}
                                     />
                                 </ImageBackground>
                             </View>

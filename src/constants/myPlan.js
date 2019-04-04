@@ -561,13 +561,13 @@ const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid,
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.white,};
-    let buttonColor = completedExercises.length > 0 ? AppColors.white : AppColors.primary.yellow.hundredPercent;
-    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.primary.yellow.hundredPercent : AppColors.white;
+    let buttonColor = completedExercises.length > 0 ? AppColors.white : AppColors.zeplin.yellow;
+    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.zeplin.yellow : AppColors.white;
     if(isFunctionalStrength) {
         buttonTitle = completedExercises.length > 0 ? 'Complete' : 'Check Boxes to Complete';
         isButtonOutlined = isFSCompleteValid ? false : true;
-        buttonColor = isFSCompleteValid ? AppColors.white : AppColors.primary.yellow.hundredPercent;
-        buttonBackgroundColor = isFSCompleteValid ? AppColors.primary.yellow.hundredPercent : AppColors.white;
+        buttonColor = isFSCompleteValid ? AppColors.white : AppColors.zeplin.yellow;
+        buttonBackgroundColor = isFSCompleteValid ? AppColors.zeplin.yellow : AppColors.white;
     }
     return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, }
 };

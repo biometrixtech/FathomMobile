@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, } from '../../../constants';
 import { onboardingUtils, } from '../../../constants/utils';
 import { Alerts, Button, Spacer, TabIcon, Text, } from '../../custom';
 
@@ -29,7 +29,6 @@ import { UserAccountAbout, UserAccountInfo, } from './';
 // import third-party libraries
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import Accordion from 'react-native-collapsible/Accordion';
-import Collapsible from 'react-native-collapsible';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -46,7 +45,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     title: {
-        fontSize: AppFonts.scaleFont(18),
+        fontSize:    AppFonts.scaleFont(18),
+        paddingLeft: AppSizes.paddingSml,
     },
     wrapper: {
         paddingHorizontal: 10,
@@ -59,7 +59,7 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            accordionSection:        0,
+            accordionSection:        [0],
             coachContent:            '',
             isAboutFormValid:        false,
             isConfirmPasswordSecure: true,
@@ -96,7 +96,6 @@ class UserAccount extends Component {
                                     :
                                     {color: AppColors.zeplin.lightGrey}
                         ]}
-                        reverse={true}
                         size={10}
                         type={'material-community'}
                     />
@@ -110,13 +109,12 @@ class UserAccount extends Component {
                                     {color: AppColors.black}
                                     :
                                     {color: AppColors.zeplin.lightGrey},
-                            {fontSize: AppFonts.scaleFont(18)},
                         ]}
                     >
                         {section.header}
                     </Text>
                 </View>
-                { section.index === 1 || (section.index === 2 && this.state.accordionSection === 1) ?
+                { (section.index === 1 && this.state.accordionSection.includes(0)) || (section.index === 2 && this.state.accordionSection.includes(1)) ?
                     <View
                         style={{
                             borderColor:     AppColors.zeplin.light,
@@ -125,8 +123,17 @@ class UserAccount extends Component {
                             marginLeft:      10,
                         }}
                     />
-                    :
-                    null
+                    : (section.index === 1 && (this.state.accordionSection.includes(1) || this.state.accordionSection.length === 0)) ?
+                        <View
+                            style={{
+                                borderColor:     AppColors.zeplin.light,
+                                borderLeftWidth: 1,
+                                height:          20,
+                                marginLeft:      10,
+                            }}
+                        />
+                        :
+                        null
                 }
             </View>
         )
@@ -163,7 +170,7 @@ class UserAccount extends Component {
                 isAboutFormValid = errorsArray.length > 0 ? false : true;
             }
             this.setState({
-                accordionSection: nextStep,
+                accordionSection: [nextStep],
                 coachContent:     errorsArray.length > 0 ? errorsArray : '',
                 isAboutFormValid,
                 isInfoFormValid,
@@ -263,14 +270,14 @@ class UserAccount extends Component {
             },
         ];
         return (
-            <View style={{flex: 1}}>
-                <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1} : {display: 'none'}],]}>
+            <View style={{flex: 1,}}>
+                <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1,} : {display: 'none',}],]}>
                     <KeyboardAwareScrollView
-                        contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
+                        contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
                         ref={ref => {this.scrollViewRef = ref}}
                     >
                         <Accordion
-                            activeSection={this.state.accordionSection}
+                            activeSections={this.state.accordionSection}
                             onChange={this._setAccordionSection}
                             onHeaderClicked={this._onAccordionHeaderClicked}
                             renderContent={this._renderContent}
@@ -278,31 +285,21 @@ class UserAccount extends Component {
                             sections={SECTIONS}
                             underlayColor={AppColors.transparent}
                         />
-                        <View style={{flex: 1, paddingVertical: AppSizes.padding,}}>
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'column', justifyContent: 'flex-end', paddingVertical: AppSizes.padding,}}>
                             <Button
-                                backgroundColor={isFormValid ? AppColors.zeplin.yellow : AppColors.white}
-                                buttonStyle={{alignSelf: 'center', width: '75%',}}
-                                containerViewStyle={{flex: 1, justifyContent: 'flex-end', marginLeft: 0, marginRight: 10, width: '100%',}}
-                                color={isFormValid ? AppColors.white : AppColors.zeplin.light}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
-                                    color: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                outlined={isFormValid ? false : true}
-                                onPress={() => isFormValid ? handleFormSubmit() : null}
-                                raised={false}
-                                rightIcon={{
+                                buttonStyle={{backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white, borderColor: isFormValid ? AppColors.zeplin.yellow : AppColors.zeplin.light, borderWidth: 1, width: '75%',}}
+                                containerStyle={{alignItems: 'center',}}
+                                icon={isFormValid ? {
                                     color: AppColors.white,
                                     name:  'chevron-right',
                                     size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                    style: {width: '25%',},
+                                } : null}
+                                iconRight={true}
+                                onPress={() => isFormValid ? handleFormSubmit() : {}}
                                 title={`${this.props.user.id ? 'Update' : 'Create'} Account`}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.light, fontSize: AppFonts.scaleFont(16), width: isFormValid ? '75%' : '100%',}}
+                                type={'outline'}
                             />
                             <TouchableHighlight
                                 onPress={() => togglePrivacyPolicyWebView()}

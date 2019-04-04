@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-06-28 11:41:51
  */
 
-import { Alert, AsyncStorage, Platform, } from 'react-native';
+import { Alert, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -13,6 +13,7 @@ import { Actions as DispatchActions, MyPlan as MyPlanConstants, } from '../const
 import { Actions as RouterActions, } from 'react-native-router-flux';
 import { AppColors, AppStyles } from '../constants';
 import { store } from '../store';
+import AsyncStorage from '@react-native-community/async-storage';
 import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
@@ -828,7 +829,7 @@ const UTIL = {
         inputStyle.borderLeftWidth = 0;
         inputStyle.borderRightWidth = 0;
         inputStyle.borderTopWidth = 0;
-        inputStyle.color = AppColors.primary.yellow.hundredPercent;
+        inputStyle.color = AppColors.zeplin.yellow;
         inputStyle.textAlign = 'center';
         inputStyle.fontFamily = AppStyles.robotoBold.fontFamily;
         inputStyle.fontWeight = AppStyles.robotoBold.fontWeight;

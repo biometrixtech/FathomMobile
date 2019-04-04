@@ -124,7 +124,7 @@ class KitOwnerView extends Component {
                                     title={'OWNER'}
                                     containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                     rightTitle={'Erase Owner'}
-                                    rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
+                                    rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.zeplin.yellow, }]}
                                     onPress={() => Actions.refresh({ isResetModalVisible: true })}
                                     hideChevron
                                 />
@@ -134,7 +134,7 @@ class KitOwnerView extends Component {
                                         title={'OWNER'}
                                         containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                         rightTitle={'Save'}
-                                        rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
+                                        rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.zeplin.yellow, }]}
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))

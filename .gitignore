@@ -29,10 +29,6 @@ build/
 .gradle
 local.properties
 *.iml
-android/.settings/
-*.bundle
-node_modules*.png
-assets_*.png
 
 # node.js
 #
@@ -56,14 +52,5 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-
-# Personal
-*.mobileprovision
-
 # Bundle artifact
 *.jsbundle
-**/public/bundle.js
-**/public/src/assets/
-
-# Test
-**/__coverage__/*

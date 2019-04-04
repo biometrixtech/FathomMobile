@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:31:04 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-04-23 18:38:09
- */
-
 /**
  * Threshold Config
  */
@@ -15,25 +8,25 @@ import AppColors from './colors';
 export default {
     acwr: [
         { max: Number.POSITIVE_INFINITY, min: 1.5, color: AppColors.secondary.red.hundredPercent },
-        { max: 1.5, min: 1.3, color: AppColors.primary.yellow.hundredPercent },
-        { max: 0.8, min: Number.NEGATIVE_INFINITY, color: AppColors.primary.yellow.hundredPercent },
+        { max: 1.5, min: 1.3, color: AppColors.zeplin.yellow },
+        { max: 0.8, min: Number.NEGATIVE_INFINITY, color: AppColors.zeplin.yellow },
         { max: 1.3, min: 0.8, color: AppColors.primary.grey.hundredPercent },
     ],
     fatigueRateAcrossDays: [
         { max: -5, min: Number.NEGATIVE_INFINITY, color: AppColors.secondary.red.hundredPercent },
-        { max: -1, min: -5, color: AppColors.primary.yellow.hundredPercent },
+        { max: -1, min: -5, color: AppColors.zeplin.yellow },
     ],
     fatigueRateSingleDay: [
         { max: -20, min: Number.NEGATIVE_INFINITY, color: AppColors.secondary.red.hundredPercent },
-        { max: -10, min: -19.99, color: AppColors.primary.yellow.hundredPercent },
+        { max: -10, min: -19.99, color: AppColors.zeplin.yellow },
     ],
     movementQualityScore: [
         { max: 70, min: Number.NEGATIVE_INFINITY, color: AppColors.secondary.red.hundredPercent },
-        { max: 88, min: 70, color: AppColors.primary.yellow.hundredPercent },
+        { max: 88, min: 70, color: AppColors.zeplin.yellow },
     ],
     gfrDist: [
         { max: Number.POSITIVE_INFINITY, min: 10, color: AppColors.secondary.red.hundredPercent },
-        { max: 9.99, min: 5, color: AppColors.primary.yellow.hundredPercent },
+        { max: 9.99, min: 5, color: AppColors.zeplin.yellow },
     ],
     chart: {
         acwrTotalAccel7: [
