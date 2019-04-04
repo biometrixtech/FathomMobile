@@ -41,10 +41,19 @@ import { Alerts, Button, Card, FormInput, ListItem, Spacer, TabIcon, Text, } fro
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    contentWrapper: {
+        alignItems:      'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+        justifyContent:  'center',
+    },
     background: {
         backgroundColor: AppColors.secondary.blue.hundredPercent,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
+    },
+    imageBackground: {
+        height: AppSizes.screen.height,
+        width:  AppSizes.screen.width,
     },
     mainLogo: {
         width: AppSizes.screen.widthThird,
@@ -56,9 +65,11 @@ const Wrapper = props => Platform.OS === 'ios' ?
         <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
             <ImageBackground
                 source={require('../../../assets/images/standard/start.png')}
-                style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
+                style={[AppStyles.containerCentered, styles.imageBackground,]}
             >
-                {props.children}
+                <View style={[styles.imageBackground, styles.contentWrapper,]}>
+                    {props.children}
+                </View>
             </ImageBackground>
         </KeyboardAvoidingView>
     ) :
@@ -68,7 +79,9 @@ const Wrapper = props => Platform.OS === 'ios' ?
                 source={require('../../../assets/images/standard/start.png')}
                 style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
             >
-                {props.children}
+                <View style={[styles.imageBackground, styles.contentWrapper,]}>
+                    {props.children}
+                </View>
             </ImageBackground>
         </View>
     );

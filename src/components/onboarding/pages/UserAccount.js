@@ -170,7 +170,7 @@ class UserAccount extends Component {
                 isAboutFormValid = errorsArray.length > 0 ? false : true;
             }
             this.setState({
-                accordionSection: nextStep,
+                accordionSection: [nextStep],
                 coachContent:     errorsArray.length > 0 ? errorsArray : '',
                 isAboutFormValid,
                 isInfoFormValid,

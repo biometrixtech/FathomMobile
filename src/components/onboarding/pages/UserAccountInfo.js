@@ -145,7 +145,7 @@ class UserAccountInfo extends Component {
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                                        icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
+                                        icon={isPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword()}
                                         size={24}
                                     />
@@ -184,7 +184,7 @@ class UserAccountInfo extends Component {
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                                        icon={isConfirmPasswordSecure ? 'visibility' : 'visibility-off'}
+                                        icon={isConfirmPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword(true)}
                                         size={24}
                                     />
