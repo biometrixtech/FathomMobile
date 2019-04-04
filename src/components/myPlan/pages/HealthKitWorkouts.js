@@ -95,12 +95,12 @@ class HealthKitWorkouts extends PureComponent {
         this.state = {
             delayTimerId:        null,
             isEditingDuration:   false,
-            isSlideUpPanelOpen:  false,
             pageIndex:           0,
             showAddContinueBtns: false,
             showRPEPicker:       false,
         };
         this._activityRPERef = {};
+        this._hkPanel = {};
         this.pages = {};
         this.scrollViewHealthKitOverviewRef = {};
         this.scrollViewHealthKitRef = [];
@@ -212,7 +212,7 @@ class HealthKitWorkouts extends PureComponent {
 
     render = () => {
         const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
-        const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
+        const { isEditingDuration, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         return(
             <View style={{flex: 1,}}>
@@ -247,7 +247,7 @@ class HealthKitWorkouts extends PureComponent {
                                         <TabIcon
                                             color={AppColors.zeplin.light}
                                             icon={'help'}
-                                            onPress={() => this.setState({ isSlideUpPanelOpen: !this.state.isSlideUpPanelOpen, })}
+                                            onPress={() => this._hkPanel.show()}
                                             reverse={false}
                                             size={20}
                                             type={'material'}
@@ -369,7 +369,7 @@ class HealthKitWorkouts extends PureComponent {
                                             }
                                             style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 5, padding: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
                                         >
-                                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
+                                            <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -465,8 +465,8 @@ class HealthKitWorkouts extends PureComponent {
 
                 <SlidingUpPanel
                     allowDragging={false}
-                    startCollapsed={true}
-                    visible={isSlideUpPanelOpen}
+                    backdropOpacity={0.8}
+                    ref={ref => this._hkPanel = ref}
                 >
                     <View style={{flex: 1, flexDirection: 'column',}}>
                         <View style={{flex: 1,}} />
@@ -477,7 +477,7 @@ class HealthKitWorkouts extends PureComponent {
                                     containerStyle={[{flex: 1,}]}
                                     icon={'close'}
                                     iconStyle={[{color: AppColors.black, opacity: 0.3,}]}
-                                    onPress={() => this.setState({ isSlideUpPanelOpen: !this.state.isSlideUpPanelOpen, })}
+                                    onPress={() => this._hkPanel.hide()}
                                     reverse={false}
                                     size={30}
                                     type={'material-community'}

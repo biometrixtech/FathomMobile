@@ -1047,13 +1047,6 @@ class MyPlan extends Component {
                                     <Button
                                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                         containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
-                                        icon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        iconRight={true}
                                         onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
                                         titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
@@ -1383,16 +1376,9 @@ class MyPlan extends Component {
                                     <Button
                                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                         containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
-                                        icon={{
-                                            color: AppColors.white,
-                                            name:  'chevron-right',
-                                            size:  AppFonts.scaleFont(24),
-                                            style: {flex: 1,},
-                                        }}
-                                        iconRight={true}
                                         onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
                                         title={completedExercises.length > 0 ? 'Continue' : 'Start'}
-                                        textStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                        titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     />
                                 </View>
                             </View>
@@ -1637,22 +1623,10 @@ class MyPlan extends Component {
                                   <Spacer size={isFunctionalStrengthCollapsed ? 12 : 20}/>
                                   { isFunctionalStrengthCollapsed ?
                                       <Button
-                                          buttonStyle={{backgroundColor: isFSCalculating ? AppColors.white : AppColors.zeplin.yellow,}}
+                                          buttonStyle={{backgroundColor: isFSCalculating ? AppColors.white : AppColors.zeplin.yellow, borderColor: AppColors.zeplin.yellow, }}
                                           containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                           loading={isFSCalculating}
                                           loadingProps={{color: AppColors.zeplin.yellow,}}
-                                          outlined
-                                          icon={isFSCalculating ?
-                                              null
-                                              :
-                                              {
-                                                  color: AppColors.white,
-                                                  name:  'chevron-right',
-                                                  size:  AppFonts.scaleFont(24),
-                                                  style: {flex: 1,},
-                                              }
-                                          }
-                                          iconRight={true}
                                           onPress={() => isFSCalculating ?
                                               null
                                               : (isFSEligible && functionalStrength && Object.keys(functionalStrength).length === 0) ?
@@ -1662,6 +1636,7 @@ class MyPlan extends Component {
                                           }
                                           title={isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
                                           titleStyle={{color: isFSCalculating ? AppColors.zeplin.yellow : AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                          type={'outline'}
                                       />
                                       :
                                       <Text
@@ -1731,7 +1706,7 @@ class MyPlan extends Component {
                 { isFunctionalStrengthCollapsed ?
                     <View>
                         <Button
-                            buttonStyle={{backgroundColor: logActivityButtonBackgroundColor, borderColor: logActivityButtonBackgroundColor, justifyContent: 'space-between',}}
+                            buttonStyle={{backgroundColor: logActivityButtonBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? logActivityButtonBackgroundColor : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
                             containerStyle={{marginLeft: 22, marginRight: 22,}}
                             icon={{
                                 color: logActivityButtonColor,
@@ -1746,7 +1721,7 @@ class MyPlan extends Component {
                         <Spacer size={10} />
                         { !offDaySelected ?
                             <Button
-                                buttonStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.yellow, justifyContent: 'space-between',}}
+                                buttonStyle={{backgroundColor: AppColors.white, borderColor: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
                                 containerStyle={{marginLeft: 22, marginRight: 22,}}
                                 icon={{
                                     color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText,

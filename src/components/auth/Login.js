@@ -281,7 +281,6 @@ class Login extends Component {
                     <Alerts
                         error={this.state.resultMsg.error}
                         extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
-                        status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                     />
                     <FormInput

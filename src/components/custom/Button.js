@@ -27,6 +27,10 @@ class CustomButton extends Component {
         props.buttonStyle = { borderRadius: 4, ...props.buttonStyle, };
         props.titleStyle = { textAlign: 'center', ...props.titleStyle, ...AppFonts.robotoMedium, };
 
+        if(props.type === 'outline') {
+            props.buttonStyle.borderWidth = 1;
+        }
+
         return props;
     }
 
