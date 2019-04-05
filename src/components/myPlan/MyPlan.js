@@ -147,9 +147,7 @@ class MyPlan extends Component {
                     isPostPracticeSurveyCompleted: false,
                 }
             );
-            this.goToPageTimer = _.delay(() => {
-                this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj));
-            }, 500);
+            this.goToPageTimer = _.delay(() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj)), 500);
             this.setState({
                 prepare: Object.assign({}, this.state.prepare, {
                     finishedRecovery:           planObj.pre_recovery_completed || this.state.prepare.finishedRecovery,
@@ -393,9 +391,7 @@ class MyPlan extends Component {
                 let newTrain = Object.assign({}, this.state.train, {
                     postPracticeSurveys: dailyPlanObj ? dailyPlanObj.training_sessions : [],
                 });
-                this.goToPageTimer = _.delay(() => {
-                    this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj));
-                }, 500);
+                this.goToPageTimer = _.delay(() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj)), 500);
                 if(shouldClearCompletedExercises) {
                     this.props.clearCompletedExercises();
                 }
@@ -582,8 +578,8 @@ class MyPlan extends Component {
                 },
                 recover: newRecoverObject,
             },
+            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: !areAllDeleted, }), 500); }
         );
-        this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: !areAllDeleted, }), 500);
         this.props.clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => this.props.postSessionSurvey(newPostSession))
             .then(response => {
@@ -1137,11 +1133,7 @@ class MyPlan extends Component {
                             if(!hasNextExercise && isUnChecked) {
                                 this.setState(
                                     { isSelectedExerciseModalOpen: false, },
-                                    () => {
-                                        this.goToPageTimer = _.delay(() => {
-                                            this.setState({ isPrepareExerciseCompletionModalOpen: true, });
-                                        }, 750)
-                                    }
+                                    () => { this.goToPageTimer = _.delay(() => this.setState({ isPrepareExerciseCompletionModalOpen: true, }), 750); }
                                 );
                             }
                         }}
@@ -1424,11 +1416,7 @@ class MyPlan extends Component {
                             if(!hasNextExercise) {
                                 this.setState(
                                     { isSelectedExerciseModalOpen: false, },
-                                    () => {
-                                        this.goToPageTimer = _.delay(() => {
-                                            this.setState({ isRecoverExerciseCompletionModalOpen: true, });
-                                        }, 750)
-                                    }
+                                    () => { this.goToPageTimer = _.delay(() => this.setState({ isRecoverExerciseCompletionModalOpen: true, }), 750); }
                                 );
                             }
                         }}
