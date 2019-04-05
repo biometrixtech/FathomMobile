@@ -50,7 +50,6 @@ class WheelScrollPicker extends Component {
     }
 
     componentDidMount = () => {
-        console.log(this.props, this.props.selectedIndex);
         if (this.props.selectedIndex) {
             setTimeout(() => {
                 this.scrollToIndex(this.props.selectedIndex);
