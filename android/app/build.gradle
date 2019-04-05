@@ -172,11 +172,7 @@ android {
             }
         }
         variant.outputs.all {
-            if(variant.name == "release") {
-                outputFileName = "FathomAI.apk"
-            } else {
-                outputFileName = "${parent.name}-${variant.name}-${variant.versionName}.apk"
-            }
+            outputFileName = "FathomAI-${variant.versionName}.apk"
         }
     }
     sourceSets {
