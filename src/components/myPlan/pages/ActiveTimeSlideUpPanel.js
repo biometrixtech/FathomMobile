@@ -16,12 +16,11 @@ import { Platform, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
-import Modal from 'react-native-modalbox';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, Text, WheelScrollPicker, } from '../../custom';
+import { Button, FathomModal, Spacer, Text, WheelScrollPicker, } from '../../custom';
 
 /* Component ==================================================================== */
 class ActiveTimeSlideUpPanel extends Component {
@@ -40,15 +39,9 @@ class ActiveTimeSlideUpPanel extends Component {
         const { changeSelectedActiveTime, isRecover, isSlideUpPanelOpen, selectedActiveTime, toggleSlideUpPanel, } = this.props;
         /*eslint no-return-assign: 0*/
         return(
-            <Modal
-                backdropColor={AppColors.zeplin.darkNavy}
-                backdropOpacity={0.8}
-                backdropPressToClose={false}
-                coverScreen={true}
-                isOpen={isSlideUpPanelOpen}
-                style={{backgroundColor: AppColors.transparent,}}
-                swipeToClose={false}
-                useNativeDriver={false}
+            <FathomModal
+                isVisible={isSlideUpPanelOpen}
+                style={{margin: 0,}}
             >
                 <SlidingUpPanel
                     allowDragging={false}
@@ -121,7 +114,7 @@ class ActiveTimeSlideUpPanel extends Component {
                         <Spacer size={Platform.OS === 'ios' ? 0 : 30} />
                     </View>
                 </SlidingUpPanel>
-            </Modal>
+            </FathomModal>
         )
     }
 }

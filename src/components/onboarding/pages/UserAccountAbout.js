@@ -109,7 +109,7 @@ class UserAccountAbout extends Component {
                     inputRef={ref => this.inputs.confirm_password = ref}
                     keyboardType={'number-pad'}
                     label={user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}
-                    labelStyle={[styles.inputLabel]}
+                    labelStyle={[styles.inputLabel, {paddingLeft: 0,}]}
                     onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.zeplin.lightSlate}

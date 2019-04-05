@@ -264,7 +264,7 @@ class SoreBodyPart extends Component {
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
-                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.padding,}}>
+                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center',}}>
                         <SoreBodyPartScaleButton
                             extraStyles={{marginRight: AppSizes.padding,}}
                             isSelected={this.state.type === 'all-good'}
@@ -286,6 +286,7 @@ class SoreBodyPart extends Component {
                         />
                     </View>
                 </Tooltip>
+                <Spacer size={AppSizes.padding} />
                 { showScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}

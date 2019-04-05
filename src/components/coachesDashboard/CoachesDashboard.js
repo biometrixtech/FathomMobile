@@ -20,7 +20,6 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
-import Modal from 'react-native-modalbox';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import moment from 'moment';
 
@@ -31,7 +30,7 @@ import { AppUtil, PlanLogic, } from '../../lib';
 
 // Components
 import { AthleteComplianceModal, } from './pages';
-import { Button, CoachesDashboardTabBar, FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
+import { Button, CoachesDashboardTabBar, FathomModal, FathomPicker, Spacer, TabIcon, Text, } from '../custom/';
 
 // Tabs titles
 const tabs = ['TODAY', 'THIS WEEK'];
@@ -157,8 +156,6 @@ class CoachesDashboard extends Component {
             todayFilter:            'view_all',
             thisWeekFilter:         'view_all',
         };
-        this._athleteCardModalRef = {};
-        this._complianceModalRef = {};
         this.renderTab = this.renderTab.bind(this);
     }
 
@@ -265,14 +262,7 @@ class CoachesDashboard extends Component {
     }
 
     _toggleComplianceModal = () => {
-        if(!this.state.isComplianceModalOpen) {
-            this.setState({ isComplianceModalOpen: true, });
-        } else {
-            this._complianceModalRef.close();
-            _.delay(() => {
-                this.setState({ isComplianceModalOpen: false, });
-            }, 500);
-        }
+        this.setState({ isComplianceModalOpen: !this.state.isComplianceModalOpen, });
     }
 
     renderAthleteCardModal = () => {
@@ -292,12 +282,7 @@ class CoachesDashboard extends Component {
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             icon={'close'}
                             iconStyle={[{color: AppColors.black, paddingRight: AppSizes.paddingLrg, paddingTop: AppSizes.paddingLrg,}]}
-                            onPress={() => {
-                                this._athleteCardModalRef.close();
-                                _.delay(() => {
-                                    this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, });
-                                }, 500);
-                            }}
+                            onPress={() => this.setState({ isAthleteCardModalOpen: false, selectedAthlete: null, selectedAthletePage: 0, })}
                             reverse={false}
                             size={30}
                             type={'material-community'}
@@ -895,26 +880,21 @@ class CoachesDashboard extends Component {
                     {this.renderToday(0, selectedTeam ? selectedTeam.daily_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [], complianceColor, selectedTeam ? selectedTeam.weekly_insights : [])}
                     {this.renderThisWeek(1, selectedTeam ? selectedTeam.weekly_insights : [], selectedTeam ? selectedTeam.athletes : [], selectedTeam ? selectedTeam.compliance : [])}
                 </ScrollableTabView>
-                { isComplianceModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkBlue}
-                        backdropOpacity={0.8}
-                        backdropPressToClose={false}
-                        coverScreen={true}
-                        isOpen={isComplianceModalOpen}
-                        position={'center'}
-                        ref={ref => {this._complianceModalRef = ref;}}
+                <FathomModal
+                    isVisible={isComplianceModalOpen}
+                    style={{alignItems: 'center', margin: 0,}}
+                >
+                    <View
                         style={[
                             AppStyles.modalShadowEffect,
                             Platform.OS === 'ios' ? {} : {elevation: 2},
                             {
-                                borderRadius: 5,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                width:        AppSizes.screen.width * 0.85,
+                                backgroundColor: AppColors.white,
+                                borderRadius:    5,
+                                height:          AppSizes.screen.heightThreeQuarters,
+                                width:           AppSizes.screen.width * 0.85,
                             }
                         ]}
-                        swipeToClose={false}
-                        useNativeDriver={false}
                     >
                         <AthleteComplianceModal
                             completedAthletes={completedAthletes}
@@ -926,36 +906,27 @@ class CoachesDashboard extends Component {
                             toggleComplianceModal={this._toggleComplianceModal}
                             trainingCompliance={trainingCompliance}
                         />
-                    </Modal>
-                    :
-                    null
-                }
-                { isAthleteCardModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkBlue}
-                        backdropOpacity={0.8}
-                        backdropPressToClose={false}
-                        coverScreen={true}
-                        isOpen={isAthleteCardModalOpen}
-                        position={'center'}
-                        ref={ref => {this._athleteCardModalRef = ref;}}
+                    </View>
+                </FathomModal>
+                <FathomModal
+                    isVisible={isAthleteCardModalOpen}
+                    style={{alignItems: 'center', margin: 0,}}
+                >
+                    <View
                         style={[
                             AppStyles.modalShadowEffect,
                             Platform.OS === 'ios' ? {} : {elevation: 2},
                             {
-                                borderRadius: 5,
-                                height:       AppSizes.screen.heightThreeQuarters,
-                                width:        AppSizes.screen.width * 0.9,
+                                backgroundColor: AppColors.white,
+                                borderRadius:    5,
+                                height:          AppSizes.screen.heightThreeQuarters,
+                                width:           AppSizes.screen.width * 0.9,
                             }
                         ]}
-                        swipeToClose={false}
-                        useNativeDriver={false}
                     >
                         {this.renderAthleteCardModal()}
-                    </Modal>
-                    :
-                    null
-                }
+                    </View>
+                </FathomModal>
             </View>
         );
     }

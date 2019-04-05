@@ -104,7 +104,14 @@ class ReadinessSurvey extends Component {
         this.sportScheduleBuilderRefs = [];
         this.pages = {};
         this.pickerTrainedAlreadyRefs = {};
+        this.timer = {};
     }
+
+    componentWillUnmount = () => {
+        // clear timer
+        clearInterval(this.timer);
+    }
+
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
@@ -204,7 +211,7 @@ class ReadinessSurvey extends Component {
             newSoreBodyParts,
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
-        _.delay(() => {
+        this.timer = _.delay(() => {
             this._renderNextPage(currentPage, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid);
         }, 500);
     }
@@ -244,14 +251,16 @@ class ReadinessSurvey extends Component {
     }
 
     _scrollToBottom = scrollViewRef => {
-        _.delay(() => {
-            scrollViewRef.scrollToEnd({ animated: true, });
-        }, 500);
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollToEnd({ animated: true, });
+            }, 500);
+        }
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
-        if(myComponentsLocation) {
-            _.delay(() => {
+        if(myComponentsLocation && scrollViewRef) {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
@@ -261,10 +270,12 @@ class ReadinessSurvey extends Component {
         }
     }
 
-    _scrollToTop = (scrollViewRef) => {
-        _.delay(() => {
-            scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        }, 500);
+    _scrollToTop = scrollViewRef => {
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+            }, 500);
+        }
     }
 
     _scrollViewEndDrag = event => {

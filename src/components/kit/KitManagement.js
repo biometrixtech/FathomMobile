@@ -23,7 +23,6 @@ import {
 import { Actions } from 'react-native-router-flux';
 import Collapsible from 'react-native-collapsible';
 import ModalDropdown from 'react-native-modal-dropdown';
-import Modal from 'react-native-modalbox';
 import Toast, {DURATION} from 'react-native-easy-toast';
 import Egg from 'react-native-egg';
 
@@ -31,7 +30,7 @@ import Egg from 'react-native-egg';
 import { Roles, BLEConfig, AppColors, AppStyles, AppSizes, AppFonts } from '../../constants/';
 
 // Components
-import { Spacer, Text, ListItem, Card, Button, FormInput, FormLabel } from '../custom/';
+import { Button, Card, FathomModal, FormInput, FormLabel, ListItem, Spacer, Text, } from '../custom/';
 
 const font18 = AppFonts.scaleFont(18);
 const font14 = AppFonts.scaleFont(14);
@@ -219,13 +218,9 @@ class KitManagementView extends Component {
             >
                 <Text style={{ paddingLeft: AppSizes.padding, fontSize: font10 }}>{'Step 4: Make sure WiFi light is solid green, then disconnect from kit'}</Text>
             </Egg>
-            <Modal
-                position={'center'}
-                style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                isOpen={this.state.isModal1Visible}
-                backButtonClose
-                swipeToClose={false}
-                onClosed={() => this.setState({ isModal1Visible: false })}
+            <FathomModal
+                isVisible={this.state.isModal1Visible}
+                style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
             >
                 <View onLayout={(ev) => this.resizeModal1(ev)}>
                     <Card title={'Connect to WiFi'}>
@@ -261,14 +256,10 @@ class KitManagementView extends Component {
                         </View>
                     </Card>
                 </View>
-            </Modal>
-            <Modal
-                position={'center'}
-                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, flex: 1 }]}
-                isOpen={this.state.isModal2Visible}
-                backButtonClose
-                swipeToClose={false}
-                onClosed={() => this.setState({ password: '', identity: '', anonymousIdentity: '', isModal2Visible: false, isCollapsed: true }) }
+            </FathomModal>
+            <FathomModal
+                isVisible={this.state.isModal2Visible}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, margin: 0,}]}
             >
                 <Wrapper>
                     <Card title={`${this.state.other ? 'Hidden network' : this.state.SSID} security settings${this.state.other ? '' : ' (if needed'}`}>
@@ -360,14 +351,10 @@ class KitManagementView extends Component {
                         </View>
                     </Card>
                 </Wrapper>
-            </Modal>
-            <Modal
-                position={'center'}
-                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, flex: 1 }]}
-                isOpen={this.state.isModal3Visible}
-                backButtonClose
-                swipeToClose={false}
-                onClosed={() => this.setState({ isModal3Visible: false }) }
+            </FathomModal>
+            <FathomModal
+                isVisible={this.state.isModal3Visible}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, margin: 0,}]}
             >
                 <Wrapper behavior={'padding'}>
                     <Card title={'Gyro Calibration'}>
@@ -397,14 +384,10 @@ class KitManagementView extends Component {
                         />
                     </Card>
                 </Wrapper>
-            </Modal>
-            <Modal
-                position={'center'}
-                style={[AppStyles.containerCentered, this.state.resetModalStyle, { backgroundColor: AppColors.transparent }]}
-                isOpen={this.state.isResetModalVisible}
-                backButtonClose
-                swipeToClose={false}
-                onClosed={() => this.setState({ isResetModalVisible: false })}
+            </FathomModal>
+            <FathomModal
+                isVisible={this.state.isResetModalVisible}
+                style={[AppStyles.containerCentered, this.state.resetModalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
             >
                 <View onLayout={(ev) => { this.resizeResetModal(ev); }}>
                     <Card title={'Factory Reset'}>
@@ -436,7 +419,7 @@ class KitManagementView extends Component {
                         </View>
                     </Card>
                 </View>
-            </Modal>
+            </FathomModal>
             { this.props.bluetooth.indicator ?
                 <ActivityIndicator
                     style={[AppStyles.activityIndicator]}

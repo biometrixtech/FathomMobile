@@ -15,13 +15,12 @@ import { Image, ImageBackground, StyleSheet, TouchableHighlight, View, } from 'r
 
 // import third-party libraries
 import LinearGradient from 'react-native-linear-gradient';
-import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 // Components
-import { Button, Spacer, Text, } from '../custom';
+import { Button, FathomModal, Spacer, Text, } from '../custom';
 
 const healthKitText = 'Sync with Apple Health to improve recovery recommendations by tracking your workouts.\n\nPlease tap \'All Categories On\' to allow.';
 
@@ -50,14 +49,11 @@ const EnableAppleHealthKit = ({
     isLoading,
     isModalOpen,
 }) => (
-    <Modal
-        backdropColor={AppColors.transparent}
+    <FathomModal
+        backdropColor={AppColors.white}
         backdropOpacity={1}
-        backdropPressToClose={false}
-        coverScreen={true}
-        isOpen={isModalOpen}
-        swipeToClose={false}
-        useNativeDriver={false}
+        isVisible={isModalOpen}
+        style={{margin: 0,}}
     >
         <View style={{flex: 1,}}>
             <ImageBackground
@@ -110,7 +106,7 @@ const EnableAppleHealthKit = ({
                 </LinearGradient>
             </ImageBackground>
         </View>
-    </Modal>
+    </FathomModal>
 )
 
 EnableAppleHealthKit.propTypes = {

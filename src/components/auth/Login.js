@@ -29,7 +29,6 @@ import {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
-import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
@@ -37,7 +36,7 @@ import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } f
 import { onboardingUtils } from '../../constants/utils';
 
 // Components
-import { Alerts, Button, Card, FormInput, ListItem, Spacer, TabIcon, Text, } from '../custom';
+import { Alerts, Button, Card, FathomModal, FormInput, ListItem, Spacer, TabIcon, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -85,7 +84,6 @@ const Wrapper = props => Platform.OS === 'ios' ?
             </ImageBackground>
         </View>
     );
-
 
 /* Component ==================================================================== */
 class Login extends Component {
@@ -298,7 +296,7 @@ class Login extends Component {
                     />
                     <FormInput
                         autoCapitalize={'none'}
-                        blurOnSubmit={ false }
+                        blurOnSubmit={false}
                         clearButtonMode={'never'}
                         containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
                         inputRef={ref => this.inputs.email = ref}
@@ -313,7 +311,7 @@ class Login extends Component {
                     />
                     <FormInput
                         autoCapitalize={'none'}
-                        blurOnSubmit={ true }
+                        blurOnSubmit={true}
                         clearButtonMode={'never'}
                         containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
                         inputRef={ref => this.inputs.password = ref}
@@ -331,12 +329,12 @@ class Login extends Component {
                     <Spacer size={50} />
                     <Button
                         buttonStyle={{backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                        containerStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf, }}
+                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
                         disabledStyle={{width: '100%'}}
                         onPress={() => this._handleFormSubmit()}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
-                        titleStyle={{ color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), width: '100%', }}
+                        titleStyle={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                     <Spacer size={12} />
                     <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
@@ -350,33 +348,25 @@ class Login extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <Modal
-                    backButtonClose
-                    coverScreen
-                    isOpen={this.state.isModalVisible}
-                    onClosed={() => this.setState({ isModalVisible: false, })}
-                    position={'center'}
-                    style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
-                    swipeToClose={false}
-                    useNativeDrive={false}
+                <FathomModal
+                    isVisible={this.state.isModalVisible}
+                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
                 >
                     <View>
                         <Card title={'Select environment'}>
                             <Spacer size={5} />
-                            <View style={{ borderWidth: 1, borderColor: AppColors.border, }}>
-                                {
-                                    _.map(APIConfig.APIs, (key, value) => (
-                                        <ListItem
-                                            bottomDivider={true}
-                                            containerStyle={{ backgroundColor: value === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white, }}
-                                            key={value}
-                                            onPress={() => { this.setState({ isModalVisible: false }); return this.props.setEnvironment(value);  }}
-                                            title={`${value}: ${key}`}
-                                            titleStyle={{ color: value === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(18), }}
-                                            topDivider={true}
-                                        />
-                                    ))
-                                }
+                            <View style={{borderWidth: 1, borderColor: AppColors.border,}}>
+                                { _.map(APIConfig.APIs, (key, value) => (
+                                    <ListItem
+                                        bottomDivider={true}
+                                        containerStyle={{backgroundColor: value === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white,}}
+                                        key={value}
+                                        onPress={() => { this.setState({ isModalVisible: false, }); return this.props.setEnvironment(value); }}
+                                        title={`${value}: ${key}`}
+                                        titleStyle={{color: value === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(18),}}
+                                        topDivider={true}
+                                    />
+                                ))}
                             </View>
                             <Spacer />
                             <Button
@@ -386,7 +376,7 @@ class Login extends Component {
                             />
                         </Card>
                     </View>
-                </Modal>
+                </FathomModal>
 
             </Wrapper>
         );

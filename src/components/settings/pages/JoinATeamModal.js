@@ -17,12 +17,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, } from 'react-native';
 
-// import third-party libraries
-import Modal from 'react-native-modalbox';
-
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Alerts, Button, FormInput, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
+import { Alerts, Button, FathomModal, FormInput, ProgressCircle, Spacer, TabIcon, Text, } from '../../custom';
 
 /* Component ==================================================================== */
 const ModalData = ({
@@ -115,16 +112,9 @@ const JoinATeamModal = ({
     isOpen,
     resultMsg,
 }) => (
-    <Modal
-        backdropColor={AppColors.zeplin.darkNavy}
-        backdropOpacity={0.8}
-        backdropPressToClose={false}
-        coverScreen={true}
-        isOpen={isOpen}
-        position={'top'}
-        style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
-        swipeToClose={false}
-        useNativeDriver={false}
+    <FathomModal
+        isVisible={isOpen}
+        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
     >
         <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon
@@ -146,7 +136,7 @@ const JoinATeamModal = ({
                 resultMsg={resultMsg}
             />
         </View>
-    </Modal>
+    </FathomModal>
 );
 
 JoinATeamModal.propTypes = {

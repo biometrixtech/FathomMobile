@@ -10,7 +10,6 @@ import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
-import Modal from 'react-native-modalbox';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import SplashScreen from 'react-native-splash-screen';
 import moment from 'moment';
@@ -22,7 +21,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { Button, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { Button, FathomModal, ListItem, Spacer, TabIcon, Text } from '../custom/';
 import {
     ActiveRecoveryBlocks,
     ActiveTimeSlideUpPanel,
@@ -125,9 +124,6 @@ class MyPlan extends Component {
         defaultState.healthData = props.healthData;
         defaultState.prepare.finishedRecovery = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false;
         this.state = defaultState;
-        this._postSessionSurveyModalRef = {};
-        this._readinessSurveyModalRef = {};
-        this._singleExerciseItemRef = {};
         this.renderTab = this.renderTab.bind(this);
         this.goToPageTimer = null;
     }
@@ -236,7 +232,7 @@ class MyPlan extends Component {
             this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(prevProps.plan.dailyPlan[0]));
         }
         // if we have workouts, handle RS or PSS
-        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData.workouts.length > 0) {
+        if(!_.isEqual(prevProps.healthData, this.props.healthData) && this.props.healthData && this.props.healthData.workouts && this.props.healthData.workouts.length > 0) {
             let dailyPlanObj = this.props.plan ? this.props.plan.dailyPlan[0] : false;
             if(dailyPlanObj.daily_readiness_survey_completed) {
                 this._goToScrollviewPage(1, () => {
@@ -699,7 +695,7 @@ class MyPlan extends Component {
         // Mark FS as started, if logic passes
         let clonedPlan = _.cloneDeep(this.props.plan);
         let startDate = clonedPlan.dailyPlan[0].functional_strength_session && clonedPlan.dailyPlan[0].functional_strength_session.start_date;
-        if(newCompletedExercises.length === 1 && !startDate) {
+        if(newCompletedExercises && newCompletedExercises.length === 1 && !startDate) {
             let newMyPlan =  _.cloneDeep(this.props.plan.dailyPlan);
             newMyPlan[0].functional_strength_session.start_date = true;
             this.props.markStartedFunctionalStrength(newMyPlan);
@@ -855,6 +851,8 @@ class MyPlan extends Component {
             !this.state.isPostSessionSurveyModalOpen &&
             !this.state.isPrepareSessionsCompletionModalOpen &&
             !this.state.isTrainSessionsCompletionModalOpen &&
+            !this.state.isSelectedExerciseModalOpen &&
+            !this.state.isFunctionalStrengthModalOpen &&
             !this.state.loading &&
             pageIndex
         ) {
@@ -1013,7 +1011,7 @@ class MyPlan extends Component {
                                     loadingProps={{color: AppColors.zeplin.yellow,}}
                                     onPress={() => null}
                                     title={'Calculating...'}
-                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     type={'outline'}
                                 />
                             </View>
@@ -1048,8 +1046,8 @@ class MyPlan extends Component {
                                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                         containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                         onPress={() => this.setState({ prepare: Object.assign({}, prepare, { isActiveRecoveryCollapsed: !prepare.isActiveRecoveryCollapsed })}) }
-                                        title={completedExercises.length > 0 ? 'Continue' : 'Start'}
-                                        titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                        title={completedExercises && completedExercises.length > 0 ? 'Continue' : 'Start'}
+                                        titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     />
                                 </View>
                             </View>
@@ -1105,75 +1103,48 @@ class MyPlan extends Component {
                         </View>
                     </View>
                 }
-                { this.state.isReadinessSurveyModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkNavy}
-                        backdropOpacity={0.8}
-                        backdropPressToClose={false}
-                        coverScreen={true}
-                        isOpen={this.state.isReadinessSurveyModalOpen}
-                        keyboardTopOffset={0}
-                        ref={ref => {this._readinessSurveyModalRef = ref;}}
-                        swipeToClose={false}
-                        useNativeDriver={false}
-                    >
-                        <ReadinessSurvey
-                            dailyReadiness={this.state.dailyReadiness}
-                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                            handleFormChange={this._handleDailyReadinessFormChange}
-                            handleFormSubmit={this._handleReadinessSurveySubmit}
-                            handleHealthDataFormChange={this._handleHealthDataFormChange}
-                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                            handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
-                            healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
-                            soreBodyParts={this.props.plan.soreBodyParts}
-                            typicalSessions={this.props.plan.typicalSessions}
-                            user={this.props.user}
-                        />
-                    </Modal>
-                    :
-                    null
-                }
-                { this.state.isSelectedExerciseModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkBlue}
-                        backdropOpacity={0.9}
-                        backdropPressToClose={false}
-                        coverScreen={true}
-                        isOpen={this.state.isSelectedExerciseModalOpen}
-                        keyboardTopOffset={0}
-                        onClosed={() => this._toggleSelectedExercise(false, false)}
-                        position={'center'}
-                        ref={ref => {this._singleExerciseItemRef = ref;}}
-                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
-                        swipeToClose={false}
-                        useNativeDriver={false}
-                    >
-                        { this.state.selectedExercise.library_id ?
-                            <Exercises
-                                closeModal={() => this._singleExerciseItemRef.close()}
-                                completedExercises={completedExercises}
-                                exerciseList={exerciseList}
-                                handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
-                                    this._handleCompleteExercise(exerciseId, setNumber, 'pre');
-                                    if(!hasNextExercise && isUnChecked) {
-                                        this._singleExerciseItemRef.close();
-                                        _.delay(() => {
-                                            this.setState({ isPrepareExerciseCompletionModalOpen: true, });
-                                        }, 750);
-                                    }
-                                }}
-                                handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                selectedExercise={this.state.selectedExercise}
-                                user={this.props.user}
-                            />
-                            :
-                            null
-                        }
-                    </Modal>
-                    :
-                    null
-                }
+                <FathomModal
+                    isVisible={this.state.isReadinessSurveyModalOpen}
+                    style={{margin: 0,}}
+                >
+                    <ReadinessSurvey
+                        dailyReadiness={this.state.dailyReadiness}
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                        handleFormChange={this._handleDailyReadinessFormChange}
+                        handleFormSubmit={this._handleReadinessSurveySubmit}
+                        handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+                        healthKitWorkouts={this.state.healthData.workouts && this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
+                        soreBodyParts={this.props.plan.soreBodyParts}
+                        typicalSessions={this.props.plan.typicalSessions}
+                        user={this.props.user}
+                    />
+                </FathomModal>
+                <FathomModal
+                  isVisible={this.state.isSelectedExerciseModalOpen}
+                    style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                >
+                    <Exercises
+                        closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                        completedExercises={completedExercises}
+                        exerciseList={exerciseList}
+                        handleCompleteExercise={(exerciseId, setNumber, hasNextExercise, isUnChecked) => {
+                            this._handleCompleteExercise(exerciseId, setNumber, 'pre');
+                            if(!hasNextExercise && isUnChecked) {
+                                this.setState(
+                                    { isSelectedExerciseModalOpen: false, },
+                                    () => _.delay(() => {
+                                        this.setState({ isPrepareExerciseCompletionModalOpen: true, });
+                                    }, 750)
+                                );
+                            }
+                        }}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        selectedExercise={this.state.selectedExercise}
+                        user={this.props.user}
+                    />
+                </FathomModal>
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
                     isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
@@ -1341,7 +1312,7 @@ class MyPlan extends Component {
                                     loadingProps={{color: AppColors.zeplin.yellow,}}
                                     onPress={() => null}
                                     title={'Calculating...'}
-                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                    titleStyle={{color: AppColors.zeplin.yellow, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     type={'outline'}
                                 />
                             </View>
@@ -1377,8 +1348,8 @@ class MyPlan extends Component {
                                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                         containerStyle={{flex: 1, marginLeft: 0, marginRight: 10,}}
                                         onPress={() => this.setState({ recover: Object.assign({}, recover, { isActiveRecoveryCollapsed: !recover.isActiveRecoveryCollapsed }) })}
-                                        title={completedExercises.length > 0 ? 'Continue' : 'Start'}
-                                        titleStyle={{color: AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                        title={completedExercises && completedExercises.length > 0 ? 'Continue' : 'Start'}
+                                        titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                     />
                                 </View>
                             </View>
@@ -1435,48 +1406,30 @@ class MyPlan extends Component {
                         </View>
                     </View>
                 }
-                {
-                    this.state.isSelectedExerciseModalOpen
-                        ?
-                        <Modal
-                            backdropColor={AppColors.zeplin.darkBlue}
-                            backdropOpacity={0.9}
-                            backdropPressToClose={false}
-                            coverScreen={true}
-                            isOpen={this.state.isSelectedExerciseModalOpen}
-                            keyboardTopOffset={0}
-                            onClosed={() => this._toggleSelectedExercise(false, false)}
-                            position={'center'}
-                            ref={ref => {this._singleExerciseItemRef = ref;}}
-                            style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
-                            swipeToClose={false}
-                            useNativeDriver={false}
-                        >
-                            { this.state.selectedExercise.library_id ?
-                                <Exercises
-                                    closeModal={() => this._singleExerciseItemRef.close()}
-                                    completedExercises={completedExercises}
-                                    exerciseList={exerciseList}
-                                    handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
-                                        this._handleCompleteExercise(exerciseId, setNumber, 'post');
-                                        if(!hasNextExercise) {
-                                            this._singleExerciseItemRef.close();
-                                            _.delay(() => {
-                                                this.setState({ isRecoverExerciseCompletionModalOpen: true, });
-                                            }, 750);
-                                        }
-                                    }}
-                                    handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                                    selectedExercise={this.state.selectedExercise}
-                                    user={this.props.user}
-                                />
-                                :
-                                null
+                <FathomModal
+                    isVisible={this.state.isSelectedExerciseModalOpen}
+                    style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                >
+                    <Exercises
+                        closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                        completedExercises={completedExercises}
+                        exerciseList={exerciseList}
+                        handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                            this._handleCompleteExercise(exerciseId, setNumber, 'post');
+                            if(!hasNextExercise) {
+                                this.setState(
+                                    { isSelectedExerciseModalOpen: false, },
+                                    () => _.delay(() => {
+                                        this.setState({ isRecoverExerciseCompletionModalOpen: true, });
+                                    }, 750)
+                                );
                             }
-                        </Modal>
-                        :
-                        null
-                }
+                        }}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        selectedExercise={this.state.selectedExercise}
+                        user={this.props.user}
+                    />
+                </FathomModal>
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'recoverSelectedActiveTime')}
                     isRecover={true}
@@ -1570,7 +1523,7 @@ class MyPlan extends Component {
                 tabLabel={tabs[index]}
             >
                 <Spacer size={30} />
-                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions.length === 0 ?
+                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions && filteredTrainingSessions.length === 0 ?
                     <View>
                         <ListItem
                             disabled={!isDailyReadinessSurveyCompleted}
@@ -1597,7 +1550,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed ?
+                { isDailyReadinessSurveyCompleted && (isFSEligible || functionalStrength && Object.keys(functionalStrength) && Object.keys(functionalStrength).length > 0) && !functionalStrength.completed ?
                       <View>
                           <ListItem
                               disabled={false}
@@ -1629,13 +1582,13 @@ class MyPlan extends Component {
                                           loadingProps={{color: AppColors.zeplin.yellow,}}
                                           onPress={() => isFSCalculating ?
                                               null
-                                              : (isFSEligible && functionalStrength && Object.keys(functionalStrength).length === 0) ?
+                                              : (isFSEligible && functionalStrength && Object.keys(functionalStrength) && Object.keys(functionalStrength).length === 0) ?
                                                   this._toggleFunctionalStrengthModal()
                                                   :
                                                   this.setState({ isFunctionalStrengthCollapsed: false, })
                                           }
-                                          title={isFSCalculating ? 'Calculating...' : completedFSExercises.length > 0 ? 'Continue' : 'Start'}
-                                          titleStyle={{color: isFSCalculating ? AppColors.zeplin.yellow : AppColors.white, flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                          title={isFSCalculating ? 'Calculating...' : completedFSExercises && completedFSExercises.length > 0 ? 'Continue' : 'Start'}
+                                          titleStyle={{color: isFSCalculating ? AppColors.zeplin.yellow : AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                           type={'outline'}
                                       />
                                       :
@@ -1660,7 +1613,7 @@ class MyPlan extends Component {
                       :
                       null
                 }
-                { functionalStrength && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !isFunctionalStrengthCollapsed ?
+                { functionalStrength && Object.keys(functionalStrength) && Object.keys(functionalStrength).length > 0 && !functionalStrength.completed && !isFunctionalStrengthCollapsed ?
                     <ExerciseList
                         completedExercises={completedFSExercises}
                         exerciseList={fsExerciseList}
@@ -1740,71 +1693,42 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                { isPostSessionSurveyModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkNavy}
-                        backdropOpacity={0.8}
-                        backdropPressToClose={false}
-                        coverScreen={true}
-                        isOpen={isPostSessionSurveyModalOpen}
-                        keyboardTopOffset={0}
-                        ref={ref => {this._postSessionSurveyModalRef = ref;}}
-                        swipeToClose={false}
-                        useNativeDriver={false}
-                    >
-                        <PostSessionSurvey
-                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                            handleFormChange={this._handlePostSessionFormChange}
-                            handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
-                            handleHealthDataFormChange={this._handleHealthDataFormChange}
-                            handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
-                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                            healthKitWorkouts={healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
-                            postSession={postSession}
-                            soreBodyParts={this.props.plan.soreBodyParts}
-                            typicalSessions={this.props.plan.typicalSessions}
-                            user={user}
-                        />
-                    </Modal>
-                    :
-                    null
-                }
-                { isSelectedExerciseModalOpen ?
-                    <Modal
-                        backdropColor={AppColors.zeplin.darkNavy}
-                        backdropOpacity={0.8}
-                        backdropPressToClose={true}
-                        coverScreen={true}
-                        isOpen={isSelectedExerciseModalOpen}
-                        keyboardTopOffset={0}
-                        onClosed={() => this._toggleSelectedExercise(false, false)}
-                        position={'center'}
-                        ref={ref => {this._singleExerciseItemRef = ref;}}
-                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: 'rgba(0,0,0,0)',}]}
-                        swipeToClose={true}
-                        useNativeDriver={false}
-                    >
-                        { selectedExercise.library_id ?
-                            <SingleExerciseItem
-                                completedExercises={completedFSExercises}
-                                exercise={MyPlanConstants.cleanExercise(selectedExercise)}
-                                handleCompleteExercise={exerciseId => {
-                                    this._handleCompleteFSExercise(exerciseId);
-                                    this._singleExerciseItemRef.close();
-                                }}
-                                selectedExercise={selectedExercise.library_id}
-                            />
-                            :
-                            null
-                        }
-                    </Modal>
-                    :
-                    null
-                }
+                <FathomModal
+                    isVisible={isPostSessionSurveyModalOpen}
+                    style={{margin: 0,}}
+                >
+                    <PostSessionSurvey
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                        handleFormChange={this._handlePostSessionFormChange}
+                        handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                        postSession={postSession}
+                        soreBodyParts={this.props.plan.soreBodyParts}
+                        typicalSessions={this.props.plan.typicalSessions}
+                        user={user}
+                    />
+                </FathomModal>
+                <FathomModal
+                    isVisible={isSelectedExerciseModalOpen}
+                    style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                >
+                    <SingleExerciseItem
+                        completedExercises={completedFSExercises}
+                        exercise={MyPlanConstants.cleanExercise(selectedExercise)}
+                        handleCompleteExercise={exerciseId => {
+                            this._handleCompleteFSExercise(exerciseId);
+                            this.setState({ isSelectedExerciseModalOpen: false, });
+                        }}
+                        selectedExercise={selectedExercise && selectedExercise.library_id ? selectedExercise.library_id : ''}
+                    />
+                </FathomModal>
                 <SessionsCompletionModal
                     isModalOpen={isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
-                    sessions={postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
+                    sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
                 />
                 <ExerciseCompletionModal
                     completedExercises={completedFSExercises}
@@ -1825,15 +1749,9 @@ class MyPlan extends Component {
                     }}
                     user={user}
                 />
-                <Modal
-                    backdropColor={AppColors.zeplin.darkNavy}
-                    backdropOpacity={0.8}
-                    backdropPressToClose={false}
-                    coverScreen={true}
-                    isOpen={isFunctionalStrengthModalOpen}
-                    keyboardTopOffset={0}
-                    swipeToClose={false}
-                    useNativeDriver={false}
+                <FathomModal
+                    isVisible={isFunctionalStrengthModalOpen}
+                    style={{margin: 0,}}
                 >
                     <FunctionalStrengthModal
                         functionalStrength={this.state.functionalStrength}
@@ -1842,21 +1760,29 @@ class MyPlan extends Component {
                         toggleFSModal={this._toggleFunctionalStrengthModal}
                         typicalSessions={this.props.plan.typicalSessions}
                     />
-                </Modal>
+                </FathomModal>
             </ScrollView>
         );
     };
 
     render = () => {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
-        let isScrollLocked = !this.state.isReadinessSurveyModalOpen && !this.state.isPostSessionSurveyModalOpen && !this.state.loading ? false : true;
+        let isScrollLocked = (
+            this.state.isReadinessSurveyModalOpen ||
+            this.state.isPostSessionSurveyModalOpen ||
+            this.state.loading ||
+            this.state.isSelectedExerciseModalOpen ||
+            this.state.isPrepareSessionsCompletionModalOpen ||
+            this.state.isTrainSessionsCompletionModalOpen ||
+            this.state.isFunctionalStrengthModalOpen
+        );
         return(
             <View style={{flex: 1,}}>
                 <ScrollableTabView
                     locked={isScrollLocked}
                     onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
-                    renderTabBar={() => <ScrollableTabBar locked renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
+                    renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
                     style={{backgroundColor: AppColors.white,}}
                     tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
                     tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}

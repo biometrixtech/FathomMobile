@@ -16,10 +16,10 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppSizes, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { onboardingUtils, } from '../../../constants/utils';
 import { Alerts, Button, Spacer, TabIcon, Text, } from '../../custom';
 
@@ -55,6 +55,28 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const Wrapper = props => Platform.OS === 'ios' ?
+    (
+        <KeyboardAwareScrollView
+            contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
+            keyboardDismissMode={'on-drag'}
+            keyboardShouldPersistTaps={'always'}
+            ref={ref => {this.scrollViewRef = ref}}
+        >
+            {props.children}
+        </KeyboardAwareScrollView>
+    ) :
+    (
+        <ScrollView
+            contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
+            keyboardDismissMode={'on-drag'}
+            keyboardShouldPersistTaps={'always'}
+            ref={ref => {this.scrollViewRef = ref}}
+        >
+            {props.children}
+        </ScrollView>
+    );
+
 class UserAccount extends Component {
     constructor(props) {
         super(props);
@@ -272,10 +294,7 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1,}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1,} : {display: 'none',}],]}>
-                    <KeyboardAwareScrollView
-                        contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
-                        ref={ref => {this.scrollViewRef = ref}}
-                    >
+                    <Wrapper>
                         <Accordion
                             activeSections={this.state.accordionSection}
                             onChange={this._setAccordionSection}
@@ -312,7 +331,7 @@ class UserAccount extends Component {
                                 </Text>
                             </TouchableHighlight>
                         </View>
-                    </KeyboardAwareScrollView>
+                    </Wrapper>
                 </View>
             </View>
         );

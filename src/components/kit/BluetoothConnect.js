@@ -30,12 +30,11 @@ import BleManager from 'react-native-ble-manager';
 import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
-import Modal from 'react-native-modalbox';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppUtil, } from '../../lib';
-import { Button, Coach, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
+import { Button, Coach, FathomModal, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
 import { AppColors, AppFonts, AppSizes, AppStyles, BLEConfig, Roles,  } from '../../constants';
 import { bleUtils } from '../../constants/utils';
 import { ble as BLEActions } from '../../actions';
@@ -545,14 +544,12 @@ class BluetoothConnectView extends Component {
                 </View>
 
             </Pages>
-            <Modal
-                backdropPressToClose={false}
-                coverScreen={true}
-                isOpen={this.state.isAlertModalOpen}
-                swipeToClose={false}
+            <FathomModal
+                isVisible={this.state.isAlertModalOpen}
+                style={{margin: 0,}}
             >
                 <View style={{backgroundColor: AppColors.black, flex: 1}}></View>
-            </Modal>
+            </FathomModal>
         </View>
     );
 }

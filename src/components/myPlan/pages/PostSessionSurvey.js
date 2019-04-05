@@ -62,6 +62,12 @@ class PostSessionSurvey extends Component {
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewRPERef = {};
         this.sportScheduleBuilderRefs = [];
+        this.timer = {};
+    }
+
+    componentWillUnmount = () => {
+        // clear timer
+        clearInterval(this.timer);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -120,7 +126,7 @@ class PostSessionSurvey extends Component {
         } = this.props;
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
-        _.delay(() => {
+        this.timer = _.delay(() => {
             this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         }, 500);
     }
@@ -147,8 +153,8 @@ class PostSessionSurvey extends Component {
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
-        if(myComponentsLocation) {
-            _.delay(() => {
+        if(myComponentsLocation && scrollViewRef) {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
@@ -159,14 +165,16 @@ class PostSessionSurvey extends Component {
     }
 
     _scrollToBottom = scrollViewRef => {
-        _.delay(() => {
-            scrollViewRef.scrollToEnd({ animated: true, });
-        }, 500);
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollToEnd({ animated: true, });
+            }, 500);
+        }
     }
 
     _scrollToTop = scrollViewRef => {
         if(scrollViewRef) {
-            _.delay(() => {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
             }, 500);
         }
