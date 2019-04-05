@@ -765,9 +765,10 @@ const randomizeSessionsCompletionModalText = () => {
 const selectedActiveTimes = (selectedIndex = 2) => {
     let possibleActiveTimes = [5, 10, 15, 20, 25, 30];
     return {
-        recommendedLabels: [' ', ' ', 'Recommended', ' ', ' ', ' '],
-        timeLabels:        ['5 minutes', '10 minutes', '15 minutes', '20 minutes', '25 minutes', '30 minutes'],
-        selectedTime:      possibleActiveTimes[selectedIndex],
+        recommendedLabels:   [' ', ' ', 'Recommended', ' ', ' ', ' '],
+        timeLabels:          ['5 minutes', '10 minutes', '15 minutes', '20 minutes', '25 minutes', '30 minutes'],
+        possibleActiveTimes: possibleActiveTimes,
+        selectedTime:        possibleActiveTimes[selectedIndex],
     }
 }
 

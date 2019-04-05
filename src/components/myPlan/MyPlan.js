@@ -120,9 +120,12 @@ class MyPlan extends Component {
 
     constructor(props) {
         super(props);
+        let dailyPlan = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0] ? props.plan.dailyPlan[0] : false;
         let defaultState = _.cloneDeep(defaultPlanState);
         defaultState.healthData = props.healthData;
-        defaultState.prepare.finishedRecovery = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0].pre_recovery_completed ? true : false;
+        defaultState.prepare.finishedRecovery = dailyPlan && dailyPlan.pre_recovery_completed ? true : false;
+        defaultState.prepareSelectedActiveTime = dailyPlan && dailyPlan.pre_recovery && dailyPlan.pre_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.pre_recovery.minutes_duration) : defaultState.prepareSelectedActiveTime;
+        defaultState.recoverSelectedActiveTime = dailyPlan && dailyPlan.post_recovery && dailyPlan.post_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.post_recovery.minutes_duration) : defaultState.recoverSelectedActiveTime;
         this.state = defaultState;
         this.renderTab = this.renderTab.bind(this);
         this.goToPageTimer = null;

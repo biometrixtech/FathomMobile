@@ -50,6 +50,7 @@ class WheelScrollPicker extends Component {
     }
 
     componentDidMount = () => {
+        console.log(this.props, this.props.selectedIndex);
         if (this.props.selectedIndex) {
             setTimeout(() => {
                 this.scrollToIndex(this.props.selectedIndex);
@@ -95,37 +96,39 @@ class WheelScrollPicker extends Component {
                 :
                 AppColors.transparent;
             return(
-                <View
+                <TouchableHighlight
                     key={index}
-                    style={{
-                        alignItems:     'center',
-                        flexDirection:  'row',
-                        height:         this.props.itemHeight ? this.props.itemHeight : 30,
-                        justifyContent: 'space-between',
-                    }}
+                    onPress={() => this.props.onValueChange(this.props.dataSource[index], index)}
+                    style={{height: this.props.itemHeight ? this.props.itemHeight : 30,}}
+                    underlayColor={AppColors.transparent}
                 >
-                    {item}
-                    <Text
-                        robotoMedium
+                    <View
                         style={{
-                            color:    recommendedColor,
-                            fontSize: AppFonts.scaleFont(15),
-                            opacity:  0.5,
+                            alignItems:     'center',
+                            flex:           1,
+                            flexDirection:  'row',
+                            justifyContent: 'space-between',
                         }}
                     >
-                        {'Recommended'}
-                    </Text>
-                </View>
+                        {item}
+                        <Text
+                            robotoMedium
+                            style={{
+                                color:    recommendedColor,
+                                fontSize: AppFonts.scaleFont(15),
+                                opacity:  0.5,
+                            }}
+                        >
+                            {'Recommended'}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
             )
         }
         return(
             <TouchableHighlight
                 key={index}
-                onPress={() => {
-                    this.scrollToIndex(index);
-                    const selectedValue = this.props.dataSource[index];
-                    this.props.onValueChange(selectedValue, index);
-                }}
+                onPress={() => this.props.onValueChange(this.props.dataSource[index], index)}
                 style={{
                     alignItems:     'center',
                     height:         this.props.itemHeight ? this.props.itemHeight : 30,
