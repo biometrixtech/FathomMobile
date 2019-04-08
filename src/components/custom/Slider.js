@@ -69,7 +69,6 @@ export default class Slider extends React.Component<{}, StateType> {
   });
 
   onMove(gestureState: PanResponderGestureState) {
-      console.log('gestureState', gestureState);
       const { barHeight } = this.state;
       const { maximumValue, minimumValue, } = this.props;
       const newDeltaValue = this.getValueFromBottomOffset(
@@ -124,7 +123,6 @@ export default class Slider extends React.Component<{}, StateType> {
 
   render() {
       const { barHeight, deltaValue, value, } = this.state;
-      console.log('value',value);
       const { maximumValue, minimumValue, } = this.props;
       const cappedValue = this.capValueWithinRange(value + deltaValue, [
           minimumValue,
@@ -136,7 +134,6 @@ export default class Slider extends React.Component<{}, StateType> {
           maximumValue,
           barHeight
       );
-      console.log('bottomOffset',bottomOffset);
       return (
           <View style={[styles.wrapper]}>
               <View style={[styles.container]}>

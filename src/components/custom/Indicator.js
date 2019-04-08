@@ -1,8 +1,8 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-04-23 15:00:54 
- * @Last Modified by:   Vir Desai 
- * @Last Modified time: 2018-04-23 15:00:54 
+ * @Author: Vir Desai
+ * @Date: 2018-04-23 15:00:54
+ * @Last Modified by:   Vir Desai
+ * @Last Modified time: 2018-04-23 15:00:54
  */
 
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         margin:         4,
     },
-    
+
     dot: {
         backgroundColor: 'white',
         borderRadius:    4,
@@ -27,10 +27,6 @@ const styles = StyleSheet.create({
 
 export default class Indicator extends PureComponent {
     static propTypes = {
-        style: ViewPropTypes.style,
-
-        pages:             PropTypes.number.isRequired,
-        progress:          PropTypes.instanceOf(Animated.Value).isRequired,
         indicatorColor:    PropTypes.string.isRequired,
         indicatorOpacity:  PropTypes.number.isRequired,
         indicatorPosition: PropTypes.oneOf([
@@ -39,7 +35,14 @@ export default class Indicator extends PureComponent {
             'bottom',
             'left',
         ]).isRequired,
+        pages:    PropTypes.number.isRequired,
+        progress: PropTypes.instanceOf(Animated.Value),
+        style:    ViewPropTypes.style,
     };
+
+    static defaultProps = {
+        progress: new Animated.Value(0),
+    }
 
     render() {
         let {

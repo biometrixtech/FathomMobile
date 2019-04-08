@@ -346,6 +346,7 @@ UserAccount.propTypes = {
         PropTypes.string,
     ]),
     handleFormChange:           PropTypes.func.isRequired,
+    handleFormSubmit:           PropTypes.func.isRequired,
     isFormValid:                PropTypes.bool.isRequired,
     isUpdatingUser:             PropTypes.bool.isRequired,
     togglePrivacyPolicyWebView: PropTypes.func.isRequired,

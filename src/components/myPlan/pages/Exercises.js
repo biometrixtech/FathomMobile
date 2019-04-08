@@ -205,7 +205,8 @@ class Exercises extends PureComponent {
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
-        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);return(
+        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
+        return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
                 <View
                     onLayout={ev => this._resizeModal(ev)}

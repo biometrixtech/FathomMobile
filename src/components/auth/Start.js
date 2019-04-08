@@ -99,13 +99,15 @@ class Start extends Component {
                         this.login();
                     } else {
                         // clear user reducer
-                        store.dispatch({
-                            type: DispatchActions.LOGOUT
-                        })
+                        if(store) {
+                            store.dispatch({
+                                type: DispatchActions.LOGOUT
+                            });
+                        }
                         // hide splash screen
                         this.hideSplash();
                         // check if we have a maintenance window to alert the user on
-                        if(!this.props.scheduledMaintenance.addressed) {
+                        if(this.props.scheduledMaintenance && !this.props.scheduledMaintenance.addressed) {
                             let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
                             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
                             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
