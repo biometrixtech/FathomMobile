@@ -216,13 +216,15 @@ class ActiveRecoveryBlocks extends Component {
                             <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
                             { isDisabled && !toggleActiveTimeSlideUpPanel ?
                                 null
-                                :
-                                <TabIcon
-                                    color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
-                                    icon={'pencil'}
-                                    size={20}
-                                    type={'material-community'}
-                                />
+                                : recoveryObj && recoveryObj.completed ?
+                                    null
+                                    :
+                                    <TabIcon
+                                        color={AppColors.zeplin.yellow}
+                                        icon={'pencil'}
+                                        size={20}
+                                        type={'material-community'}
+                                    />
                             }
                         </View>
                         <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
@@ -270,13 +272,15 @@ class ActiveRecoveryBlocks extends Component {
                                 <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'EQUIPMENT'}</Text>
                                 { isDisabled && !toggleActiveTimeSlideUpPanel ?
                                     null
-                                    :
-                                    <TabIcon
-                                        color={recoveryObj.completed ? AppColors.zeplin.lightSlate : AppColors.zeplin.yellow}
-                                        icon={'help'}
-                                        size={20}
-                                        type={'material'}
-                                    />
+                                    : recoveryObj && recoveryObj.completed ?
+                                        null
+                                        :
+                                        <TabIcon
+                                            color={AppColors.zeplin.yellow}
+                                            icon={'help'}
+                                            size={20}
+                                            type={'material'}
+                                        />
                                 }
                             </View>
                             <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
