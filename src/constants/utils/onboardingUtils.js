@@ -7,10 +7,7 @@ const onboardingUtils = {
     isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
-        if(
-            user.personal_data.first_name.length === 0 ||
-            user.personal_data.last_name.length === 0
-        ) {
+        if( user.personal_data.first_name.length === 0 || user.personal_data.last_name.length === 0 ) {
             let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
@@ -18,20 +15,15 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if(
-            !isUpdatingUser &&
-            (
-                (!this.isPasswordValid(user.password).isValid && !this.isPasswordValid(user.confirm_password).isValid) ||
-                user.password !== user.confirm_password
-            )
-        ) {
+        } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
-        } else if(
-            user.personal_data.phone_number.length > 0 &&
-            !this.isPhoneNumberValid(user.personal_data.phone_number)
-        ) {
+        } else if( !isUpdatingUser && user.password !== user.confirm_password ) {
+            let newError = this.getInvalidPasswordRules();
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.phone_number.length > 0 && !this.isPhoneNumberValid(user.personal_data.phone_number) ) {
             let newError = 'Your Phone Number must be a valid format (1234567890)';
             errorsArray.push(newError);
             isValid = false;
@@ -180,6 +172,10 @@ const onboardingUtils = {
 
     getPasswordRules() {
         return 'Your password must be 8-16 characters and include a number.';
+    },
+
+    getInvalidPasswordRules() {
+        return 'Passwords do not match.';
     },
 
     hasWhiteSpaces(str) {
