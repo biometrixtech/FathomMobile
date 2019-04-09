@@ -257,7 +257,7 @@ class ResetPassword extends Component {
     }
 
     _scrollToInput = reactNode => {
-        this._scrollWrapper.props.scrollToFocusedInput(reactNode);
+        this._scrollWrapper.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
     }
 
     render = () => {

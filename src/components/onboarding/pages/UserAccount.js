@@ -226,7 +226,7 @@ class UserAccount extends Component {
     }
 
     _scrollToInput = reactNode => {
-        this.scrollViewRef.props.scrollToFocusedInput(reactNode);
+        this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
     }
 
     render = () => {
