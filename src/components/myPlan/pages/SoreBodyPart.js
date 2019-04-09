@@ -222,14 +222,14 @@ class SoreBodyPart extends Component {
                     }
                 </View>
                 { bodyPart.isClearCandidate && isPrevSoreness ?
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                         {'How has it felt the last '}
                         <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                             {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                         </Text>
                     </Text>
                     : isPrevSoreness ?
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {`How ${helpingVerb} your `}
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                                 {bodyPartName}
@@ -237,7 +237,7 @@ class SoreBodyPart extends Component {
                             {' felt?'}
                         </Text>
                         :
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {'My '}
                             <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                                 {bodyPartName}
@@ -264,7 +264,7 @@ class SoreBodyPart extends Component {
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
-                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center',}}>
+                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, borderRadius: 5, flexDirection: 'row', justifyContent: 'center', padding: AppSizes.padding,}}>
                         <SoreBodyPartScaleButton
                             extraStyles={{marginRight: AppSizes.padding,}}
                             isSelected={this.state.type === 'all-good'}
@@ -286,7 +286,6 @@ class SoreBodyPart extends Component {
                         />
                     </View>
                 </Tooltip>
-                <Spacer size={AppSizes.padding} />
                 { showScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}

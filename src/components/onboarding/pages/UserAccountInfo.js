@@ -7,6 +7,7 @@
         isConfirmPasswordSecure={this.state.isConfirmPasswordSecure}
         isPasswordSecure={this.state.isPasswordSecure}
         isUpdatingUser={isUpdatingUser}
+        scrollToInput={this._scrollToInput}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
         updateErrorMessage={this._updateErrorMessage}
@@ -16,7 +17,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, findNodeHandle, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -66,6 +67,7 @@ class UserAccountInfo extends Component {
             isConfirmPasswordSecure,
             isPasswordSecure,
             isUpdatingUser,
+            scrollToInput,
             setAccordionSection,
             toggleShowPassword,
             updateErrorMessage,
@@ -84,6 +86,7 @@ class UserAccountInfo extends Component {
                             label={user.personal_data.first_name.length > 0 ? 'First name' : ' '}
                             labelStyle={[styles.inputLabel]}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.first_name', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => this.focusNextField('last_name')}
                             placeholder={'First name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
@@ -99,6 +102,7 @@ class UserAccountInfo extends Component {
                             label={user.personal_data.last_name.length > 0 ? 'Last name' : ' '}
                             labelStyle={[styles.inputLabel]}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => isUpdatingUser ? setAccordionSection(0, 1) : this.focusNextField('email')}
                             placeholder={'Last name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
@@ -119,6 +123,7 @@ class UserAccountInfo extends Component {
                             label={user.personal_data.email.length > 0 ? 'E-mail address' : ' '}
                             labelStyle={[styles.inputLabel]}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => this.focusNextField('password')}
                             placeholder={'E-mail address'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
@@ -135,7 +140,10 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
                             onEndEditing={() => this.setState({ showPasswordErrorText: false, isPasswordEditedOnce: true, })}
-                            onFocus={() => this.setState({ showPasswordErrorText: true, })}
+                            onFocus={event => {
+                                this.setState({ showPasswordErrorText: true, });
+                                scrollToInput(findNodeHandle(event.target));
+                            }}
                             onSubmitEditing={() => this.focusNextField('confirm_password')}
                             placeholder={'Password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
@@ -175,6 +183,7 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel]}
                             onChangeText={(text) => clearCoachContent('', () => handleFormChange('confirm_password', text))}
                             onEndEditing={() => this.setState({ isConfirmPasswordEditedOnce: true, })}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                             placeholder={'Confirm password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
@@ -233,6 +242,7 @@ UserAccountInfo.propTypes = {
     isConfirmPasswordSecure: PropTypes.bool.isRequired,
     isPasswordSecure:        PropTypes.bool.isRequired,
     isUpdatingUser:          PropTypes.bool.isRequired,
+    scrollToInput:           PropTypes.func.isRequired,
     setAccordionSection:     PropTypes.func.isRequired,
     toggleShowPassword:      PropTypes.func.isRequired,
     updateErrorMessage:      PropTypes.func.isRequired,

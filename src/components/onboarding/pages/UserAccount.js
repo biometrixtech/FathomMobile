@@ -16,7 +16,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -27,7 +27,7 @@ import { Alerts, Button, Spacer, TabIcon, Text, } from '../../custom';
 import { UserAccountAbout, UserAccountInfo, } from './';
 
 // import third-party libraries
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Accordion from 'react-native-collapsible/Accordion';
 
 /* Styles ==================================================================== */
@@ -55,28 +55,6 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAwareScrollView
-            contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
-            keyboardDismissMode={'on-drag'}
-            keyboardShouldPersistTaps={'always'}
-            ref={ref => {this.scrollViewRef = ref}}
-        >
-            {props.children}
-        </KeyboardAwareScrollView>
-    ) :
-    (
-        <ScrollView
-            contentContainerStyle={{flex: 1, justifyContent: 'space-between',}}
-            keyboardDismissMode={'on-drag'}
-            keyboardShouldPersistTaps={'always'}
-            ref={ref => {this.scrollViewRef = ref}}
-        >
-            {props.children}
-        </ScrollView>
-    );
-
 class UserAccount extends Component {
     constructor(props) {
         super(props);
@@ -88,7 +66,6 @@ class UserAccount extends Component {
             isInfoFormValid:         false,
             isPasswordSecure:        true,
         };
-
         this.scrollViewRef = {};
     }
 
@@ -248,6 +225,10 @@ class UserAccount extends Component {
         }
     }
 
+    _scrollToInput = reactNode => {
+        this.scrollViewRef.props.scrollToFocusedInput(reactNode);
+    }
+
     render = () => {
         const {
             componentStep,
@@ -268,6 +249,7 @@ class UserAccount extends Component {
                     isConfirmPasswordSecure={this.state.isConfirmPasswordSecure}
                     isPasswordSecure={this.state.isPasswordSecure}
                     isUpdatingUser={isUpdatingUser}
+                    scrollToInput={this._scrollToInput}
                     setAccordionSection={this._setAccordionSection}
                     toggleShowPassword={this._toggleShowPassword}
                     updateErrorMessage={this._updateErrorMessage}
@@ -282,6 +264,7 @@ class UserAccount extends Component {
                     clearCoachContent={this._clearCoachContent}
                     handleFormChange={handleFormChange}
                     isUpdatingUser={isUpdatingUser}
+                    scrollToInput={this._scrollToInput}
                     setAccordionSection={handleFormSubmit}
                     updateErrorMessage={this._updateErrorMessage}
                     user={user}
@@ -294,7 +277,7 @@ class UserAccount extends Component {
         return (
             <View style={{flex: 1,}}>
                 <View style={[styles.wrapper, [componentStep === currentStep ? {flex: 1,} : {display: 'none',}],]}>
-                    <Wrapper>
+                    <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1,}} innerRef={ref => {this.scrollViewRef = ref}}>
                         <Accordion
                             activeSections={this.state.accordionSection}
                             onChange={this._setAccordionSection}
@@ -331,7 +314,7 @@ class UserAccount extends Component {
                                 </Text>
                             </TouchableHighlight>
                         </View>
-                    </Wrapper>
+                    </KeyboardAwareScrollView>
                 </View>
             </View>
         );

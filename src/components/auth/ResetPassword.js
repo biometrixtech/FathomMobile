@@ -3,10 +3,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Keyboard, View, findNodeHandle, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -18,32 +19,7 @@ import { onboardingUtils, } from '../../constants/utils';
 // Components
 import { Alerts, Button, FormInput, ProgressBar, Spacer, Text, } from '../custom';
 
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({
-    headerWrapper: {
-        alignItems:    'center',
-        flexDirection: 'row',
-    },
-    wrapper: {
-        paddingHorizontal: 10,
-        paddingVertical:   10,
-    },
-});
-
 /* Component ==================================================================== */
-const Wrapper = props => Platform.OS === 'ios' ?
-    (
-        <KeyboardAvoidingView behavior={'padding'} style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
-            {props.children}
-        </KeyboardAvoidingView>
-    )
-    :
-    (
-        <KeyboardAvoidingView style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
-            {props.children}
-        </KeyboardAvoidingView>
-    );
-
 class ResetPassword extends Component {
     static componentName = 'ResetPassword';
 
@@ -77,6 +53,7 @@ class ResetPassword extends Component {
         super(props);
         this._focusNextField = this._focusNextField.bind(this);
         this.inputs = {};
+        this._scrollWrapper = {};
         this.state = {
             isSubmitting: false,
             resultMsg:    {
@@ -279,112 +256,115 @@ class ResetPassword extends Component {
         );
     }
 
+    _scrollToInput = reactNode => {
+        this._scrollWrapper.props.scrollToFocusedInput(reactNode);
+    }
+
     render = () => {
         /*eslint no-return-assign: 0*/
         return (
-            <Wrapper>
-                <View>
-                    <ProgressBar
-                        currentStep={2}
-                        totalSteps={3}
-                    />
-                    <Alerts
-                        status={this.state.resultMsg.status}
-                        success={this.state.resultMsg.success}
-                        error={this.state.resultMsg.error}
-                    />
-                    <Spacer size={20} />
-                    <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
-                        {'Set New Password'}
-                    </Text>
-                    <Spacer size={20} />
-                    <View style={[AppStyles.containerCentered,]}>
-                        <View style={{width: AppSizes.screen.widthFourFifths}}>
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
-                                {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
-                            </Text>
+            <KeyboardAwareScrollView contentContainerStyle={{flexGrow: 1,}} innerRef={ref => {this._scrollWrapper = ref;}}>
+                <View style={{backgroundColor: AppColors.white, flex: 1, justifyContent: 'space-between',}}>
+                    <View>
+                        <ProgressBar
+                            currentStep={2}
+                            totalSteps={3}
+                        />
+                        <Alerts
+                            status={this.state.resultMsg.status}
+                            success={this.state.resultMsg.success}
+                            error={this.state.resultMsg.error}
+                        />
+                        <Spacer size={20} />
+                        <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
+                            {'Set New Password'}
+                        </Text>
+                        <Spacer size={20} />
+                        <View style={[AppStyles.containerCentered,]}>
+                            <View style={{width: AppSizes.screen.widthFourFifths}}>
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
+                                    {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
+                                </Text>
+                            </View>
+                        </View>
+                        <Spacer size={20} />
+                        <View style={[AppStyles.containerCentered,]}>
+                            <FormInput
+                                autoCapitalize={'none'}
+                                blurOnSubmit={ false }
+                                clearButtonMode={'while-editing'}
+                                containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.email = ref}
+                                inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
+                                keyboardType={'email-address'}
+                                onChangeText={text => this._handleFormChange('Email', text)}
+                                onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                                onSubmitEditing={() => this._focusNextField('verification_code')}
+                                placeholder={'email'}
+                                placeholderTextColor={AppColors.zeplin.yellow}
+                                returnKeyType={'next'}
+                                value={this.state.form_values.Email}
+                            />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                blurOnSubmit={ false }
+                                clearButtonMode={'while-editing'}
+                                containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.verification_code = ref}
+                                inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
+                                keyboardType={'default'}
+                                onChangeText={text => this._handleFormChange('VerificationCode', text)}
+                                onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                                onSubmitEditing={() => this._focusNextField('new_password')}
+                                placeholder={'6-digit PIN'}
+                                placeholderTextColor={AppColors.zeplin.yellow}
+                                returnKeyType={'next'}
+                                value={this.state.form_values.VerificationCode}
+                            />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                blurOnSubmit={ false }
+                                clearButtonMode={'while-editing'}
+                                containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.new_password = ref}
+                                inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
+                                keyboardType={'default'}
+                                onChangeText={text => this._handleFormChange('NewPassword', text)}
+                                onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                                onSubmitEditing={() => this._focusNextField('confirm_password')}
+                                placeholder={'new password'}
+                                placeholderTextColor={AppColors.zeplin.yellow}
+                                returnKeyType={'next'}
+                                secureTextEntry={true}
+                                value={this.state.form_values.NewPassword}
+                            />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                blurOnSubmit={ true }
+                                clearButtonMode={'while-editing'}
+                                containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.confirm_password = ref}
+                                inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
+                                keyboardType={'default'}
+                                onChangeText={text => this._handleFormChange('ConfirmPassword', text)}
+                                onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                                placeholder={'confirm new password'}
+                                placeholderTextColor={AppColors.zeplin.yellow}
+                                returnKeyType={'done'}
+                                secureTextEntry={true}
+                                value={this.state.form_values.ConfirmPassword}
+                            />
                         </View>
                     </View>
-                    <Spacer size={20} />
-                    <View style={[AppStyles.containerCentered,]}>
-                        <FormInput
-                            autoCapitalize={'none'}
-                            blurOnSubmit={ false }
-                            clearButtonMode={'while-editing'}
-                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.email = ref}
-                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
-                            keyboardType={'email-address'}
-                            onChangeText={(text) => this._handleFormChange('Email', text)}
-                            onSubmitEditing={() => {
-                                this._focusNextField('verification_code');
-                            }}
-                            placeholder={'email'}
-                            placeholderTextColor={AppColors.zeplin.yellow}
-                            returnKeyType={'next'}
-                            value={this.state.form_values.Email}
-                        />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            blurOnSubmit={ false }
-                            clearButtonMode={'while-editing'}
-                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.verification_code = ref}
-                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
-                            keyboardType={'default'}
-                            onChangeText={(text) => this._handleFormChange('VerificationCode', text)}
-                            onSubmitEditing={() => {
-                                this._focusNextField('new_password');
-                            }}
-                            placeholder={'6-digit PIN'}
-                            placeholderTextColor={AppColors.zeplin.yellow}
-                            returnKeyType={'next'}
-                            value={this.state.form_values.VerificationCode}
-                        />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            blurOnSubmit={ false }
-                            clearButtonMode={'while-editing'}
-                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.new_password = ref}
-                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
-                            keyboardType={'default'}
-                            onChangeText={(text) => this._handleFormChange('NewPassword', text)}
-                            onSubmitEditing={() => {
-                                this._focusNextField('confirm_password');
-                            }}
-                            placeholder={'new password'}
-                            placeholderTextColor={AppColors.zeplin.yellow}
-                            returnKeyType={'next'}
-                            secureTextEntry={true}
-                            value={this.state.form_values.NewPassword}
-                        />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            blurOnSubmit={ true }
-                            clearButtonMode={'while-editing'}
-                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.confirm_password = ref}
-                            inputStyle={[{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}]}
-                            keyboardType={'default'}
-                            onChangeText={(text) => this._handleFormChange('ConfirmPassword', text)}
-                            placeholder={'confirm new password'}
-                            placeholderTextColor={AppColors.zeplin.yellow}
-                            returnKeyType={'done'}
-                            secureTextEntry={true}
-                            value={this.state.form_values.ConfirmPassword}
-                        />
-
-                    </View>
+                    <Button
+                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
+                        disabled={this.state.isSubmitting}
+                        onPress={() => this._handleFormSubmit()}
+                        title={'Confirm'}
+                        titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
+                    />
                 </View>
-                <Button
-                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
-                    disabled={this.state.isSubmitting}
-                    onPress={() => this._handleFormSubmit()}
-                    title={'Confirm'}
-                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(16), }}
-                />
-            </Wrapper>
+            </KeyboardAwareScrollView>
         );
     }
 }

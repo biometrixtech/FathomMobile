@@ -358,10 +358,10 @@ describe('Testing Render of Onboarding Pages', () => {
         renderer.create(<UserAccount componentStep={1} currentStep={1} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} isFormValid={false} isUpdatingUser={false} togglePrivacyPolicyWebView={jest.fn()} user={emptyUser} />);
     });
     it('User Account About', () => {
-        renderer.create(<UserAccountAbout handleFormChange={jest.fn()} setAccordionSection={jest.fn()} updateErrorMessage={jest.fn()} user={emptyUser} />);
+        renderer.create(<UserAccountAbout handleFormChange={jest.fn()} scrollToInput={jest.fn()} setAccordionSection={jest.fn()} updateErrorMessage={jest.fn()} user={emptyUser} />);
     });
     it('User Account Info', () => {
-        renderer.create(<UserAccountInfo handleFormChange={jest.fn()} isConfirmPasswordSecure={false} isPasswordSecure={false} isUpdatingUser={false} setAccordionSection={jest.fn()} toggleShowPassword={jest.fn()} updateErrorMessage={jest.fn()} user={emptyUser} />);
+        renderer.create(<UserAccountInfo handleFormChange={jest.fn()} isConfirmPasswordSecure={false} isPasswordSecure={false} isUpdatingUser={false} scrollToInput={jest.fn()} setAccordionSection={jest.fn()} toggleShowPassword={jest.fn()} updateErrorMessage={jest.fn()} user={emptyUser} />);
     });
     it('Account Details', () => {
         renderer.create(<AccountDetails user={emptyUser} />);
