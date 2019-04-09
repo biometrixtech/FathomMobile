@@ -22,7 +22,7 @@ import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, 
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, Spacer, TabIcon, Text, } from '../../custom';
 import { EnableAppleHealthKit, } from '../../general';
 import { AppUtil, PlanLogic, } from '../../../lib';
 
@@ -38,6 +38,7 @@ import {
 } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 import LinearGradient from 'react-native-linear-gradient';

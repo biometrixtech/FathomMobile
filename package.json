@@ -51,6 +51,7 @@
     "react-native-linear-gradient": "^2.5.4",
     "react-native-modal": "^9.0.0",
     "react-native-modal-dropdown": "^0.6.2",
+    "react-native-pages": "^0.7.0",
     "react-native-progress": "^3.6.0",
     "react-native-push-notification": "^3.1.2",
     "react-native-redux-connectivity": "^0.1.0",

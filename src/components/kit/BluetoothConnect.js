@@ -26,6 +26,7 @@ import {
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import { Icon } from 'react-native-elements';
+import { Pages, } from 'react-native-pages';
 import BleManager from 'react-native-ble-manager';
 import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
@@ -34,7 +35,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { AppUtil, } from '../../lib';
-import { Button, Coach, FathomModal, FormLabel, ListItem, Pages, Spacer, TabIcon, Text, } from '../custom';
+import { Button, Coach, FathomModal, FormLabel, ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { AppColors, AppFonts, AppSizes, AppStyles, BLEConfig, Roles,  } from '../../constants';
 import { bleUtils } from '../../constants/utils';
 import { ble as BLEActions } from '../../actions';
@@ -352,7 +353,7 @@ class BluetoothConnectView extends Component {
         <View style={{ backgroundColor: '#FFFFFF', flex: 1, }} onLayout={this._onLayoutDidChange}>
             <Pages
                 indicatorPosition={'none'}
-                ref={(pages) => { this.pages = pages; }}
+                ref={pages => { this.pages = pages; }}
                 startPage={this.state.index}
             >
 

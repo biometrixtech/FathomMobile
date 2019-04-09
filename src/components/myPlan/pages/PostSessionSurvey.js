@@ -22,7 +22,7 @@ import { ScrollView, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -37,6 +37,7 @@ import {
 } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 

@@ -17,11 +17,12 @@ import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableO
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { FormInput, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { FormInput, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 

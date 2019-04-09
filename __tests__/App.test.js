@@ -19,7 +19,7 @@ import SignUp from '../src/components/auth/SignUp';
 import Start from '../src/components/auth/Start';
 // import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard'; // NOTE: issue with 'new'
 import { AthleteComplianceModal, } from '../src/components/coachesDashboard/pages';
-import { Alerts, AnimatedProgressBar, Button, Card, Checkbox, Coach, CoachesDashboardTabBar, CustomMyPlanNavBar, CustomNavBar, FathomModal, FathomPicker, FathomSlider, FormInput, Indicator, ListItem, Pages, ProgressBar, ProgressCircle, RadioButton, Slider, Spacer, SVGImage, TabIcon, Text, Tooltip, WebViewPage, WheelScrollPicker, } from '../src/components/custom';
+import { Alerts, AnimatedProgressBar, Button, Card, Checkbox, Coach, CoachesDashboardTabBar, CustomMyPlanNavBar, CustomNavBar, FathomModal, FathomPicker, FathomSlider, FormInput, Indicator, ListItem, ProgressBar, ProgressCircle, RadioButton, Slider, Spacer, SVGImage, TabIcon, Text, Tooltip, WebViewPage, WheelScrollPicker, } from '../src/components/custom';
 import { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView, } from '../src/components/general';
 // TODO: ../src/components/kit
 /*import { ActiveRecoveryBlocks, ActiveTimeSlideUpPanel, AreasOfSoreness, BackNextButtons, DefaultListGap, ExerciseCompletionModal, ExerciseList, ExerciseListItem,
@@ -149,9 +149,6 @@ describe('Testing Render of Custom Pages', () => {
     });
     it('List Item', () => {
         renderer.create(<ListItem />);
-    });
-    it('Pages', () => {
-        renderer.create(<Pages />);
     });
     it('Progress Bar', () => {
         renderer.create(<ProgressBar currentStep={2} totalSteps={5} />);
