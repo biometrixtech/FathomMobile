@@ -50,7 +50,6 @@ Custom build components to help us with any dynamic functionality that the libra
 | Feature | Summary | Location |
 | --- | --- | --- |
 | Animated Progress Bar | Hacked from [Progress Bar - Animated](https://github.com/rafaelmotta/react-native-progress-bar-animated) - Simple, customizable and animated progress bar for React-Native. | Used for our sensor syncing progress bar |
-| Calendar Strip | Hacked from [Calendar Strip](https://github.com/BugiDev/react-native-calendar-strip). | Currently not being used, was created for the ability to see previous days plans |
 | Coach | Previous setup as a "coach" blurb that pops up when there is something to update the user on. | Currently not being used |
 | Custom Progress Circle | Was previously setup for a circle that fills up with progress tracking text. | Currently not being used |
 | Elements | Customizing [RN Elements](https://react-native-training.github.io/react-native-elements/docs/0.19.1/overview.html) | Button, Card, Checkbox, FormInput, FormLabel, Icon, List, ListItem, Text |

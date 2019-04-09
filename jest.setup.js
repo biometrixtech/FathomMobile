@@ -1,6 +1,31 @@
 /* global jest fetch */
 
+// import required third-party libraries
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+
+// setup consts
+const middlewares = [thunk]; // add your middlewares like `redux-thunk`
+const mockStore = configureStore(middlewares);
 let mockFn = jest.fn();
+
+// run reducer mock
+jest.mock('./src/store', () => {
+    let bleStore = {
+        accessoryData: { sensor_pid: '', mobile_udid: '', },
+        bluetoothOn:   false,
+        systemStatus:  0,
+    };
+    let planStore = { dailyPlan: [], };
+    let userStore = { id: '', };
+    return {
+        store: mockStore({
+            ble:  bleStore,
+            plan: planStore,
+            user: userStore,
+        }),
+    };
+});
 
 // run thrid-party libraries mock
 jest.mock('react-native-fabric', () => {
@@ -21,20 +46,29 @@ jest.mock('react-native-splash-screen', () => {
     }
 });
 
-jest.mock('react-native-google-analytics-bridge', () => 'GoogleAnalyticsTracker');
-
-jest.mock('rn-sliding-up-panel', () => 'SlidingUpPanel');
-
 jest.mock('redux-persist/lib/storage', () => {
     return {
         storage: mockFn,
     };
 });
 
+jest.mock('react-native-router-flux', () => ({
+    Actions: {
+        currentParams: {
+            onLeft: mockFn,
+        },
+    },
+}));
+
+jest.mock('rn-sliding-up-panel', () => 'SlidingUpPanel');
+
 // run react-native modules libraries mock
 jest.mock('NativeModules', () => {
     return {
-        BleManager: mockFn,
+        BleManager: {
+            addListener: mockFn,
+            checkState:  mockFn,
+        },
     };
 });
 
@@ -57,6 +91,12 @@ jest.mock('Keyboard', () => {
     return {
         addListener: mockFn,
         dismiss:     mockFn,
+    };
+});
+
+jest.mock('StatusBar', () => {
+    return {
+        setBarStyle: mockFn,
     };
 });
 
