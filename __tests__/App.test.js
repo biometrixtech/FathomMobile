@@ -17,17 +17,17 @@ import Login from '../src/components/auth/Login';
 import ResetPassword from '../src/components/auth/ResetPassword';
 import SignUp from '../src/components/auth/SignUp';
 import Start from '../src/components/auth/Start';
-// import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard'; // NOTE: issue with 'new'
+// import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard'; // NOTE: issue with 'new' from Google Analytics
 import { AthleteComplianceModal, } from '../src/components/coachesDashboard/pages';
 import { Alerts, AnimatedProgressBar, Button, Card, Checkbox, Coach, CoachesDashboardTabBar, CustomMyPlanNavBar, CustomNavBar, FathomModal, FathomPicker, FathomSlider, FormInput, Indicator, ListItem, ProgressBar, ProgressCircle, RadioButton, Slider, Spacer, SVGImage, TabIcon, Text, Tooltip, WebViewPage, WheelScrollPicker, } from '../src/components/custom';
 import { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView, } from '../src/components/general';
 // TODO: ../src/components/kit
 /*import { ActiveRecoveryBlocks, ActiveTimeSlideUpPanel, AreasOfSoreness, BackNextButtons, DefaultListGap, ExerciseCompletionModal, ExerciseList, ExerciseListItem,
-    // Exercises,
+    // Exercises, // NOTE: issue with 'new' from TimedExercise
     ExercisesExercise, FunctionalStrengthModal, HealthKitWorkouts, PostSessionSurvey, ProgressPill, ReadinessSurvey, RenderMyPlanTab, ScaleButton, SessionsCompletionModal, SingleExerciseItem, SoreBodyPart, SoreBodyPartScaleButton, SportBlock, SportScheduleBuilder, SurveySlideUpPanel,
-    // TimedExercise, // NOTE: issue with 'new'
+    // TimedExercise, // NOTE: issue with 'new' from Sound
 } from '../src/components/myPlan/pages';*/
-// import MyPlan from '../src/components/myPlan/MyPlan'; // NOTE: issue with 'new'
+// import MyPlan from '../src/components/myPlan/MyPlan'; // NOTE: issue with 'new' from TimedExercise
 import { UserAccount, UserAccountAbout, UserAccountInfo, } from '../src/components/onboarding/pages';
 import AccountDetails from '../src/components/onboarding/AccountDetails';
 import ChangeEmail from '../src/components/onboarding/ChangeEmail';
@@ -96,12 +96,12 @@ describe('Testing Render of Auth Pages', () => {
 });
 
 describe('Testing Render of CoachesDashboard Pages', () => {
-    // it('Coaches Dashboard', () => {
-    //     renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} updateUser={jest.fn()} user={{}} />);
-    // });
     it('Athlete Compliance Modal', () => {
         renderer.create(<AthleteComplianceModal completedAthletes={[]} complianceColor={''} incompleteAthletes={[]} numOfCompletedAthletes={5} numOfIncompletedAthletes={5} numOfTotalAthletes={10} toggleComplianceModal={jest.fn()} trainingCompliance={{no_response: 5, rest_day: 2, sessions_logged: 3,}} />);
     });
+    // it('Coaches Dashboard', () => {
+    //     renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} updateUser={jest.fn()} user={{}} />);
+    // });
 });
 
 describe('Testing Render of Custom Pages', () => {
@@ -318,9 +318,9 @@ describe('Testing Render of Onboarding Pages', () => {
     it('Survey', () => {
         renderer.create(<Survey postSurvey={jest.fn()} updateUser={jest.fn()} user={emptyUser} />);
     });
-    /*it('Tutorial', () => {
-        renderer.create(<Tutorial updateUser={jest.fn()} user={emptyUser} />);
-    });*/
+    // it('Tutorial', () => {
+    //     renderer.create(<Tutorial updateUser={jest.fn()} user={emptyUser} />);
+    // });
 });
 
 describe('Testing Render of Settings Pages', () => {
