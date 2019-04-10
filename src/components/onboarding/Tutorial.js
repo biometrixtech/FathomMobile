@@ -179,7 +179,7 @@ class Tutorial extends Component {
                     </Text>
                     { props.text ?
                         <View>
-                            <Spacer size={20} />
+                            <Spacer size={props.title && props.title.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
                                 style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
@@ -192,7 +192,7 @@ class Tutorial extends Component {
                     }
                     { props.subtext ?
                         <View>
-                            <Spacer size={20} />
+                            <Spacer size={props.text && props.text.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
                                 style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
