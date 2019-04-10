@@ -20,7 +20,7 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, FathomModal, Spacer, Text, WheelScrollPicker, } from '../../custom';
+import { Button, FathomModal, Text, WheelScrollPicker, } from '../../custom';
 
 /* Component ==================================================================== */
 class ActiveTimeSlideUpPanel extends Component {
@@ -111,7 +111,6 @@ class ActiveTimeSlideUpPanel extends Component {
                                 titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}
                             />
                         </View>
-                        <Spacer size={Platform.OS === 'ios' ? 0 : 30} />
                     </View>
                 </SlidingUpPanel>
             </FathomModal>

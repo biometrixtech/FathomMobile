@@ -228,6 +228,7 @@ class HealthKitWorkouts extends PureComponent {
                 <Pages
                     indicatorPosition={'none'}
                     ref={pages => { this.pages = pages; }}
+                    scrollEnabled={false}
                     startPage={pageIndex}
                 >
 

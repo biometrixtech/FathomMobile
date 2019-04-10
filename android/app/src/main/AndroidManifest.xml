@@ -29,6 +29,12 @@
       android:theme="@style/AppTheme">
 
         <!-- START: react-native-push-notification -->
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_name"
+                android:value="Fathom"/>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_channel_description"
+                    android:value="Notifing users of their plan updates."/>
+        <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
+                    android:resource="@android:color/white"/>
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -46,7 +52,7 @@
         </receiver>
         <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationRegistrationService"/>
         <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerServiceGcm"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -76,6 +82,7 @@
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="true"
+            android:launchMode="singleTask"
         />
         <meta-data
             android:name="io.fabric.ApiKey"
