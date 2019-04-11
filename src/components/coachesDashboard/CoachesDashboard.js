@@ -867,7 +867,6 @@ class CoachesDashboard extends Component {
                                 selectedTeamIndex,
                                 updateState: value => this.setState({ selectedTeamIndex: value ? value : 0, })
                             }}
-                            locked
                             renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) => this.renderTab(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, selectedTeam)}
                             style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
                         />
