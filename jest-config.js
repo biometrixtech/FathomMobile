@@ -4,7 +4,10 @@ module.exports = {
     coverageDirectory: '__coverage__',
     preset:            'react-native',
     setupFiles:        [
-        '<rootDir>/jest.setup.js'
+        '<rootDir>/jest.setup.js',
+        '<rootDir>/__mocks__/@react-native-community/async-storage/index.js',
+        '<rootDir>/__mocks__/react-native-google-analytics-bridge.js',
+        '<rootDir>/__mocks__/react-native-scrollable-tab-view.js'
     ],
     testMatch: [
         '**/__tests__/*.*test.[jt]s?(x)',

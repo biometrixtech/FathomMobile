@@ -16,11 +16,13 @@ jest.mock('./src/store', () => {
         bluetoothOn:   false,
         systemStatus:  0,
     };
+    let initStore = { environment: 'TEST', };
     let planStore = { dailyPlan: [], };
     let userStore = { id: '', };
     return {
         store: mockStore({
             ble:  bleStore,
+            init: initStore,
             plan: planStore,
             user: userStore,
         }),
@@ -52,15 +54,27 @@ jest.mock('redux-persist/lib/storage', () => {
     };
 });
 
-jest.mock('react-native-router-flux', () => ({
-    Actions: {
-        currentParams: {
-            onLeft: mockFn,
+jest.mock('react-native-router-flux', () => {
+    return {
+        Actions: {
+            currentParams: {
+                onLeft: mockFn,
+            },
         },
-    },
-}));
+    };
+});
 
 jest.mock('rn-sliding-up-panel', () => 'SlidingUpPanel');
+
+jest.mock('react-native-scrollable-tab-view', () => 'NativeAnimatedHelper');
+
+jest.mock('react-native-sound', () => {
+    return {
+        IsAndroid:   false,
+        MAIN_BUNDLE: '',
+        setCategory: mockFn,
+    };
+});
 
 // run react-native modules libraries mock
 jest.mock('NativeModules', () => {
@@ -72,10 +86,12 @@ jest.mock('NativeModules', () => {
     };
 });
 
-jest.mock('PushNotificationIOS', () => ({
-    addEventListener:   mockFn,
-    requestPermissions: mockFn,
-}));
+jest.mock('PushNotificationIOS', () => {
+    return {
+        addEventListener:   mockFn,
+        requestPermissions: mockFn,
+    };
+});
 
 jest.mock('Linking', () => {
     return {

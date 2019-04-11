@@ -17,18 +17,78 @@ import Login from '../src/components/auth/Login';
 import ResetPassword from '../src/components/auth/ResetPassword';
 import SignUp from '../src/components/auth/SignUp';
 import Start from '../src/components/auth/Start';
-// import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard'; // NOTE: issue with 'new' from Google Analytics
-import { AthleteComplianceModal, } from '../src/components/coachesDashboard/pages';
-import { Alerts, AnimatedProgressBar, Button, Card, Checkbox, Coach, CoachesDashboardTabBar, CustomMyPlanNavBar, CustomNavBar, FathomModal, FathomPicker, FathomSlider, FormInput, Indicator, ListItem, ProgressBar, ProgressCircle, RadioButton, Slider, Spacer, SVGImage, TabIcon, Text, Tooltip, WebViewPage, WheelScrollPicker, } from '../src/components/custom';
-import { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView, } from '../src/components/general';
+import {
+    AthleteComplianceModal,
+} from '../src/components/coachesDashboard/pages';
+import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard';
+import {
+    Alerts,
+    AnimatedProgressBar,
+    Button,
+    Card,
+    Checkbox,
+    Coach,
+    CoachesDashboardTabBar,
+    CustomMyPlanNavBar,
+    CustomNavBar,
+    FathomModal,
+    FathomPicker,
+    FathomSlider,
+    FormInput,
+    Indicator,
+    ListItem,
+    ProgressBar,
+    ProgressCircle,
+    RadioButton,
+    Slider,
+    Spacer,
+    SVGImage,
+    TabIcon,
+    Text,
+    Tooltip,
+    WebViewPage,
+    WheelScrollPicker,
+} from '../src/components/custom';
+import {
+    EnableAppleHealthKit,
+    Error,
+    Loading,
+    PrivacyPolicyModal,
+    Placeholder,
+    WebView,
+} from '../src/components/general';
 // TODO: ../src/components/kit
-/*import { ActiveRecoveryBlocks, ActiveTimeSlideUpPanel, AreasOfSoreness, BackNextButtons, DefaultListGap, ExerciseCompletionModal, ExerciseList, ExerciseListItem,
-    // Exercises, // NOTE: issue with 'new' from TimedExercise
-    ExercisesExercise, FunctionalStrengthModal, HealthKitWorkouts, PostSessionSurvey, ProgressPill, ReadinessSurvey, RenderMyPlanTab, ScaleButton, SessionsCompletionModal, SingleExerciseItem, SoreBodyPart, SoreBodyPartScaleButton, SportBlock, SportScheduleBuilder, SurveySlideUpPanel,
-    // TimedExercise, // NOTE: issue with 'new' from Sound
-} from '../src/components/myPlan/pages';*/
+import ActiveRecoveryBlocks from '../src/components/myPlan/pages/ActiveRecoveryBlocks';
+import ActiveTimeSlideUpPanel from '../src/components/myPlan/pages/ActiveTimeSlideUpPanel';
+import AreasOfSoreness from '../src/components/myPlan/pages/AreasOfSoreness';
+import BackNextButtons from '../src/components/myPlan/pages/BackNextButtons';
+import DefaultListGap from '../src/components/myPlan/pages/DefaultListGap';
+import ExerciseCompletionModal from '../src/components/myPlan/pages/ExerciseCompletionModal'; // NOTE: issue with 'new' from TimedExercise
+// import ExerciseList from '../src/components/myPlan/pages/ExerciseList';
+import ExerciseListItem from '../src/components/myPlan/pages/ExerciseListItem';
+// import Exercises from '../src/components/myPlan/pages/Exercises'; // NOTE: issue with 'new'
+import ExercisesExercise from '../src/components/myPlan/pages/ExercisesExercise';
+// import FunctionalStrengthModal from '../src/components/myPlan/pages/FunctionalStrengthModal'; // NOTE: issue with 'new' from TimedExercise
+// import HealthKitWorkouts from '../src/components/myPlan/pages/HealthKitWorkouts'; // NOTE: issue with 'new' from TimedExercise
+// import PostSessionSurvey from '../src/components/myPlan/pages/PostSessionSurvey'; // NOTE: issue with 'new' from TimedExercise
+import ProgressPill from '../src/components/myPlan/pages/ProgressPill';
+// import ReadinessSurvey from '../src/components/myPlan/pages/ReadinessSurvey'; // NOTE: issue with 'new' from TimedExercise
+import RenderMyPlanTab from '../src/components/myPlan/pages/RenderMyPlanTab';
+import ScaleButton from '../src/components/myPlan/pages/ScaleButton';
+import SessionsCompletionModal from '../src/components/myPlan/pages/SessionsCompletionModal';
+import SingleExerciseItem from '../src/components/myPlan/pages/SingleExerciseItem';
+// import SoreBodyPart from '../src/components/myPlan/pages/SoreBodyPart'; // NOTE: issue with 'new' from TimedExercise
+import SoreBodyPartScaleButton from '../src/components/myPlan/pages/SoreBodyPartScaleButton';
+import SportBlock from '../src/components/myPlan/pages/SportBlock';
+// import SportScheduleBuilder from '../src/components/myPlan/pages/SportScheduleBuilder'; // NOTE: issue with 'new' from TimedExercise
+import SurveySlideUpPanel from '../src/components/myPlan/pages/SurveySlideUpPanel';
+// import TimedExercise from '../src/components/myPlan/pages/TimedExercise'; // NOTE: issue with 'new'
 // import MyPlan from '../src/components/myPlan/MyPlan'; // NOTE: issue with 'new' from TimedExercise
-import { UserAccount, UserAccountAbout, UserAccountInfo, } from '../src/components/onboarding/pages';
+import {
+    UserAccount,
+    UserAccountAbout,
+    UserAccountInfo,
+} from '../src/components/onboarding/pages';
 import AccountDetails from '../src/components/onboarding/AccountDetails';
 import ChangeEmail from '../src/components/onboarding/ChangeEmail';
 import Onboarding from '../src/components/onboarding/Onboarding';
@@ -36,7 +96,9 @@ import ResendEmail from '../src/components/onboarding/ResendEmail';
 import Survey from '../src/components/onboarding/Survey';
 import Tutorial from '../src/components/onboarding/Tutorial';
 import Settings from '../src/components/settings/Settings';
-import { JoinATeamModal, } from '../src/components/settings/pages';
+import {
+    JoinATeamModal,
+} from '../src/components/settings/pages';
 // import CircularProgress from '../src/components/ui/CircularProgress'; // NOTE: react-native-svg isn't installed, not needed
 
 // setup consts
@@ -99,9 +161,9 @@ describe('Testing Render of CoachesDashboard Pages', () => {
     it('Athlete Compliance Modal', () => {
         renderer.create(<AthleteComplianceModal completedAthletes={[]} complianceColor={''} incompleteAthletes={[]} numOfCompletedAthletes={5} numOfIncompletedAthletes={5} numOfTotalAthletes={10} toggleComplianceModal={jest.fn()} trainingCompliance={{no_response: 5, rest_day: 2, sessions_logged: 3,}} />);
     });
-    // it('Coaches Dashboard', () => {
-    //     renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} updateUser={jest.fn()} user={{}} />);
-    // });
+    it('Coaches Dashboard', () => {
+        renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} scheduledMaintenance={{addressed: true,}} updateUser={jest.fn()} user={{}} />);
+    });
 });
 
 describe('Testing Render of Custom Pages', () => {
@@ -212,7 +274,7 @@ describe('Testing Render of General Pages', () => {
     });
 });*/
 
-/*describe('Testing Render of MyPlan Pages', () => {
+describe('Testing Render of MyPlan Pages', () => {
     // it('My Plan', () => {
     //     renderer.create(<MyPlan activateFunctionalStrength={jest.fn()} ble={{}} clearCompletedExercises={jest.fn()} clearCompletedFSExercises={jest.fn()} clearHealthKitWorkouts={jest.fn()} getSoreBodyParts={jest.fn()} healthData={{}} lastOpened={{}} markStartedFunctionalStrength={jest.fn()} markStartedRecovery={jest.fn()} network={{}} noSessions={jest.fn()} patchActiveRecovery={jest.fn()} patchActiveTime={jest.fn()} patchFunctionalStrength={jest.fn()} plan={{}} postReadinessSurvey={jest.fn()} postSessionSurvey={jest.fn()} setAppLogs={jest.fn()} setCompletedExercises={jest.fn()} setCompletedFSExercises={jest.fn()} updateUser={jest.fn()} user={emptyUser} />);
     // });
@@ -221,7 +283,8 @@ describe('Testing Render of General Pages', () => {
     });
     it('Active Time Slide Up Panel', () => {
         renderer.create(<ActiveTimeSlideUpPanel changeSelectedActiveTime={jest.fn()} isSlideUpPanelOpen={false} selectedActiveTime={1} toggleSlideUpPanel={jest.fn()} />);
-    });it('Areas Of Soreness', () => {
+    });
+    it('Areas Of Soreness', () => {
         renderer.create(<AreasOfSoreness handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} headerTitle={''} scrollToArea={jest.fn()} scrollToTop={jest.fn()} soreBodyParts={{body_parts: [], hist_sore_status: [], clear_candidates: [],}} soreBodyPartsState={[]} surveyObject={{}} toggleSlideUpPanel={jest.fn()} user={emptyUser} />);
     });
     it('Back Next Buttons', () => {
@@ -230,12 +293,12 @@ describe('Testing Render of General Pages', () => {
     it('Default List Gap', () => {
         renderer.create(<DefaultListGap />);
     });
-    it('Exercise Completion Modal', () => {
-        renderer.create(<ExerciseCompletionModal completedExercises={[]} exerciseList={{}} isModalOpen={false} onClose={jest.fn()} onComplete={jest.fn()} user={emptyUser} />);
-    });
-    it('Exercise List', () => {
-        renderer.create(<ExerciseList completedExercises={[]} exerciseList={{}} handleCompleteExercise={jest.fn()} toggleCompletedAMPMRecoveryModal={jest.fn()} toggleSelectedExercise={jest.fn()} />);
-    });
+    // it('Exercise Completion Modal', () => {
+    //     renderer.create(<ExerciseCompletionModal completedExercises={[]} exerciseList={{}} isModalOpen={false} onClose={jest.fn()} onComplete={jest.fn()} user={emptyUser} />);
+    // });
+    // it('Exercise List', () => {
+    //     renderer.create(<ExerciseList completedExercises={[]} exerciseList={{}} handleCompleteExercise={jest.fn()} toggleCompletedAMPMRecoveryModal={jest.fn()} toggleSelectedExercise={jest.fn()} />);
+    // });
     it('Exercise List Item', () => {
         renderer.create(<ExerciseListItem completedExercises={[]} exercise={{}} handleCompleteExercise={jest.fn()} isLastItem={false} toggleSelectedExercise={jest.fn()} />);
     });
@@ -245,21 +308,21 @@ describe('Testing Render of General Pages', () => {
     it('Exercises Exercise', () => {
         renderer.create(<ExercisesExercise completedExercises={[]} exercise={{longDosage: '',}} progressPillsHeight={0} />);
     });
-    it('Functional Strength Modal', () => {
-        renderer.create(<FunctionalStrengthModal functionalStrength={{}} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} toggleFSModal={jest.fn()} typicalSessions={[]} />);
-    });
-    it('HealthKit Workouts', () => {
-        renderer.create(<HealthKitWorkouts handleHealthDataFormChange={jest.fn()} handleNextStep={jest.fn()} handleToggleSurvey={jest.fn()} workouts={[]} />);
-    });
-    it('Post Session Survey', () => {
-        renderer.create(<PostSessionSurvey handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleTogglePostSessionSurvey={jest.fn()} postSession={{soreness: [],}} soreBodyParts={{}} typicalSessions={[]} user={emptyUser} />);
-    });
+    // it('Functional Strength Modal', () => {
+    //     renderer.create(<FunctionalStrengthModal functionalStrength={{}} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} toggleFSModal={jest.fn()} typicalSessions={[]} />);
+    // });
+    // it('HealthKit Workouts', () => {
+    //     renderer.create(<HealthKitWorkouts handleHealthDataFormChange={jest.fn()} handleNextStep={jest.fn()} handleToggleSurvey={jest.fn()} workouts={[]} />);
+    // });
+    // it('Post Session Survey', () => {
+    //     renderer.create(<PostSessionSurvey handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleTogglePostSessionSurvey={jest.fn()} postSession={{soreness: [],}} soreBodyParts={{}} typicalSessions={[]} user={emptyUser} />);
+    // });
     it('Progress Pill', () => {
         renderer.create(<ProgressPill currentStep={1} totalSteps={5} />);
     });
-    it('Readiness Survey', () => {
-        renderer.create(<ReadinessSurvey dailyReadiness={{soreness: [],}} handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleHealthDataFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} soreBodyParts={{}} user={emptyUser} />);
-    });
+    // it('Readiness Survey', () => {
+    //     renderer.create(<ReadinessSurvey dailyReadiness={{soreness: [],}} handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleHealthDataFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} soreBodyParts={{}} user={emptyUser} />);
+    // });
     it('Render My Plan Tab', () => {
         renderer.create(<RenderMyPlanTab isPostSessionSurveyModalOpen={false} isReadinessSurveyModalOpen={false} isTabActive={false} loading={false} name={''} onLayoutHandler={jest.fn()} onPressHandler={jest.fn()} page={0} plan={{dailyPlan: [{nav_bar_indicator: 0,}],}} statePages={{}} updatePageState={jest.fn()} />);
     });
@@ -272,26 +335,25 @@ describe('Testing Render of General Pages', () => {
     it('Single Exercise Item', () => {
         renderer.create(<SingleExerciseItem completedExercises={[]} exercise={{longDosage: '', videoUrl: '',}} handleCompleteExercise={jest.fn()} selectedExercise={''} />);
     });
-    it('Sore Body Part', () => {
-        renderer.create(<SoreBodyPart bodyPart={{body_part: 2,}} firstTimeExperience={[]} handleFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} toggleSlideUpPanel={jest.fn()} />);
-    });
+    // it('Sore Body Part', () => {
+    //     renderer.create(<SoreBodyPart bodyPart={{body_part: 2,}} firstTimeExperience={[]} handleFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} toggleSlideUpPanel={jest.fn()} />);
+    // });
     it('Sore Body Part Scale Button', () => {
         renderer.create(<SoreBodyPartScaleButton isSelected={false} label={''} updateStateAndForm={jest.fn()} />);
     });
     it('Sport Block', () => {
         renderer.create(<SportBlock displayName={''} onPress={jest.fn()} />);
     });
-    it('Sport Schedule Builder', () => {
-        renderer.create(<SportScheduleBuilder backNextButtonOptions={{}} handleFormChange={jest.fn()} postSession={{}} typicalSessions={[]} />);
-    });
+    // it('Sport Schedule Builder', () => {
+    //     renderer.create(<SportScheduleBuilder backNextButtonOptions={{}} handleFormChange={jest.fn()} postSession={{}} typicalSessions={[]} />);
+    // });
     it('Survey Slide Up Panel', () => {
         renderer.create(<SurveySlideUpPanel expandSlideUpPanel={jest.fn()} isSlideUpPanelExpanded={false} isSlideUpPanelOpen={false} toggleSlideUpPanel={jest.fn()} />);
     });
     // it('Timed Exercise', () => {
-    //     renderer.create(<TimedExercise
-    //     />);
+    //     renderer.create(<TimedExercise />);
     // });
-});*/
+});
 
 describe('Testing Render of Onboarding Pages', () => {
     it('User Account', () => {
