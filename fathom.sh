@@ -110,6 +110,7 @@ initialize() {
 
             # android build tools and gradle patches
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
 

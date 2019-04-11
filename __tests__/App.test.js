@@ -20,7 +20,7 @@ import Start from '../src/components/auth/Start';
 import {
     AthleteComplianceModal,
 } from '../src/components/coachesDashboard/pages';
-import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard';
+// import CoachesDashboard from '../src/components/coachesDashboard/CoachesDashboard';
 import {
     Alerts,
     AnimatedProgressBar,
@@ -161,9 +161,9 @@ describe('Testing Render of CoachesDashboard Pages', () => {
     it('Athlete Compliance Modal', () => {
         renderer.create(<AthleteComplianceModal completedAthletes={[]} complianceColor={''} incompleteAthletes={[]} numOfCompletedAthletes={5} numOfIncompletedAthletes={5} numOfTotalAthletes={10} toggleComplianceModal={jest.fn()} trainingCompliance={{no_response: 5, rest_day: 2, sessions_logged: 3,}} />);
     });
-    it('Coaches Dashboard', () => {
-        renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} scheduledMaintenance={{addressed: true,}} updateUser={jest.fn()} user={{}} />);
-    });
+    // it('Coaches Dashboard', () => {
+    //     renderer.create(<CoachesDashboard coachesDashboardData={[]} getCoachesDashboardData={jest.fn()} lastOpened={{}} network={{}} scheduledMaintenance={{addressed: true,}} updateUser={jest.fn()} user={{}} />);
+    // });
 });
 
 describe('Testing Render of Custom Pages', () => {

@@ -228,8 +228,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         unauthorizedCounter += 1;
                         let userIdObj = {userId: currentState.user.id};
                         let sessionTokenObj = {session_token: currentState.init.session_token};
-                        return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
-                            .then(res => {
+                        return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0);
+                            /*.then(res => {
                                 // successfully fetched, reset counter, update reducer, and resend API
                                 unauthorizedCounter = 0;
                                 store.dispatch({
@@ -245,7 +245,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                                     type: DispatchActions.LOGOUT
                                 });
                                 return Actions.login();
-                            });
+                            });*/
                     }
                     // reached limit, reset timer and log user out
                     unauthorizedCounter = 0;

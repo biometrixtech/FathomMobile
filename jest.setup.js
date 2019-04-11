@@ -68,6 +68,8 @@ jest.mock('rn-sliding-up-panel', () => 'SlidingUpPanel');
 
 jest.mock('react-native-scrollable-tab-view', () => 'NativeAnimatedHelper');
 
+jest.mock('react-native-device-info', () => 'DeviceInfo');
+
 jest.mock('react-native-sound', () => {
     return {
         IsAndroid:   false,
