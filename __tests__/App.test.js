@@ -63,8 +63,8 @@ import ActiveTimeSlideUpPanel from '../src/components/myPlan/pages/ActiveTimeSli
 import AreasOfSoreness from '../src/components/myPlan/pages/AreasOfSoreness';
 import BackNextButtons from '../src/components/myPlan/pages/BackNextButtons';
 import DefaultListGap from '../src/components/myPlan/pages/DefaultListGap';
-import ExerciseCompletionModal from '../src/components/myPlan/pages/ExerciseCompletionModal'; // NOTE: issue with 'new' from TimedExercise
-// import ExerciseList from '../src/components/myPlan/pages/ExerciseList';
+import ExerciseCompletionModal from '../src/components/myPlan/pages/ExerciseCompletionModal';
+// import ExerciseList from '../src/components/myPlan/pages/ExerciseList'; // NOTE: issue with 'new' from TimedExercise
 import ExerciseListItem from '../src/components/myPlan/pages/ExerciseListItem';
 // import Exercises from '../src/components/myPlan/pages/Exercises'; // NOTE: issue with 'new'
 import ExercisesExercise from '../src/components/myPlan/pages/ExercisesExercise';
