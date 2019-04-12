@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles } from '../../constants';
-import { FormLabel, Text } from './';
+import { Text } from './';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const RadioButton = ({ label, onChange, options, value }) => (
+const RadioButton = ({ label, onChange, options, textStyle, value, }) => (
     <View style={[styles.view]}>
-        <FormLabel>{label}</FormLabel>
+        <Text style={textStyle}>{label}</Text>
         { options.map((option, index) => (
             <TouchableOpacity
                 key={index}
@@ -60,13 +60,15 @@ const RadioButton = ({ label, onChange, options, value }) => (
 );
 
 RadioButton.propTypes = {
-    label:    PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    options:  PropTypes.array.isRequired,
-    value:    PropTypes.bool,
+    label:     PropTypes.string.isRequired,
+    onChange:  PropTypes.func.isRequired,
+    options:   PropTypes.array.isRequired,
+    textStyle: PropTypes.object,
+    value:     PropTypes.bool,
 };
 RadioButton.defaultProps = {
-    value: null,
+    textStyle: {},
+    value:     null,
 };
 RadioButton.componentName = 'RadioButton';
 

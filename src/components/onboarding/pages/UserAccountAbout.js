@@ -5,6 +5,7 @@
         clearCoachContent={this._clearCoachContent}
         handleFormChange={handleFormChange}
         isUpdatingUser={isUpdatingUser}
+        scrollToInput={this._scrollToInput}
         setAccordionSection={handleFormSubmit}
         updateErrorMessage={this._updateErrorMessage}
         user={user}
@@ -13,11 +14,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, View, } from 'react-native';
+import { Platform, StyleSheet, View, findNodeHandle, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, UserAccount as UserAccountConstants, } from '../../../constants';
-import { FathomInput, FathomPicker, Text, } from '../../custom';
+import { FormInput, FathomPicker, Text, } from '../../custom';
 
 // import third-party libraries
 import DatePicker from 'react-native-datepicker';
@@ -76,10 +77,12 @@ class UserAccountAbout extends Component {
             clearCoachContent,
             handleFormChange,
             isUpdatingUser,
+            scrollToInput,
             setAccordionSection,
             updateErrorMessage,
             user,
         } = this.props;
+        /*eslint no-return-assign: 0*/
         return(
             <View style={[{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1,}]}>
                 <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of birth' : ' '}</Text>
@@ -101,13 +104,16 @@ class UserAccountAbout extends Component {
                     showIcon={false}
                     style={{width: '100%'}}
                 />
-                <FathomInput
+                <FormInput
                     blurOnSubmit={true}
-                    inputContainerStyle={{paddingLeft: AppSizes.paddingSml,}}
+                    containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                    inputStyle={{paddingLeft: 0,}}
+                    inputRef={ref => this.inputs.confirm_password = ref}
                     keyboardType={'number-pad'}
-                    onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
                     label={user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}
-                    labelStyle={[styles.inputLabel]}
+                    labelStyle={[styles.inputLabel, {paddingLeft: 0,}]}
+                    onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
+                    onFocus={event => scrollToInput(findNodeHandle(event.target))}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.zeplin.lightSlate}
                     ref={input => {this.inputs.mass = input;}}
@@ -139,6 +145,7 @@ class UserAccountAbout extends Component {
 
 UserAccountAbout.propTypes = {
     handleFormChange:    PropTypes.func.isRequired,
+    scrollToInput:       PropTypes.func.isRequired,
     setAccordionSection: PropTypes.func.isRequired,
     updateErrorMessage:  PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,

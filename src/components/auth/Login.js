@@ -29,23 +29,30 @@ import {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
-import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
-import { Actions as DispatchActions, AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
+import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
 import { onboardingUtils } from '../../constants/utils';
-import { store } from '../../store';
 
 // Components
-import { Alerts, Button, Card, FormInput, ListItem, Spacer, TabIcon, Text } from '../custom';
+import { Alerts, Button, Card, FathomModal, FormInput, ListItem, Spacer, TabIcon, Text, } from '../custom';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    contentWrapper: {
+        alignItems:      'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+        justifyContent:  'center',
+    },
     background: {
         backgroundColor: AppColors.secondary.blue.hundredPercent,
         height:          AppSizes.screen.height,
         width:           AppSizes.screen.width,
+    },
+    imageBackground: {
+        height: AppSizes.screen.height,
+        width:  AppSizes.screen.width,
     },
     mainLogo: {
         width: AppSizes.screen.widthThird,
@@ -57,9 +64,11 @@ const Wrapper = props => Platform.OS === 'ios' ?
         <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
             <ImageBackground
                 source={require('../../../assets/images/standard/start.png')}
-                style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
+                style={[AppStyles.containerCentered, styles.imageBackground,]}
             >
-                {props.children}
+                <View style={[styles.imageBackground, styles.contentWrapper,]}>
+                    {props.children}
+                </View>
             </ImageBackground>
         </KeyboardAvoidingView>
     ) :
@@ -69,11 +78,12 @@ const Wrapper = props => Platform.OS === 'ios' ?
                 source={require('../../../assets/images/standard/start.png')}
                 style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
             >
-                {props.children}
+                <View style={[styles.imageBackground, styles.contentWrapper,]}>
+                    {props.children}
+                </View>
             </ImageBackground>
         </View>
     );
-
 
 /* Component ==================================================================== */
 class Login extends Component {
@@ -113,10 +123,8 @@ class Login extends Component {
         super(props);
         this._focusNextField = this._focusNextField.bind(this);
         this.inputs = {};
-
         this.state = {
             isModalVisible: false,
-            modalStyle:     {},
             resultMsg:      {
                 error:   '',
                 status:  '',
@@ -136,7 +144,7 @@ class Login extends Component {
     }
 
     componentDidMount = () => {
-        if(!this.props.scheduledMaintenance.addressed) {
+        if(this.props.scheduledMaintenance && !this.props.scheduledMaintenance.addressed) {
             let apiMaintenanceWindow = { end_date: this.props.scheduledMaintenance.end_date, start_date: this.props.scheduledMaintenance.start_date };
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
@@ -147,7 +155,7 @@ class Login extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
-    _focusNextField = (id) => {
+    _focusNextField = id => {
         this.inputs[id].focus();
     }
 
@@ -186,10 +194,6 @@ class Login extends Component {
         return errorsArray;
     }
 
-    resizeModal = (ev) => {
-        this.setState({ modalStyle: { height: ev.nativeEvent.layout.height, width: ev.nativeEvent.layout.width } });
-    }
-
     /**
       * Login
       */
@@ -226,9 +230,6 @@ class Login extends Component {
                                         if(!res.daily_plans[0].daily_readiness_survey_completed) {
                                             this.props.setAppLogs();
                                         }
-                                        return res;
-                                    })
-                                    .then(res => {
                                         if(user.health_enabled) {
                                             return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
                                                 .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
@@ -257,7 +258,7 @@ class Login extends Component {
     }
 
     render = () => {
-
+        /*eslint no-return-assign: 0*/
         return (
             <Wrapper>
 
@@ -284,60 +285,53 @@ class Login extends Component {
                     </Egg>
                 </View>
 
-                <View style={[AppStyles.containerCentered]}>
+                <View style={[AppStyles.containerCentered,]}>
                     <Alerts
                         error={this.state.resultMsg.error}
                         extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
-                        status={this.state.resultMsg.status}
                         success={this.state.resultMsg.success}
                     />
                     <FormInput
                         autoCapitalize={'none'}
-                        blurOnSubmit={ false }
+                        blurOnSubmit={false}
                         clearButtonMode={'never'}
-                        inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                        containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                        inputRef={ref => this.inputs.email = ref}
+                        inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
                         keyboardType={'email-address'}
                         onChangeText={(text) => this._handleFormChange('email', text)}
                         onSubmitEditing={() => this._focusNextField('password')}
                         placeholder={'email'}
-                        placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                        placeholderTextColor={AppColors.zeplin.yellow}
                         returnKeyType={'next'}
-                        textInputRef={input => {
-                            this.inputs.email = input;
-                        }}
                         value={this.state.form_values.email}
                     />
                     <FormInput
                         autoCapitalize={'none'}
-                        blurOnSubmit={ true }
+                        blurOnSubmit={true}
                         clearButtonMode={'never'}
-                        inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds,paddingTop: 25}]}
+                        containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                        inputRef={ref => this.inputs.password = ref}
+                        inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}}
                         keyboardType={'default'}
                         onChangeText={(text) => this._handleFormChange('password', text)}
                         onSubmitEditing={() => this._handleFormSubmit()}
                         password={true}
                         placeholder={'password'}
-                        placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                        placeholderTextColor={AppColors.zeplin.yellow}
                         returnKeyType={'done'}
                         secureTextEntry={true}
-                        textInputRef={input => {
-                            this.inputs.password = input;
-                        }}
                         value={this.state.form_values.password}
                     />
                     <Spacer size={50} />
                     <Button
-                        backgroundColor={AppColors.white}
-                        buttonStyle={[AppStyles.paddingVertical, AppStyles.paddingHorizontal, {justifyContent: 'center', width: '85%',}]}
-                        containerViewStyle={{ alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf }}
+                        buttonStyle={{backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
+                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
                         disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
                         disabledStyle={{width: '100%'}}
-                        fontFamily={AppStyles.robotoBold.fontFamily}
-                        fontWeight={AppStyles.robotoBold.fontWeight}
                         onPress={() => this._handleFormSubmit()}
-                        textColor={AppColors.primary.yellow.hundredPercent}
-                        textStyle={{ fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%', }}
                         title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
+                        titleStyle={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                     <Spacer size={12} />
                     <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
@@ -351,41 +345,35 @@ class Login extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <Modal
-                    backButtonClose
-                    coverScreen
-                    isOpen={this.state.isModalVisible}
-                    onClosed={() => this.setState({ isModalVisible: false })}
-                    position={'center'}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                    swipeToClose={false}
+                <FathomModal
+                    isVisible={this.state.isModalVisible}
+                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
                 >
-                    <View onLayout={(ev) => { this.resizeModal(ev); }}>
+                    <View>
                         <Card title={'Select environment'}>
                             <Spacer size={5} />
-                            <View style={{ borderWidth: 1, borderColor: AppColors.border }}>
-                                {
-                                    Object.entries(APIConfig.APIs).map(([key, value]) => (
-                                        <ListItem
-                                            containerStyle={{ backgroundColor: key === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white }}
-                                            hideChevron
-                                            key={key}
-                                            onPress={() => { this.setState({ isModalVisible: false }); return this.props.setEnvironment(key);  }}
-                                            title={`${key}: ${value}`}
-                                            titleStyle={{ color: key === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent }}
-                                        />
-                                    ))
-                                }
+                            <View style={{borderWidth: 1, borderColor: AppColors.border,}}>
+                                { _.map(APIConfig.APIs, (key, value) => (
+                                    <ListItem
+                                        bottomDivider={true}
+                                        containerStyle={{backgroundColor: value === this.props.environment ? AppColors.primary.grey.fiftyPercent : AppColors.white,}}
+                                        key={value}
+                                        onPress={() => { this.setState({ isModalVisible: false, }); return this.props.setEnvironment(value); }}
+                                        title={`${value}: ${key}`}
+                                        titleStyle={{color: value === this.props.environment ? AppColors.white : AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(18),}}
+                                        topDivider={true}
+                                    />
+                                ))}
                             </View>
                             <Spacer />
                             <Button
-                                backgroundColor={AppColors.primary.grey.fiftyPercent}
-                                onPress={() => this.setState({ isModalVisible: false })}
+                                buttonStyle={{backgroundColor: AppColors.primary.grey.fiftyPercent,}}
+                                onPress={() => this.setState({ isModalVisible: false, })}
                                 title={'Cancel'}
                             />
                         </Card>
                     </View>
-                </Modal>
+                </FathomModal>
 
             </Wrapper>
         );

@@ -1,4 +1,5 @@
 /* global it expect jest */
+/* global it expect beforeAll */
 /* global describe expect jest */
 /* global fetch console */
 // require required libraries to create fetch
@@ -14,6 +15,11 @@ import moment from 'moment';
 import { PlanLogic, } from '../';
 import { APIConfig, AppConfig, } from '../../constants';
 import defaultPlanState from '../../states/plan';
+
+// mock async-storage
+beforeAll(() => {
+    jest.mock('@react-native-community/async-storage');
+});
 
 // setup helper functions
 const helperFunctions = {

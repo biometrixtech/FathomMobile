@@ -6,31 +6,23 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Modal, View, } from 'react-native';
+import { ActivityIndicator, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 // Components
-import { Spacer, Text, } from '../custom';
+import { FathomModal, Spacer, Text, } from '../custom';
 
 /* Component ==================================================================== */
 const Loading = ({ text, }) => (
-    <Modal
-        animationType={'slide'}
-        onRequestClose={() => {}}
-        transparent={true}
-        visible={true}
+    <FathomModal
+        backdropColor={AppColors.zeplin.superLight}
+        backdropOpacity={0.8}
+        isVisible={true}
+        style={{margin: 0,}}
     >
-        <View
-            style={{
-                alignItems:      'center',
-                backgroundColor: AppColors.zeplin.superLight,
-                flex:            1,
-                justifyContent:  'center',
-                opacity:         0.8,
-            }}
-        >
+        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
             <ActivityIndicator
                 animating
                 color={AppColors.zeplin.yellow}
@@ -39,7 +31,7 @@ const Loading = ({ text, }) => (
             <Spacer size={AppSizes.padding} />
             {!!text && <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14),}}>{text}</Text>}
         </View>
-    </Modal>
+    </FathomModal>
 );
 
 Loading.propTypes = {

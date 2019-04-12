@@ -22,7 +22,6 @@ import { AppColors, AppStyles, AppSizes } from '../../constants/';
 // Components
 import { Spacer, Text } from '../custom';
 
-
 /* Component ==================================================================== */
 class CircularProgress extends Component {
     static propTypes = {

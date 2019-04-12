@@ -1,70 +1,29 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 
 #import "AppDelegate.h"
-#import <AVFoundation/AVFoundation.h>
+
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
-#import <asl.h>
-#import <React/RCTLog.h>
+#import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <React/RCTLinkingManager.h>
-#if RCT_DEV
-#import <React/RCTDevLoadingView.h>
-#endif
 #import "RNSplashScreen.h"
 #import <React/RCTPushNotificationManager.h>
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-  return [RCTLinkingManager application:application openURL:url
-                      sourceApplication:sourceApplication annotation:annotation];
-}
-
-// Only if your app is using [Universal Links](https://developer.apple.com/library/prerelease/ios/documentation/General/Conceptual/AppSearch/UniversalLinks.html).
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
- restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
-{
-  return [RCTLinkingManager application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
-}
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [Fabric with:@[[Crashlytics class]]];
-  RCTSetLogThreshold(RCTLogLevelInfo);
-  RCTSetLogFunction(CrashlyticsReactLogFunction);
-
-  NSURL *jsCodeLocation;
-
-
-#ifdef DEBUG
-  jsCodeLocation = [NSURL URLWithString:@"http://10.248.12.129:8081/index.bundle?platform=ios&dev=true"];
-//  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-
-#else
-    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
-
-  RCTBridge *bridge = [[RCTBridge alloc] initWithBundleURL:jsCodeLocation
-                                            moduleProvider:nil
-                                             launchOptions:launchOptions];
-#if RCT_DEV
-  [bridge moduleForClass:[RCTDevLoadingView class]];
-#endif
-  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                      moduleName:@"Fathom"
-                                               initialProperties:nil];
+                                                   moduleName:@"Fathom"
+                                            initialProperties:nil];
+
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -73,18 +32,18 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  /**
-   * Custom
-   * Get launch image - saves annoying white flash
-   */
-//  UIImageView *launchScreenView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LaunchScreen"]]; // Image named "LaunchScreen"
-//  launchScreenView.frame = self.window.bounds;
-//
-//  launchScreenView.contentMode = UIViewContentModeScaleAspectFill;
-//  rootView.loadingView = launchScreenView;
-
   [RNSplashScreen show];
+  [Fabric with:@[[Crashlytics class]]];
   return YES;
+}
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 }
 
 // Required to register for notifications
@@ -113,45 +72,5 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
-
-RCTLogFunction CrashlyticsReactLogFunction = ^(
-                                               RCTLogLevel level,
-                                               __unused RCTLogSource source,
-                                               NSString *fileName,
-                                               NSNumber *lineNumber,
-                                               NSString *message
-                                               )
-{
-  NSString *log = RCTFormatLog([NSDate date], level, fileName, lineNumber, message);
-
-#ifdef DEBUG
-  fprintf(stderr, "%s\n", log.UTF8String);
-  fflush(stderr);
-#else
-  CLS_LOG(@"REACT LOG: %s", log.UTF8String);
-#endif
-
-  int aslLevel;
-  switch(level) {
-    case RCTLogLevelTrace:
-      aslLevel = ASL_LEVEL_DEBUG;
-      break;
-    case RCTLogLevelInfo:
-      aslLevel = ASL_LEVEL_NOTICE;
-      break;
-    case RCTLogLevelWarning:
-      aslLevel = ASL_LEVEL_WARNING;
-      break;
-    case RCTLogLevelError:
-      aslLevel = ASL_LEVEL_ERR;
-      break;
-    case RCTLogLevelFatal:
-      aslLevel = ASL_LEVEL_CRIT;
-      break;
-  }
-  asl_log(NULL, NULL, aslLevel, "%s", message.UTF8String);
-
-
-};
 
 @end

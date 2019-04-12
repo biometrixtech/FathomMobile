@@ -22,7 +22,7 @@ import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, 
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, Spacer, TabIcon, Text, } from '../../custom';
 import { EnableAppleHealthKit, } from '../../general';
 import { AppUtil, PlanLogic, } from '../../../lib';
 
@@ -38,6 +38,7 @@ import {
 } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 import LinearGradient from 'react-native-linear-gradient';
@@ -104,7 +105,14 @@ class ReadinessSurvey extends Component {
         this.sportScheduleBuilderRefs = [];
         this.pages = {};
         this.pickerTrainedAlreadyRefs = {};
+        this.timer = {};
     }
+
+    componentWillUnmount = () => {
+        // clear timer
+        clearInterval(this.timer);
+    }
+
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
@@ -204,7 +212,7 @@ class ReadinessSurvey extends Component {
             newSoreBodyParts,
         } = PlanLogic.handleReadinessSurveyRenderLogic(dailyReadiness, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, dailyReadiness.soreness);
-        _.delay(() => {
+        this.timer = _.delay(() => {
             this._renderNextPage(currentPage, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid);
         }, 500);
     }
@@ -244,14 +252,16 @@ class ReadinessSurvey extends Component {
     }
 
     _scrollToBottom = scrollViewRef => {
-        _.delay(() => {
-            scrollViewRef.scrollToEnd({ animated: true, });
-        }, 500);
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollToEnd({ animated: true, });
+            }, 500);
+        }
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
-        if(myComponentsLocation) {
-            _.delay(() => {
+        if(myComponentsLocation && scrollViewRef) {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
@@ -261,10 +271,12 @@ class ReadinessSurvey extends Component {
         }
     }
 
-    _scrollToTop = (scrollViewRef) => {
-        _.delay(() => {
-            scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
-        }, 500);
+    _scrollToTop = scrollViewRef => {
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
+            }, 500);
+        }
     }
 
     _scrollViewEndDrag = event => {
@@ -333,6 +345,7 @@ class ReadinessSurvey extends Component {
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
+                    scrollEnabled={false}
                     startPage={pageIndex}
                 >
 
@@ -355,29 +368,17 @@ class ReadinessSurvey extends Component {
                                         <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
                                         <Button
-                                            backgroundColor={AppColors.zeplin.yellow}
-                                            buttonStyle={{borderRadius: 5, width: '100%',}}
-                                            containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                            color={AppColors.white}
-                                            fontFamily={AppStyles.robotoBold.fontFamily}
-                                            fontWeight={AppStyles.robotoBold.fontWeight}
-                                            leftIcon={{
-                                                color: AppColors.zeplin.yellow,
-                                                name:  'chevron-right',
-                                                size:  AppFonts.scaleFont(24),
-                                                style: {flex: 1,},
-                                            }}
-                                            outlined={false}
+                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                            containerStyle={{alignItems: 'center',}}
                                             onPress={() => this._renderNextPage(0, isFormValidItems)}
-                                            raised={false}
-                                            rightIcon={{
+                                            icon={{
                                                 color: AppColors.white,
                                                 name:  'chevron-right',
                                                 size:  AppFonts.scaleFont(24),
-                                                style: {flex: 1,},
                                             }}
-                                            textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
+                                            iconRight={true}
                                             title={'Begin'}
+                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '75%',}}
                                         />
                                     </View>
                                 </View>

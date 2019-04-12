@@ -16,11 +16,10 @@ import { Image, Platform, StyleSheet, View, } from 'react-native';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
-import Modal from 'react-native-modalbox';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, ProgressCircle, Spacer, Text, } from '../../custom';
+import { Button, FathomModal, ProgressCircle, Spacer, Text, } from '../../custom';
 
 const modalText = MyPlanConstants.randomizeSessionsCompletionModalText();
 const modalWidth = (AppSizes.screen.width * 0.9);
@@ -61,6 +60,14 @@ class SessionsCompletionModal extends Component {
         this.animation = {};
         this.animation2 = {};
         this.animation3 = {};
+        this.iconTimers = [];
+        this.mainTimer = {};
+    }
+
+    componentWillUnmount = () => {
+        // clear timers
+        clearInterval(this.mainTimer);
+        _.map(this.iconTimers, (timer, i) => clearInterval(this.iconTimers[i]));
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -69,10 +76,10 @@ class SessionsCompletionModal extends Component {
                 return (session.sport_name || session.sport_name === 0) ||
                     (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
             });
-            _.delay(() => {
+            this.mainTimer = _.delay(() => {
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
                 _.map(filteredIconSessions, (session, i) => {
-                    _.delay(() => {
+                    this.iconTimers[i] = _.delay(() => {
                         newProgressCounters[i] = 1;
                         this.setState(
                             { progressCounters: newProgressCounters, },
@@ -144,16 +151,9 @@ class SessionsCompletionModal extends Component {
             iconSize = AppFonts.scaleFont(90);
         }
         return(
-            <Modal
-                backdropColor={AppColors.zeplin.darkNavy}
-                backdropOpacity={0.8}
-                backdropPressToClose={false}
-                coverScreen={true}
-                isOpen={isModalOpen}
-                position={'top'}
-                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
-                swipeToClose={false}
-                useNativeDriver={false}
+            <FathomModal
+                isVisible={isModalOpen}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
@@ -243,35 +243,17 @@ class SessionsCompletionModal extends Component {
                                 speed={3}
                             />
                             <Button
-                                backgroundColor={AppColors.zeplin.yellow}
-                                buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0, zIndex: 10,}}
-                                color={AppColors.white}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
-                                    color: AppColors.zeplin.yellow,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                outlined={false}
+                                buttonStyle={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                containerStyle={{marginLeft: 0, marginRight: 0, zIndex: 10,}}
                                 onPress={() => this._onClose()}
-                                raised={false}
-                                rightIcon={{
-                                    color: AppColors.white,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                 title={'Continue'}
+                                titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                             />
                             <Spacer size={AppSizes.paddingXLrg} />
                         </View>
                     </LinearGradient>
                 </View>
-            </Modal>
+            </FathomModal>
         )
     }
 }

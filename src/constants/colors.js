@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:20:06
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 04:09:53
- */
-
 /**
  * App Theme - Colors
  */

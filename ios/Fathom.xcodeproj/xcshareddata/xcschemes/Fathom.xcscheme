@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0830"
+   LastUpgradeVersion = "0940"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "NO"
@@ -35,11 +35,11 @@
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "NO"
+            buildForTesting = "YES"
+            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
@@ -56,6 +56,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
+               BuildableName = "FathomTests.xctest"
+               BlueprintName = "FathomTests"
+               ReferencedContainer = "container:Fathom.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
@@ -89,13 +99,6 @@
             ReferencedContainer = "container:Fathom.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "OS_ACTIVITY_MODE"
-            value = "disable"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -120,7 +123,7 @@
       buildConfiguration = "Staging">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Staging"
+      buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

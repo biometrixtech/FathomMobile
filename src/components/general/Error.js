@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:26:38 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:26:38
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-20 18:22:27
  */
@@ -13,19 +13,21 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, } from 'react-native';
+
+// import third-party libraries
+import { Icon, } from 'react-native-elements';
 
 // Consts and Libs
-import { AppStyles } from '../../constants';
+import { AppStyles, } from '../../constants';
 
 // Components
-import { Spacer, Text, Button } from '../custom';
+import { Button, Spacer, Text, } from '../custom';
 
 /* Component ==================================================================== */
 const Error = ({ text, tryAgain }) => (
     <View style={[AppStyles.container, AppStyles.containerCentered]}>
-        <Icon name={'ios-alert-outline'} size={50} color={'#CCC'} />
+        <Icon color={'#ccc'} name={'alert-circle-outline'} size={50} type={'material-community'} />
 
         <Spacer size={10} />
 

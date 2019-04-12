@@ -11,26 +11,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Image, ImageBackground, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
-// import third-party libraries
-import Modal from 'react-native-modalbox';
-
 // Consts and Libs
 import { AppColors, AppSizes, AppStyles, } from '../../constants';
 
 // Components
-import { Text, WebViewPage, } from '../custom';
+import { FathomModal, Text, WebViewPage, } from '../custom';
 
 /* Component ==================================================================== */
 const PrivacyPolicyModal = ({
     handleModalToggle,
     isPrivacyPolicyOpen,
 }) => (
-    <Modal
-        backdropPressToClose={false}
-        coverScreen={true}
-        isOpen={isPrivacyPolicyOpen}
-        swipeToClose={false}
-        useNativeDriver={false}
+    <FathomModal
+        backdropColor={AppColors.white}
+        backdropOpacity={1}
+        isVisible={isPrivacyPolicyOpen}
+        style={{margin: 0,}}
     >
         <WebViewPage
             source={'https://www.fathomai.com/privacy/'}
@@ -42,7 +38,7 @@ const PrivacyPolicyModal = ({
         >
             <Text style={[AppStyles.nextButtonText]}>{'DONE'}</Text>
         </TouchableHighlight>
-    </Modal>
+    </FathomModal>
 )
 
 PrivacyPolicyModal.propTypes = {

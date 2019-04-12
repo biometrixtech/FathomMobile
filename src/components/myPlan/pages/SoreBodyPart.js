@@ -47,7 +47,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >
@@ -61,7 +61,7 @@ const TooltipContent = ({ handleTooltipClose, text, toggleSlideUpPanel, }) => (
                 <Text
                     robotoMedium
                     style={{
-                        color:    AppColors.primary.yellow.hundredPercent,
+                        color:    AppColors.zeplin.yellow,
                         fontSize: AppFonts.scaleFont(15),
                     }}
                 >
@@ -166,7 +166,7 @@ class SoreBodyPart extends Component {
             isPain = bodyPart.pain;
         }
         this.setState({
-            movementValue: key,
+            movementValue: newKey,
             type:          newType,
         }, () => {
             handleFormChange('soreness', newKey, isPain, bodyPartMap.index, bodyPartSide, newKey === null ? false : true, true);
@@ -222,14 +222,14 @@ class SoreBodyPart extends Component {
                     }
                 </View>
                 { bodyPart.isClearCandidate && isPrevSoreness ?
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                         {'How has it felt the last '}
                         <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                             {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                         </Text>
                     </Text>
                     : isPrevSoreness ?
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {`How ${helpingVerb} your `}
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
                                 {bodyPartName}
@@ -237,7 +237,7 @@ class SoreBodyPart extends Component {
                             {' felt?'}
                         </Text>
                         :
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {'My '}
                             <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
                                 {bodyPartName}
@@ -264,7 +264,7 @@ class SoreBodyPart extends Component {
                     onClose={() => {}}
                     tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                 >
-                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.padding,}}>
+                    <View style={{backgroundColor: this.state.isToolTipOpen ? AppColors.white : AppColors.transparent, borderRadius: 5, flexDirection: 'row', justifyContent: 'center', padding: AppSizes.padding,}}>
                         <SoreBodyPartScaleButton
                             extraStyles={{marginRight: AppSizes.padding,}}
                             isSelected={this.state.type === 'all-good'}
@@ -289,6 +289,7 @@ class SoreBodyPart extends Component {
                 { showScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}
+                        duration={500}
                         style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
                     >
                         <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
@@ -318,6 +319,7 @@ class SoreBodyPart extends Component {
                 { this.state.showMotionScaleButtons &&
                     <Animatable.View
                         animation={'fadeInDown'}
+                        duration={500}
                         style={{paddingVertical: AppSizes.paddingMed,}}
                     >
                         <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>

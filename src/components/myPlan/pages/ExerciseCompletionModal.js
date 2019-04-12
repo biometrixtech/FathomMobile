@@ -19,11 +19,10 @@ import { Platform, StyleSheet, View, } from 'react-native';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
-import Modal from 'react-native-modalbox';
 
 // // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, ProgressCircle, Spacer, Text, } from '../../custom';
+import { Button, FathomModal, ProgressCircle, Spacer, Text, } from '../../custom';
 
 const modalWidth = (AppSizes.screen.width * 0.9);
 const thickness = 5;
@@ -61,16 +60,24 @@ class ExerciseCompletionModal extends Component {
             progressCounters: {},
         };
         this.animation = [];
+        this.iconTimers = [];
+        this.mainTimer = {};
+    }
+
+    componentWillUnmount = () => {
+        // clear timers
+        clearInterval(this.mainTimer);
+        _.map(this.iconTimers, (timer, i) => clearInterval(this.iconTimers[i]));
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen) {
-            _.delay(() => {
+            this.mainTimer = _.delay(() => {
                 const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
                 let index = 0;
                 _.map(completionModalExerciseList, (exerciseGroup, group) => {
-                    _.delay(() => {
+                    this.iconTimers[group] = _.delay(() => {
                         newProgressCounters[group] = (exerciseGroup.completed / exerciseGroup.total);
                         this.setState(
                             { progressCounters: newProgressCounters, },
@@ -130,16 +137,9 @@ class ExerciseCompletionModal extends Component {
             :
             '';
         return(
-            <Modal
-                backdropColor={AppColors.zeplin.darkNavy}
-                backdropOpacity={0.8}
-                backdropPressToClose={false}
-                coverScreen={true}
-                isOpen={isModalOpen}
-                position={'top'}
-                style={[AppStyles.containerCentered, { backgroundColor: AppColors.transparent, }]}
-                swipeToClose={false}
-                useNativeDriver={false}
+            <FathomModal
+                isVisible={isModalOpen}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
@@ -202,64 +202,29 @@ class ExerciseCompletionModal extends Component {
                             <Spacer size={AppSizes.padding} />
                             { !isCompleted ?
                                 <Button
-                                    backgroundColor={AppColors.zeplin.yellow}
-                                    buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                    containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                    color={AppColors.white}
-                                    fontFamily={AppStyles.robotoBold.fontFamily}
-                                    fontWeight={AppStyles.robotoBold.fontWeight}
-                                    leftIcon={{
-                                        color: AppColors.zeplin.yellow,
-                                        name:  'chevron-right',
-                                        size:  AppFonts.scaleFont(24),
-                                        style: {flex: 1,},
-                                    }}
-                                    outlined={false}
+                                    buttonStyle={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                    containerStyle={{marginLeft: 0, marginRight: 0,}}
                                     onPress={() => this._closeModal(() => onClose())}
-                                    raised={false}
-                                    rightIcon={{
-                                        color: AppColors.white,
-                                        name:  'chevron-right',
-                                        size:  AppFonts.scaleFont(24),
-                                        style: {flex: 1,},
-                                    }}
-                                    textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                     title={'Finish what I started'}
+                                    titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                 />
                                 :
                                 null
                             }
                             <Spacer size={isCompleted ? 0 : AppSizes.padding} />
                             <Button
-                                backgroundColor={isCompleted ? AppColors.zeplin.yellow : AppColors.transparent}
-                                buttonStyle={{alignSelf: 'center', borderRadius: 5, width: (modalWidth - (AppSizes.padding * 2)),}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0}}
-                                color={isCompleted ? AppColors.white : AppColors.zeplin.yellow}
-                                fontFamily={AppStyles.robotoBold.fontFamily}
-                                fontWeight={AppStyles.robotoBold.fontWeight}
-                                leftIcon={{
-                                    color: AppColors.transparent,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                outline={isCompleted ? false : true}
+                                buttonStyle={{alignSelf: 'center', backgroundColor: isCompleted ? AppColors.zeplin.yellow : AppColors.transparent, borderColor: isCompleted ? AppColors.transparent : AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
+                                containerStyle={{marginLeft: 0, marginRight: 0,}}
                                 onPress={() => this._closeModal(() => onComplete())}
-                                raised={false}
-                                rightIcon={{
-                                    color: isCompleted ? AppColors.white : AppColors.transparent,
-                                    name:  'chevron-right',
-                                    size:  AppFonts.scaleFont(24),
-                                    style: {flex: 1,},
-                                }}
-                                textStyle={{ flex: 8, fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                                 title={'Complete'}
+                                titleStyle={{color: isCompleted ? AppColors.white : AppColors.zeplin.yellow, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                type={isCompleted ? 'solid' : 'outline'}
                             />
                             <Spacer size={AppSizes.paddingXLrg} />
                         </View>
                     </LinearGradient>
                 </View>
-            </Modal>
+            </FathomModal>
         )
     }
 }

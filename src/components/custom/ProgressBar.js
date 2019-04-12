@@ -22,7 +22,7 @@ import { View } from 'react-native';
 import { AppColors, AppSizes } from '../../constants';
 
 /* Component ==================================================================== */
-const ProgressBar = ({ currentStep, totalSteps }) => (
+const ProgressBar = ({ currentStep, totalSteps, }) => (
     <View
         style={{
             backgroundColor: AppColors.primary.grey.thirtyPercent,
@@ -31,9 +31,9 @@ const ProgressBar = ({ currentStep, totalSteps }) => (
     >
         <View
             style={{
-                backgroundColor: AppColors.primary.yellow.hundredPercent,
-                width:           `${(currentStep / totalSteps) * 100}%`,
+                backgroundColor: AppColors.zeplin.yellow,
                 height:          AppSizes.screen.progressBarHeight,
+                width:           `${(currentStep / totalSteps) * 100}%`,
             }}
         />
     </View>

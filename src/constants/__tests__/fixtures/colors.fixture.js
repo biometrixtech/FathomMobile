@@ -2,7 +2,7 @@
  * @Author: Vir Desai
  * @Date: 2017-10-12 11:20:06
  * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-30 04:11:39
+ * @Last Modified time: 2018-07-30 04:09:53
  */
 
 /**
@@ -59,7 +59,7 @@ const brand = {
             seventyPercent: '#548AA3',
             fiftyPercent:   '#85ACBE',
             thirtyPercent:  '#B6CDD8',
-        }
+        },
     },
     gradient: {
         blue: {
@@ -89,7 +89,9 @@ const borders = {
 };
 
 const tabbar = {
-    tabbar: {
+    activeTabText:   '#2B2B2B',
+    inactiveTabText: '#2B2B2B4D', // 30% opacity
+    tabbar:          {
         background:   app.white,
         iconDefault:  '#BABDC2',
         iconSelected: brand.secondary.blue.hundredPercent,
@@ -97,8 +99,49 @@ const tabbar = {
 };
 
 const zeplin = {
-    blueBackground: '#183C4D',
-    greyText:       '#B2B2B2',
+    blueBackground:         '#183C4D', // 24, 60, 77
+    blueGrey:               '#757D8A',
+    coachesDashError:       '#E6583D',
+    darkBlue:               '#081832', // 8, 24, 50
+    darkGrey:               '#2B2B2B', // 43, 43, 43
+    darkGreyText:           '#868686', // 134, 134, 134
+    darkNavy:               '#0F1320',
+    darkSlate:              '#757D8A',
+    darkWhite:              '#F8F8F8', // 248, 248, 248
+    error:                  '#C8432A', // 200, 67, 42
+    green:                  '#0B7B88',
+    greyText:               '#B2B2B2', // 178, 178, 178
+    iconCircle:             '#AFAFAF',
+    light:                  '#E2E4E6',
+    lightGrey:              '#D5D5D5', // 213, 213, 213
+    lightNavy:              '#2A374A',
+    lightSlate:             '#ADB1B7',
+    mediumGrey:             '#707070', // 112, 112, 112
+    navyBlue:               '#0E0822', // 14, 8, 34
+    progressPillBackground: '#FAFAFA',
+    seaBlue:                '#0B7B88', // 11, 123, 136
+    shadow:                 '#e4e4e4',
+    slate:                  '#50535B',
+    success:                '#2EA985',
+    superLight:             '#F5F5F5',
+    warning:                '#EBBA2D',
+    yellow:                 '#EBBA2D',
+}
+
+const alerts = {
+    errorBackground:   '#972C2F',
+    statusBackground:  '#1E6789',
+    successBackground: '#59DC9A',
+}
+
+const sensor = {
+    charging:               brand.primary.yellow.hundredPercent,
+    chargingBackground:     '#1E6789',
+    good:                   '#2E7D32',
+    notConnected:           '#BABABA',
+    notConnectedBackground: '#081831',
+    unabled:                '#0277BD',
+    wrongKit:               '#972C2F',
 }
 
 export default {
@@ -107,5 +150,7 @@ export default {
     ...brand,
     ...sliders,
     ...tabbar,
+    alerts,
+    sensor,
     zeplin,
 };

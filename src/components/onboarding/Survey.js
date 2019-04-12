@@ -169,91 +169,89 @@ class Survey extends Component {
                             </TouchableHighlight>
                         </View>
                         :
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'DO YOU USE A WEARABLE DEVICE WHILE TRAINING?'}</Text>
-                            <Spacer size={AppSizes.padding} />
-                            <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We will soon sync with your device to log activity & monitor training volume!'}</Text>
-                            <Spacer size={AppSizes.padding} />
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Select all that apply'}</Text>
-                            <Spacer size={AppSizes.padding} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-evenly',}}>
-                                <TouchableHighlight
-                                    onPress={() => this._handleFormChange('form_values.wearable_devices', 'No')}
-                                    style={{backgroundColor: form_values.wearable_devices.includes('No') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text robotoRegular style={{color: form_values.wearable_devices.includes('No') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'No'}</Text>
-                                </TouchableHighlight>
-                                <View style={{flex: 0.5,}} />
-                                <TouchableHighlight
-                                    onPress={() => this._handleFormChange('form_values.wearable_devices', 'Apple Watch')}
-                                    style={{backgroundColor: form_values.wearable_devices.includes('Apple Watch') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text robotoRegular style={{color: form_values.wearable_devices.includes('Apple Watch') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Apple Watch'}</Text>
-                                </TouchableHighlight>
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'column', justifyContent: 'center',}}>
+                            <View style={{alignItems: 'center', flex: 8, justifyContent: 'center',}}>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'DO YOU USE A WEARABLE DEVICE WHILE TRAINING?'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We will soon sync with your device to log activity & monitor training volume!'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Select all that apply'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <View style={{flexDirection: 'row', justifyContent: 'space-evenly',}}>
+                                    <TouchableHighlight
+                                        onPress={() => this._handleFormChange('form_values.wearable_devices', 'No')}
+                                        style={{backgroundColor: form_values.wearable_devices.includes('No') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('No') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'No'}</Text>
+                                    </TouchableHighlight>
+                                    <View style={{flex: 0.5,}} />
+                                    <TouchableHighlight
+                                        onPress={() => this._handleFormChange('form_values.wearable_devices', 'Apple Watch')}
+                                        style={{backgroundColor: form_values.wearable_devices.includes('Apple Watch') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Apple Watch') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Apple Watch'}</Text>
+                                    </TouchableHighlight>
+                                </View>
+                                <Spacer size={AppSizes.paddingSml} />
+                                <View style={{flexDirection: 'row', justifyContent: 'space-evenly',}}>
+                                    <TouchableHighlight
+                                        onPress={() => this._handleFormChange('form_values.wearable_devices', 'Garmin')}
+                                        style={{backgroundColor: form_values.wearable_devices.includes('Garmin') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Garmin') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Garmin'}</Text>
+                                    </TouchableHighlight>
+                                    <View style={{flex: 0.5,}} />
+                                    <TouchableHighlight
+                                        onPress={() => this._handleFormChange('form_values.wearable_devices', 'Fitbit')}
+                                        style={{backgroundColor: form_values.wearable_devices.includes('Fitbit') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Fitbit') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Fitbit'}</Text>
+                                    </TouchableHighlight>
+                                </View>
+                                <Spacer size={AppSizes.paddingSml} />
+                                { showTextInput && !form_values.wearable_devices.includes('No') ?
+                                    <FormInput
+                                        autoCapitalize={'none'}
+                                        autoCorrect={false}
+                                        blurOnSubmit={true}
+                                        clearButtonMode={'never'}
+                                        containerStyle={[{borderBottomColor: AppColors.zeplin.darkSlate, paddingBottom: AppSizes.paddingXSml, width: AppSizes.screen.widthTwoThirds,}]}
+                                        inputStyle={[{...AppStyles.robotoRegular, color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                                        keyboardType={'default'}
+                                        onChangeText={(text) => this._handleFormChange('otherField', text)}
+                                        placeholder={''}
+                                        placeholderTextColor={AppColors.zeplin.darkSlate}
+                                        returnKeyType={'done'}
+                                        underlineColorAndroid={'transparent'}
+                                        value={otherField}
+                                    />
+                                    :
+                                    <TouchableHighlight
+                                        onPress={() => this.setState({ showTextInput: true, })}
+                                        style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
+                                        underlayColor={AppColors.transparent}
+                                    >
+                                        <Text robotoRegular style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Other'}</Text>
+                                    </TouchableHighlight>
+                                }
+                                <Spacer size={AppSizes.paddingSml} />
                             </View>
-                            <Spacer size={AppSizes.paddingSml} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-evenly',}}>
-                                <TouchableHighlight
-                                    onPress={() => this._handleFormChange('form_values.wearable_devices', 'Garmin')}
-                                    style={{backgroundColor: form_values.wearable_devices.includes('Garmin') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text robotoRegular style={{color: form_values.wearable_devices.includes('Garmin') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Garmin'}</Text>
-                                </TouchableHighlight>
-                                <View style={{flex: 0.5,}} />
-                                <TouchableHighlight
-                                    onPress={() => this._handleFormChange('form_values.wearable_devices', 'Fitbit')}
-                                    style={{backgroundColor: form_values.wearable_devices.includes('Fitbit') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text robotoRegular style={{color: form_values.wearable_devices.includes('Fitbit') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Fitbit'}</Text>
-                                </TouchableHighlight>
-                            </View>
-                            <Spacer size={AppSizes.paddingSml} />
-                            { showTextInput && !form_values.wearable_devices.includes('No') ?
-                                <FormInput
-                                    autoCapitalize={'none'}
-                                    autoCorrect={false}
-                                    blurOnSubmit={true}
-                                    clearButtonMode={'never'}
-                                    containerStyle={[{borderBottomColor: AppColors.zeplin.darkSlate, paddingBottom: AppSizes.paddingXSml,}]}
-                                    inputStyle={[{...AppStyles.robotoRegular, color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
-                                    keyboardType={'default'}
-                                    onChangeText={(text) => this._handleFormChange('otherField', text)}
-                                    placeholder={''}
-                                    placeholderTextColor={AppColors.zeplin.darkSlate}
-                                    returnKeyType={'done'}
-                                    underlineColorAndroid={'transparent'}
-                                    value={otherField}
+                            <View style={{alignItems: 'center', flex: 2, flexDirection: 'column', justifyContent: 'flex-end', width: AppSizes.screen.widthHalf,}}>
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                    containerStyle={{width: '100%',}}
+                                    disabled={!isValid}
+                                    disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.shadow, borderWidth: 1,}}
+                                    disabledTitleStyle={{color: AppColors.zeplin.shadow,}}
+                                    onPress={() => this._onDone()}
+                                    title={'Submit'}
+                                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(18), }}
                                 />
-                                :
-                                <TouchableHighlight
-                                    onPress={() => this.setState({ showTextInput: true, })}
-                                    style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
-                                    underlayColor={AppColors.transparent}
-                                >
-                                    <Text robotoRegular style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Other'}</Text>
-                                </TouchableHighlight>
-                            }
-                            <Spacer size={AppSizes.paddingSml} />
-                            <Button
-                                backgroundColor={AppColors.zeplin.yellow}
-                                buttonStyle={{alignSelf: 'center', borderRadius: 5, width: '100%',}}
-                                containerViewStyle={{marginLeft: 0, marginRight: 0, width: '100%',}}
-                                color={AppColors.white}
-                                disabled={!isValid}
-                                disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.shadow, borderWidth: 1,}}
-                                disabledTextStyle={{color: AppColors.zeplin.shadow,}}
-                                fontFamily={AppStyles.robotoMedium.fontFamily}
-                                fontWeight={AppStyles.robotoMedium.fontWeight}
-                                outlined={false}
-                                onPress={() => this._onDone()}
-                                raised={false}
-                                textStyle={{ flex: 1, fontSize: AppFonts.scaleFont(18), textAlign: 'center', }}
-                                title={'Submit'}
-                            />
+                            </View>
                         </View>
                     }
                 </LinearGradient>

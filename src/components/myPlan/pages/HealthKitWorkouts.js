@@ -17,11 +17,12 @@ import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableO
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, FormInput, Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { FormInput, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
@@ -95,12 +96,12 @@ class HealthKitWorkouts extends PureComponent {
         this.state = {
             delayTimerId:        null,
             isEditingDuration:   false,
-            isSlideUpPanelOpen:  false,
             pageIndex:           0,
             showAddContinueBtns: false,
             showRPEPicker:       false,
         };
         this._activityRPERef = {};
+        this._hkPanel = {};
         this.pages = {};
         this.scrollViewHealthKitOverviewRef = {};
         this.scrollViewHealthKitRef = [];
@@ -212,7 +213,7 @@ class HealthKitWorkouts extends PureComponent {
 
     render = () => {
         const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
-        const { isEditingDuration, isSlideUpPanelOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
+        const { isEditingDuration, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         return(
             <View style={{flex: 1,}}>
@@ -227,6 +228,7 @@ class HealthKitWorkouts extends PureComponent {
                 <Pages
                     indicatorPosition={'none'}
                     ref={pages => { this.pages = pages; }}
+                    scrollEnabled={false}
                     startPage={pageIndex}
                 >
 
@@ -247,7 +249,7 @@ class HealthKitWorkouts extends PureComponent {
                                         <TabIcon
                                             color={AppColors.zeplin.light}
                                             icon={'help'}
-                                            onPress={() => this.setState({ isSlideUpPanelOpen: !this.state.isSlideUpPanelOpen, })}
+                                            onPress={() => this._hkPanel.show()}
                                             reverse={false}
                                             size={20}
                                             type={'material'}
@@ -283,6 +285,7 @@ class HealthKitWorkouts extends PureComponent {
                             return(<View key={index} />)
                         }
                         let { sportDuration, sportImage, sportName, sportText, } = PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout);
+                        /*eslint no-return-assign: 0*/
                         return(
                             <ScrollView
                                 contentContainerStyle={{flexGrow: 1,}}
@@ -305,15 +308,15 @@ class HealthKitWorkouts extends PureComponent {
                                             blurOnSubmit={true}
                                             clearButtonMode={'never'}
                                             clearTextOnFocus={true}
-                                            containerStyle={[{display: 'none',}]}
-                                            inputStyle={[{display: 'none',}]}
+                                            containerStyle={{display: 'none',}}
+                                            inputRef={ref => this.textInput[index] = ref}
+                                            inputStyle={{display: 'none',}}
                                             keyboardType={'numeric'}
                                             onChangeText={value => handleHealthDataFormChange((pageIndex - 1), 'duration', parseInt(value, 10))}
                                             onEndEditing={() => this.setState({ isEditingDuration: false, })}
                                             placeholder={''}
                                             placeholderTextColor={AppColors.transparent}
                                             returnKeyType={'done'}
-                                            textInputRef={input => {this.textInput[index] = input;}}
                                             value={''}
                                         />
                                         <Spacer size={AppSizes.paddingSml} />
@@ -368,7 +371,7 @@ class HealthKitWorkouts extends PureComponent {
                                             }
                                             style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 5, padding: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
                                         >
-                                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
+                                            <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -420,7 +423,7 @@ class HealthKitWorkouts extends PureComponent {
                                                                     <Text
                                                                         oswaldMedium
                                                                         style={{
-                                                                            color:    isSelected ? AppColors.primary.yellow.hundredPercent : AppColors.zeplin.darkGrey,
+                                                                            color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
                                                                             fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
                                                                         }}
                                                                     >
@@ -464,8 +467,8 @@ class HealthKitWorkouts extends PureComponent {
 
                 <SlidingUpPanel
                     allowDragging={false}
-                    startCollapsed={true}
-                    visible={isSlideUpPanelOpen}
+                    backdropOpacity={0.8}
+                    ref={ref => this._hkPanel = ref}
                 >
                     <View style={{flex: 1, flexDirection: 'column',}}>
                         <View style={{flex: 1,}} />
@@ -476,7 +479,7 @@ class HealthKitWorkouts extends PureComponent {
                                     containerStyle={[{flex: 1,}]}
                                     icon={'close'}
                                     iconStyle={[{color: AppColors.black, opacity: 0.3,}]}
-                                    onPress={() => this.setState({ isSlideUpPanelOpen: !this.state.isSlideUpPanelOpen, })}
+                                    onPress={() => this._hkPanel.hide()}
                                     reverse={false}
                                     size={30}
                                     type={'material-community'}

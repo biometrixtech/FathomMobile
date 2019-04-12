@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-05-05 23:34:47 
+ * @Author: Vir Desai
+ * @Date: 2018-05-05 23:34:47
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-06-28 11:42:43
  */
@@ -10,13 +10,22 @@
  */
 
 /* global it expect jest */
+/* global it expect beforeAll */
 import 'react-native';
 
+// import consts
 import { AppUtil } from '../';
 
+// setup consts
 const MS_IN_DAY = 86400000;
 const MS_IN_WEEK = MS_IN_DAY * 7;
 
+// mock async-storage
+beforeAll(() => {
+    jest.mock('@react-native-community/async-storage');
+});
+
+// setup tests
 it('Has utils available', () => {
     let numberOfUtils = 0;
 
