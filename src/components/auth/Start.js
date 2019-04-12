@@ -9,6 +9,7 @@ import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, Toucha
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import * as Fabric from 'react-native-fabric';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import SplashScreen from 'react-native-splash-screen';
@@ -19,6 +20,9 @@ import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
 import { Alerts, Button, Spacer, Text, } from '../custom';
 import { store } from '../../store';
+
+// setup consts
+const Crashlytics = Fabric.Crashlytics;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -210,8 +214,11 @@ class Start extends Component {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
                 console.log('err',error);
-                // this._routeToLogin();
-                AppUtil.handleAPIErrorAlert(error);
+                if(Platform.OS === 'ios') {
+                    Crashlytics.recordError(`ERROR on start: ${error.toString()}`);
+                } else {
+                    Crashlytics.logException(`ERROR on start: ${error.toString()}`);
+                }
             });
     }
 
