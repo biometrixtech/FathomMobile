@@ -156,6 +156,7 @@ start() {
     rm -rf ./android/app/build/intermediates
     rm -rf ./android/app/src/main/res/drawable-*
     rm ./android/app/src/main/assets/index.android.bundle
+    rm -rf /tmp/haste-map-react-native-packager-*
     lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }

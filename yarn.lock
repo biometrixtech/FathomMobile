@@ -718,8 +718,8 @@
     "@types/yargs" "^12.0.9"
 
 "@react-native-community/async-storage@^1.2.2":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.3.0.tgz#8254db63d6e2c51574008cce1535447055387b6a"
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.3.1.tgz#66b02438289ea1f525eca65ea2535b7d6ece5eb7"
 
 "@react-native-community/cli@^1.2.1":
   version "1.8.0"
@@ -773,6 +773,10 @@
     eslint-plugin-react-hooks "^1.5.1"
     eslint-plugin-react-native "3.6.0"
     prettier "1.16.4"
+
+"@react-native-community/netinfo@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-2.0.0.tgz#b98171aeaa4326bc9d9834399a3f6cecf8fd4781"
 
 "@types/babel__core@^7.1.0":
   version "7.1.1"
@@ -835,8 +839,8 @@ accepts@~1.3.3, accepts@~1.3.5:
     negotiator "0.6.1"
 
 acorn-globals@^4.1.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.0.tgz#e3b6f8da3c1552a95ae627571f7dd6923bb54103"
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.1.tgz#deb149c59276657ebd40ba2ba849ddd529763ccf"
   dependencies:
     acorn "^6.0.1"
     acorn-walk "^6.0.1"
@@ -5132,9 +5136,9 @@ react-native-ratings@^6.3.0:
     lodash "^4.17.4"
     prop-types "^15.5.10"
 
-react-native-redux-connectivity@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-redux-connectivity/-/react-native-redux-connectivity-0.1.0.tgz#cb9044fca706152eb4eadc606744421fcbd4fda4"
+react-native-redux-connectivity@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-redux-connectivity/-/react-native-redux-connectivity-0.2.0.tgz#1a3e45d8a5c85dfa7afae85726edb654cf63a66b"
 
 react-native-remote-svg@^2.0.0:
   version "2.0.3"

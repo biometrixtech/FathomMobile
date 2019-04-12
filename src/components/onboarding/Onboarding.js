@@ -404,9 +404,6 @@ class Onboarding extends Component {
                         return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                             .then(res => {
                                 this.props.setAppLogs();
-                                return res;
-                            })
-                            .then(res => {
                                 if(user.health_enabled) {
                                     return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
                                         .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));

@@ -9,6 +9,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
             return Arrays.<ReactPackage>asList(
                 new MainReactPackage(),
                 new AsyncStoragePackage(),
+                new NetInfoPackage(),
                 new LottiePackage(),
                 new VectorIconsPackage(),
                 new LocationServicesDialogBoxPackage(),

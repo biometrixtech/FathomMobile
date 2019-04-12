@@ -238,13 +238,6 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                                     expires: res.authorization.expires,
                                 });
                                 return fetcher(method, endpoint, params, body, api_enum);
-                            })
-                            .catch(err => {
-                                // if we hit an unexpected error, logout user and route to login
-                                store.dispatch({
-                                    type: DispatchActions.LOGOUT
-                                });
-                                return Actions.login();
                             });
                     }
                     // reached limit, reset timer and log user out
@@ -252,7 +245,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     store.dispatch({
                         type: DispatchActions.LOGOUT
                     });
-                    return Actions.login();
+                    throw {};
                 } else if( (/500/.test(`${rawRes.status}`) || /429/.test(`${rawRes.status}`)) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey) ) {
                     if(retryCounter < 2) {
                         // update counter and retry api

@@ -144,6 +144,7 @@ const registerDevice = (certificate, device, user) => {
   * - universal login steps
   */
 const finalizeLogin = (user, userCreds, authorization) => {
+    console.log(user, userCreds, authorization);
     return dispatch => new Promise((resolve, reject) => {
         dispatch({
             type:          Actions.LOGIN,

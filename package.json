@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.2.2",
+    "@react-native-community/netinfo": "^2.0.0",
     "es6-promise": "^4.2.6",
     "isomorphic-fetch": "^2.2.1",
     "jwt-decode": "^2.2.0",
@@ -55,7 +56,7 @@
     "react-native-pages": "^0.7.0",
     "react-native-progress": "^3.6.0",
     "react-native-push-notification": "^3.1.2",
-    "react-native-redux-connectivity": "^0.1.0",
+    "react-native-redux-connectivity": "^0.2.0",
     "react-native-remote-svg": "^2.0.0",
     "react-native-router-flux": "^4.0.6",
     "react-native-scrollable-tab-view": "^0.10.0",

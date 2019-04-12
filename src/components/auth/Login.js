@@ -230,9 +230,6 @@ class Login extends Component {
                                         if(!res.daily_plans[0].daily_readiness_survey_completed) {
                                             this.props.setAppLogs();
                                         }
-                                        return res;
-                                    })
-                                    .then(res => {
                                         if(user.health_enabled) {
                                             return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
                                                 .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));

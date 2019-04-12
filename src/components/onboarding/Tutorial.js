@@ -171,12 +171,16 @@ class Tutorial extends Component {
                     }
                 </View>
                 <View style={{flex: props.videoLink ? 1 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : props.videoLink ? 'flex-end' : 'center', paddingTop: props.image ? AppSizes.padding : 0,}}>
-                    <Text
-                        oswaldMedium
-                        style={props.titleStyle ? [props.titleStyle] : [AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
-                    >
-                        {props.title}
-                    </Text>
+                    { props.title ?
+                        <Text
+                            oswaldMedium
+                            style={props.titleStyle ? [props.titleStyle] : [AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
+                        >
+                            {props.title}
+                        </Text>
+                        :
+                        null
+                    }
                     { props.text ?
                         <View>
                             <Spacer size={props.title && props.title.length > 0 ? 20 : 0} />
