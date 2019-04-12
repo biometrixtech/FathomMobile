@@ -14,8 +14,9 @@ Installed React-Native libraries that we're utilizing
 | Feature | Summary | Location |
 | --- | --- | --- |
 | [Action Button](https://github.com/mastermoo/react-native-action-button) | Customizable multi-action-button component for React-Native. | Helps with scroll to bottom of page:<br/>1. Post Session Survey<br/>2. Readiness Survey |
+| [Async Storage](https://github.com/react-native-community/react-native-async-storage) | An asynchronous, persistent, key-value storage system for React-Native. | Utils |
 | [App Intro Slider](https://github.com/Jacse/react-native-app-intro-slider) | Easy-to-use yet very configurable app introduction slider/swiper | Tutorials |
-| [Apple HealthKit](https://github.com/AFGhazy/rn-apple-healthkit) | A React-Native bridge module for interacting with Apple HealthKit data. Forked from [RN-Apple-HealthKit](https://github.com/terrillo/rn-apple-healthkit). | Start, Login, On-boarding, Settings |
+| [Apple HealthKit](https://github.com/mazenchami/rn-apple-healthkit) | A React-Native bridge module for interacting with Apple HealthKit data. Forked from [RN-Apple-HealthKit](https://github.com/terrillo/rn-apple-healthkit) & [RN-Apple-HealthKit AFGhazy](https://github.com/AFGhazy/rn-apple-healthkit). | Start, Login, On-boarding, Settings |
 | [BLE Manager](https://github.com/innoveit/react-native-ble-manager) | React-Native BLE communication module. | Pair with sensor and sync data |
 | [Accordion](https://github.com/oblador/react-native-collapsible) | Animated collapsible component for React-Native, good for accordions, toggles etc | 1. Athlete Compliance Modal<br/>2. User Account (Account Information & About You sections) |
 | [Animatable](https://github.com/oblador/react-native-animatable) | Standard set of easy to use animations and declarative transitions for React-Native. | SoreBodyPart |
@@ -25,9 +26,11 @@ Installed React-Native libraries that we're utilizing
 | [Easter Egg](https://github.com/FuYaoDe/react-native-egg) | Implementation simple gestures detection achieve trigger easter egg, You can also use it as a gesture switch. | (INTERNAL) Toggle environment |
 | [Elements](https://react-native-training.github.io/react-native-elements) | USED MAINLY IN CUSTOM SECTION. Customizing [RN Elements](https://react-native-training.github.io/react-native-elements/docs/0.19.1/overview.html) | Button, Card, Checkbox, FormInput, FormLabel, Icon, List, ListItem, Text |
 | [Keep Awake](https://github.com/corbt/react-native-keep-awake) | This React-Native package allows you to prevent the screen from going to sleep while your app is active. It's useful for things like navigation or video playback, where the user expects the app to remain visible over long periods without touch interaction. | Exercises Modal |
+| [KeyboardAwareScrollView](https://github.com/APSL/react-native-keyboard-aware-scroll-view) | A ScrollView component that handles keyboard appearance and automatically scrolls to focused TextInput. | Onboarding |
 | [Linear Gradient](https://github.com/react-native-community/react-native-linear-gradient) | A <LinearGradient> component for React-Native | 1. Coach<br/>2. Readiness Survey Welcome page<br/>3. Splash Screen |
 | [Lottie](https://github.com/react-native-community/lottie-react-native) | Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](https://www.adobe.com/products/aftereffects.html) animations exported as JSON with [bodymovin](https://github.com/airbnb/lottie-web) and renders them natively on mobile! | 1. MyPlan - SessionsCompletionModal & ExerciseCompletionModal |
-| [Modal](https://github.com/maxs15/react-native-modalbox) | A React-Native component, easy, fully customizable, implementing the 'swipe down to close' feature. | 1. Login<br/>2. Coaches Dashboard<br/>3. Bluetooth Connect<br/>4. MyPlan<br/>5. Exercises<br/>6. On-boarding<br/>7. Join A Team |
+| [Modal](https://github.com/react-native-community/react-native-modal) | An enhanced, animated and customizable React-Native modal | 1. Login<br/>2. Coaches Dashboard<br/>3. Bluetooth Connect<br/>4. MyPlan<br/>5. Exercises<br/>6. On-boarding<br/>7. Join A Team |
+| [Pages](https://github.com/n4kz/react-native-pages) | Easy to use page view component for React-Native. | 1. Bluetooth Connection<br/>2. Post Session Survey<br/>3. Readiness Survey |
 | [Push Notification](https://github.com/zo0r/react-native-push-notification) | React-Native Local and Remote Notifications | Throughout app |
 | [React-Native](https://facebook.github.io/react-native/docs/components-and-apis) | Access to all React-Native's components and APIs. | Throughout App |
 | [Scrollable Tab View](https://github.com/ptomasroos/react-native-scrollable-tab-view) | Tabbed navigation that you can swipe between, each tab can have its own ScrollView and maintain its own scroll position between swipes. Pleasantly animated. Customizable tab bar. | 1. Coaches Dashboard<br/>2. MyPlan |
@@ -48,13 +51,11 @@ Custom build components to help us with any dynamic functionality that the libra
 | Feature | Summary | Location |
 | --- | --- | --- |
 | Animated Progress Bar | Hacked from [Progress Bar - Animated](https://github.com/rafaelmotta/react-native-progress-bar-animated) - Simple, customizable and animated progress bar for React-Native. | Used for our sensor syncing progress bar |
-| Calendar Strip | Hacked from [Calendar Strip](https://github.com/BugiDev/react-native-calendar-strip). | Currently not being used, was created for the ability to see previous days plans |
 | Coach | Previous setup as a "coach" blurb that pops up when there is something to update the user on. | Currently not being used |
 | Custom Progress Circle | Was previously setup for a circle that fills up with progress tracking text. | Currently not being used |
 | Elements | Customizing [RN Elements](https://react-native-training.github.io/react-native-elements/docs/0.19.1/overview.html) | Button, Card, Checkbox, FormInput, FormLabel, Icon, List, ListItem, Text |
 | Fathom Picker | Hacked from [Picker Select](https://github.com/lawnstarter/react-native-picker-select) - A Picker component for React-Native which emulates the native <select> interfaces for iOS and Android | 1. Coaches Dashboard (Sort By)<br/>2. Coaches Dashboard Tab Bar (Select Teams)<br/>3. Readiness Survey (Select the number of trainings)<br/>4. User On-Boarding (a. Injury Statues, b. Heights, c. Gender) |
 | Fathom Slider | Hacked from [Elements Slider](https://react-native-training.github.io/react-native-elements/docs/0.19.1/slider.html) - A pure JavaScript component for React-Native. It is a drop-in replacement for Slider. | Currently not being used, was setup for our vertical RPE picker |
-| Pages | Hacked from [Pages](https://github.com/n4kz/react-native-pages) - Easy to use page view component for React-Native. | 1. Bluetooth Connection<br/>2. Post Session Survey<br/>3. Readiness Survey |
 | Tooltip | Hacked from [Walkthrough Tooltip](https://github.com/jasongaare/react-native-walkthrough-tooltip) - React-Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps. When not visible, the wrapped element is displayed normally. | __Open's our first time experience tooltip on:__<br/>1. Areas Of Soreness<br/>2. SVG Image (Body Part)<br/>3. Sore Body Part |
 | Wheel Scroll Picker | Custom Wheel Scroll component | Sport Schedule Builder (duration) |
 

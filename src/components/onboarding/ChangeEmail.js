@@ -108,7 +108,7 @@ class ChangeEmail extends Component {
                             onChangeText={(text) => this._handleFormChange('current_email', text)}
                             onSubmitEditing={() => this.focusNextField('new_email')}
                             placeholder={'current email'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'next'}
                             textInputRef={input => {this.inputs.current_email = input;}}
                             value={this.state.form_values.email}
@@ -123,7 +123,7 @@ class ChangeEmail extends Component {
                             onChangeText={(text) => this._handleFormChange('new_email', text)}
                             onSubmitEditing={() => this._handleFormSubmit()}
                             placeholder={'new email'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'done'}
                             textInputRef={input => {this.inputs.new_email = input;}}
                             value={this.state.form_values.email}
@@ -131,7 +131,7 @@ class ChangeEmail extends Component {
                     </View>
                     <View style={{flex: 1,}}>
                         <Button
-                            backgroundColor={AppColors.primary.yellow.hundredPercent}
+                            backgroundColor={AppColors.zeplin.yellow}
                             buttonStyle={{borderRadius: 0, height: '100%', width: AppSizes.screen.width}}
                             color={AppColors.white}
                             fontFamily={AppStyles.robotoBold.fontFamily}

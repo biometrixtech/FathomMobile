@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:34:45 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:34:45
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-08-10 04:25:25
  */
@@ -18,13 +18,12 @@ import {
     View,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
 
 // Consts and Libs
 import { Roles, BLEConfig, AppColors, AppStyles, AppSizes, AppFonts } from '../../constants/';
 
 // Components
-import { Spacer, Button, FormLabel, Text, ListItem, Card, FormInput } from '../custom/';
+import { Spacer, Button, FathomModal, FormLabel, Text, ListItem, Card, FormInput } from '../custom/';
 
 const font10 = AppFonts.scaleFont(10);
 const font14 = AppFonts.scaleFont(14);
@@ -124,7 +123,7 @@ class KitOwnerView extends Component {
                                     title={'OWNER'}
                                     containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                     rightTitle={'Erase Owner'}
-                                    rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
+                                    rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.zeplin.yellow, }]}
                                     onPress={() => Actions.refresh({ isResetModalVisible: true })}
                                     hideChevron
                                 />
@@ -134,7 +133,7 @@ class KitOwnerView extends Component {
                                         title={'OWNER'}
                                         containerStyle={{ padding: 10, backgroundColor: AppColors.secondary.light_blue.fiftyPercent }}
                                         rightTitle={'Save'}
-                                        rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.primary.yellow.hundredPercent, }]}
+                                        rightTitleStyle={[AppStyles.baseText, AppStyles.oswaldBold, { color: AppColors.zeplin.yellow, }]}
                                         onPress={() => this.props.startConnect()
                                             .then(() => this.props.assignKitName(this.props.bluetooth.accessoryData.id, this.props.bluetooth.accessoryData.name.slice(11)))
                                             .then(() => this.props.setOwnerFlag(this.props.bluetooth.accessoryData.id, true))
@@ -274,13 +273,9 @@ class KitOwnerView extends Component {
                         }
                     </View>
                 </ScrollView>
-                <Modal
-                    position={'center'}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                    isOpen={this.props.isModalVisible}
-                    backButtonClose
-                    swipeToClose={false}
-                    onClosed={() => { this.setState({ name: '' }); return Actions.refresh({ isModalVisible: false }); }}
+                <FathomModal
+                    isVisible={this.props.isModalVisible}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
                 >
                     <View onLayout={(ev) => { this.resizeModal(ev); }}>
                         <Card title={'Set Kit Name'}>
@@ -314,14 +309,10 @@ class KitOwnerView extends Component {
                             </View>
                         </Card>
                     </View>
-                </Modal>
-                <Modal
-                    position={'center'}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, { backgroundColor: AppColors.transparent }]}
-                    isOpen={this.props.isResetModalVisible}
-                    backButtonClose
-                    swipeToClose={false}
-                    onClosed={() => Actions.refresh({ isResetModalVisible: false })}
+                </FathomModal>
+                <FathomModal
+                    isVisible={this.props.isResetModalVisible}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
                 >
                     <View onLayout={(ev) => { this.resizeModal(ev); }}>
                         <Card title={'Erase Owner'}>
@@ -352,8 +343,8 @@ class KitOwnerView extends Component {
                             </View>
                         </Card>
                     </View>
-                </Modal>
-                { this.props.bluetooth.indicator ? 
+                </FathomModal>
+                { this.props.bluetooth.indicator ?
                     <ActivityIndicator
                         style={[AppStyles.activityIndicator]}
                         size={'large'}

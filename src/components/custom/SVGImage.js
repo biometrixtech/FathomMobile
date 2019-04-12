@@ -38,7 +38,7 @@ const TooltipContent = ({ handleTooltipClose, text, }) => (
             <Text
                 robotoMedium
                 style={{
-                    color:    AppColors.primary.yellow.hundredPercent,
+                    color:    AppColors.zeplin.yellow,
                     fontSize: AppFonts.scaleFont(15),
                 }}
             >
@@ -214,7 +214,7 @@ class SVGImage extends Component {
         >
             <View style={{
                 alignItems:     'center',
-                borderColor:    this.props.selected ? AppColors.primary.yellow.hundredPercent : AppColors.white,
+                borderColor:    this.props.selected ? AppColors.zeplin.yellow : AppColors.white,
                 borderRadius:   AppSizes.screen.widthQuarter + 5,
                 borderWidth:    Platform.OS === 'ios' ? 5 : 6,
                 height:         this.props.style.height ? this.props.style.height : (AppSizes.screen.widthQuarter + 5),

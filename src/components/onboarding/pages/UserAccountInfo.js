@@ -7,6 +7,7 @@
         isConfirmPasswordSecure={this.state.isConfirmPasswordSecure}
         isPasswordSecure={this.state.isPasswordSecure}
         isUpdatingUser={isUpdatingUser}
+        scrollToInput={this._scrollToInput}
         setAccordionSection={this._setAccordionSection}
         toggleShowPassword={this._toggleShowPassword}
         updateErrorMessage={this._updateErrorMessage}
@@ -16,11 +17,11 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, findNodeHandle, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { FathomInput, Spacer, TabIcon, Text, } from '../../custom';
+import { FormInput, Spacer, TabIcon, Text, } from '../../custom';
 import { onboardingUtils, } from '../../../constants/utils';
 
 /* Styles ==================================================================== */
@@ -66,43 +67,45 @@ class UserAccountInfo extends Component {
             isConfirmPasswordSecure,
             isPasswordSecure,
             isUpdatingUser,
+            scrollToInput,
             setAccordionSection,
             toggleShowPassword,
             updateErrorMessage,
             user,
         } = this.props;
         const { isConfirmPasswordEditedOnce, isPasswordEditedOnce, showPasswordErrorText, } = this.state;
+        /*eslint no-return-assign: 0*/
         return(
             <View>
                 <View style={{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1, flexDirection: 'row',}}>
-                    <View style={[styles.leftItem]}>
-                        <FathomInput
+                    <View style={[styles.leftItem,]}>
+                        <FormInput
                             blurOnSubmit={false}
-                            containerStyle={{marginHorizontal: 0,}}
-                            inputContainerStyle={{marginHorizontal: 0, paddingLeft: AppSizes.paddingSml,}}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.first_name', text))}
-                            onSubmitEditing={() => this.focusNextField('last_name')}
+                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            inputRef={ref => this.inputs.first_name = ref}
                             label={user.personal_data.first_name.length > 0 ? 'First name' : ' '}
                             labelStyle={[styles.inputLabel]}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.first_name', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
+                            onSubmitEditing={() => this.focusNextField('last_name')}
                             placeholder={'First name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
-                            ref={input => {this.inputs.first_name = input;}}
                             returnKeyType={'next'}
                             value={user.personal_data.first_name}
                         />
                     </View>
-                    <View style={[styles.rightItem]}>
-                        <FathomInput
+                    <View style={[styles.rightItem,]}>
+                        <FormInput
                             blurOnSubmit={false}
-                            containerStyle={{marginHorizontal: 0,}}
-                            inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
-                            onSubmitEditing={() => isUpdatingUser ? setAccordionSection(0, 1) : this.focusNextField('email')}
+                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            inputRef={ref => this.inputs.last_name = ref}
                             label={user.personal_data.last_name.length > 0 ? 'Last name' : ' '}
                             labelStyle={[styles.inputLabel]}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
+                            onSubmitEditing={() => isUpdatingUser ? setAccordionSection(0, 1) : this.focusNextField('email')}
                             placeholder={'Last name'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
-                            ref={input => {this.inputs.last_name = input;}}
                             returnKeyType={'next'}
                             value={user.personal_data.last_name}
                         />
@@ -110,43 +113,47 @@ class UserAccountInfo extends Component {
                 </View>
                 {!isUpdatingUser ?
                     <View>
-                        <FathomInput
+                        <FormInput
                             autoCapitalize={'none'}
                             blurOnSubmit={false}
-                            inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
                             editable={!isUpdatingUser}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
-                            onSubmitEditing={() => this.focusNextField('password')}
+                            inputRef={ref => this.inputs.email = ref}
                             keyboardType={'email-address'}
                             label={user.personal_data.email.length > 0 ? 'E-mail address' : ' '}
                             labelStyle={[styles.inputLabel]}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
+                            onSubmitEditing={() => this.focusNextField('password')}
                             placeholder={'E-mail address'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
-                            ref={input => {this.inputs.email = input;}}
                             returnKeyType={'next'}
                             value={user.personal_data.email}
                         />
-                        <FathomInput
+                        <FormInput
                             blurOnSubmit={true}
+                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
                             errorMessage={showPasswordErrorText ? '8+ characters, 1 number' : ''}
                             errorStyle={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(13), paddingLeft: AppSizes.paddingXSml,}}
-                            inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
-                            onEndEditing={() => this.setState({ showPasswordErrorText: false, isPasswordEditedOnce: true, })}
-                            onFocus={() => this.setState({ showPasswordErrorText: true, })}
-                            onSubmitEditing={() => this.focusNextField('confirm_password')}
+                            inputRef={ref => this.inputs.password = ref}
                             label={user.password.length > 0 ? 'Password' : ' '}
                             labelStyle={[styles.inputLabel]}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
+                            onEndEditing={() => this.setState({ showPasswordErrorText: false, isPasswordEditedOnce: true, })}
+                            onFocus={event => {
+                                this.setState({ showPasswordErrorText: true, });
+                                scrollToInput(findNodeHandle(event.target));
+                            }}
+                            onSubmitEditing={() => this.focusNextField('confirm_password')}
                             placeholder={'Password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
-                            ref={input => {this.inputs.password = input;}}
                             returnKeyType={'next'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                                        icon={isPasswordSecure ? 'visibility' : 'visibility-off'}
+                                        icon={isPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword()}
                                         size={24}
                                     />
@@ -168,24 +175,25 @@ class UserAccountInfo extends Component {
                             secureTextEntry={isPasswordSecure}
                             value={user.password}
                         />
-                        <FathomInput
+                        <FormInput
                             blurOnSubmit={true}
-                            inputContainerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('confirm_password', text))}
-                            onEndEditing={() => this.setState({ isConfirmPasswordEditedOnce: true, })}
-                            onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
+                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            inputRef={ref => this.inputs.confirm_password = ref}
                             label={user.confirm_password.length > 0 ? 'Confirm password' : ' '}
                             labelStyle={[styles.inputLabel]}
+                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('confirm_password', text))}
+                            onEndEditing={() => this.setState({ isConfirmPasswordEditedOnce: true, })}
+                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
+                            onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                             placeholder={'Confirm password'}
                             placeholderTextColor={AppColors.zeplin.lightSlate}
-                            ref={input => {this.inputs.confirm_password = input;}}
                             returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
                                         color={AppColors.zeplin.lightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                                        icon={isConfirmPasswordSecure ? 'visibility' : 'visibility-off'}
+                                        icon={isConfirmPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword(true)}
                                         size={24}
                                     />
@@ -234,6 +242,7 @@ UserAccountInfo.propTypes = {
     isConfirmPasswordSecure: PropTypes.bool.isRequired,
     isPasswordSecure:        PropTypes.bool.isRequired,
     isUpdatingUser:          PropTypes.bool.isRequired,
+    scrollToInput:           PropTypes.func.isRequired,
     setAccordionSection:     PropTypes.func.isRequired,
     toggleShowPassword:      PropTypes.func.isRequired,
     updateErrorMessage:      PropTypes.func.isRequired,

@@ -25,6 +25,7 @@ import {
     Dimensions,
     Platform,
     ScrollView,
+    TouchableHighlight,
     View,
 } from 'react-native';
 
@@ -94,40 +95,48 @@ class WheelScrollPicker extends Component {
                 :
                 AppColors.transparent;
             return(
-                <View
+                <TouchableHighlight
                     key={index}
-                    style={{
-                        alignItems:     'center',
-                        flexDirection:  'row',
-                        height:         this.props.itemHeight ? this.props.itemHeight : 30,
-                        justifyContent: 'space-between',
-                    }}
+                    onPress={() => this.props.onValueChange(this.props.dataSource[index], index)}
+                    style={{height: this.props.itemHeight ? this.props.itemHeight : 30,}}
+                    underlayColor={AppColors.transparent}
                 >
-                    {item}
-                    <Text
-                        robotoMedium
+                    <View
                         style={{
-                            color:    recommendedColor,
-                            fontSize: AppFonts.scaleFont(15),
-                            opacity:  0.5,
+                            alignItems:     'center',
+                            flex:           1,
+                            flexDirection:  'row',
+                            justifyContent: 'space-between',
                         }}
                     >
-                        {'Recommended'}
-                    </Text>
-                </View>
+                        {item}
+                        <Text
+                            robotoMedium
+                            style={{
+                                color:    recommendedColor,
+                                fontSize: AppFonts.scaleFont(15),
+                                opacity:  0.5,
+                            }}
+                        >
+                            {'Recommended'}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
             )
         }
         return(
-            <View
+            <TouchableHighlight
                 key={index}
+                onPress={() => this.props.onValueChange(this.props.dataSource[index], index)}
                 style={{
                     alignItems:     'center',
                     height:         this.props.itemHeight ? this.props.itemHeight : 30,
                     justifyContent: 'center',
                 }}
+                underlayColor={AppColors.transparent}
             >
                 {item}
-            </View>
+            </TouchableHighlight>
         );
     };
 
@@ -229,7 +238,7 @@ class WheelScrollPicker extends Component {
             >
                 <View
                     style={{
-                        backgroundColor: this.props.highlightColor || AppColors.primary.yellow.hundredPercent,
+                        backgroundColor: this.props.highlightColor || AppColors.zeplin.yellow,
                         borderColor:     this.props.highlightColor,
                         borderWidth:     this.props.highlightBorderWidth,
                         height:          this.props.itemHeight,
@@ -246,7 +255,7 @@ class WheelScrollPicker extends Component {
                     onMomentumScrollEnd={this.onMomentumScrollEnd}
                     onScrollBeginDrag={this.onScrollBeginDrag}
                     onScrollEndDrag={this.onScrollEndDrag}
-                    ref={(sview) => {
+                    ref={sview => {
                         this.sview = sview;
                     }}
                     scrollEnabled={this.props.scrollEnabled}

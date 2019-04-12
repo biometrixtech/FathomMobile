@@ -19,13 +19,13 @@ import AppleHealthKit from 'rn-apple-healthkit';
 import Toast, { DURATION, } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
-import { ListItem, TabIcon, } from '../custom';
+import { ListItem, Spacer, TabIcon, } from '../custom';
 import { PrivacyPolicyModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
-import { store } from '../../store';
+import { store, } from '../../store';
 
 // Components
 import { JoinATeamModal, } from './pages';
@@ -274,7 +274,7 @@ class Settings extends Component {
         }
     }
 
-    _handleLogoutAlert = (err) => {
+    _handleLogoutAlert = err => {
         Alert.alert(
             'Error!',
             'Ooops! Something went wrong while trying to logout. Please try again.',
@@ -356,50 +356,59 @@ class Settings extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 { userHasSensorSystem ?
-                    <ListItem
-                        chevronColor={AppColors.black}
-                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                        leftIcon={ this.state.isUnpairing ?
-                            <Animated.View
-                                style={{transform: [{rotate: spin}],}}
-                            >
-                                <TabIcon
-                                    color={AppColors.black}
-                                    icon={'loading'}
-                                    size={24}
-                                    type={'material-community'}
-                                />
-                            </Animated.View>
-                            :
-                            <TabIcon
-                                color={AppColors.black}
-                                icon={'bluetooth'}
-                                size={24}
-                            />
-                        }
-                        onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()
-                        }
-                        title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                        titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                    />
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={ this.state.isUnpairing ?
+                                <Animated.View
+                                    style={{transform: [{rotate: spin}],}}
+                                >
+                                    <TabIcon
+                                        color={AppColors.black}
+                                        icon={'loading'}
+                                        size={24}
+                                        type={'material-community'}
+                                    />
+                                </Animated.View>
+                                :
+                                {
+                                    color: AppColors.black,
+                                    name:  'bluetooth',
+                                    size:  24,
+                                }
+                            }
+                            onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
+                            rightIcon={{
+                                color: AppColors.black,
+                                name:  'chevron-right',
+                                size:  24,
+                            }}
+                            title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
+                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
                     :
                     null
                 }
                 <ListItem
-                    chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
-                    leftIcon={
-                        <TabIcon
-                            color={AppColors.black}
-                            icon={'account-group'}
-                            size={24}
-                            type={'material-community'}
-                        />
-                    }
+                    leftIcon={{
+                        color: AppColors.black,
+                        name:  'account-group',
+                        size:  24,
+                        type:  'material-community',
+                    }}
                     onPress={() => this._toggleJoinATeamModal()}
+                    rightIcon={{
+                        color: AppColors.black,
+                        name:  'chevron-right',
+                        size:  24,
+                    }}
                     title={'JOIN A TEAM'}
                     titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
+                <Spacer isDivider />
                 {
                     /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
                     /amina[+]mvp@fathomai.com/g.test(userEmail) ||
@@ -415,73 +424,78 @@ class Settings extends Component {
                     /paul[+]mvp@fathomai.com/g.test(userEmail) ||
                     /dipesh@fathomai.com/g.test(userEmail) ||
                     /mazen@fathomai.com/g.test(userEmail) ?
-                        <ListItem
-                            chevronColor={AppColors.black}
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                            leftIcon={
-                                <TabIcon
-                                    color={AppColors.black}
-                                    icon={'lock-reset'}
-                                    size={24}
-                                    type={'material-community'}
-                                />
-                            }
-                            onPress={() => this._resetAccountData()}
-                            title={'RESET ACCOUNT DATA'}
-                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                        />
+                        <View>
+                            <ListItem
+                                containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                                leftIcon={{
+                                    color: AppColors.black,
+                                    name:  'lock-reset',
+                                    size:  24,
+                                    type:  'material-community',
+                                }}
+                                onPress={() => this._resetAccountData()}
+                                rightIcon={{
+                                    color: AppColors.black,
+                                    name:  'chevron-right',
+                                    size:  24,
+                                }}
+                                title={'RESET ACCOUNT DATA'}
+                                titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            />
+                            <Spacer isDivider />
+                        </View>
                         :
                         null
                 }
                 { Platform.OS === 'ios' && userObj.role !== 'coach' ?
-                    <ListItem
-                        chevronColor={AppColors.black}
-                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                        leftIcon={
-                            <TabIcon
-                                color={AppColors.black}
-                                icon={'heart'}
-                                size={24}
-                                type={'material-community'}
-                            />
-                        }
-                        rightIcon={
-                            <Switch
-                                onValueChange={value => this._toggleHealthKitSwitch(value)}
-                                value={this.props.user.health_enabled}
-                            />
-                        }
-                        title={'APPLE HEALTH'}
-                        titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                    />
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={{
+                                color: AppColors.black,
+                                name:  'heart',
+                                size:  24,
+                                type:  'material-community',
+                            }}
+                            rightIcon={
+                                <Switch
+                                    onValueChange={value => this._toggleHealthKitSwitch(value)}
+                                    value={this.props.user.health_enabled}
+                                />
+                            }
+                            title={'APPLE HEALTH'}
+                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
                     :
                     null
                 }
                 <ListItem
-                    chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                    leftIcon={
-                        <TabIcon
-                            color={AppColors.black}
-                            icon={'gavel'}
-                            size={24}
-                        />
-                    }
+                    leftIcon={{
+                        color: AppColors.black,
+                        name:  'gavel',
+                        size:  24,
+                    }}
                     onPress={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
+                    rightIcon={{
+                        color: AppColors.black,
+                        name:  'chevron-right',
+                        size:  24,
+                    }}
                     title={'TERMS & PRIVACY'}
                     titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
+                <Spacer isDivider />
                 <ListItem
-                    chevronColor={AppColors.black}
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     disabled={this.state.isLogoutBtnDisabled}
-                    leftIcon={
-                        <TabIcon
-                            color={AppColors.black}
-                            icon={'power-settings-new'}
-                            size={24}
-                        />
-                    }
+                    leftIcon={{
+                        color: AppColors.black,
+                        name:  'power-settings-new',
+                        size:  24,
+                    }}
                     onPress={() =>
                         this.setState(
                             { isLogoutBtnDisabled: true, },
@@ -496,9 +510,15 @@ class Settings extends Component {
                                 })
                         )
                     }
+                    rightIcon={{
+                        color: AppColors.black,
+                        name:  'chevron-right',
+                        size:  24,
+                    }}
                     title={'LOGOUT'}
                     titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
+                <Spacer isDivider />
                 <Toast
                     position={'bottom'}
                     ref={'toast'}

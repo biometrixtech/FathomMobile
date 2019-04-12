@@ -7,10 +7,7 @@ const onboardingUtils = {
     isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
-        if(
-            user.personal_data.first_name.length === 0 ||
-            user.personal_data.last_name.length === 0
-        ) {
+        if( user.personal_data.first_name.length === 0 || user.personal_data.last_name.length === 0 ) {
             let newError = 'Your First and Last Name are required';
             errorsArray.push(newError);
             isValid = false;
@@ -18,20 +15,15 @@ const onboardingUtils = {
             let newError = 'Your Email must be a valid email format';
             errorsArray.push(newError);
             isValid = false;
-        } else if(
-            !isUpdatingUser &&
-            (
-                (!this.isPasswordValid(user.password).isValid && !this.isPasswordValid(user.confirm_password).isValid) ||
-                user.password !== user.confirm_password
-            )
-        ) {
+        } else if( !isUpdatingUser && !this.isPasswordValid(user.password).isValid ) {
             let newError = this.getPasswordRules();
             errorsArray.push(newError);
             isValid = false;
-        } else if(
-            user.personal_data.phone_number.length > 0 &&
-            !this.isPhoneNumberValid(user.personal_data.phone_number)
-        ) {
+        } else if( !isUpdatingUser && user.password !== user.confirm_password ) {
+            let newError = this.getInvalidPasswordRules();
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.phone_number.length > 0 && !this.isPhoneNumberValid(user.personal_data.phone_number) ) {
             let newError = 'Your Phone Number must be a valid format (1234567890)';
             errorsArray.push(newError);
             isValid = false;
@@ -182,6 +174,10 @@ const onboardingUtils = {
         return 'Your password must be 8-16 characters and include a number.';
     },
 
+    getInvalidPasswordRules() {
+        return 'Passwords do not match.';
+    },
+
     hasWhiteSpaces(str) {
         return str.indexOf(' ') >= 0;
     },
@@ -242,7 +238,7 @@ const onboardingUtils = {
                 {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-5',
-                    linkStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoMedium, color: AppColors.primary.yellow.hundredPercent, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',},
+                    linkStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoMedium, color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',},
                     linkText:        'No, I\'ll do it later in Settings.',
                     subtext:         'This will only take 1min and must be completed to sync your activity.',
                     subtextStyle:    {...AppStyles.textCenterAligned, ...AppStyles.robotoRegular, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),},
@@ -303,13 +299,13 @@ const onboardingUtils = {
             slides:         [
                 {
                     backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
                     title:           'Let\'s Take a Tour of Fathom!',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
                     text:            'It\'s important that athletes do pre & post training surveys regularly to ensure your dashboard has the most accurate insights.',
@@ -341,7 +337,7 @@ const onboardingUtils = {
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/coachinsight.mp4',
                 },
                 {
-                    backgroundColor: AppColors.primary.yellow.hundredPercent,
+                    backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-5',
                     text:            'Encourage athletes to complete Fathom\'s Active Recovery to improve their training readiness & reduce chronic soreness & injury risk.',
@@ -358,7 +354,7 @@ const onboardingUtils = {
                 },
                 {
                     backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.primary.yellow.hundredPercent, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
+                    icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-9',
                     title:           'Now Let\'s Go To The Dashboard!',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},

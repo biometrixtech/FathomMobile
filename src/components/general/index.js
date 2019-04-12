@@ -15,4 +15,4 @@ import PrivacyPolicyModal from './PrivacyPolicyModal';
 import Placeholder from './Placeholder';
 import WebView from './WebView';
 
-export { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView };
+export { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView, };

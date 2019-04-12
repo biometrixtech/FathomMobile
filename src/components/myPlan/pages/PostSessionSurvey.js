@@ -22,7 +22,7 @@ import { ScrollView, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Pages, Spacer, TabIcon, Text, } from '../../custom';
+import { Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -37,6 +37,7 @@ import {
 } from './';
 
 // import third-party libraries
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 
@@ -62,6 +63,12 @@ class PostSessionSurvey extends Component {
         this.scrollViewPrevSorenessRef = {};
         this.scrollViewRPERef = {};
         this.sportScheduleBuilderRefs = [];
+        this.timer = {};
+    }
+
+    componentWillUnmount = () => {
+        // clear timer
+        clearInterval(this.timer);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -120,7 +127,7 @@ class PostSessionSurvey extends Component {
         } = this.props;
         let { isFormValidItems, newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, postSession.soreness);
-        _.delay(() => {
+        this.timer = _.delay(() => {
             this._renderNextPage(currentStep, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked, isHealthKitValid, isHKNextStep);
         }, 500);
     }
@@ -147,8 +154,8 @@ class PostSessionSurvey extends Component {
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
-        if(myComponentsLocation) {
-            _.delay(() => {
+        if(myComponentsLocation && scrollViewRef) {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({
                     x:        myComponentsLocation.x,
                     y:        myComponentsLocation.y,
@@ -159,14 +166,16 @@ class PostSessionSurvey extends Component {
     }
 
     _scrollToBottom = scrollViewRef => {
-        _.delay(() => {
-            scrollViewRef.scrollToEnd({ animated: true, });
-        }, 500);
+        if(scrollViewRef) {
+            this.timer = _.delay(() => {
+                scrollViewRef.scrollToEnd({ animated: true, });
+            }, 500);
+        }
     }
 
     _scrollToTop = scrollViewRef => {
         if(scrollViewRef) {
-            _.delay(() => {
+            this.timer = _.delay(() => {
                 scrollViewRef.scrollTo({x: 0, y: 0, animated: true});
             }, 500);
         }
@@ -223,6 +232,7 @@ class PostSessionSurvey extends Component {
                 <Pages
                     indicatorPosition={'none'}
                     ref={(pages) => { this.pages = pages; }}
+                    scrollEnabled={false}
                     startPage={pageIndex}
                 >
 
@@ -437,7 +447,7 @@ class PostSessionSurvey extends Component {
 
                 { isFABVisible ?
                     <ActionButton
-                        buttonColor={AppColors.primary.yellow.hundredPercent}
+                        buttonColor={AppColors.zeplin.yellow}
                         degrees={0}
                         hideShadow
                         onPress={() => {this._scrollToBottom(this.myAreasOfSorenessComponent); this.setState({ isActionButtonVisible: false, isCloseToBottom: true, });}}

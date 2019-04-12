@@ -30,7 +30,7 @@ import { PlanLogic, } from '../../../lib';
 import { Error, } from '../../general';
 
 const minActivatePercent = 0.15;
-const maxOtherExercisesPercet = (1 - minActivatePercent);
+const maxOtherExercisesPercent = (1 - minActivatePercent);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -55,8 +55,8 @@ const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedE
     /*eslint dot-notation: 0*/
     _.map(cleanedExerciseList, (exerciseList, index) => {
         if(availableSectionsCount === 3 && isActivateTooShort) {
-            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercet;
-            let stretchLength = (cleanedExerciseList['STRETCH'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercet;
+            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercent;
+            let stretchLength = (cleanedExerciseList['STRETCH'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercent;
             wrapperWidths['FOAM ROLL'] = foamRollLength;
             wrapperWidths['STRETCH'] = stretchLength;
             wrapperWidths['ACTIVATE'] = minActivatePercent;
@@ -205,7 +205,8 @@ class Exercises extends PureComponent {
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
-        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);return(
+        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
+        return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
                 <View
                     onLayout={ev => this._resizeModal(ev)}

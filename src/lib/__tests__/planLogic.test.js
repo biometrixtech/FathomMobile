@@ -1,4 +1,5 @@
 /* global it expect jest */
+/* global it expect beforeAll */
 import 'react-native';
 
 // import third-party libraries
@@ -11,6 +12,12 @@ import { PlanLogic, } from '../';
 // Consts and Libs
 import { MyPlan as MyPlanConstants, } from '../../constants';
 
+// mock async-storage
+beforeAll(() => {
+    jest.mock('@react-native-community/async-storage');
+});
+
+// setup helper functions
 const helperFunctions = {
 
     getPushNotificationHelperProps: (notificationString, preRecoveryCompleted, postRecoveryCompleted, isReadinessSurveyCompleted) => {
@@ -1107,6 +1114,7 @@ const helperFunctions = {
 
 };
 
+// setup tests
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {
         sport_name: 79,

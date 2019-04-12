@@ -162,6 +162,7 @@ class ForgotPassword extends Component {
     }
 
     render = () => {
+        /*eslint no-return-assign: 0*/
         return (
             <Wrapper>
                 <View>
@@ -178,7 +179,7 @@ class ForgotPassword extends Component {
                     </Text>
                     <Spacer size={20} />
                     <View style={[AppStyles.containerCentered]}>
-                        <View style={{width: AppSizes.screen.widthFourFifths}}>
+                        <View style={{width: AppSizes.screen.widthFourFifths,}}>
                             <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
                                 {'Enter your email to receive a 6-digit PIN to create a new password.'}
                             </Text>
@@ -190,15 +191,14 @@ class ForgotPassword extends Component {
                             autoCapitalize={'none'}
                             blurOnSubmit={ true }
                             clearButtonMode={'while-editing'}
-                            inputStyle={[{color: AppColors.primary.yellow.hundredPercent, textAlign: 'center', width: AppSizes.screen.widthTwoThirds, paddingTop: 25,}]}
+                            containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.email = ref}
+                            inputStyle={[{color: AppColors.zeplin.yellow, paddingTop: 25, textAlign: 'center',}]}
                             keyboardType={'email-address'}
                             onChangeText={(text) => this._handleFormChange('email', text)}
                             placeholder={'email'}
-                            placeholderTextColor={AppColors.primary.yellow.hundredPercent}
+                            placeholderTextColor={AppColors.zeplin.yellow}
                             returnKeyType={'done'}
-                            textInputRef={input => {
-                                this.inputs.email = input;
-                            }}
                             value={this.state.form_values.email}
                         />
                         <Spacer size={20} />
@@ -221,17 +221,11 @@ class ForgotPassword extends Component {
                     </View>
                 </View>
                 <Button
-                    backgroundColor={AppColors.primary.yellow.hundredPercent}
-                    buttonStyle={{borderRadius: 0, paddingVertical: 20,}}
-                    containerViewStyle={{marginLeft: 0, width: '100%',}}
-                    color={AppColors.white}
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
                     disabled={this.state.isSubmitting}
-                    fontFamily={AppStyles.robotoBold.fontFamily}
-                    fontWeight={AppStyles.robotoBold.fontWeight}
                     onPress={() => this._handleFormSubmit()}
-                    raised={false}
-                    textStyle={{ fontSize: AppFonts.scaleFont(16), textAlign: 'center', }}
                     title={'Reset'}
+                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(16), }}
                 />
             </Wrapper>
         );

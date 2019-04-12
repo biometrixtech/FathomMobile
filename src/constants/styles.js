@@ -413,7 +413,7 @@ export default {
         textDecorationLine: 'none',
     },
     nextButtonText: {
-        ...Fonts.oswaldBold,
+        ...Fonts.robotoRegular,
         color:         Colors.white,
         fontSize:      Fonts.scaleFont(16),
         paddingBottom: 20,

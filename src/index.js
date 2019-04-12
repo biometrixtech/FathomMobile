@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Image, NetInfo, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
+import { Image, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
 
 // import components
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
@@ -16,11 +16,11 @@ import { Actions as RouterActions, Router, Stack, } from 'react-native-router-fl
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
-import Fabric from 'react-native-fabric';
+import * as Fabric from 'react-native-fabric';
 import PushNotification from 'react-native-push-notification';
 
 // setup consts
-const { Crashlytics } = Fabric;
+const Crashlytics = Fabric.Crashlytics;
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -106,23 +106,15 @@ class Root extends Component {
         this._dropdown.close();
     }
 
-    _onCloseDropdown = (data) => {
-        // data = {type, title, message, action}
-        // action means how the alert was closed.
-        // returns: automatic, programmatic, tap, pan or cancel
-        console.log('_onCloseDropdown',data);
-    }
-
-    _renderDropdownImage = (props, side) => {
-        return(
-            <TabIcon
-                icon={side === 'cancel' ? 'close' : 'cloud-off'}
-                iconStyle={[{color: AppColors.white}]}
-                reverse={false}
-                type={side === 'cancel' ? 'material-community' : 'material'}
-            />
-        )
-    }
+    _renderDropdownImage = (props, side) => (
+        <TabIcon
+            containerStyle={[{justifyContent: 'center',}]}
+            icon={side === 'cancel' ? 'close' : 'cloud-off'}
+            iconStyle={[{color: AppColors.white,}]}
+            reverse={false}
+            type={side === 'cancel' ? 'material-community' : 'material'}
+        />
+    )
 
     /**
      *
@@ -136,7 +128,7 @@ class Root extends Component {
      * }
      *
      */
-    _onNotificationReceived = (notification) => {
+    _onNotificationReceived = notification => {
         console.log( 'NOTIFICATION:', notification );
         /**
          * Unsure if this logic below will work for redux in active and inactive
@@ -166,7 +158,7 @@ class Root extends Component {
             notification.finish();
     }
 
-    _onRegisterForPushNotifications = (registration) => {
+    _onRegisterForPushNotifications = registration => {
         console.log(`about to register with deviceToken: ${registration.token}`);
         return this.props.store.dispatch({
             type:  Actions.SEND_DEVICE_TOKEN,
@@ -235,8 +227,8 @@ class Root extends Component {
                     defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
                     defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
                     messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
-                    onCancel={data => this._onCloseDropdown(data)}
-                    onClose={data => this._onCloseDropdown(data)}
+                    onCancel={data => {}}
+                    onClose={data => {}}
                     ref={ref => {this._dropdown = ref;}}
                     renderCancel={props => this._renderDropdownImage(props, 'cancel')}
                     renderImage={props => this._renderDropdownImage(props, 'left')}

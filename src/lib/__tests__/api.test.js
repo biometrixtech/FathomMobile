@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2018-05-05 23:34:47 
+ * @Author: Vir Desai
+ * @Date: 2018-05-05 23:34:47
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-05-06 22:57:42
  */
@@ -10,10 +10,18 @@
  */
 
 /* global it expect jest */
+/* global it expect beforeAll */
 import 'react-native';
 
-import { AppAPI } from '../';
+// import APIs
+import { AppAPI, } from '../';
 
+// mock async-storage
+beforeAll(() => {
+    jest.mock('@react-native-community/async-storage');
+});
+
+// setup tests
 it('Handle API error', () => {
     let errorMessage = 'error message';
     expect(AppAPI.handleError(errorMessage)).toEqual(errorMessage);

@@ -1,4 +1,10 @@
-#check if stdout is a terminal...
+# NOTE: examples on how to replace a while file or just text in a file
+# whole file
+    # yes | cp ./custom/javascript/ScrollableTabBar.js ./node_modules/react-native-scrollable-tab-view/ScrollableTabBar.js
+# text in a file
+    # sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+
+# check if stdout is a terminal...
 if test -t 1; then
 
     # see if it supports colors...
@@ -20,7 +26,6 @@ if test -t 1; then
         grey="$(tput setaf 8)"
     fi
 fi
-
 
 # install_java() {
 #     current_location=`pwd`
@@ -89,72 +94,25 @@ initialize() {
                 nvm install
             fi
 
-
             echo "☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️️☁️☁️☁️☁️☁️☁️☁️☁️☁️️️️️️️"
             echo "🚀\t${green}✔︎${normal} ${yellow}Xcode installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${blue}yarn installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${magenta}Homebrew installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${cyan}watchman installed${normal}\t🚀"
             echo "🚀\t${green}✔︎${normal} ${white}nvm installed${normal}\t\t🚀"
-            echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
+            echo "🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊"
 
             watchman watch-del-all
             lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
-            # lsof -i tcp:3000 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
+
             rm -rf node_modules/ yarn.lock
             yarn
-            # android build tools and gradle patches
-            sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            # sed -i '' 's/23.0.1/27.0.3/' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/25.0.2/27.0.3/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-vector-icons/android/build.gradle
-            sed -i '' 's/"26.0.3"/"27.0.3"/' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/26.0.1/27.0.3/' ./node_modules/react-native-linear-gradient/android/build.gradle
-            sed -i '' 's/23.0.1/27.0.3/g' ./node_modules/react-native-push-notification/android/build.gradle
 
+            # android build tools and gradle patches
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
+            sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            # sed -i '' 's/compile /implementation /' ./node_modules/react-native-svg/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-vector-icons/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-video/android/build.gradle
-
-            sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/, }/ }/g' ./node_modules/react-native-scrollable-tab-view/SceneComponent.js
-            # sed -i '' 's/compile(/implementation(/' ./node_modules/react-native-svg/android/build.gradle
-
-            # extra android patches
-            sed -i '' 's/25/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            sed -i '' 's/23/27/' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
-            sed -i '' 's/26/27/g' ./node_modules/react-native-vector-icons/android/build.gradle
-            sed -i '' 's/ 26/ 27/' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/26/27/g' ./node_modules/react-native-linear-gradient/android/build.gradle
-            sed -i '' 's/23/27/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/22/27/' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/24/27/' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/22/27/' ./node_modules/react-native-device-info/android/build.gradle
-            sed -i '' 's/24/27/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-            sed -i '' 's/22/27/' ./node_modules/react-native-google-analytics-bridge/android/build.gradle
-            sed -i '' 's/26/27/' ./node_modules/react-native-ble-manager/android/build.gradle
-            sed -i '' 's/23/27/g' ./node_modules/react-native-push-notification/android/build.gradle
-            sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-linear-gradient/android/build.gradle
-            sed -i '' 's/provided/compileOnly/g' ./node_modules/react-native-video/android/build.gradle
-            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-splash-screen/android/build.gradle
-            sed -i '' 's/Compile /Implementation /g' ./node_modules/react-native-push-notification/android/build.gradle
-            sed -i '' 's/babel\-jest/\<rootDir\>\/node_modules\/react-native\/jest\/preprocessor.js/' ./node_modules/react-native/jest-preset.json
-            yes | cp ./custom/android/RNPushNotificationHelper.java ./node_modules/react-native-push-notification/android/src/main/java/com/dieam/reactnativepushnotification/modules/RNPushNotificationHelper.java
-            yes | cp ./custom/javascript/SvgImage.js ./node_modules/react-native-remote-svg/SvgImage.js # handles the iOS patch too
-            yes | cp ./custom/javascript/ScrollableTabBar.js ./node_modules/react-native-scrollable-tab-view/ScrollableTabBar.js
-
-            # libraries patches
-            sed -i '' 's/useNativeDriver: true,/useNativeDriver: false,/g' ./node_modules/react-native-modalbox/index.js
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
             android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
@@ -165,20 +123,7 @@ initialize() {
             sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
             # iOS patches
-            # sed -i '' 's/<WebView/<WebView originWhitelist={["*"]}/' ./node_modules/react-native-remote-svg/SvgImage.js
-            sed -i '' 's/\[SplashScreen/[RNSplashScreen/' ./node_modules/react-native-splash-screen/ios/RNSplashScreen.m
-            sed -i '' 's/#import <RCTAnimation\/RCTValueAnimatedNode.h>/#import "RCTValueAnimatedNode.h"/' ./node_modules/react-native/Libraries/NativeAnimation/RCTNativeAnimatedNodesManager.h
-            # sed -i '' 's/ length]/ pathLength]/' ./node_modules/react-native-svg/ios/Text/RNSVGTSpan.m
-            [ -d "./node_modules/react-native/third-party" ] && {
-                cd node_modules/react-native/third-party/glog-0.3.4
-                ../../scripts/ios-configure-glog.sh
-                cd ../../../../
-            } || continue
-
-            # extra iOS HealthKit patches
-            yes | cp ./custom/javascript/Activities.js ./node_modules/rn-apple-healthkit/Constants/Activities.js
-            yes | cp ./custom/ios/RCTAppleHealthKit+Queries.m ./node_modules/rn-apple-healthkit/RCTAppleHealthKit/RCTAppleHealthKit+Queries.m
-            yes | cp ./custom/ios/RCTAppleHealthKit+TypesAndPermissions.m ./node_modules/rn-apple-healthkit/RCTAppleHealthKit/RCTAppleHealthKit+TypesAndPermissions.m
+            # none for now...
 
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
@@ -211,6 +156,7 @@ start() {
     rm -rf ./android/app/build/intermediates
     rm -rf ./android/app/src/main/res/drawable-*
     rm ./android/app/src/main/assets/index.android.bundle
+    rm -rf /tmp/haste-map-react-native-packager-*
     lsof -i tcp:8081 | grep 'node' | awk '{print $2}' | tail -n 1 | xargs kill -9
     npm run start -- --reset-cache
 }
@@ -278,7 +224,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -293,7 +239,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -308,7 +254,7 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                yarn bundle-android
+                # yarn bundle-android
                 cd android
                 ./gradlew clean assembleDebug
                 cd ..
