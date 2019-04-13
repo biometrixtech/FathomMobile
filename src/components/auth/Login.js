@@ -10,7 +10,7 @@
  *  - Entry screen for all authentication
  *  - User can tap to login, forget password, or signUp...
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {

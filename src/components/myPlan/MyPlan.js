@@ -1,7 +1,7 @@
 /**
  * MyPlan View
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import { AppState, BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 

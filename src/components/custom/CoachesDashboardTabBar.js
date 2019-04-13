@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import { Animated, Easing, StyleSheet, Text, View, ViewPropTypes, } from 'react-native';
 import PropTypes from 'prop-types';
 const createReactClass = require('create-react-class');

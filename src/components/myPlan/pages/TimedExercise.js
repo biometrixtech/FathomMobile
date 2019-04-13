@@ -17,7 +17,7 @@
     />
  *
  */
-import React, { PureComponent } from 'react';
+import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, TouchableOpacity, View, } from 'react-native';
 

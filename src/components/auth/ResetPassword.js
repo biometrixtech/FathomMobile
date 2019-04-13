@@ -1,7 +1,7 @@
 /**
  * Reset Password Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard, View, findNodeHandle, } from 'react-native';
 

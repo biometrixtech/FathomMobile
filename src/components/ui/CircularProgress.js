@@ -11,7 +11,7 @@
      <CircularProgress percentage={60} width={100} height={100} />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';

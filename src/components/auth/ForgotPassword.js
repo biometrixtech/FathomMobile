@@ -1,7 +1,7 @@
 /**
  * Forgot Password Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 

@@ -15,7 +15,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, findNodeHandle, } from 'react-native';
 

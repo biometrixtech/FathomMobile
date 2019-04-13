@@ -1,7 +1,7 @@
 /**
  * Resend Email Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, } from 'react-native';
 

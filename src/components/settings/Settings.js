@@ -8,7 +8,7 @@
 /**
  * Settings View
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
 

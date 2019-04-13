@@ -1,5 +1,5 @@
 // https://github.com/lawnstarter/react-native-picker-select
-import React, { PureComponent } from 'react';
+import React, { PureComponent, } from 'react';
 import {
     ColorPropType,
     Modal,

@@ -11,7 +11,7 @@
      <ListItem title={'Hello World'} />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ListItem } from 'react-native-elements';
 

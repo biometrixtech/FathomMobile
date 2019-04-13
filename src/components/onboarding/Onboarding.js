@@ -2,7 +2,7 @@
  * Onboarding Screen
  *  - Steps through the multiple steps
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 

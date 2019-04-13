@@ -3,7 +3,7 @@
  *  - Get Started -> onboarding steps
  *  - Already a memeber? -> login
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 

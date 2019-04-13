@@ -16,7 +16,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 

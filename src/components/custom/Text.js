@@ -11,7 +11,7 @@
      <Text h1>Hello World</Text>
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Text, View } from 'react-native';
 

@@ -4,7 +4,7 @@
      <Button text={'Server is down'} />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Button, } from 'react-native-elements';
 

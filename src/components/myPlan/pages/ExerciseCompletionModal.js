@@ -11,7 +11,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Platform, StyleSheet, View, } from 'react-native';
 

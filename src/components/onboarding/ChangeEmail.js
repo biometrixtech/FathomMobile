@@ -1,7 +1,7 @@
 /**
  * Change Email Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard, StyleSheet, View, } from 'react-native';
 

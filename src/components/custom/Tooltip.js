@@ -1,5 +1,5 @@
 // https://github.com/jasongaare/react-native-walkthrough-tooltip
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import type { Node } from 'react';
 import {
     Animated,
