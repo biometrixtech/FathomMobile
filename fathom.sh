@@ -224,7 +224,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -239,7 +240,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -254,7 +256,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleDebug
                 cd ..
