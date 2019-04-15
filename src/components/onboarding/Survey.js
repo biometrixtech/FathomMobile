@@ -81,9 +81,28 @@ class Survey extends Component {
                 typical_weekly_sessions: null,
                 wearable_devices:        [],
             },
-            otherField:    '',
-            showTextInput: false,
+            isKeyboardOpen: false,
+            otherField:     '',
+            showTextInput:  false,
         }
+    }
+
+    componentWillMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+    _keyboardDidShow = () => {
+        this.setState({ isKeyboardOpen: true, });
+    }
+
+    _keyboardDidHide = () => {
+        this.setState({ isKeyboardOpen: false, });
     }
 
     _handleFormChange = (name, value) => {
@@ -127,7 +146,7 @@ class Survey extends Component {
     }
 
     render = () => {
-        const { form_values, otherField, showTextInput, } = this.state;
+        const { form_values, isKeyboardOpen, otherField, showTextInput, } = this.state;
         let isValid = form_values.typical_weekly_sessions && (form_values.wearable_devices.length > 0 || otherField.length > 0);
         // render page
         return(
@@ -241,16 +260,18 @@ class Survey extends Component {
                                 <Spacer size={AppSizes.paddingSml} />
                             </View>
                             <View style={{alignItems: 'center', flex: 2, flexDirection: 'column', justifyContent: 'flex-end', width: AppSizes.screen.widthHalf,}}>
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
-                                    containerStyle={{width: '100%',}}
-                                    disabled={!isValid}
-                                    disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.shadow, borderWidth: 1,}}
-                                    disabledTitleStyle={{color: AppColors.zeplin.shadow,}}
-                                    onPress={() => this._onDone()}
-                                    title={'Submit'}
-                                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(18), }}
-                                />
+                                { !isKeyboardOpen &&
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                        containerStyle={{width: '100%',}}
+                                        disabled={!isValid}
+                                        disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.shadow, borderWidth: 1,}}
+                                        disabledTitleStyle={{color: AppColors.zeplin.shadow,}}
+                                        onPress={() => this._onDone()}
+                                        title={'Submit'}
+                                        titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(18), }}
+                                    />
+                                }
                             </View>
                         </View>
                     }

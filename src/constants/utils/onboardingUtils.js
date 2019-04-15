@@ -7,8 +7,17 @@ const onboardingUtils = {
     isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
+        const firstLastNameRegex = /\d/g;
         if( user.personal_data.first_name.length === 0 || user.personal_data.last_name.length === 0 ) {
             let newError = 'Your First and Last Name are required';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.first_name.length > 0 && firstLastNameRegex.test(user.personal_data.first_name) ) {
+            let newError = 'Please enter a valid First Name';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.last_name.length > 0 && firstLastNameRegex.test(user.personal_data.last_name) ) {
+            let newError = 'Please enter a valid Last Name';
             errorsArray.push(newError);
             isValid = false;
         } else if( !this.isEmailValid(user.personal_data.email).isValid ) {
@@ -63,7 +72,7 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }*/
-        if((user.biometric_data.mass.lb.length === 0 || user.biometric_data.mass.lb === 0)) {
+        if( _.toNumber(user.biometric_data.mass.lb) < 50 || _.toNumber(user.biometric_data.mass.lb) > 1000 ) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
             isValid = false;
