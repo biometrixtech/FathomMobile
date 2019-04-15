@@ -22,7 +22,7 @@
     ]
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.2.2",
+    "@react-native-community/async-storage": "^1.3.3",
     "@react-native-community/netinfo": "^2.0.0",
     "es6-promise": "^4.2.6",
     "isomorphic-fetch": "^2.2.1",
