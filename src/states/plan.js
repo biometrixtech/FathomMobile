@@ -51,12 +51,14 @@ const defaultPlanState = {
     page0:                                {},
     page1:                                {},
     page2:                                {},
+    postRecoveryPriority:                 1,
     postSession:                          {
         description: '',
         sessions:    [PlanLogic.returnEmptySession()],
         soreness:    [],
     },
-    prepare: {
+    preRecoveryPriority: 1,
+    prepare:             {
         finishedRecovery:           false,
         isActiveRecoveryCollapsed:  true,
         isReadinessSurveyCollapsed: false,

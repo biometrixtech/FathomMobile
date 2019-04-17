@@ -202,24 +202,32 @@ const postSessionFeel = [
     'Max effort',
 ];
 
-function cleanExerciseList(recoveryObj) {
+function cleanExerciseList(recoveryObj, recoveryPriority = 1) {
+    // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
     let largestSetCount = {};
     let equipmentRequired = [];
+    let totalSeconds = 0;
+    let exerciseGoals = [];
+    // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
         largestSetCount[list.index] = 0;
+        // loop through our specific exercise to update our variables
         _.map(recoveryObj[list.index], exercise => {
+            totalSeconds += exercise.seconds_duration;
+            exerciseGoals = _.concat(exerciseGoals, exercise.goals);
             equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
             if(exercise.sets_assigned > largestSetCount[list.index]) {
                 largestSetCount[list.index] = exercise.sets_assigned;
             }
         });
+        // setup our specific exercise array
         let exerciseArray = [];
         for(let i = 1; i <= largestSetCount[list.index]; i += 1) {
             _.map(recoveryObj[list.index], exercise => {
                 let newExercise = _.cloneDeep(exercise);
-                if(newExercise.sets_assigned >= i) {
+                if(newExercise.sets_assigned >= i && (newExercise.priority && newExercise.priority.includes(recoveryPriority))) {
                     newExercise.set_number = i;
                     exerciseArray.push(newExercise);
                 }
@@ -228,12 +236,17 @@ function cleanExerciseList(recoveryObj) {
         totalLength += exerciseArray.length;
         cleanedExerciseList[list.title] = exerciseArray;
     });
+    // clean variables as needed
     equipmentRequired = _.uniq(equipmentRequired);
     equipmentRequired = _.filter(equipmentRequired, o => o !== 'None');
+    exerciseGoals = _.uniq(exerciseGoals);
+    // return variables
     return {
         cleanedExerciseList,
+        exerciseGoals,
         equipmentRequired,
         totalLength,
+        totalSeconds,
     };
 }
 

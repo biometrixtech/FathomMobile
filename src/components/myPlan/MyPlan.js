@@ -377,8 +377,8 @@ class MyPlan extends Component {
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
             .then(response => {
                 const dailyPlanObj = response.daily_plans && response.daily_plans[0] ? response.daily_plans[0] : false;
-                let prepExerciseList = dailyPlanObj.pre_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.pre_recovery) : {};
-                let recoverExerciseList = dailyPlanObj.post_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.post_recovery) : {};
+                let prepExerciseList = dailyPlanObj.pre_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.pre_recovery, this.state.preRecoveryPriority) : {};
+                let recoverExerciseList = dailyPlanObj.post_recovery.display_exercises ? MyPlanConstants.cleanExerciseList(dailyPlanObj.post_recovery, this.state.postRecoveryPriority) : {};
                 let isPrepActive = isFromPushNotification && dailyPlanObj.pre_recovery && dailyPlanObj.pre_recovery.display_exercises && !dailyPlanObj.pre_recovery.completed && prepExerciseList.totalLength > 0 ? true : false;
                 let isRecoverActive = isFromPushNotification && dailyPlanObj.post_recovery && dailyPlanObj.post_recovery.display_exercises && !dailyPlanObj.post_recovery.completed && recoverExerciseList.totalLength > 0 ? true : false;
                 let newRecover = _.cloneDeep(this.state.recover);
@@ -910,6 +910,7 @@ class MyPlan extends Component {
             isPrepCalculating,
             isRecoverCalculating,
             prepare,
+            preRecoveryPriority,
         } = this.state;
         let { plan, user, } = this.props;
         let completedExercises = store.getState().plan.completedExercises;
@@ -921,7 +922,7 @@ class MyPlan extends Component {
             isCompleted,
             isReadinessSurveyCompleted,
             recoveryObj,
-        } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj);
+        } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj, preRecoveryPriority);
         return (
             <ScrollView
                 contentContainerStyle={{backgroundColor: AppColors.white,}}
@@ -1214,6 +1215,7 @@ class MyPlan extends Component {
             isFSCalculating,
             isPrepCalculating,
             isRecoverCalculating,
+            postRecoveryPriority,
             recover,
         } = this.state;
         let { plan, user, } = this.props;
@@ -1225,7 +1227,7 @@ class MyPlan extends Component {
             isActive,
             isCompleted,
             recoveryObj,
-        } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj);
+        } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj, postRecoveryPriority);
         return (
             <ScrollView
                 contentContainerStyle={{backgroundColor: AppColors.white,}}
@@ -1769,7 +1771,10 @@ class MyPlan extends Component {
             this.state.isSelectedExerciseModalOpen ||
             this.state.isPrepareSessionsCompletionModalOpen ||
             this.state.isTrainSessionsCompletionModalOpen ||
-            this.state.isFunctionalStrengthModalOpen
+            this.state.isFunctionalStrengthModalOpen ||
+            this.state.isFSCalculating ||
+            this.state.isPrepCalculating ||
+            this.state.isRecoverCalculating
         );
         return(
             <View style={{flex: 1,}}>

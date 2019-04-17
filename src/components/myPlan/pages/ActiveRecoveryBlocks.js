@@ -5,6 +5,7 @@
         after={true}
         isFunctionalStrength={true}
         recoveryObj={recoveryObj}
+        recoveryPriority={recoveryPriority}
         toggleActiveTimeSlideUpPanel={this._toggleActiveTimeSlideUpPanel}
     />
  *
@@ -122,10 +123,11 @@ class ActiveRecoveryBlocks extends Component {
             after,
             isFunctionalStrength,
             recoveryObj,
+            recoveryPriority,
             toggleActiveTimeSlideUpPanel,
         } = this.props;
         let isDisabled = !recoveryObj && !recoveryObj.minutes_duration;
-        let { equipmentRequired, } = MyPlanConstants.cleanExerciseList(recoveryObj);
+        let { equipmentRequired, totalSeconds, } = MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority);
         if(isFunctionalStrength) {
             return(
                 <View style={{flex: 1, flexDirection: 'row', marginRight: 9,}}>
@@ -304,6 +306,7 @@ ActiveRecoveryBlocks.propTypes = {
         PropTypes.object,
         PropTypes.bool,
     ]),
+    recoveryPriority:             PropTypes.number,
     toggleActiveTimeSlideUpPanel: PropTypes.func,
 };
 
@@ -311,6 +314,7 @@ ActiveRecoveryBlocks.defaultProps = {
     after:                        false,
     isFunctionalStrength:         false,
     recoveryObj:                  false,
+    recoveryPriority:             1,
     toggleActiveTimeSlideUpPanel: null,
 };
 

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
@@ -1090,9 +1090,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
+    handleMyPlanRenderRecoverTabLogic: (dailyPlanObj, recoveryPriority) => {
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority) : {};
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
@@ -1110,9 +1110,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
+    handleMyPlanRenderPrepareTabLogic: (dailyPlanObj, recoveryPriority) => {
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj) : {};
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority) : {};
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;
