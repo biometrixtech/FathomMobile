@@ -40,6 +40,9 @@ import SettingsComponent from '../components/settings/Settings';
 import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
 import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 
+import BluetoothConnect3SensorContainer from '../containers/kit/BluetoothConnect3Sensor';
+import BluetoothConnect3SensorComponent from '../components/kit/BluetoothConnect3Sensor';
+
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
@@ -211,8 +214,13 @@ const Index = (
                 hideNavBar={true}
                 key={'bluetoothConnect'}
                 panHandlers={null}
-                // title={'Bluetooth Connect'}
-                // {...DefaultProps.navbarProps}
+            />
+            <Scene
+                Layout={BluetoothConnect3SensorComponent}
+                component={BluetoothConnect3SensorContainer}
+                hideNavBar={true}
+                key={'bluetoothConnect3Sensor'}
+                panHandlers={null}
             />
         </Stack>
     </Router>

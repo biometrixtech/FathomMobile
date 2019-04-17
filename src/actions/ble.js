@@ -171,8 +171,8 @@ const startBluetooth = () => {
         .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
-const startScan = () => {
-    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
+const startScan = (seconds = 30) => {
+    return dispatch => BleManager.scan([], seconds, false, { scanMode: 2 })
         .then(() => dispatch({
             type: Actions.START_SCAN
         }))

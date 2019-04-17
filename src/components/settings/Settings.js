@@ -332,8 +332,10 @@ class Settings extends Component {
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
-        const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
-        const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
+        // const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
+        // const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
+        const userHasSingleSensorSystem = userObj && userObj.system_type && userObj.system_type === '1-sensor' ? true : false;
+        const userHas3SensorSensorSystem = userObj && userObj.system_type && userObj.system_type === '3-sensor' ? true : false;
         // set animated values
         const spinValue = new Animated.Value(0);
         // First set up animation
@@ -355,7 +357,28 @@ class Settings extends Component {
         });
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
-                { userHasSensorSystem ?
+                { userHas3SensorSensorSystem &&
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={{
+                                color: AppColors.black,
+                                name:  'bluetooth',
+                                size:  24,
+                            }}
+                            onPress={() => Actions.bluetoothConnect3Sensor()}
+                            rightIcon={{
+                                color: AppColors.black,
+                                name:  'chevron-right',
+                                size:  24,
+                            }}
+                            title={'CONNECT TO FATHOM SENSORS'}
+                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
+                }
+                { userHasSingleSensorSystem &&
                     <View>
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -388,8 +411,6 @@ class Settings extends Component {
                         />
                         <Spacer isDivider />
                     </View>
-                    :
-                    null
                 }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
@@ -447,7 +468,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                { Platform.OS === 'ios' && userObj.role !== 'coach' ?
+                { Platform.OS === 'ios' && userObj.role !== 'coach' &&
                     <View>
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -468,8 +489,6 @@ class Settings extends Component {
                         />
                         <Spacer isDivider />
                     </View>
-                    :
-                    null
                 }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
