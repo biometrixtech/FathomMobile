@@ -412,6 +412,18 @@ const patchSession = (session_id, payload) => {
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
 
+/**
+  * Set Completed FS Exercise
+  */
+const toggleRecoveryGoal = newGoals => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type:  Actions.TOGGLE_RECOVERY_GOAL,
+            goals: newGoals,
+        })
+    );
+};
+
 export default {
     activateFunctionalStrength,
     clearCompletedExercises,
@@ -436,4 +448,5 @@ export default {
     setAppLogs,
     setCompletedExercises,
     setCompletedFSExercises,
+    toggleRecoveryGoal,
 };

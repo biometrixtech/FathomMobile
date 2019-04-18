@@ -69,6 +69,10 @@ export default function planReducer(state = initialState, action) {
         return Object.assign({}, state, {
             dailyPlan: action.data,
         });
+    case Actions.TOGGLE_RECOVERY_GOAL:
+        return Object.assign({}, state, {
+            goals: action.goals,
+        });
     case Actions.UPDATE_LAST_OPENED:
         return Object.assign({}, state, {
             lastOpened: {

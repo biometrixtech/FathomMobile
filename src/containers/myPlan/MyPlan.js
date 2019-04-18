@@ -30,6 +30,7 @@ const MyPlan = ({
     setAppLogs,
     setCompletedExercises,
     setCompletedFSExercises,
+    toggleRecoveryGoal,
     updateUser,
     user,
 }) => (
@@ -58,6 +59,7 @@ const MyPlan = ({
         setAppLogs={setAppLogs}
         setCompletedExercises={setCompletedExercises}
         setCompletedFSExercises={setCompletedFSExercises}
+        toggleRecoveryGoal={toggleRecoveryGoal}
         updateUser={updateUser}
         user={user}
     />
@@ -92,6 +94,7 @@ MyPlan.propTypes = {
     setAppLogs:              PropTypes.func.isRequired,
     setCompletedExercises:   PropTypes.func.isRequired,
     setCompletedFSExercises: PropTypes.func.isRequired,
+    toggleRecoveryGoal:      PropTypes.func.isRequired,
     updateUser:              PropTypes.func.isRequired,
     user:                    PropTypes.object.isRequired,
 };
@@ -129,6 +132,7 @@ const mapDispatchToProps = {
     setAppLogs:                    PlanActions.setAppLogs,
     setCompletedExercises:         PlanActions.setCompletedExercises,
     setCompletedFSExercises:       PlanActions.setCompletedFSExercises,
+    toggleRecoveryGoal:            PlanActions.toggleRecoveryGoal,
     updateUser:                    UserActions.updateUser,
 };
 

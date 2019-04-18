@@ -31,6 +31,7 @@ import {
     Exercises,
     FunctionalStrengthModal,
     PostSessionSurvey,
+    PrioritySlideUpPanel,
     ReadinessSurvey,
     RenderMyPlanTab,
     SessionsCompletionModal,
@@ -112,6 +113,7 @@ class MyPlan extends Component {
         setAppLogs:              PropTypes.func.isRequired,
         setCompletedExercises:   PropTypes.func.isRequired,
         setCompletedFSExercises: PropTypes.func.isRequired,
+        toggleRecoveryGoal:      PropTypes.func.isRequired,
         updateUser:              PropTypes.func.isRequired,
         user:                    PropTypes.object.isRequired,
     }
@@ -805,6 +807,13 @@ class MyPlan extends Component {
         }
     }
 
+    _toggleRecoveryGoal = selectedIndex => {
+        const { plan, toggleRecoveryGoal, } = this.props;
+        let newGoals = _.cloneDeep(plan.goals);
+        newGoals = _.update(newGoals, `[${selectedIndex}].isSelected`, () => !plan.goals[selectedIndex].isSelected);
+        toggleRecoveryGoal(newGoals);
+    }
+
     _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
         this.setState({ [prepareOrRecover]: selectedIndex, });
     }
@@ -922,7 +931,7 @@ class MyPlan extends Component {
             isCompleted,
             isReadinessSurveyCompleted,
             recoveryObj,
-        } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj, preRecoveryPriority);
+        } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj, preRecoveryPriority, plan.goals);
         return (
             <ScrollView
                 contentContainerStyle={{backgroundColor: AppColors.white,}}
@@ -1017,7 +1026,7 @@ class MyPlan extends Component {
                             </View>
                         </View>
                     : isActive ?
-                        exerciseList.totalLength === 0 ?
+                        exerciseList.unFilteredExerciseArray.length === 0 ?
                             <View style={{flex: 1,}}>
                                 <Spacer size={10} />
                                 <View style={[AppStyles.containerCentered, customStyles.alertMessageWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}]}>
@@ -1038,8 +1047,11 @@ class MyPlan extends Component {
                                 <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
                                 <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                     <ActiveRecoveryBlocks
+                                        goals={plan.goals}
                                         recoveryObj={recoveryObj}
-                                        toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                        recoveryPriority={preRecoveryPriority}
+                                        toggleActiveTimeSlideUpPanel={() => this.setState({ isPreparePrioritySlideUpPanelOpen: !this.state.isPreparePrioritySlideUpPanelOpen, })}//this._togglePrepareSlideUpPanel}
+                                        toggleRecoveryGoal={this._toggleRecoveryGoal}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1057,8 +1069,11 @@ class MyPlan extends Component {
                                     <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15,}}>
                                         <ActiveRecoveryBlocks
+                                            goals={plan.goals}
                                             recoveryObj={recoveryObj}
-                                            toggleActiveTimeSlideUpPanel={this._togglePrepareSlideUpPanel}
+                                            recoveryPriority={preRecoveryPriority}
+                                            toggleActiveTimeSlideUpPanel={() => this.setState({ isPreparePrioritySlideUpPanelOpen: !this.state.isPreparePrioritySlideUpPanelOpen, })}//this._togglePrepareSlideUpPanel}
+                                            toggleRecoveryGoal={this._toggleRecoveryGoal}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1091,7 +1106,10 @@ class MyPlan extends Component {
                             <View style={{borderRightColor: AppColors.white, borderRightWidth: 1,paddingLeft: 22,}} />
                             <View style={{flex: 1, paddingLeft: 30, paddingRight: 15,}}>
                                 <ActiveRecoveryBlocks
+                                    goals={plan.goals}
                                     recoveryObj={recoveryObj}
+                                    recoveryPriority={preRecoveryPriority}
+                                    toggleRecoveryGoal={this._toggleRecoveryGoal}
                                 />
                             </View>
                         </View>
@@ -1143,6 +1161,12 @@ class MyPlan extends Component {
                         user={this.props.user}
                     />
                 </FathomModal>
+                <PrioritySlideUpPanel
+                    changeSelectedPriority={selectedIndex => this._changeSelectedActiveTime((selectedIndex + 1), 'preRecoveryPriority')}
+                    isSlideUpPanelOpen={this.state.isPreparePrioritySlideUpPanelOpen}
+                    selectedPriority={this.state.preRecoveryPriority}
+                    toggleSlideUpPanel={() => this.setState({ isPreparePrioritySlideUpPanelOpen: !this.state.isPreparePrioritySlideUpPanelOpen, })}
+                />
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'prepareSelectedActiveTime')}
                     isSlideUpPanelOpen={this.state.isPrepareSlideUpPanelOpen}
@@ -1227,7 +1251,7 @@ class MyPlan extends Component {
             isActive,
             isCompleted,
             recoveryObj,
-        } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj, postRecoveryPriority);
+        } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj, postRecoveryPriority, plan.goals);
         return (
             <ScrollView
                 contentContainerStyle={{backgroundColor: AppColors.white,}}
@@ -1339,8 +1363,11 @@ class MyPlan extends Component {
                                 <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
                                     <ActiveRecoveryBlocks
                                         after={true}
+                                        goals={plan.goals}
                                         recoveryObj={recoveryObj}
-                                        toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                        recoveryPriority={postRecoveryPriority}
+                                        toggleActiveTimeSlideUpPanel={() => this.setState({ isRecoverPrioritySlideUpPanelOpen: !this.state.isRecoverPrioritySlideUpPanelOpen, })}//this._toggleRecoverSlideUpPanel}
+                                        toggleRecoveryGoal={this._toggleRecoveryGoal}
                                     />
                                     <Spacer size={12}/>
                                     <Button
@@ -1359,8 +1386,11 @@ class MyPlan extends Component {
                                     <View style={{flex: 1, paddingLeft: 20, paddingRight: 15}}>
                                         <ActiveRecoveryBlocks
                                             after={true}
+                                            goals={plan.goals}
                                             recoveryObj={recoveryObj}
-                                            toggleActiveTimeSlideUpPanel={this._toggleRecoverSlideUpPanel}
+                                            recoveryPriority={postRecoveryPriority}
+                                            toggleActiveTimeSlideUpPanel={() => this.setState({ isRecoverPrioritySlideUpPanelOpen: !this.state.isRecoverPrioritySlideUpPanelOpen, })}//this._toggleRecoverSlideUpPanel}
+                                            toggleRecoveryGoal={this._toggleRecoveryGoal}
                                         />
                                         <Spacer size={20}/>
                                         <Text
@@ -1393,7 +1423,10 @@ class MyPlan extends Component {
                             <View style={{flex: 1, marginBottom: 30, marginLeft: 20, marginRight: 15,}}>
                                 <ActiveRecoveryBlocks
                                     after={true}
+                                    goals={plan.goals}
                                     recoveryObj={recoveryObj}
+                                    recoveryPriority={postRecoveryPriority}
+                                    toggleRecoveryGoal={this._toggleRecoveryGoal}
                                 />
                             </View>
                         </View>
@@ -1427,6 +1460,13 @@ class MyPlan extends Component {
                         user={this.props.user}
                     />
                 </FathomModal>
+                <PrioritySlideUpPanel
+                    changeSelectedPriority={selectedIndex => this._changeSelectedActiveTime((selectedIndex + 1), 'postRecoveryPriority')}
+                    isRecover={true}
+                    isSlideUpPanelOpen={this.state.isRecoverPrioritySlideUpPanelOpen}
+                    selectedPriority={this.state.postRecoveryPriority}
+                    toggleSlideUpPanel={() => this.setState({ isRecoverPrioritySlideUpPanelOpen: !this.state.isRecoverPrioritySlideUpPanelOpen, })}
+                />
                 <ActiveTimeSlideUpPanel
                     changeSelectedActiveTime={(selectedIndex) => this._changeSelectedActiveTime(selectedIndex, 'recoverSelectedActiveTime')}
                     isRecover={true}

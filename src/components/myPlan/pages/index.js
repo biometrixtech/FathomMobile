@@ -15,6 +15,7 @@ import ExercisesExercise from './ExercisesExercise';
 import FunctionalStrengthModal from './FunctionalStrengthModal';
 import HealthKitWorkouts from './HealthKitWorkouts';
 import PostSessionSurvey from './PostSessionSurvey';
+import PrioritySlideUpPanel from './PrioritySlideUpPanel';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
 import RenderMyPlanTab from './RenderMyPlanTab';
@@ -42,6 +43,7 @@ export {
     FunctionalStrengthModal,
     HealthKitWorkouts,
     PostSessionSurvey,
+    PrioritySlideUpPanel,
     ProgressPill,
     ReadinessSurvey,
     RenderMyPlanTab,

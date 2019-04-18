@@ -35,6 +35,7 @@ export default {
     SIGN_UP_SUCCESS:              'SIGN_UP_SUCCESS',
     START_REQUEST:                'START_REQUEST',
     STOP_REQUEST:                 'STOP_REQUEST',
+    TOGGLE_RECOVERY_GOAL:         'TOGGLE_RECOVERY_GOAL',
     USER_REPLACE:                 'USER_REPLACE',
     // BLE
     ACCESSORY_RESET:              'ACCESSORY_RESET',

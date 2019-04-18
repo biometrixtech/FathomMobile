@@ -1090,9 +1090,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderRecoverTabLogic: (dailyPlanObj, recoveryPriority) => {
+    handleMyPlanRenderRecoverTabLogic: (dailyPlanObj, recoveryPriority, goals) => {
         let recoveryObj = dailyPlanObj && dailyPlanObj.post_recovery ? dailyPlanObj.post_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority) : {};
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority, goals) : {};
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed ? true : false;
@@ -1110,9 +1110,9 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderPrepareTabLogic: (dailyPlanObj, recoveryPriority) => {
+    handleMyPlanRenderPrepareTabLogic: (dailyPlanObj, recoveryPriority, goals) => {
         let recoveryObj = dailyPlanObj && dailyPlanObj.pre_recovery ? dailyPlanObj.pre_recovery : false;
-        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority) : {};
+        let exerciseList = recoveryObj.display_exercises ? MyPlanConstants.cleanExerciseList(recoveryObj, recoveryPriority, goals) : {};
         let disabled = recoveryObj && !recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isActive = recoveryObj && recoveryObj.display_exercises && !recoveryObj.completed ? true : false;
         let isCompleted = recoveryObj && !recoveryObj.display_exercises && recoveryObj.completed  ? true : false;

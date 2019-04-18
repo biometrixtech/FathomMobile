@@ -202,7 +202,7 @@ const postSessionFeel = [
     'Max effort',
 ];
 
-function cleanExerciseList(recoveryObj, recoveryPriority = 1) {
+function cleanExerciseList(recoveryObj, recoveryPriority = 1, goals) {
     // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
@@ -210,12 +210,12 @@ function cleanExerciseList(recoveryObj, recoveryPriority = 1) {
     let equipmentRequired = [];
     let totalSeconds = 0;
     let exerciseGoals = [];
+    let unFilteredExerciseArray = [];
     // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
         largestSetCount[list.index] = 0;
         // loop through our specific exercise to update our variables
         _.map(recoveryObj[list.index], exercise => {
-            totalSeconds += exercise.seconds_duration;
             exerciseGoals = _.concat(exerciseGoals, exercise.goals);
             equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
             if(exercise.sets_assigned > largestSetCount[list.index]) {
@@ -225,12 +225,32 @@ function cleanExerciseList(recoveryObj, recoveryPriority = 1) {
         // setup our specific exercise array
         let exerciseArray = [];
         for(let i = 1; i <= largestSetCount[list.index]; i += 1) {
+            /*eslint no-loop-func: 0*/
             _.map(recoveryObj[list.index], exercise => {
                 let newExercise = _.cloneDeep(exercise);
-                if(newExercise.sets_assigned >= i && (newExercise.priority && newExercise.priority.includes(recoveryPriority))) {
+                if(
+                    newExercise.sets_assigned >= i &&
+                    (
+                        newExercise.priority &&
+                        (
+                            (recoveryPriority === 1 && newExercise.priority.includes(1)) ||
+                            (recoveryPriority === 2 && (newExercise.priority.includes(2) || newExercise.priority.includes(1))) ||
+                            (recoveryPriority === 3 && (newExercise.priority.includes(3) || newExercise.priority.includes(2) || newExercise.priority.includes(1)))
+                        )
+                    ) &&
+                    ( goals &&
+                        (
+                            (newExercise.goals.includes(0) && goals[0].isSelected) ||
+                            (newExercise.goals.includes(1) && goals[1].isSelected) ||
+                            (newExercise.goals.includes(2) && goals[2].isSelected)
+                        )
+                    )
+                ) {
+                    totalSeconds += (newExercise.seconds_duration / newExercise.sets_assigned);
                     newExercise.set_number = i;
                     exerciseArray.push(newExercise);
                 }
+                unFilteredExerciseArray.push(newExercise);
             });
         }
         totalLength += exerciseArray.length;
@@ -247,6 +267,7 @@ function cleanExerciseList(recoveryObj, recoveryPriority = 1) {
         equipmentRequired,
         totalLength,
         totalSeconds,
+        unFilteredExerciseArray,
     };
 }
 
@@ -785,6 +806,10 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     }
 }
 
+const selectedPriorities = (selectedIndex = 0) => {
+    return ['1', '2', '3'];
+}
+
 function completionModalExerciseList(exerciseList, completedExercises, isFS = false) {
     let cleanedExerciseList = {};
     _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
@@ -833,6 +858,7 @@ export default {
     randomizeSessionsCompletionModalText,
     scrollableTabViewPage,
     selectedActiveTimes,
+    selectedPriorities,
     sessionTypes,
     sleepQuality,
     sorenessPainScaleMapping,

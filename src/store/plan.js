@@ -55,6 +55,11 @@ export default {
         sessions_planned:       true,
         training_sessions:      [],
     }],
+    goals: [
+        {show: true, text: '0-GOAL', shape: 'square', isSelected: true,},
+        {show: true, text: '1-GOAL', shape: 'square', isSelected: true,},
+        {show: true, text: '2-GOAL', shape: 'square', isSelected: true,},
+    ],
     healthData:      { ignoredWorkouts: [], sleep: [], workouts: [], },
     lastOpened:      { date: '', userId: '' },
     postSession:     {},
