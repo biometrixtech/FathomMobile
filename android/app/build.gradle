@@ -207,6 +207,7 @@ dependencies {
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-fabric')
+    implementation project(':react-native-wifi')
     // For animated GIF support
     implementation 'com.facebook.fresco:animated-gif:1.10.0'
 }

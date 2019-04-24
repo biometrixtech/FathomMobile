@@ -37,6 +37,7 @@ import {
     SessionsCompletionModal,
     SingleExerciseItem,
 } from './pages';
+import { Prepare, Recover, Train, } from './tabs';
 import { Loading, } from '../general';
 
 // Tabs titles
@@ -921,6 +922,16 @@ class MyPlan extends Component {
             prepare,
             preRecoveryPriority,
         } = this.state;
+            // below are still in the works - state
+            // isReadinessSurveyModalOpen,
+            // isPreparePrioritySlideUpPanelOpen,
+            // isPrepareSlideUpPanelOpen,
+            // prepareSelectedActiveTime,
+            // healthData,
+            // isSelectedExerciseModalOpen,
+            // selectedExercise,
+            // isPrepareSessionsCompletionModalOpen,
+            // isPrepareExerciseCompletionModalOpen,
         let { plan, user, } = this.props;
         let completedExercises = store.getState().plan.completedExercises;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -1140,7 +1151,7 @@ class MyPlan extends Component {
                     />
                 </FathomModal>
                 <FathomModal
-                  isVisible={this.state.isSelectedExerciseModalOpen}
+                    isVisible={this.state.isSelectedExerciseModalOpen}
                     style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
                 >
                     <Exercises

@@ -26,6 +26,7 @@ import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.smixx.fabric.FabricPackage;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
+import com.reactlibrary.RNWifiPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +59,8 @@ public class MainApplication extends Application implements ReactApplication {
                 new ReactVideoPackage(),
                 new LinearGradientPackage(),
                 new ReactNativePushNotificationPackage(),
-                new FabricPackage()
+                new FabricPackage(),
+                new RNWifiPackage()
             );
         }
 

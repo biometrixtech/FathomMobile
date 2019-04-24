@@ -27,7 +27,6 @@ export default {
         SET_WIFI_PSW_HEAD:              parseInt('0x06', 16),
         SET_WIFI_PSW_CONT:              parseInt('0x07', 16),
         CONNECT_WIFI:                   parseInt('0x08', 16),
-        GET_MAC_ADDRESS:                parseInt('0x09', 16),
         SET_SERIAL_ID:                  parseInt('0x0A', 16),
         GET_SERIAL_ID:                  parseInt('0x0B', 16),
         GET_BLE_BD:                     parseInt('0x0C', 16),
@@ -89,12 +88,14 @@ export default {
         // SINGLE SENSOR COMMANDS
         DELETE_ALL_PRACTICES:           parseInt('0x7C', 16),
         DELETE_SINGLE_PRACTICE:         parseInt('0x79', 16),
-        IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         GET_ENTIRE_SYSTEM_STATUS:       parseInt('0x7D', 16),
         GET_PRACTICE_ACCELERATIONS:     parseInt('0x77', 16),
         GET_PRACTICE_DURATION:          parseInt('0x78', 16),
         GET_PRACTICE_TIMESTAMPS:        parseInt('0x76', 16),
         GET_SINGLE_SENSOR_LIST:         parseInt('0x75', 16),
+        IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
+        // THREE SENSOR COMMANDS
+        GET_MAC_ADDRESS:                parseInt('0xD4', 16),
     },
 
     roles: {

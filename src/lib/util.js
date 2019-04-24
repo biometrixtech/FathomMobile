@@ -193,11 +193,13 @@ const UTIL = {
             } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('survey-questions')) {
                 RouterActions.survey();
             } else {
-                if(userObj.role === 'coach') {
-                    RouterActions.coachesDashboard();
-                } else {
-                    RouterActions.myPlan();
-                }
+                // TODO: FIX ME!
+                RouterActions.bluetoothConnect3Sensor();
+                // if(userObj.role === 'coach') {
+                //     RouterActions.coachesDashboard();
+                // } else {
+                //     RouterActions.myPlan();
+                // }
             }
         }
     },

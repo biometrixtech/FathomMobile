@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:21:33
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:31
- */
-
 /**
  * Bluetooth Actions
  */
@@ -34,8 +27,10 @@ const validateReadData = (response, dataArray) => {
     return response[0] === 0 && response[2] === dataArray[0] && response[3] === 0;
 };
 
-const read = (id, dataArray) => {
-    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+const read = (id, dataArray, is3Sensor) => {
+    let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
+    let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
+    return BleManager.read(id, serviceUUID, characteristicUUID)
         .then(data => {
             // Answers.logCustom('BLE read', {
             //     data,
@@ -47,18 +42,20 @@ const read = (id, dataArray) => {
             } else if(!dataArray) {
                 return data;
             }
-            return read(id, dataArray);
+            return read(id, dataArray, is3Sensor);
         });
 };
 
-const write = (id, data) => {
+const write = (id, data, is3Sensor) => {
     // Answers.logCustom('BLE write', {
     //     data,
     //     deviceInfo: AppConfig.deviceInfo,
     //     id,
     // });
-    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => read(id, data));
+    let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
+    let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
+    return BleManager.write(id, serviceUUID, characteristicUUID, data)
+        .then(() => read(id, data, is3Sensor));
 };
 
 /**
@@ -188,10 +185,12 @@ const stopScan = () => {
 };
 
 const deviceFound = data => {
-    return dispatch => dispatch({
-        type: Actions.DEVICE_FOUND,
-        data
-    });
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.DEVICE_FOUND,
+            data
+        })
+    );
 };
 
 const startConnect = () => {
@@ -556,6 +555,137 @@ const deleteSinglePractice = (sensorId, practiceIndex = 0) => {
 };
 
 /**
+  * NEW FUNCTIONS
+  * - 3 Sensor System
+  */
+const returnCleaned3SensorDataArray = (byteString, command) => {
+    let dataArray = [];
+    dataArray.push(command);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    console.log('SSID Data Array: ', dataArray);
+    return dataArray;
+}
+
+const getBLEMacAddress = sensorId => {
+    const dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray, true))
+        .then(response => response[3] === 1 ? write(sensorId, dataArray) : Promise.resolve(response))
+        .then(response => convertDecimal(response.slice(4, 10)))
+        .then(macAddress => macAddress === '00:00:00:00:00:00' ? write(sensorId, dataArray) : macAddress)
+        .then(macAddress => Promise.resolve(
+            dispatch({
+                type: Actions.GET_WIFI_MAC_ADDRESS,
+                data: {
+                    macAddress:  macAddress,
+                    mobile_udid: AppUtil.getDeviceUUID(),
+                    sensor_pid:  sensorId,
+                },
+            })
+        ))
+        .catch(err => Promise.reject(err));
+};
+
+const writeWifiDetailsToSensor = (sensorId, ssid, password) => {
+    // setup consts needed
+    const ssidArray = convertDecimal(convertStringToByteArray(ssid)).split(':');
+    const passwordArray = convertDecimal(convertStringToByteArray(password)).split(':');
+    let shortSlicedPswDataArray = _.slice(passwordArray, 0, 18);
+    let longSlicedPswDataArray = _.slice(passwordArray, 18, 32);
+    let shortPswDataArray = returnCleaned3SensorDataArray(shortSlicedPswDataArray, commands.WRITE_WIFI_PSW_SHORT);
+    let longPswDataArray = returnCleaned3SensorDataArray(longSlicedPswDataArray, commands.WRITE_WIFI_PSW_LONG);
+    let shortSlicedSsidDataArray = _.slice(ssidArray, 0, 18);
+    let longSlicedSsidDataArray = _.slice(ssidArray, 18, 32);
+    let shortSsidDataArray = returnCleaned3SensorDataArray(shortSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
+    let longSsidDataArray = returnCleaned3SensorDataArray(longSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
+    // check if ssid & password are out of scope of ble
+    if(ssidArray && (ssidArray.length === 0 || ssidArray.length > 32)) {
+        return dispatch => Promise.reject('Wifi SSID is too long!');
+    } else if(passwordArray && (passwordArray.length === 0 || passwordArray.length > 32)) {
+        return dispatch => Promise.reject('Wifi Password is too long!');
+    }
+    // checks done, now update sensor
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, shortSsidDataArray, true)) // 1. write short wifi
+        .then(() => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => longSlicedSsidDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longSsidDataArray, true)) // 2. check if long wifi -> write if needed
+        .then(() => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, shortPswDataArray, true)) // 3. write short psw
+        .then(peripheralInfo => longSlicedPswDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longPswDataArray, true)) // 4. check if long psw -> write if needed
+        .then(res => Promise.resolve(
+            dispatch({
+                type: Actions.WIFI
+            })
+        ))
+        .catch(err => Promise.resolve(err))
+};
+
+const getScannedWifiConnections = sensorId => {
+    const writeDataArray = [commands.WRITE_WIFI_SCAN, convertHex('0x00')];
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, writeDataArray, true))
+        .then(response => {
+            console.log('response',response);
+            return Promise.resolve(response[4]);
+        })
+        .catch(err => Promise.reject('Error fetching WIFI connections'));
+};
+
+const getSingleWifiConnection = (sensorId, index) => {
+    const readDataArray = [commands.READ_WIFI_SCAN_SHORT];
+    const readLongDataArray = [commands.READ_WIFI_SCAN_LONG];
+    let returnShortArray = [];
+    return BleManager.retrieveServices(sensorId)
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, readDataArray, true))
+        .then(response => {
+            if(response[1] > 18) {
+                returnShortArray = response;
+                return BleManager.retrieveServices(sensorId)
+                    .then(peripheralInfo => write(peripheralInfo.id, readLongDataArray, true));
+            }
+            return Promise.resolve(response);
+        })
+        .then(response => Promise.resolve(_.concat(returnShortArray, response)));
+};
+
+// TODO: clean me up?
+const assignKitIndividual = (accessory, user) => {
+    return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
+        .then(response => {
+            let data = accessory;
+            data.individual = user;
+            data.last_user_id = user.id;
+            return dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data
+            });
+        })
+        .catch(err => Promise.reject(err));
+};
+
+/**
   * OLD FUNCTIONS
   * - 3 Sensor System
   */
@@ -774,20 +904,6 @@ const setOwnerFlag = (id, value) => {
         });
 };
 
-const assignKitIndividual = (accessory, user) => {
-    return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
-        .then(response => {
-            let data = accessory;
-            data.individual = user;
-            data.last_user_id = user.id;
-            return dispatch({
-                type: Actions.CONNECT_TO_ACCESSORY,
-                data
-            });
-        })
-        .catch(err => Promise.reject(err));
-};
-
 const assignKitTeam = (accessory, team) => {
     let data = accessory;
     data.team = team;
@@ -840,27 +956,6 @@ const handleDisconnect = id => {
         .then(services => dispatch({
             type: Actions.HANDLE_DISCONNECT
         }));
-};
-
-const getWifiMacAddress = id => {
-    let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
-        .then(response => {
-            return response[3] === 1 ? write(id, dataArray) : Promise.resolve(response);
-        })
-        .then(response => {
-            return convertDecimal(response.slice(4,10));
-        })
-        .then(macAddress => {
-            return macAddress === '00:00:00:00:00:00' ? write(id, dataArray) : Promise.resolve(macAddress);
-        })
-        .then(macAddress => {
-            return dispatch({
-                type: Actions.GET_WIFI_MAC_ADDRESS,
-                data: macAddress
-            });
-        })
-        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const setIdentity = (id, identity) => {
@@ -991,11 +1086,13 @@ export default {
     enableBluetooth,
     getAccessoryKey,
     getAllPracticeDetails,
+    getBLEMacAddress,
     getKitName,
     getOwnerFlag,
+    getScannedWifiConnections,
     getSingleSensorStatus,
+    getSingleWifiConnection,
     getUserSensorData,
-    getWifiMacAddress,
     handleDisconnect,
     loginToAccessory,
     postUserSensorData,
@@ -1020,4 +1117,5 @@ export default {
     stopScan,
     storeParams,
     systemReset,
+    writeWifiDetailsToSensor,
 };

@@ -67,6 +67,7 @@
     "react-native-vector-icons": "^6.4.2",
     "react-native-video": "^4.4.0",
     "react-native-webview": "^5.5.0",
+    "react-native-wifi": "https://github.com/mazenchami/react-native-wifi.git",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",

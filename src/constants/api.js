@@ -1,17 +1,12 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:30:58
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 12:50:12
- */
-
 /**
  * API Config
  */
 
 // what {version} are we on?
+const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
 const plansAPIVersion = '/plans/3_1';
+const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_2';
 
 export default {
@@ -36,6 +31,7 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
+        // User specific routes
         ['authorize',          `${usersAPIVersion}/user/{userId}/authorize`],
         ['check_account_code', `${usersAPIVersion}/account`], // GET
         ['create_user',        `${usersAPIVersion}/user`],
@@ -102,10 +98,13 @@ export default {
         PROD: 'https://apis.production.fathomai.com/preprocessing',
     },
 
-    preprocessingHostname: 'https://apis.production.fathomai.com/preprocessing',
+    // preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
+    // preprocessingHostname: 'https://apis.qa.fathomai.com', // qa
+    preprocessingHostname: 'https://apis.test.fathomai.com', // test
+    // preprocessingHostname: 'https://apis.dev.fathomai.com', // development
 
     preprocessingEndpoints: new Map([
-        ['status', '/status'] // body: { start_date: '<start of week>', end_date: '<end of week>' }
+        ['status', `${preprocessingAPIVersion}/status/athlete`], // GET
     ]),
 
     HARDWARE_APIs: {
@@ -114,9 +113,12 @@ export default {
         PROD: 'https://apis.production.fathomai.com/hardware',
     },
 
-    hardwareHostname: 'https://apis.production.fathomai.com/hardware',
+    // hardwareHostname: 'https://apis.production.fathomai.com', // deployment
+    // hardwareHostname: 'https://apis.qa.fathomai.com', // qa
+    hardwareHostname: 'https://apis.test.fathomai.com', // test
+    // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
-        ['accessory', '/accessory/{wifiMacAddress}'], // GET: settings key, PATCH: owner-uuid with body: { owner_id: '<uuid>' }
+        ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
     ]),
 };

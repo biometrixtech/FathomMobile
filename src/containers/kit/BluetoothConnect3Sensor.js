@@ -11,75 +11,84 @@ import BluetoothActions from '../../actions/ble';
 const BluetoothConnect3Sensor = ({
     Layout,
     bluetooth,
+    deviceFound,
+    getBLEMacAddress,
+    getScannedWifiConnections,
+    getSingleWifiConnection,
+    network,
+    startScan,
+    stopConnect,
+    stopScan,
+    user,
+    writeWifiDetailsToSensor,
     // changeState,
     // checkState,
-    connectToAccessory,
-    deviceFound,
+    // connectToAccessory,
     // disconnect,
     // enableBluetooth,
     // getAccessoryKey,
     // getOwnerFlag,
     // getUserSensorData,
-    // getWifiMacAddress,
     // loginToAccessory,
-    network,
     // postUserSensorData,
     // setKitTime,
     // startBluetooth,
-    startConnect,
-    startScan,
-    stopConnect,
-    stopScan,
-    user,
+    // startConnection,
 }) => (
     <Layout
         bluetooth={bluetooth}
+        deviceFound={deviceFound}
+        getBLEMacAddress={getBLEMacAddress}
+        getScannedWifiConnections={getScannedWifiConnections}
+        getSingleWifiConnection={getSingleWifiConnection}
+        network={network}
+        startScan={startScan}
+        stopConnect={stopConnect}
+        stopScan={stopScan}
+        user={user}
+        writeWifiDetailsToSensor={writeWifiDetailsToSensor}
         // changeState={changeState}
         // checkState={checkState}
-        connectToAccessory={connectToAccessory}
-        deviceFound={deviceFound}
+        // connectToAccessory={connectToAccessory}
         // disconnect={disconnect}
         // enableBluetooth={enableBluetooth}
         // getAccessoryKey={getAccessoryKey}
         // getOwnerFlag={getOwnerFlag}
         // getUserSensorData={getUserSensorData}
-        // getWifiMacAddress={getWifiMacAddress}
         // loginToAccessory={loginToAccessory}
-        network={network}
         // postUserSensorData={postUserSensorData}
         // setKitTime={setKitTime}
         // startBluetooth={startBluetooth}
-        startConnect={startConnect}
-        startScan={startScan}
-        stopConnect={stopConnect}
-        stopScan={stopScan}
-        user={user}
+        // startConnection={startConnection}
     />
 );
 
 BluetoothConnect3Sensor.propTypes = {
-    Layout:             PropTypes.func.isRequired,
-    bluetooth:          PropTypes.shape({}).isRequired,
+    Layout:                    PropTypes.func.isRequired,
+    bluetooth:                 PropTypes.shape({}).isRequired,
+    deviceFound:               PropTypes.func.isRequired,
+    getBLEMacAddress:          PropTypes.func.isRequired,
+    getScannedWifiConnections: PropTypes.func.isRequired,
+    getSingleWifiConnection:   PropTypes.func.isRequired,
+    network:                   PropTypes.object.isRequired,
+    stopConnect:               PropTypes.func.isRequired,
+    startScan:                 PropTypes.func.isRequired,
+    stopScan:                  PropTypes.func.isRequired,
+    user:                      PropTypes.shape({}).isRequired,
+    writeWifiDetailsToSensor:  PropTypes.func.isRequired,
     // changeState:        PropTypes.func.isRequired,
     // checkState:         PropTypes.func.isRequired,
-    connectToAccessory: PropTypes.func.isRequired,
-    deviceFound:        PropTypes.func.isRequired,
+    // connectToAccessory: PropTypes.func.isRequired,
     // disconnect:         PropTypes.func.isRequired,
     // enableBluetooth:    PropTypes.func.isRequired,
     // getAccessoryKey:    PropTypes.func.isRequired,
     // getOwnerFlag:       PropTypes.func.isRequired,
     // getUserSensorData:  PropTypes.func.isRequired,
-    // getWifiMacAddress:  PropTypes.func.isRequired,
     // loginToAccessory:   PropTypes.func.isRequired,
-    network:            PropTypes.object.isRequired,
     // postUserSensorData: PropTypes.func.isRequired,
     // setKitTime:         PropTypes.func.isRequired,
     // startBluetooth:     PropTypes.func.isRequired,
-    stopConnect:        PropTypes.func.isRequired,
-    startScan:          PropTypes.func.isRequired,
-    startConnect:       PropTypes.func.isRequired,
-    stopScan:           PropTypes.func.isRequired,
-    user:               PropTypes.shape({}).isRequired,
+    // startConnection:    PropTypes.func.isRequired,
 };
 
 BluetoothConnect3Sensor.defaultProps = {
@@ -94,24 +103,27 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+    deviceFound:               BluetoothActions.deviceFound,
+    getBLEMacAddress:          BluetoothActions.getBLEMacAddress,
+    getScannedWifiConnections: BluetoothActions.getScannedWifiConnections,
+    getSingleWifiConnection:   BluetoothActions.getSingleWifiConnection,
+    startScan:                 BluetoothActions.startScan,
+    stopConnect:               BluetoothActions.stopConnect,
+    stopScan:                  BluetoothActions.stopScan,
+    writeWifiDetailsToSensor:  BluetoothActions.writeWifiDetailsToSensor,
     // changeState:        BluetoothActions.changeState,
     // checkState:         BluetoothActions.checkState,
-    connectToAccessory: BluetoothActions.connectToAccessory,
-    deviceFound:        BluetoothActions.deviceFound,
+    // connectToAccessory: BluetoothActions.connectToAccessory,
     // disconnect:         BluetoothActions.disconnect,
     // enableBluetooth:    BluetoothActions.enableBluetooth,
     // getAccessoryKey:    BluetoothActions.getAccessoryKey,
     // getOwnerFlag:       BluetoothActions.getOwnerFlag,
     // getUserSensorData:  BluetoothActions.getUserSensorData,
-    // getWifiMacAddress:  BluetoothActions.getWifiMacAddress,
     // loginToAccessory:   BluetoothActions.loginToAccessory,
     // postUserSensorData: BluetoothActions.postUserSensorData,
     // setKitTime:         BluetoothActions.setKitTime,
     // startBluetooth:     BluetoothActions.startBluetooth,
-    startConnect:       BluetoothActions.startConnect,
-    startScan:          BluetoothActions.startScan,
-    stopConnect:        BluetoothActions.stopConnect,
-    stopScan:           BluetoothActions.stopScan,
+    // startConnection:    BluetoothActions.startConnection,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BluetoothConnect3Sensor);

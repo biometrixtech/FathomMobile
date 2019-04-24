@@ -3,28 +3,26 @@
  *
     <BluetoothConnect3Sensor
         bluetooth={bluetooth}
-        connectToAccessory={connectToAccessory}
         deviceFound={deviceFound}
+        getBLEMacAddress={getBLEMacAddress}
+        getScannedWifiConnections={getScannedWifiConnections}
+        getSingleWifiConnection={getSingleWifiConnection}
         network={network}
-        startConnect={startConnect}
         startScan={startScan}
         stopConnect={stopConnect}
         stopScan={stopScan}
         user={user}
+        writeWifiDetailsToSensor={writeWifiDetailsToSensor}
     />
  *
  */
-import React, { PureComponent, } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, StyleSheet, View, } from 'react-native';
-// import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Alert, Keyboard, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, ScrollView, View, } from 'react-native';
 
 // Consts and Libs
-// import { AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { AppColors, AppFonts, AppSizes, } from '../../constants';
-// import { FormInput, TabIcon, Text, } from '../../custom';
-import { Button, ListItem, Spacer, ProgressBar, Text, } from '../custom';
-// import { PlanLogic, } from '../../../lib';
+import { Button, FormInput, ListItem, Spacer, ProgressBar, Text, } from '../custom';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -32,13 +30,11 @@ import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import Toast, { DURATION } from 'react-native-easy-toast';
+import WifiManager from 'react-native-wifi';
 
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
-
-/* Styles ==================================================================== */
-const styles = StyleSheet.create({});
 
 /* Component ==================================================================== */
 const TopNav = ({ currentStep, title, totalSteps, }) => (
@@ -67,15 +63,16 @@ const TopNav = ({ currentStep, title, totalSteps, }) => (
     </View>
 );
 
-class BluetoothConnect3Sensor extends PureComponent {
+class BluetoothConnect3Sensor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isSavedNetworksTab: true,
-            isScrollEnabled:    true,
-            pageIndex:          5,//0, // TODO: FIX ME
+            availableNetworks:     [],
+            currentWifiConnection: false,
+            pageIndex:             0,
         };
         this._pages = {};
+        this._timer = null;
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleStopScan = this.handleStopScan.bind(this);
     }
@@ -84,8 +81,6 @@ class BluetoothConnect3Sensor extends PureComponent {
         BleManager.start({ showAlert: false, });
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
         this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan);
-        // this.handlerDisconnect = bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', this.handleDisconnectedPeripheral );
-        // this.handlerUpdate = bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateValueForCharacteristic );
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
                 if (result) {
@@ -104,25 +99,47 @@ class BluetoothConnect3Sensor extends PureComponent {
     }
 
     componentWillUnmount = () => {
+        this._pages = null;
+        this._timer = null;
         this.handlerDiscover.remove();
         this.handleStopScan.remove();
-        this.pages = null;
     }
 
     _onPageScrollEnd = currentPage => {
         console.log('currentPage',currentPage);
+        const { bluetooth, getScannedWifiConnections, } = this.props;
         if(currentPage === 2) {
             this._handleBLEPair();
+        } else if(currentPage === 5) {
+            this._timer = _.delay(() => {
+                console.log(WifiManager)
+                WifiManager.getCurrentWifiSSID()
+                    .then(networkDetails => {
+                        let currentWifiConnectionObj = Platform.OS === 'android' ? JSON.parse(networkDetails) : networkDetails;
+                        currentWifiConnectionObj.password = '';
+                        this.setState({ currentWifiConnection: currentWifiConnectionObj, })
+                    })
+                    .catch(error => console.log('Cannot get current SSID!',error));
+                if(Platform.OS === 'android') {
+                    WifiManager.loadWifiList(
+                        list => this.setState(
+                            { availableNetworks: _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))), },
+                            () => console.log('wifi list', _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))))
+                        ),
+                        error => console.log('Cannot get current LIST!', error)
+                    );
+                }
+                getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
+                    .then(res => console.log('res',res))
+                    .catch(err => console.log('err',err));
+            }, 500);
         }
     }
 
     _handleBLEPair = () => {
         const { startScan, } = this.props;
         console.log('starting scan');
-        this.setState(
-            { isScrollEnabled: false, },
-            () => startScan(10),
-        )
+        startScan(10);
     }
 
     handleDiscoverPeripheral = data => {
@@ -130,7 +147,7 @@ class BluetoothConnect3Sensor extends PureComponent {
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        return data.name && data.name === 'fathomKit' ? deviceFound(data) : null; // 3-sensor solution
+        return data.name && data.name === 'fathomKit' ? deviceFound(data).then(() => this.handleStopScan()) : null; // 3-sensor solution
         // return data.name && /fathomS[*]_/i.test(data.name) ? deviceFound(data) : null; // 1-sensor solution
     }
 
@@ -147,15 +164,10 @@ class BluetoothConnect3Sensor extends PureComponent {
     }
 
     _connect = data => {
-        const { bluetooth, connectToAccessory, startConnect, stopConnect, stopScan, user, } = this.props;
+        const { bluetooth, getBLEMacAddress, stopConnect, stopScan, user, } = this.props;
         stopScan()
-            .then(() => startConnect(data))
-            .then(() => connectToAccessory(data))
-            .catch(err => connectToAccessory(data))
-            .catch(err => stopConnect())
-            .then(() => {
-                this._toggleAlertNotification(data.id, user.id);
-            })
+            .then(() => getBLEMacAddress(data.id))
+            .then(() => this._toggleAlertNotification(data.id, user.id))
             .catch(err => {
                 console.log('err in BluetoothConnect #4',err);
                 if (bluetooth.accessoryData && !bluetooth.accessoryData.sensor_pid) {
@@ -182,13 +194,37 @@ class BluetoothConnect3Sensor extends PureComponent {
                 },
                 {
                     text:    'Yes',
-                    onPress: () => {
-                        this._renderNextPage();
-                    },
+                    onPress: () => this._renderNextPage(),
                 },
             ],
             { cancelable: false }
         );
+    }
+
+    _connectSensorToWifi = () => {
+        Keyboard.dismiss();
+        const { bluetooth, getSingleWifiConnection, writeWifiDetailsToSensor, } = this.props;
+        const { currentWifiConnection, } = this.state;
+        if(currentWifiConnection && currentWifiConnection.password && currentWifiConnection.SSID && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.sensor_pid !== 'None') {
+            let sensorId = bluetooth.accessoryData.sensor_pid;
+            let ssid = currentWifiConnection.SSID;
+            let password = currentWifiConnection.password;
+            writeWifiDetailsToSensor(sensorId, ssid, password)
+                .then(res => {
+                    console.log('res', res);
+                    return getSingleWifiConnection(sensorId, 0);
+                })
+                .then(res => console.log('res-1', res))
+                // .then(res => {
+                //     // 1. PATCH user specific endpoint
+                //     // 2. PATCH hardware specific endpoint
+                //     // 3. route to settings page (will eventually go to files list)
+                //     console.log('res', res);
+                // })
+                .catch(err => console.log('err', err));
+        } else {
+            console.log('OOOPS');
+        }
     }
 
     _renderNextPage = () => {
@@ -197,10 +233,14 @@ class BluetoothConnect3Sensor extends PureComponent {
         this.setState({ pageIndex: nextPageIndex, });
     }
 
+    _handleFormChange = (name, value) => {
+        let newFormFields = _.update( this.state.currentWifiConnection, name, () => value);
+        this.setState({ ['currentWifiConnection']: newFormFields, });
+    }
+
     render = () => {
         const { bluetooth, } = this.props;
-        const { isSavedNetworksTab, isScrollEnabled, pageIndex, } = this.state;
-        console.log(bluetooth.devicesFound);
+        const { availableNetworks, currentWifiConnection, pageIndex, } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -209,7 +249,7 @@ class BluetoothConnect3Sensor extends PureComponent {
                     indicatorPosition={'none'}
                     onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)}
                     ref={pages => { this._pages = pages; }}
-                    scrollEnabled={isScrollEnabled}
+                    scrollEnabled={false}
                     startPage={pageIndex}
                 >
 
@@ -253,7 +293,7 @@ class BluetoothConnect3Sensor extends PureComponent {
                         <Text robotoRegular style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Touch Your Phone To The Base to Pair'}</Text>
                         { bluetooth.devicesFound && bluetooth.devicesFound.length > 0 &&
                             _.map(bluetooth.devicesFound, (data, i) =>
-                                <Text key={i} onPress={() => this._connect(data.id)}>{`${data.name} ${data.id} ${data.rssi}`}</Text>
+                                <Text key={i} onPress={() => this._connect(data)}>{`${data.name} ${data.id} ${data.rssi}`}</Text>
                             )
                         }
                     </View>
@@ -287,47 +327,66 @@ class BluetoothConnect3Sensor extends PureComponent {
                             title={'CONFIGURE WIFI'}
                             totalSteps={5}
                         />
-                        <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select up to 5 networks you commonly use after training.'}</Text>
+                        { currentWifiConnection && currentWifiConnection.SSID &&
+                            <View style={{flex: 1,}}>
+                                <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, paddingBottom: 0, textAlign: 'center',}}>
+                                    {`Current Wifi Connection: ${currentWifiConnection.SSID} ${currentWifiConnection.frequency ? currentWifiConnection.frequency : ''}`}
+                                </Text>
+                                <FormInput
+                                    autoCapitalize={'none'}
+                                    blurOnSubmit={false}
+                                    clearButtonMode={'never'}
+                                    containerStyle={{alignSelf: 'center', paddingTop: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
+                                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
+                                    keyboardType={'default'}
+                                    onChangeText={text => this._handleFormChange('password', text)}
+                                    onSubmitEditing={() => this._connectSensorToWifi()}
+                                    placeholder={'password'}
+                                    placeholderTextColor={AppColors.zeplin.yellow}
+                                    returnKeyType={'done'}
+                                    value={currentWifiConnection.password}
+                                />
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
+                                    containerStyle={{paddingTop: AppSizes.paddingLrg,}}
+                                    disabled={currentWifiConnection.password.length === 0}
+                                    onPress={() => this._connectSensorToWifi()}
+                                    title={'Update'}
+                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
+                                />
+                            </View>
+                        }
+
+                        {/*<Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select up to 5 networks you commonly use after training.'}</Text>
                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
                             <Text
-                                onPress={() => this.setState({ isSavedNetworksTab: true, })}
                                 robotoBold
-                                style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), opacity: isSavedNetworksTab ? 1 : 0.5, textAlign: 'center', textDecorationLine: 'none',}}
-                            >
-                                {'Saved Networks'}
-                            </Text>
-                            <Text
-                                onPress={() => this.setState({ isSavedNetworksTab: false, })}
-                                robotoBold
-                                style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), opacity: isSavedNetworksTab ? 0.5 : 1, textAlign: 'center', textDecorationLine: 'none',}}
+                                style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                             >
                                 {'Networks In Range'}
                             </Text>
                         </View>
                         <Spacer isDivider />
-                        <View style={{}}>
-                            { isSavedNetworksTab ?
-                                <View>
-                                    <ListItem
-                                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                                        onPress={() => console.log('A')}
-                                        title={'testA'}
-                                        titleStyle={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                                    />
-                                    <Spacer isDivider />
-                                </View>
+                        <View style={{flex: 1,}}>
+                            { availableNetworks.length > 0 ?
+                                <ScrollView>
+                                    {_.map(availableNetworks, (network, i) =>
+                                        <ListItem
+                                            bottomDivider={true}
+                                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                                            key={i}
+                                            onPress={() => console.log(network.SSID)}
+                                            title={network.SSID}
+                                            titleStyle={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                                        />
+                                    )}
+                                </ScrollView>
                                 :
-                                <View>
-                                    <ListItem
-                                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                                        onPress={() => console.log('B')}
-                                        title={'testB'}
-                                        titleStyle={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                                    />
-                                    <Spacer isDivider />
+                                <View style={{flex: 1, padding: AppSizes.padding,}}>
+                                    <Text robotoBold style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>{'No available broadcasting networks are compatible with our sensor.'}</Text>
                                 </View>
                             }
-                        </View>
+                        </View>*/}
                     </View>
 
                     <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.seaBlue, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
@@ -343,21 +402,28 @@ class BluetoothConnect3Sensor extends PureComponent {
 
                 </Pages>
 
+                <Toast
+                    position={'bottom'}
+                    ref={'toast'}
+                />
+
             </View>
         )
     }
 }
 
 BluetoothConnect3Sensor.propTypes = {
-    bluetooth:          PropTypes.object.isRequired,
-    connectToAccessory: PropTypes.func.isRequired,
-    deviceFound:        PropTypes.func.isRequired,
-    network:            PropTypes.object.isRequired,
-    startConnect:       PropTypes.func.isRequired,
-    startScan:          PropTypes.func.isRequired,
-    stopConnect:        PropTypes.func.isRequired,
-    stopScan:           PropTypes.func.isRequired,
-    user:               PropTypes.object.isRequired,
+    bluetooth:                 PropTypes.object.isRequired,
+    deviceFound:               PropTypes.func.isRequired,
+    getBLEMacAddress:          PropTypes.func.isRequired,
+    getScannedWifiConnections: PropTypes.func.isRequired,
+    getSingleWifiConnection:   PropTypes.func.isRequired,
+    network:                   PropTypes.object.isRequired,
+    startScan:                 PropTypes.func.isRequired,
+    stopConnect:               PropTypes.func.isRequired,
+    stopScan:                  PropTypes.func.isRequired,
+    user:                      PropTypes.object.isRequired,
+    writeWifiDetailsToSensor:  PropTypes.func.isRequired,
 };
 
 BluetoothConnect3Sensor.defaultProps = {};
