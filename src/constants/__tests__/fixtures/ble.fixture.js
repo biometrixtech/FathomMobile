@@ -1,18 +1,55 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:31:04
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-05-06 17:38:50
- */
-
 /**
  * BLE Config
  */
+
+// var _byteToHex = [];
+// var _hexToByte = {};
+// for (let i = 0; i < 256; i++) {
+//     _byteToHex[i] = (i + 0x100).toString(16).substr(1);
+//     _hexToByte[_byteToHex[i]] = i;
+// }
+
+// const parse = function parse(s, buf, offset) {
+//     return new Promise(resolve => {
+//         let i = (buf && offset) || 0;
+//         let j = 0;
+
+//         buf = buf || [];
+//         s.toLowerCase().replace(/[0-9a-f]{2}/g, (oct) => {
+//             if (j < 16) { // Don't overflow!
+//                 buf[i + (j++)] = _hexToByte[oct];
+//             }
+//         });
+
+//         // Zero out remaining bytes if string was short
+//         while (j < 16) {
+//             buf[i + (j++)] = 0;
+//         }
+
+//         return resolve(buf);
+//     });
+// }
+
+// function unparse(buf, offset) {
+//     let i = offset || 0;
+//     let bth = _byteToHex;
+//     return  bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] + '-' +
+//             bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]] +
+//             bth[buf[i++]] + bth[buf[i++]];
+// }
 
 export default {
     serviceUUID:        '3282ae19-ab8b-f495-7544-67e11bb6223f',
     characteristicUUID: 'a268ae6f-3433-d999-4e44-42e82070d3de',
     dataUUID:           '4A8C2B82-5BB8-D4B8-D244-57280862C228',
+
+    serviceUUID3Sensor:        'e7a53559-80e2-48a2-a750-7d18c8cf7875',
+    characteristicUUID3Sensor: '713bf14f-aed2-4c9d-9d71-1e801b912b89',
 
     errors: {
         encryption: 'Encryption is insufficient.'
@@ -96,6 +133,14 @@ export default {
         IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         // THREE SENSOR COMMANDS
         GET_MAC_ADDRESS:                parseInt('0xD4', 16),
+        READ_WIFI_SCAN_LONG:            parseInt('0xDD', 16),
+        READ_WIFI_SCAN_SHORT:           parseInt('0xDC', 16),
+        WRITE_WIFI_CONNECT:             parseInt('0x5A', 16),
+        WRITE_WIFI_PSW_LONG:            parseInt('0x53', 16),
+        WRITE_WIFI_PSW_SHORT:           parseInt('0x52', 16),
+        WRITE_WIFI_SCAN:                parseInt('0x5C', 16),
+        WRITE_WIFI_SSID_LONG:           parseInt('0x51', 16),
+        WRITE_WIFI_SSID_SHORT:          parseInt('0x50', 16),
     },
 
     roles: {
@@ -135,9 +180,13 @@ export default {
     },
 
     networkTypes: {
-        Open:           parseInt('0x02', 16),
-        WPA_PSK:        parseInt('0x00', 16),
-        WPA_Enterprise: parseInt('0x01', 16)
+        OPEN:            parseInt('0x06', 16),
+        WEP_OPEN:        parseInt('0x00', 16),
+        WEP_SHARED:      parseInt('0x01', 16),
+        WPA2_ENTERPRISE: parseInt('0x05', 16),
+        WPA2_PSK:        parseInt('0x03', 16),
+        WPA_ENTERPRISE:  parseInt('0x04', 16),
+        WPA_PSK:         parseInt('0x02', 16),
     },
 
     eapTypes: {
@@ -148,5 +197,8 @@ export default {
     gyroCalibrationOffsets: {
         SOFT: parseInt('0x01', 16),
         HARD: parseInt('0x02', 16),
-    }
+    },
+
+    // parse,
+    // unparse
 };

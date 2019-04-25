@@ -20,6 +20,7 @@ const Settings = ({
     accessoryData,
     deleteUserSensorData,
     deleteAllSingleSensorPractices,
+    getSensorFiles,
     logout,
     network,
     user,
@@ -30,6 +31,7 @@ const Settings = ({
         accessoryData={accessoryData}
         deleteUserSensorData={deleteUserSensorData}
         deleteAllSingleSensorPractices={deleteAllSingleSensorPractices}
+        getSensorFiles={getSensorFiles}
         logout={logout}
         network={network}
         user={user}
@@ -43,6 +45,7 @@ Settings.propTypes = {
     accessoryData:                  PropTypes.object.isRequired,
     deleteUserSensorData:           PropTypes.func.isRequired,
     deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+    getSensorFiles:                 PropTypes.func.isRequired,
     logout:                         PropTypes.func.isRequired,
     network:                        PropTypes.object.isRequired,
     user:                           PropTypes.object.isRequired,
@@ -62,6 +65,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     deleteUserSensorData:           ble.deleteUserSensorData,
     deleteAllSingleSensorPractices: ble.deleteAllSingleSensorPractices,
+    getSensorFiles:                 ble.getSensorFiles,
     logout:                         init.logout,
     updateUser:                     userActions.updateUser,
     userJoinAccount:                userActions.userJoinAccount,

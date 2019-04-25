@@ -94,6 +94,7 @@ export default {
 
     PREPROCESSING_APIs: {
         DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        TEST: 'https://apis.test.fathomai.com',
         QA:   'https://apis.qa.fathomai.com/preprocessing',
         PROD: 'https://apis.production.fathomai.com/preprocessing',
     },
@@ -108,9 +109,10 @@ export default {
     ]),
 
     HARDWARE_APIs: {
-        DEV:  'https://apis.dev.fathomai.com/hardware',
-        QA:   'https://apis.qa.fathomai.com/hardware',
-        PROD: 'https://apis.production.fathomai.com/hardware',
+        DEV:  'https://apis.dev.fathomai.com',
+        TEST: 'https://apis.test.fathomai.com',
+        QA:   'https://apis.qa.fathomai.com',
+        PROD: 'https://apis.production.fathomai.com',
     },
 
     // hardwareHostname: 'https://apis.production.fathomai.com', // deployment

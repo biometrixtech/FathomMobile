@@ -42,6 +42,7 @@
     "react-native-collapsible": "^1.4.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^1.2.0",
+    "react-native-dialog-input": "^1.0.7",
     "react-native-dropdownalert": "^3.10.0",
     "react-native-easy-toast": "^1.2.0",
     "react-native-egg": "^1.0.1",

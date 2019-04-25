@@ -10,7 +10,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
+import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -21,7 +21,7 @@ import Toast, { DURATION, } from 'react-native-easy-toast';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
-import { ListItem, Spacer, TabIcon, } from '../custom';
+import { FathomModal, ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { PrivacyPolicyModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
@@ -37,6 +37,7 @@ class Settings extends Component {
         accessoryData:                  PropTypes.object.isRequired,
         deleteUserSensorData:           PropTypes.func.isRequired,
         deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+        getSensorFiles:                 PropTypes.func.isRequired,
         logout:                         PropTypes.func.isRequired,
         network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
@@ -49,16 +50,19 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isJoinATeamFormSubmitting: false,
-            isJoinATeamModalOpen:      false,
-            isLogoutBtnDisabled:       false,
-            isPrivacyPolicyOpen:       false,
-            isUnpairing:               false,
-            resultMsg:                 {
+            areSessionFinishedFetching: false,
+            is3SensorFilesModalVisible: false,
+            isJoinATeamFormSubmitting:  false,
+            isJoinATeamModalOpen:       false,
+            isLogoutBtnDisabled:        false,
+            isPrivacyPolicyOpen:        false,
+            isUnpairing:                false,
+            resultMsg:                  {
                 error:   '',
                 status:  '',
                 success: '',
             },
+            sessions:    [],
             form_values: {
                 code: '',
             },
@@ -329,6 +333,17 @@ class Settings extends Component {
         }
     }
 
+    _toggle3SensorModal = () => {
+        this.setState(
+            { is3SensorFilesModalVisible: true, },
+            () => {
+                this.props.getSensorFiles()
+                    .then(res => this.setState({ areSessionFinishedFetching: true, sessions: res.sessions, }))
+                    .catch(err => this.setState({ areSessionFinishedFetching: true, sessions: [], }));
+            }
+        );
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
@@ -366,13 +381,13 @@ class Settings extends Component {
                                 name:  'bluetooth',
                                 size:  24,
                             }}
-                            onPress={() => Actions.bluetoothConnect3Sensor()}
+                            onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._toggle3SensorModal() : Actions.bluetoothConnect3Sensor()}
                             rightIcon={{
                                 color: AppColors.black,
                                 name:  'chevron-right',
                                 size:  24,
                             }}
-                            title={'CONNECT TO FATHOM SENSORS'}
+                            title={this.props.accessoryData.sensor_pid !== 'None' ? 'SHOW YOUR SENSOR FILE(S)' : 'CONNECT TO FATHOM SENSORS'}
                             titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
@@ -556,6 +571,32 @@ class Settings extends Component {
                     handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
                 />
+                <FathomModal
+                    isVisible={this.state.is3SensorFilesModalVisible}
+                    style={{margin: 0,}}
+                >
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
+                        { this.state.areSessionFinishedFetching ?
+                            <View>
+                                <TabIcon
+                                    color={AppColors.black}
+                                    icon={'close'}
+                                    onPress={() => this.setState({ is3SensorFilesModalVisible: false, })}
+                                    size={24}
+                                />
+                                {_.map(this.state.sessions, (session, i) => <Text key={i}>{`#${(i + 1)}: Duration: ${session.duration.toFixed(2)}min, Status: ${session.upload_status}`}</Text>)}
+                            </View>
+                            :
+                            <View>
+                                <ActivityIndicator
+                                    animating={true}
+                                    color={AppColors.zeplin.yellow}
+                                    size={'large'}
+                                />
+                            </View>
+                        }
+                    </View>
+                </FathomModal>
             </View>
         );
     }

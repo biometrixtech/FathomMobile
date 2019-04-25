@@ -17,6 +17,7 @@ const Answers = Fabric.Answers;
 
 // constants
 const commands = BLEConfig.commands;
+const networkTypes = BLEConfig.networkTypes;
 const state = BLEConfig.state;
 const timeoutValue = 30500;
 
@@ -223,7 +224,13 @@ const setKitTime = id => {
         });
 };
 
-const startDisconnection = sensorId => {
+const startDisconnection = (sensorId, is3Sensor) => {
+    if(is3Sensor) {
+        return dispatch => BleManager.disconnect(sensorId)
+            .catch(err => BleManager.disconnect(sensorId))
+            .then(() => Promise.resolve('successfully disconnected'))
+            .catch(err => Promise.reject(err)); // ble err will always return the same string 'Device not connected'
+    }
     return BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
         .then(() => Promise.resolve('successfully disconnected'))
@@ -568,11 +575,60 @@ const returnCleaned3SensorDataArray = (byteString, command) => {
     for (let i = byteString.length + 2; i < 20; i+=1) {
         dataArray.push(convertHex('0x00'));
     }
-    console.log('SSID Data Array: ', dataArray);
     return dataArray;
-}
+};
 
-const getBLEMacAddress = sensorId => {
+const returnNetworkMapping = value => {
+    let networkType = '';
+    let toByte = '';
+    switch (value) {
+    case 0:
+        networkType = 'WEP_OPEN';
+        toByte = networkTypes[networkType];
+        break;
+    case 1:
+        networkType = 'WEP_SHARED';
+        toByte = networkTypes[networkType];
+        break;
+    case 2:
+        networkType = 'WPA_PSK';
+        toByte = networkTypes[networkType];
+        break;
+    case 3:
+        networkType = 'WPA2_PSK';
+        toByte = networkTypes[networkType];
+        break;
+    case 4:
+        networkType = 'WPA_ENTERPRISE';
+        toByte = networkTypes[networkType];
+        break;
+    case 5:
+        networkType = 'WPA2_ENTERPRISE';
+        toByte = networkTypes[networkType];
+        break;
+    case 6:
+        networkType = 'OPEN';
+        toByte = networkTypes[networkType];
+        break;
+    default:
+        networkType = 'WEP_OPEN';
+        toByte = networkTypes[networkType];
+    }
+    return {
+        networkType,
+        toByte,
+    };
+};
+
+const cleanSingleWifiArray = wifiArray => {
+    return {
+        rssi:     wifiArray[5],
+        security: returnNetworkMapping(wifiArray[4]),
+        ssid:     convertByteArrayToString(_.slice(wifiArray, 6, wifiArray.length)),
+    }
+};
+
+const getBLEMacAddress = sensorId => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
     const dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
     return dispatch => BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
@@ -597,22 +653,23 @@ const getBLEMacAddress = sensorId => {
         .catch(err => Promise.reject(err));
 };
 
-const writeWifiDetailsToSensor = (sensorId, ssid, password) => {
+const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
     // setup consts needed
-    const ssidArray = convertDecimal(convertStringToByteArray(ssid)).split(':');
-    const passwordArray = convertDecimal(convertStringToByteArray(password)).split(':');
-    let shortSlicedPswDataArray = _.slice(passwordArray, 0, 18);
-    let longSlicedPswDataArray = _.slice(passwordArray, 18, 32);
+    const ssidDataArray = convertStringToByteArray(ssid);
+    const passwordDataArray = convertStringToByteArray(password);
+    let shortSlicedPswDataArray = _.slice(passwordDataArray, 0, 18);
+    // let longSlicedPswDataArray = _.slice(passwordDataArray, 18, 32);
     let shortPswDataArray = returnCleaned3SensorDataArray(shortSlicedPswDataArray, commands.WRITE_WIFI_PSW_SHORT);
-    let longPswDataArray = returnCleaned3SensorDataArray(longSlicedPswDataArray, commands.WRITE_WIFI_PSW_LONG);
-    let shortSlicedSsidDataArray = _.slice(ssidArray, 0, 18);
-    let longSlicedSsidDataArray = _.slice(ssidArray, 18, 32);
-    let shortSsidDataArray = returnCleaned3SensorDataArray(shortSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
-    let longSsidDataArray = returnCleaned3SensorDataArray(longSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
+    // let longPswDataArray = returnCleaned3SensorDataArray(longSlicedPswDataArray, commands.WRITE_WIFI_PSW_LONG);
+    let shortSlicedSsidDataArray = _.slice(ssidDataArray, 0, 18);
+    // let longSlicedSsidDataArray = _.slice(ssidDataArray, 18, 32);
+    let shortSsidDataArray = returnCleaned3SensorDataArray(shortSlicedSsidDataArray, commands.WRITE_WIFI_SSID_SHORT);
+    // let longSsidDataArray = returnCleaned3SensorDataArray(longSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
+    let connectDataArray = [commands.WRITE_WIFI_CONNECT, convertHex('0x01'), securityByte];
     // check if ssid & password are out of scope of ble
-    if(ssidArray && (ssidArray.length === 0 || ssidArray.length > 32)) {
+    if(ssidDataArray && (ssidDataArray.length === 0 || ssidDataArray.length > 32)) {
         return dispatch => Promise.reject('Wifi SSID is too long!');
-    } else if(passwordArray && (passwordArray.length === 0 || passwordArray.length > 32)) {
+    } else if(passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
         return dispatch => Promise.reject('Wifi Password is too long!');
     }
     // checks done, now update sensor
@@ -623,20 +680,25 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password) => {
         .then(() => BleManager.retrieveServices(sensorId))
         .catch(err => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => write(peripheralInfo.id, shortSsidDataArray, true)) // 1. write short wifi
-        .then(() => BleManager.retrieveServices(sensorId))
-        .then(peripheralInfo => longSlicedSsidDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longSsidDataArray, true)) // 2. check if long wifi -> write if needed
-        .then(() => BleManager.retrieveServices(sensorId))
+        // TODO: fix below?!?!
+        // .then(res => BleManager.retrieveServices(sensorId))
+        // .then(peripheralInfo => longSlicedSsidDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longSsidDataArray, true)) // 2. check if long wifi -> write if needed
+        .then(res => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => write(peripheralInfo.id, shortPswDataArray, true)) // 3. write short psw
-        .then(peripheralInfo => longSlicedPswDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longPswDataArray, true)) // 4. check if long psw -> write if needed
+        // TODO: fix below?!?!
+        // .then(res => BleManager.retrieveServices(sensorId))
+        // .then(peripheralInfo => longSlicedPswDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longPswDataArray, true)) // 4. check if long psw -> write if needed
+        .then(res => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, connectDataArray, true)) // 4. write connect
         .then(res => Promise.resolve(
             dispatch({
                 type: Actions.WIFI
             })
         ))
-        .catch(err => Promise.resolve(err))
+        .catch(err => Promise.resolve(err));
 };
 
-const getScannedWifiConnections = sensorId => {
+const getScannedWifiConnections = sensorId => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
     const writeDataArray = [commands.WRITE_WIFI_SCAN, convertHex('0x00')];
     return dispatch => BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
@@ -645,32 +707,29 @@ const getScannedWifiConnections = sensorId => {
         .then(() => BleManager.retrieveServices(sensorId))
         .catch(err => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => write(peripheralInfo.id, writeDataArray, true))
-        .then(response => {
-            console.log('response',response);
-            return Promise.resolve(response[4]);
-        })
+        .then(response => Promise.resolve(response[4]))
         .catch(err => Promise.reject('Error fetching WIFI connections'));
 };
 
-const getSingleWifiConnection = (sensorId, index) => {
-    const readDataArray = [commands.READ_WIFI_SCAN_SHORT];
+const getSingleWifiConnection = (sensorId, index) => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
+    const readDataArray = [commands.READ_WIFI_SCAN_SHORT, convertHex('0x01'), convertHex(`0x${index}`)];
     const readLongDataArray = [commands.READ_WIFI_SCAN_LONG];
-    let returnShortArray = [];
-    return BleManager.retrieveServices(sensorId)
+    let singleWifiConnectionArray = [];
+    return dispatch => BleManager.retrieveServices(sensorId)
         .catch(err => BleManager.retrieveServices(sensorId))
         .then(peripheralInfo => write(peripheralInfo.id, readDataArray, true))
         .then(response => {
             if(response[1] > 18) {
-                returnShortArray = response;
+                singleWifiConnectionArray = response;
                 return BleManager.retrieveServices(sensorId)
-                    .then(peripheralInfo => write(peripheralInfo.id, readLongDataArray, true));
+                    .then(peripheralInfo => write(peripheralInfo.id, readLongDataArray, true))
+                    .then(res => Promise.resolve(cleanSingleWifiArray(_.concat(singleWifiConnectionArray, res))));
             }
-            return Promise.resolve(response);
+            return Promise.resolve(cleanSingleWifiArray(response));
         })
-        .then(response => Promise.resolve(_.concat(returnShortArray, response)));
+        .catch(err => Promise.reject('Error fetching WIFI Details'));
 };
 
-// TODO: clean me up?
 const assignKitIndividual = (accessory, user) => {
     return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
         .then(response => {
@@ -684,6 +743,14 @@ const assignKitIndividual = (accessory, user) => {
         })
         .catch(err => Promise.reject(err));
 };
+
+const getSensorFiles = (days = 30) => {
+    return dispatch =>  new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.status.get()
+            .then(response => resolve(response))
+            .catch(error => reject(error));
+    });
+}
 
 /**
   * OLD FUNCTIONS
@@ -1090,6 +1157,7 @@ export default {
     getKitName,
     getOwnerFlag,
     getScannedWifiConnections,
+    getSensorFiles,
     getSingleSensorStatus,
     getSingleWifiConnection,
     getUserSensorData,
