@@ -517,7 +517,7 @@ class ReadinessSurvey extends Component {
                                     onPress={() => {
                                         if(!this.state.lockTrainLaterBtn) {
                                             this.setState(
-                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn},
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn, },
                                                 () => {
                                                     handleFormChange('sessions_planned', false);
                                                     this._checkNextStep(4);
@@ -548,7 +548,7 @@ class ReadinessSurvey extends Component {
                                     onPress={() => {
                                         if(!this.state.lockTrainLaterBtn) {
                                             this.setState(
-                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn},
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn, },
                                                 () => {
                                                     handleFormChange('sessions_planned', true);
                                                     this._checkNextStep(4);

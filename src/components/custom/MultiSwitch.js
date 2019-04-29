@@ -1,0 +1,251 @@
+// inspiration from https://github.com/victorkvarghese/rn-slider-switch
+/**
+ * MultiSwitch
+ *
+    <MultiSwitch
+        buttons={[]} // must be array of length 3 for now
+        onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
+        selectedIndex={priority}
+    />
+ *
+ */
+import React, { Component } from 'react';
+import {
+    Animated,
+    Dimensions,
+    PanResponder,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+    Vibration,
+    View,
+} from 'react-native';
+import PropTypes from 'prop-types';
+
+// import third-party libraries
+import _ from 'lodash';
+
+// consts and custom components
+import { AppColors, AppFonts, } from '../../constants';
+import { Text, } from './';
+
+// setup variables
+const { width, } = Dimensions.get('window');
+const Metrics = {
+    containerWidth: (width - 30),
+    switchWidth:    (width / 2.7),
+};
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    buttonStyle: {
+        alignItems:     'center',
+        flex:           1,
+        height:         30,
+        justifyContent: 'center',
+        width:          Metrics.containerWidth / 3,
+    },
+    container: {
+        alignItems:      'center',
+        backgroundColor: AppColors.zeplin.superLight,
+        borderRadius:    20,
+        flexDirection:   'row',
+        height:          30,
+        justifyContent:  'center',
+        marginVertical:  5,
+        width:           Metrics.containerWidth,
+    },
+    containerWrapper: {
+        height: 40,
+    },
+    switcher: {
+        alignItems:      'center',
+        backgroundColor: AppColors.zeplin.yellow,
+        borderRadius:    20,
+        elevation:       4,
+        flexDirection:   'row',
+        height:          40,
+        justifyContent:  'center',
+        left:            0,
+        position:        'absolute',
+        shadowColor:     AppColors.black,
+        shadowOpacity:   0.31,
+        shadowRadius:    10,
+        top:             0,
+        width:           Metrics.switchWidth,
+    },
+});
+
+/* Component ==================================================================== */
+export default class MultiSwitch extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentStatus:     props.currentStatus,
+            duration:          100,
+            isComponentReady:  false,
+            mainWidth:         width - 30,
+            posValue:          0,
+            position:          new Animated.Value(0),
+            selectedPosition:  props.selectedIndex,
+            switcherWidth:     width / 2.7,
+            thresholdDistance: width - 8 - width / 2.4
+        };
+        this.isParentScrollDisabled = false;
+    }
+
+    componentWillMount() {
+        this._panResponder = PanResponder.create({
+            onStartShouldSetPanResponder:        () => true,
+            onStartShouldSetPanResponderCapture: () => true,
+            onMoveShouldSetPanResponder:         () => true,
+            onMoveShouldSetPanResponderCapture:  () => true,
+            onPanResponderGrant: () => {
+                // disable parent scroll if slider is inside a scrollview
+                if (!this.isParentScrollDisabled) {
+                    this.props.disableScroll(false);
+                    this.isParentScrollDisabled = true;
+                }
+            },
+            onPanResponderMove: (evt, gestureState) => {
+                if (!this.props.disableSwitch) {
+                    let finalValue = gestureState.dx + this.state.posValue;
+                    if (finalValue >= 0 && finalValue <= this.state.thresholdDistance) {
+                        this.state.position.setValue(this.state.posValue + gestureState.dx);
+                    }
+                }
+            },
+            onPanResponderTerminationRequest: () => true,
+            onPanResponderRelease: (evt, gestureState) => {
+                if (!this.props.disableSwitch) {
+                    let finalValue = gestureState.dx + this.state.posValue;
+                    this.isParentScrollDisabled = false;
+                    this.props.disableScroll(true);
+                    if (gestureState.dx > 0) {
+                        if (finalValue >= 0 && finalValue <= 30) {
+                            this._onStatusChanged(0);
+                        } else if (finalValue >= 30 && finalValue <= 121) {
+                            this._onStatusChanged(1);
+                        } else if (finalValue >= 121 && finalValue <= 280) {
+                            if (gestureState.dx > 0) {
+                                this._onStatusChanged(2);
+                            } else {
+                                this._onStatusChanged(1);
+                            }
+                        }
+                    } else {
+                        if (finalValue >= 78 && finalValue <= 175) {
+                            this._onStatusChanged(1);
+                        } else if (finalValue >= -100 && finalValue <= 78) {
+                            this._onStatusChanged(0);
+                        } else {
+                            this._onStatusChanged(2);
+                        }
+                    }
+                }
+            },
+            onPanResponderTerminate:      () => {},
+            onShouldBlockNativeResponder: () => {
+                // Returns whether this component should block native components from becoming the JS
+                // responder. Returns true by default. Is currently only supported on android.
+                return true;
+            }
+        });
+        this._onStatusChanged(this.props.selectedIndex);
+    }
+
+    _onStatusChanged = index => {
+        if (this.props.disableSwitch) { return; }
+        if(index === 0) {
+            Animated.timing(this.state.position, {
+                duration: this.state.duration,
+                toValue:  Platform.OS === 'ios' ? -2 : 0,
+            }).start();
+            setTimeout(() => {
+                this.setState({
+                    posValue:         Platform.OS === 'ios' ? -2 : 0,
+                    selectedPosition: 0,
+                });
+            }, 100);
+        } else if(index === 1) {
+            Animated.timing(this.state.position, {
+                duration: this.state.duration,
+                toValue:  this.state.mainWidth / 2 - this.state.switcherWidth / 2,
+            }).start();
+            setTimeout(() => {
+                this.setState({
+                    posValue:         this.state.mainWidth / 2 - this.state.switcherWidth / 2,
+                    selectedPosition: 1
+                });
+            }, 100);
+        } else if(index === 2) {
+            Animated.timing(this.state.position, {
+                duration: this.state.duration,
+                toValue:  Platform.OS === 'ios' ?
+                    this.state.mainWidth - this.state.switcherWidth
+                    :
+                    this.state.mainWidth - this.state.switcherWidth - 2,
+            }).start();
+            setTimeout(() => {
+                this.setState({
+                    posValue: Platform.OS === 'ios' ?
+                        this.state.mainWidth - this.state.switcherWidth
+                        :
+                        this.state.mainWidth - this.state.switcherWidth - 2,
+                    selectedPosition: 2
+                });
+            }, 100);
+        }
+        this.setState(
+            { selectedPosition: index, },
+            () => {
+                Vibration.vibrate(1000);
+                this.props.onStatusChanged(index);
+            }
+        );
+    }
+
+    render() {
+        const { buttons, selectedIndex, } = this.props;
+        return (
+            <View style={styles.containerWrapper}>
+                <View style={styles.container}>
+                    {_.map(buttons, (button, index) =>
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => this._onStatusChanged(index)}
+                            style={styles.buttonStyle}
+                        >
+                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+                <Animated.View
+                    {...this._panResponder.panHandlers}
+                    style={[styles.switcher, {transform: [{ translateX: this.state.position, }]},]}
+                >
+                    <TouchableOpacity
+                        onPress={() => {}}
+                        style={styles.buttonStyle}
+                    >
+                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{buttons[selectedIndex]}</Text>
+                    </TouchableOpacity>
+                </Animated.View>
+            </View>
+        );
+    }
+}
+
+MultiSwitch.propTypes = {
+    buttons:         PropTypes.array.isRequired,
+    disableScroll:   PropTypes.func,
+    disableSwitch:   PropTypes.bool,
+    onStatusChanged: PropTypes.func.isRequired,
+    selectedIndex:   PropTypes.number,
+};
+
+MultiSwitch.defaultProps = {
+    disableScroll: () => {},
+    disableSwitch: false,
+    selectedIndex: 1,
+};

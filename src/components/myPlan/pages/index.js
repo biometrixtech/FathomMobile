@@ -13,6 +13,7 @@ import ExerciseListItem from './ExerciseListItem';
 import Exercises from './Exercises';
 import ExercisesExercise from './ExercisesExercise';
 import FunctionalStrengthModal from './FunctionalStrengthModal';
+import GoalPill from './GoalPill';
 import HealthKitWorkouts from './HealthKitWorkouts';
 import PostSessionSurvey from './PostSessionSurvey';
 import PrioritySlideUpPanel from './PrioritySlideUpPanel';
@@ -41,6 +42,7 @@ export {
     Exercises,
     ExercisesExercise,
     FunctionalStrengthModal,
+    GoalPill,
     HealthKitWorkouts,
     PostSessionSurvey,
     PrioritySlideUpPanel,

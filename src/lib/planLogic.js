@@ -315,6 +315,7 @@ const PlanLogic = {
             areQuestionsValid,
             isPrevSorenessValid:        (areSoreBodyPartsValid || postSession.soreness.length === 0),
             selectAreasOfSorenessValid: areasOfSorenessRef && areasOfSorenessRef.state ? filteredAreasOfSoreness.length > 0 || areasOfSorenessRef.state.isAllGood : false,
+            willTrainLaterValid:        postSession.sessions_planned !== null,
         };
         let newSoreBodyParts = combinedSoreBodyParts;
         return {
@@ -740,15 +741,18 @@ const PlanLogic = {
                         1;
             isValid = isHealthKitValid;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
-            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
+            pageNum = (pageState.pageIndex + 1);
             isValid = true; // can only click if form is valid
-        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+        } else if(currentPage === 2) { // 2. train later?
+            pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ? (pageState.pageIndex + 1) : (pageState.pageIndex + 2);
+            isValid = isFormValidItems.willTrainLaterValid;
+        } else if(currentPage === 3) { // 3. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.isPrevSorenessValid;
-        } else if(currentPage === 3) { // 3. Areas of Soreness
+        } else if(currentPage === 4) { // 4. Areas of Soreness
             pageNum = (pageState.pageIndex + 1);
             isValid = isFormValidItems.selectAreasOfSorenessValid;
-        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+        } else if(currentPage === 5) { // 5. Areas of Soreness Selected
             pageNum = (pageState.pageIndex);
             isValid = isFormValidItems.areAreasOfSorenessValid;
         }
@@ -768,19 +772,19 @@ const PlanLogic = {
             pageNum = 0;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
-        } else if(currentPage === 2) { // 2. Follow Up Pain & Soreness
+        } else if(currentPage === 2) { // 2. train later?
             pageNum = (postSessionSessions && postSessionSessions.length > 0) ?
                 (pageState.pageIndex - 1)
                 :
                 0;
-        } else if(currentPage === 3) { // 3. Areas of Soreness
+        } else if(currentPage === 3) { // 3. Follow Up Pain & Soreness
+            pageNum = (pageState.pageIndex - 1);
+        } else if(currentPage === 4) { // 4. Areas of Soreness
             pageNum = (newSoreBodyParts && newSoreBodyParts.length > 0) ?
                 (pageState.pageIndex - 1)
-                : (postSessionSessions && postSessionSessions.length > 0) ?
-                    (pageState.pageIndex - 2)
-                    :
-                    (pageState.pageIndex - 3);
-        } else if(currentPage === 4) { // 4. Areas of Soreness Selected
+                :
+                (pageState.pageIndex - 2);
+        } else if(currentPage === 5) { // 5. Areas of Soreness Selected
             pageNum = (pageState.pageIndex - 1);
         }
         return {
@@ -886,8 +890,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleReadinessSurveySubmitLogic: (dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
-            isActiveRecoveryCollapsed:  dailyReadiness.sessions_planned ? false : true,
-            isReadinessSurveyCompleted: true,
+            isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? false : true,
         });
         let newRecoverObject = Object.assign({}, recover, {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
@@ -956,8 +959,9 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handlePostSessionSurveySubmitLogic: (postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
-            event_date: eventDate,
-            sessions:   [],
+            event_date:       eventDate,
+            sessions:         [],
+            sessions_planned: postSession.sessions_planned,
         };
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
         let loggedSessions = postSession.sessions ?
@@ -1125,6 +1129,37 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             recoveryObj,
         };
+    },
+
+    /**
+      * Handle Find Goals Logic
+      * - /actions/plan.js
+      */
+    // TODO: UNIT TEST ME
+    handleFindGoals: dailyPlan => {
+        // setup variables
+        let isPrepareActiveRest = dailyPlan.pre_active_rest && dailyPlan.pre_active_rest.active;
+        let activeRest = isPrepareActiveRest ? dailyPlan.pre_active_rest : dailyPlan.post_active_rest;
+        let exerciseListOrder = isPrepareActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+        let tmpGoals = [];
+        let goals = [];
+        // loop through our exercise order and sections
+        _.map(exerciseListOrder, list => {
+            _.map(activeRest[list.index], exercise => {
+                _.map(exercise.dosages, dosage => {
+                    tmpGoals = _.concat(tmpGoals, dosage.goal);
+                })
+            });
+        });
+        // filter unique goal object(s)
+        tmpGoals = _.uniqBy(tmpGoals, 'goal_type');
+        _.map(tmpGoals, goal => {
+            let newGoal = _.cloneDeep(goal);
+            newGoal.isSelected = true;
+            goals.push(newGoal);
+        });
+        // return array of object(s)
+        return goals;
     },
 
 };

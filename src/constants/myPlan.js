@@ -169,21 +169,44 @@ function sorenessPainScaleMapping(type, value, isJoint) {
     return newValue;
 }
 
-const exerciseListOrder = [
+const preExerciseListOrder = [
     {
         index: 'inhibit_exercises',
         title: 'FOAM ROLL',
     },
     {
-        index: 'lengthen_exercises',
-        title: 'STRETCH',
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
     },
     {
-        index: 'activate_exercises',
+        index: 'active_stretch_exercises',
+        title: 'ACTIVE STRETCH',
+    },
+    {
+        index: 'isolated_activate_exercises',
         title: 'ACTIVATE',
     },
     {
-        index: 'integrate_exercises',
+        index: 'static_integrate_exercises',
+        title: 'INTEGRATE',
+    },
+];
+
+const postExerciseListOrder = [
+    {
+        index: 'inhibit_exercises',
+        title: 'FOAM ROLL',
+    },
+    {
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'isolated_activate_exercises',
+        title: 'ACTIVATE',
+    },
+    {
+        index: 'static_integrate_exercises',
         title: 'INTEGRATE',
     },
 ];
@@ -202,24 +225,38 @@ const postSessionFeel = [
     'Max effort',
 ];
 
-function cleanExerciseList(recoveryObj, recoveryPriority = 1, goals) {
+function cleanExerciseList(recoveryObj, priority = 1, goals, isPrepare) {
     // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
     let largestSetCount = {};
     let equipmentRequired = [];
     let totalSeconds = 0;
-    let exerciseGoals = [];
-    let unFilteredExerciseArray = [];
+    // let exerciseGoals = [];
+    // let unFilteredExerciseArray = [];
+    let exerciseListOrder = isPrepare ? preExerciseListOrder : postExerciseListOrder;
     // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
         largestSetCount[list.index] = 0;
         // loop through our specific exercise to update our variables
         _.map(recoveryObj[list.index], exercise => {
-            exerciseGoals = _.concat(exerciseGoals, exercise.goals);
+            // exerciseGoals = _.concat(exerciseGoals, exercise.goals);
             equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
-            if(exercise.sets_assigned > largestSetCount[list.index]) {
-                largestSetCount[list.index] = exercise.sets_assigned;
+            let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+            let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
+            let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+            dosage = _.sortBy(dosage, ['ranking']);
+            let exerciseSetsAssigned = dosage.length > 0 ?
+                priority === 0 ?
+                    dosage[0].efficient_sets_assigned
+                    : priority === 1 ?
+                        dosage[0].complete_sets_assigned
+                        :
+                        dosage[0].comprehensive_sets_assigned
+                :
+                0;
+            if(exerciseSetsAssigned > largestSetCount[list.index]) {
+                largestSetCount[list.index] = exerciseSetsAssigned;
             }
         });
         // setup our specific exercise array
@@ -228,29 +265,26 @@ function cleanExerciseList(recoveryObj, recoveryPriority = 1, goals) {
             /*eslint no-loop-func: 0*/
             _.map(recoveryObj[list.index], exercise => {
                 let newExercise = _.cloneDeep(exercise);
-                if(
-                    newExercise.sets_assigned >= i &&
-                    (
-                        newExercise.priority &&
-                        (
-                            (recoveryPriority === 1 && newExercise.priority.includes(1)) ||
-                            (recoveryPriority === 2 && (newExercise.priority.includes(2) || newExercise.priority.includes(1))) ||
-                            (recoveryPriority === 3 && (newExercise.priority.includes(3) || newExercise.priority.includes(2) || newExercise.priority.includes(1)))
-                        )
-                    ) &&
-                    ( goals &&
-                        (
-                            (newExercise.goals.includes(0) && goals[0].isSelected) ||
-                            (newExercise.goals.includes(1) && goals[1].isSelected) ||
-                            (newExercise.goals.includes(2) && goals[2].isSelected)
-                        )
-                    )
-                ) {
-                    totalSeconds += (newExercise.seconds_duration / newExercise.sets_assigned);
+                let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+                let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
+                let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+                dosage = _.sortBy(dosage, ['ranking']);
+                let newExerciseSetsAssigned = dosage.length > 0 ?
+                    priority === 0 ?
+                        dosage[0].efficient_sets_assigned
+                        : priority === 1 ?
+                            dosage[0].complete_sets_assigned
+                            :
+                            dosage[0].comprehensive_sets_assigned
+                    :
+                    0;
+                let newExerciseSecondsDuration = priority === 0 ? exercise.duration_efficient : priority === 1 ? exercise.duration_complete : exercise.duration_comprehensive;
+                if(newExerciseSetsAssigned >= i) {
+                    totalSeconds += (newExerciseSecondsDuration / newExerciseSetsAssigned);
                     newExercise.set_number = i;
                     exerciseArray.push(newExercise);
                 }
-                unFilteredExerciseArray.push(newExercise);
+                // unFilteredExerciseArray.push(newExercise);
             });
         }
         totalLength += exerciseArray.length;
@@ -259,15 +293,15 @@ function cleanExerciseList(recoveryObj, recoveryPriority = 1, goals) {
     // clean variables as needed
     equipmentRequired = _.uniq(equipmentRequired);
     equipmentRequired = _.filter(equipmentRequired, o => o !== 'None');
-    exerciseGoals = _.uniq(exerciseGoals);
+    // exerciseGoals = _.uniqBy(exerciseGoals, 'text');
     // return variables
     return {
         cleanedExerciseList,
-        exerciseGoals,
+        // exerciseGoals,
         equipmentRequired,
         totalLength,
         totalSeconds,
-        unFilteredExerciseArray,
+        // unFilteredExerciseArray,
     };
 }
 
@@ -317,13 +351,25 @@ function isFSCompletedValid(functionalStrength, exerciseList) {
     return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
 }
 
-function cleanExercise(exercise) {
+function cleanExercise(exercise, priority, goals) {
+    let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+    let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
+    let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+    dosage = _.sortBy(dosage, ['ranking']);
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
-    let cleanedDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
-    let cleanedLongDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    cleanedExercise.repsAssigned = cleanedExercise && dosage.length > 0 ?
+        priority === 0 ? dosage[0].efficient_reps_assigned
+            : priority === 1 ?
+                dosage[0].complete_reps_assigned
+                :
+                dosage[0].comprehensive_reps_assigned
+        :
+        0;
+    let cleanedDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    let cleanedLongDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
     cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
@@ -594,16 +640,16 @@ const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid,
     let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Mobilize ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Mobilize' : ' Recovery'}`;
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
-    let buttonDisabledStyle = {backgroundColor: AppColors.white,};
+    let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.lightSlate,};
     let buttonColor = completedExercises.length > 0 ? AppColors.white : AppColors.zeplin.yellow;
-    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.zeplin.yellow : AppColors.white;
+    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.zeplin.yellow : AppColors.zeplin.lightSlate;
     if(isFunctionalStrength) {
         buttonTitle = completedExercises.length > 0 ? 'Complete' : 'Check Boxes to Complete';
         isButtonOutlined = isFSCompleteValid ? false : true;
         buttonColor = isFSCompleteValid ? AppColors.white : AppColors.zeplin.yellow;
         buttonBackgroundColor = isFSCompleteValid ? AppColors.zeplin.yellow : AppColors.white;
     }
-    return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, }
+    return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, };
 };
 
 const allGoodBodyPartMessage = () => {
@@ -854,6 +900,8 @@ export default {
     muscleLevels,
     overallReadiness,
     painSorenessMessage,
+    preExerciseListOrder,
+    postExerciseListOrder,
     postSessionFeel,
     randomizeSessionsCompletionModalText,
     scrollableTabViewPage,

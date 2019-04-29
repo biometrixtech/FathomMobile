@@ -349,8 +349,8 @@ class CustomMyPlanNavBar extends Component {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
                 <TabIcon
-                    icon={'settings'}
-                    iconStyle={[{color: AppColors.black,}]}
+                    icon={'sort-variant'}
+                    iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
                     onPress={Actions.currentParams.onLeft}
                     reverse={false}
                     size={26}

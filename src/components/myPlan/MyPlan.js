@@ -2,7 +2,8 @@
  * MyPlan View
  */
 import React, { Component, } from 'react';
-import { AppState, BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+// import { AppState, RefreshControl, StyleSheet, } from 'react-native';
+import { BackHandler, ImageBackground, Platform, ScrollView, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -10,128 +11,183 @@ import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
+import Placeholder, { Line, Media, } from 'rn-placeholder';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
-import SplashScreen from 'react-native-splash-screen';
-import moment from 'moment';
+// import SplashScreen from 'react-native-splash-screen';
+// import moment from 'moment';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants/';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { Button, FathomModal, ListItem, Spacer, TabIcon, Text } from '../custom/';
+import { ListItem, TabIcon, Text, } from '../custom';
+import { Button, FathomModal, Spacer, } from '../custom';
 import {
-    ActiveRecoveryBlocks,
-    ActiveTimeSlideUpPanel,
+//     ActiveRecoveryBlocks,
+//     ActiveTimeSlideUpPanel,
     DefaultListGap,
-    ExerciseCompletionModal,
-    ExerciseList,
-    Exercises,
-    FunctionalStrengthModal,
+    // ExerciseCompletionModal,
+//     ExerciseList,
+//     Exercises,
+//     FunctionalStrengthModal,
     PostSessionSurvey,
-    PrioritySlideUpPanel,
+//     PrioritySlideUpPanel,
     ReadinessSurvey,
     RenderMyPlanTab,
     SessionsCompletionModal,
-    SingleExerciseItem,
+//     SingleExerciseItem,
 } from './pages';
-import { Prepare, Recover, Train, } from './tabs';
 import { Loading, } from '../general';
 
 // Tabs titles
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // global constants
-const activeRecoveryDisabledText = 'Log a new activity on the Train Screen to receive an Active Recovery!';
-const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
-const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
+// const activeRecoveryDisabledText = 'Log a new activity on the Train Screen to receive an Active Recovery!';
+// const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
+// const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
-const timerDelay = 30000; // delay for X ms
+// const timerDelay = 30000; // delay for X ms
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 /* Styles ==================================================================== */
-const customStyles = StyleSheet.create({
-    alertMessageWrapper: {
-        alignSelf:    'center',
-        flex:         1,
-        marginRight:  9,
-        paddingLeft:  37,
-        paddingRight: 10,
-    },
-    alertMessageIconWrapper: {
-        alignSelf:            'stretch',
-        backgroundColor:      AppColors.zeplin.yellow,
-        borderTopLeftRadius:  5,
-        borderTopRightRadius: 5,
-        paddingVertical:      AppSizes.paddingSml,
-    },
-    alertMessageTextWrapper: {
-        backgroundColor:         AppColors.primary.grey.twentyPercent,
-        borderBottomLeftRadius:  5,
-        borderBottomRightRadius: 5,
-        flex:                    1,
-        padding:                 AppSizes.padding,
-    },
-    shadowEffect: {
-        shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { height: 3, width: 0, },
-        shadowOpacity: 1,
-        shadowRadius:  4,
-    },
-});
+// const customStyles = StyleSheet.create({
+//     alertMessageWrapper: {
+//         alignSelf:    'center',
+//         flex:         1,
+//         marginRight:  9,
+//         paddingLeft:  37,
+//         paddingRight: 10,
+//     },
+//     alertMessageIconWrapper: {
+//         alignSelf:            'stretch',
+//         backgroundColor:      AppColors.zeplin.yellow,
+//         borderTopLeftRadius:  5,
+//         borderTopRightRadius: 5,
+//         paddingVertical:      AppSizes.paddingSml,
+//     },
+//     alertMessageTextWrapper: {
+//         backgroundColor:         AppColors.primary.grey.twentyPercent,
+//         borderBottomLeftRadius:  5,
+//         borderBottomRightRadius: 5,
+//         flex:                    1,
+//         padding:                 AppSizes.padding,
+//     },
+//     shadowEffect: {
+//         shadowColor:   'rgba(0, 0, 0, 0.16)',
+//         shadowOffset:  { height: 3, width: 0, },
+//         shadowOpacity: 1,
+//         shadowRadius:  4,
+//     },
+// });
 
 /* Component ==================================================================== */
+const ActivityTab = ({
+    backgroundImage = require('../../../assets/images/standard/active_rest.png'),
+    onPress = () => {},
+    showBottomGap = true,
+    subtitle = 'Anytime before training',
+    title = 'CARE & ACTIVATE',
+}) => (
+    <View>
+        <View style={{flex: 1, flexDirection: 'row',}}>
+            <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
+                <TabIcon
+                    color={AppColors.zeplin.lightSlate}
+                    containerStyle={[{width: AppFonts.scaleFont(24),}]}
+                    icon={'check-circle'}
+                    size={AppFonts.scaleFont(24)}
+                    type={'material-community'}
+                />
+            </View>
+            <View style={{flex: 1,}}>
+                <ImageBackground
+                    imageStyle={{borderRadius: AppSizes.padding,}}
+                    source={backgroundImage}
+                    style={{flex: 1, marginLeft: AppSizes.padding,}}
+                >
+                    <TouchableOpacity onPress={onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
+                        <ListItem
+                            chevron={
+                                <TabIcon
+                                    color={AppColors.white}
+                                    icon={'chevron-right'}
+                                    size={AppFonts.scaleFont(28)}
+                                    type={'material-community'}
+                                />
+                            }
+                            containerStyle={{backgroundColor: 'transparent', padding: 0,}}
+                            subtitle={subtitle}
+                            subtitleStyle={[AppStyles.robotoRegular, {color: AppColors.white,}]}
+                            title={title}
+                            titleStyle={[AppStyles.oswaldRegular, {color: AppColors.white,}]}
+                        />
+                    </TouchableOpacity>
+                </ImageBackground>
+            </View>
+        </View>
+        { showBottomGap &&
+            <DefaultListGap
+                size={AppSizes.paddingLrg}
+            />
+        }
+    </View>
+);
+
 class MyPlan extends Component {
-    static componentName = 'MyPlanView';
+    static componentName = 'MyPlan';
 
     static propTypes = {
-        activateFunctionalStrength:    PropTypes.func.isRequired,
-        ble:                           PropTypes.object.isRequired,
+        // activateFunctionalStrength:    PropTypes.func.isRequired,
+        // ble:                           PropTypes.object.isRequired,
         clearCompletedExercises:       PropTypes.func.isRequired,
         clearCompletedFSExercises:     PropTypes.func.isRequired,
         clearHealthKitWorkouts:        PropTypes.func.isRequired,
-        getSoreBodyParts:              PropTypes.func.isRequired,
-        healthData:                    PropTypes.object.isRequired,
-        lastOpened:                    PropTypes.object.isRequired,
-        markStartedFunctionalStrength: PropTypes.func.isRequired,
-        markStartedRecovery:           PropTypes.func.isRequired,
-        network:                       PropTypes.object.isRequired,
+        // getSoreBodyParts:              PropTypes.func.isRequired,
+        // healthData:                    PropTypes.object.isRequired,
+        // lastOpened:                    PropTypes.object.isRequired,
+        // markStartedFunctionalStrength: PropTypes.func.isRequired,
+        // markStartedRecovery:           PropTypes.func.isRequired,
+        // network:                       PropTypes.object.isRequired,
         noSessions:                    PropTypes.func.isRequired,
-        notification:                  PropTypes.oneOfType([
-            PropTypes.bool,
-            PropTypes.string,
-        ]),
+        // notification:                  PropTypes.oneOfType([
+        //     PropTypes.bool,
+        //     PropTypes.string,
+        // ]),
         patchActiveRecovery:     PropTypes.func.isRequired,
-        patchActiveTime:         PropTypes.func.isRequired,
-        patchFunctionalStrength: PropTypes.func.isRequired,
+        // patchActiveTime:         PropTypes.func.isRequired,
+        // patchFunctionalStrength: PropTypes.func.isRequired,
         plan:                    PropTypes.object.isRequired,
         postReadinessSurvey:     PropTypes.func.isRequired,
-        postSessionSurvey:       PropTypes.func.isRequired,
-        setAppLogs:              PropTypes.func.isRequired,
-        setCompletedExercises:   PropTypes.func.isRequired,
-        setCompletedFSExercises: PropTypes.func.isRequired,
-        toggleRecoveryGoal:      PropTypes.func.isRequired,
+        // postSessionSurvey:       PropTypes.func.isRequired,
+        // setAppLogs:              PropTypes.func.isRequired,
+        // setCompletedExercises:   PropTypes.func.isRequired,
+        // setCompletedFSExercises: PropTypes.func.isRequired,
+        // toggleRecoveryGoal:      PropTypes.func.isRequired,
         updateUser:              PropTypes.func.isRequired,
         user:                    PropTypes.object.isRequired,
     }
 
-    static defaultProps = {}
+    static defaultProps = {};
 
     constructor(props) {
         super(props);
-        let dailyPlan = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0] ? props.plan.dailyPlan[0] : false;
         let defaultState = _.cloneDeep(defaultPlanState);
+        // let dailyPlan = props.plan && props.plan.dailyPlan[0] && props.plan.dailyPlan[0] ? props.plan.dailyPlan[0] : false;
         defaultState.healthData = props.healthData;
-        defaultState.prepare.finishedRecovery = dailyPlan && dailyPlan.pre_recovery_completed ? true : false;
-        defaultState.prepareSelectedActiveTime = dailyPlan && dailyPlan.pre_recovery && dailyPlan.pre_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.pre_recovery.minutes_duration) : defaultState.prepareSelectedActiveTime;
-        defaultState.recoverSelectedActiveTime = dailyPlan && dailyPlan.post_recovery && dailyPlan.post_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.post_recovery.minutes_duration) : defaultState.recoverSelectedActiveTime;
+        // defaultState.prepare.finishedRecovery = dailyPlan && dailyPlan.pre_recovery_completed ? true : false;
+        // defaultState.prepareSelectedActiveTime = dailyPlan && dailyPlan.pre_recovery && dailyPlan.pre_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.pre_recovery.minutes_duration) : defaultState.prepareSelectedActiveTime;
+        // defaultState.recoverSelectedActiveTime = dailyPlan && dailyPlan.post_recovery && dailyPlan.post_recovery.minutes_duration ? _.indexOf(MyPlanConstants.selectedActiveTimes().possibleActiveTimes, dailyPlan.post_recovery.minutes_duration) : defaultState.recoverSelectedActiveTime;
         this.state = defaultState;
+        this.tabView = null;
         this.renderTab = this.renderTab.bind(this);
         this.goToPageTimer = null;
+        this._timer = null;
     }
 
     componentWillMount = () => {
@@ -141,28 +197,28 @@ class MyPlan extends Component {
         // we've already fetched MyPlan, make necessary state updates
         let planObj = this.props.plan.dailyPlan[0] || {};
         if(planObj.daily_readiness_survey_completed) {
-            let postPracticeSurveys = planObj.training_sessions.map(session => session.post_session_survey
-                ? {
-                    isPostPracticeSurveyCollapsed: true,
-                    isPostPracticeSurveyCompleted: true,
-                } : {
-                    isPostPracticeSurveyCollapsed: false,
-                    isPostPracticeSurveyCompleted: false,
-                }
-            );
+            // let postPracticeSurveys = planObj.training_sessions.map(session => session.post_session_survey
+            //     ? {
+            //         isPostPracticeSurveyCollapsed: true,
+            //         isPostPracticeSurveyCompleted: true,
+            //     } : {
+            //         isPostPracticeSurveyCollapsed: false,
+            //         isPostPracticeSurveyCompleted: false,
+            //     }
+            // );
             this.goToPageTimer = _.delay(() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj)), 500);
             this.setState({
                 prepare: Object.assign({}, this.state.prepare, {
-                    finishedRecovery:           planObj.pre_recovery_completed || this.state.prepare.finishedRecovery,
+                    // finishedRecovery:           planObj.pre_recovery_completed || this.state.prepare.finishedRecovery,
                     isActiveRecoveryCollapsed:  planObj.pre_recovery_completed || this.state.prepare.isActiveRecoveryCollapsed,
-                    isReadinessSurveyCollapsed: true,
+                    // isReadinessSurveyCollapsed: true,
                 }),
                 recover: Object.assign({}, this.state.recover, {
-                    isActiveRecoveryCollapsed: planObj.post_recovery && !planObj.pre_recovery ? false : true,
+                    isActiveRecoveryCollapsed: planObj.post_active_rest && !planObj.pre_active_rest ? false : true,
                 }),
                 train: Object.assign({}, this.state.train, {
-                    completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
-                    postPracticeSurveys
+                    // completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
+                    // postPracticeSurveys
                 }),
             });
         } else {
@@ -172,8 +228,7 @@ class MyPlan extends Component {
                 dailyReadiness:             newDailyReadiness,
                 isReadinessSurveyModalOpen: true,
                 prepare:                    Object.assign({}, this.state.prepare, {
-                    isActiveRecoveryCollapsed:  true,
-                    isReadinessSurveyCollapsed: false,
+                    isActiveRecoveryCollapsed: true,
                 }),
             });
         }
@@ -183,12 +238,12 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
-        AppState.removeEventListener('change', this._handleAppStateChange);
+        // AppState.removeEventListener('change', this._handleAppStateChange);
         // clear timers
-        clearInterval(this.state.timer);
+        clearInterval(this._timer);
         clearInterval(this.goToPageTimer);
     }
-
+/*
     componentDidMount = async () => {
         AppState.addEventListener('change', this._handleAppStateChange);
         if(!this.props.scheduledMaintenance.addressed) {
@@ -265,16 +320,14 @@ class MyPlan extends Component {
             )
         ) {
             // start timer
-            this.setState({
-                timer: _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay),
-            });
+            this._timer: _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay);
         } else if(
             (prevState.isFSCalculating !== this.state.isFSCalculating && !this.state.isFSCalculating) ||
             (prevState.isPrepCalculating !== this.state.isPrepCalculating && !this.state.isPrepCalculating) ||
             (prevState.isRecoverCalculating !== this.state.isRecoverCalculating && !this.state.isRecoverCalculating)
         ) {
             // clear timer
-            clearInterval(this.state.timer);
+            clearInterval(this._timer);
         }
     }
 
@@ -310,7 +363,7 @@ class MyPlan extends Component {
                             isReadinessSurveyCollapsed: true,
                         }),
                         recover: Object.assign({}, this.state.recover, {
-                            isActiveRecoveryCollapsed: response.daily_plans[0].post_recovery && !response.daily_plans[0].pre_recovery ? false : true,
+                            isActiveRecoveryCollapsed: response.daily_plans[0].post_active_rest && !response.daily_plans[0].pre_active_rest ? false : true,
                         }),
                         train: Object.assign({}, this.state.train, {
                             completedPostPracticeSurvey: postPracticeSurveys[0] ? postPracticeSurveys[0].isPostPracticeSurveyCompleted : {},
@@ -374,7 +427,7 @@ class MyPlan extends Component {
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
         // clear timer
-        clearInterval(this.state.timer);
+        clearInterval(this._timer);
         let userId = this.props.user.id;
         this.setState({ isPageLoading: isFromPushNotification ? false : true, });
         this.props.getMyPlan(userId, moment().format('YYYY-MM-DD'))
@@ -472,7 +525,7 @@ class MyPlan extends Component {
             }
         );
     }
-
+*/
     _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, this.state.dailyReadiness, isClearCandidate, isMovementValue);
         this.setState({ dailyReadiness: newFormFields, });
@@ -484,7 +537,8 @@ class MyPlan extends Component {
     }
 
     _handleHealthDataFormChange = (index, name, value, callback) => {
-        let newHealthData = _.cloneDeep(this.state.healthData.workouts);
+        const { healthData, } = this.state;
+        let newHealthData = _.cloneDeep(healthData.workouts);
         let newFormFields = _.update(newHealthData[index], name, () => value);
         if(name === 'deleted' && value === true) {
             newFormFields = _.update(newHealthData[index], 'post_session_survey.RPE', () => null);
@@ -492,15 +546,15 @@ class MyPlan extends Component {
         newHealthData[index] = newFormFields;
         this.setState({
             healthData: {
-                ignoredWorkouts: this.state.healthData.ignoredWorkouts,
-                sleep:           this.state.healthData.sleep,
+                ignoredWorkouts: healthData.ignoredWorkouts,
+                sleep:           healthData.sleep,
                 workouts:        newHealthData,
             },
         }, () => {
             if(callback) { callback(); }
         });
     }
-
+/*
     _handleFSFormChange = (name, value) => {
         const newFormFields = _.update(this.state.functionalStrength, name, () => value);
         this.setState({ functionalStrength: newFormFields, });
@@ -518,7 +572,7 @@ class MyPlan extends Component {
                 AppUtil.handleAPIErrorAlert(ErrorMessages.patchFunctionalStrength);
             });
     }
-
+*/
     _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
         let {
             newDailyReadiness,
@@ -590,13 +644,13 @@ class MyPlan extends Component {
                 if(!areAllDeleted) {
                     this.props.clearCompletedExercises();
                 }
-                if(areAllDeleted) {
-                    let landingScreen = this.props.plan.dailyPlan[0] && this.props.plan.dailyPlan[0].landing_screen ?
-                        this.props.plan.dailyPlan[0].landing_screen
+                let landingScreen = areAllDeleted ?
+                    1
+                    : newPostSession.sessions_planned ?
+                        0
                         :
-                        0;
-                    this._goToScrollviewPage(landingScreen);
-                }
+                        1;
+                this._goToScrollviewPage(landingScreen);
             })
             .catch(error => {
                 this.setState({ isRecoverCalculating: false, });
@@ -616,10 +670,11 @@ class MyPlan extends Component {
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
+        const { updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
-        let newUserObj = _.cloneDeep(this.props.user);
+        let newUserObj = _.cloneDeep(user);
         newUserObj.first_time_experience.push(value);
         // update reducer as API might take too long to return a value
         store.dispatch({
@@ -627,14 +682,14 @@ class MyPlan extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+        updateUser(newUserPayloadObj, user.id)
             .then(res => {
                 if(callback) {
                     callback();
                 }
             });
     }
-
+/*
     _handleUpdateUserHealthKitFlag = (flag, callback) => {
         // setup variables
         let newUserPayloadObj = {};
@@ -655,6 +710,7 @@ class MyPlan extends Component {
             });
     }
 
+    // MOVED TO ExerciseList
     _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
@@ -706,12 +762,13 @@ class MyPlan extends Component {
         this.props.setCompletedFSExercises(newCompletedExercises);
     }
 
-    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
-        this.setState({
-            isSelectedExerciseModalOpen: isModalOpen,
-            selectedExercise:            exerciseObj ? exerciseObj : {},
-        });
-    }
+    // MOVED TO ExerciseList
+    // _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
+    //     this.setState({
+    //         isSelectedExerciseModalOpen: isModalOpen,
+    //         selectedExercise:            exerciseObj ? exerciseObj : {},
+    //     });
+    // }
 
     _togglePrepareSlideUpPanel = () => {
         this.setState({ isPrepareSlideUpPanelOpen: !this.state.isPrepareSlideUpPanelOpen, });
@@ -725,7 +782,7 @@ class MyPlan extends Component {
         this.props.clearCompletedExercises();
         this.setState({ isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen, });
     }
-
+*/
     _togglePostSessionSurveyModal = () => {
         let isLoading = Platform.OS === 'ios';
         this.setState({ loading: isLoading, showLoadingText: true, });
@@ -756,19 +813,18 @@ class MyPlan extends Component {
                     AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                 });
         } else {
-            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
             this.props.clearCompletedExercises();
             this.goToPageTimer = _.delay(() => {
                 this.setState({
                     isPostSessionSurveyModalOpen: false,
                     loading:                      false,
-                    postSession:                  newPostSession,
+                    postSession:                  _.cloneDeep(defaultPlanState.postSession),
                     showLoadingText:              false,
                 });
             }, 500);
         }
     }
-
+/*
     _toggleFunctionalStrengthModal = () => {
         this.setState({ loading: true, });
         if(!this.state.isFunctionalStrengthModalOpen) {
@@ -818,14 +874,13 @@ class MyPlan extends Component {
     _changeSelectedActiveTime = (selectedIndex, prepareOrRecover) => {
         this.setState({ [prepareOrRecover]: selectedIndex, });
     }
-
+*/
     _closePrepareSessionsCompletionModal = () => {
         const { dailyReadiness, } = this.state;
         this.goToPageTimer = _.delay(() => {
-            let newDailyReadinessState = _.cloneDeep(defaultPlanState.dailyReadiness);
             this.setState(
                 {
-                    dailyReadiness:                       newDailyReadinessState,
+                    dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
                     isPrepCalculating:                    false,
                     isPrepareSessionsCompletionModalOpen: false,
                     isRecoverCalculating:                 false,
@@ -838,11 +893,10 @@ class MyPlan extends Component {
     }
 
     _closeTrainSessionsCompletionModal = () => {
-        let newPostSessionState = _.cloneDeep(defaultPlanState.postSession);
         this.setState(
             {
                 isTrainSessionsCompletionModalOpen: false,
-                postSession:                        newPostSessionState,
+                postSession:                        _.cloneDeep(defaultPlanState.postSession),
             },
             () => { this.goToPageTimer = _.delay(() => { this._goToScrollviewPage(2) }, 500); }
         );
@@ -861,7 +915,7 @@ class MyPlan extends Component {
             !this.state.isPrepareSessionsCompletionModalOpen &&
             !this.state.isTrainSessionsCompletionModalOpen &&
             !this.state.isSelectedExerciseModalOpen &&
-            !this.state.isFunctionalStrengthModalOpen &&
+            // !this.state.isFunctionalStrengthModalOpen &&
             !this.state.loading &&
             pageIndex
         ) {
@@ -911,7 +965,7 @@ class MyPlan extends Component {
             />
         );
     }
-
+/*
     renderPrepare = index => {
         let {
             dailyReadiness,
@@ -1010,7 +1064,7 @@ class MyPlan extends Component {
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                 />
                 {
-                    /* eslint-disable indent */
+                    /* eslint-disable indent *
                     disabled && !isPrepCalculating ?
                         <View style={{flex: 1, flexDirection: 'row',}}>
                             <View style={{borderRightColor: AppColors.white, borderRightWidth: 1, paddingLeft: 22,}} />
@@ -1240,6 +1294,31 @@ class MyPlan extends Component {
                     }}
                     user={user}
                 />
+                // USE BELOW MAYBE?
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={isPrepareExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isPrepareExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isPrepareExerciseCompletionModalOpen: false, });
+                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
+                        patchActiveRecovery(newCompletedExercises, 'pre')
+                            .then(res => {
+                                let newDailyPlanObj = store.getState().plan.dailyPlan[0];
+                                this.setState(
+                                    {
+                                        prepare: Object.assign({}, this.state.prepare, { isActiveRecoveryCollapsed: true, }),
+                                    },
+                                    () => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(newDailyPlanObj)),
+                                )
+                            })
+                            .catch(() => {
+                                AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery);
+                            });
+                    }}
+                    user={user}
+                />
             </ScrollView>
         );
     };
@@ -1306,7 +1385,7 @@ class MyPlan extends Component {
                     titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                 />
                 {
-                    /* eslint-disable indent */
+                    /* eslint-disable indent *
                     disabled && !isRecoverCalculating ?
                         <View>
                             <View style={{flex: 1, flexDirection: 'row',}}>
@@ -1589,7 +1668,7 @@ class MyPlan extends Component {
                             titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
                         />
                         <View style={{flexDirection: 'row',}}>
-                            <View style={{borderRightColor: AppColors.primary.grey.thirtyPercent, borderRightWidth: 1, paddingLeft: 22,}} />{/* standard padding of 10 and 5 for half the default size of icons */}
+                            <View style={{borderRightColor: AppColors.primary.grey.thirtyPercent, borderRightWidth: 1, paddingLeft: 22,}} />{/* standard padding of 10 and 5 for half the default size of icons *}
                             <View style={{flex: 1, margin: 20,}}>
                                 <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(16),}]}>{offDayLoggedText}</Text>
                             </View>
@@ -1812,20 +1891,328 @@ class MyPlan extends Component {
             </ScrollView>
         );
     };
+*/
+    renderPrepare = index => {
+        let {
+            dailyReadiness,
+            // isFSCalculating,
+            // isPageLoading,
+            isPrepCalculating,
+            // isPrepareExerciseCompletionModalOpen,
+            isPrepareSessionsCompletionModalOpen,
+            // isRecoverCalculating,
+            // prepare,
+            // preRecoveryPriority,
+        } = this.state;
+            // below are still in the works - state
+            // isReadinessSurveyModalOpen,
+            // isPreparePrioritySlideUpPanelOpen,
+            // isPrepareSlideUpPanelOpen,
+            // prepareSelectedActiveTime,
+            // healthData,
+            // isSelectedExerciseModalOpen,
+            // selectedExercise,
+        let { plan, /*user,*/ } = this.props;
+        // let completedExercises = plan.completedExercises;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
+        let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active;
+        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.length > 0;
+        // let {
+        //     // disabled,
+        //     // exerciseList,
+        //     // isActive,
+        //     // isCompleted,
+        //     isReadinessSurveyCompleted,
+        //     // recoveryObj,
+        // } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj, false, plan.goals);
+        return (
+            <ScrollView
+                contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, paddingLeft: AppSizes.padding, paddingRight: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg,}}
+                tabLabel={tabs[index]}
+            >
+                { isReadinessSurveyCompleted &&
+                    <Placeholder
+                        isReady={!isPrepCalculating}
+                        animation={'fade'}
+                        whenReadyRender={() =>
+                            <View>
+                                <View>
+                                    <View style={{flex: 1, flexDirection: 'row', paddingBottom: AppSizes.paddingMed,}}>
+                                        <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
+                                            <LottieView
+                                                autoPlay={true}
+                                                loop={false}
+                                                source={require('../../../assets/animation/checkmark-circle.json')}
+                                            />
+                                        </View>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(24), marginLeft: (AppSizes.padding + AppSizes.paddingMed),}}>{'READINESS SURVEY'}</Text>
+                                    </View>
+                                    { isCareAndActivateActive &&
+                                        <DefaultListGap
+                                            size={AppSizes.paddingLrg}
+                                        />
+                                    }
+                                </View>
+                                { isCareAndActivateActive &&
+                                    <ActivityTab
+                                        backgroundImage={require('../../../assets/images/standard/active_rest.png')}
+                                        onPress={() => Actions.exerciseList()}
+                                        showBottomGap={isHeatActive}
+                                        subtitle={isPrepCalculating ? '' : 'Anytime before training'}
+                                        title={'CARE & ACTIVATE'}
+                                    />
+                                }
+                                { isHeatActive && !isPrepCalculating &&
+                                    <ActivityTab
+                                        backgroundImage={require('../../../assets/images/standard/heat.png')}
+                                        onPress={() => console.log('hi from RENDERPREPARE - HEAT')}
+                                        showBottomGap={false}
+                                        subtitle={'30 minutes before training'}
+                                        title={'HEAT'}
+                                    />
+                                }
+                            </View>
+                        }
+                    >
+                        <View>
+                            <View style={{flex: 1, flexDirection: 'row',}}>
+                                <Media
+                                    hasRadius
+                                    size={AppFonts.scaleFont(24)}
+                                />
+                                <Line
+                                    color={AppColors.zeplin.superLight}
+                                    style={{flex: 1, marginLeft: AppSizes.paddingMed,}}
+                                    textSize={AppFonts.scaleFont(24)}
+                                />
+                            </View>
+                            <DefaultListGap
+                                size={AppSizes.paddingLrg}
+                            />
+                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', height: 100,}}>
+                                <Media
+                                    hasRadius
+                                    size={AppFonts.scaleFont(24)}
+                                />
+                                <Line
+                                    color={AppColors.zeplin.superLight}
+                                    style={{flex: 1, marginLeft: AppSizes.paddingMed,}}
+                                    textSize={100}
+                                />
+                            </View>
+                        </View>
+                    </Placeholder>
+                }
+                <SessionsCompletionModal
+                    isModalOpen={isPrepareSessionsCompletionModalOpen}
+                    onClose={this._closePrepareSessionsCompletionModal}
+                    sessions={dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? dailyReadiness.sessions : []}
+                />
+            </ScrollView>
+        );
+    }
+
+    renderTrain = index => {
+        let {
+            // healthData,
+            // isFSCalculating,
+            // isFSExerciseCompletionModalOpen,
+            // isFunctionalStrengthCollapsed,
+            // isFunctionalStrengthModalOpen,
+            // isPostSessionSurveyModalOpen,
+            // isSelectedExerciseModalOpen,
+            isTrainSessionsCompletionModalOpen,
+            postSession,
+            // selectedExercise,
+        } = this.state;
+        let { plan, /*user,*/ } = this.props;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let {
+            // completedFSExercises,
+            filteredTrainingSessions,
+            // fsExerciseList,
+            // functionalStrength,
+            isDailyReadinessSurveyCompleted,
+            // isFSCompletedValid,
+            // isFSEligible,
+            logActivityButtonBackgroundColor,
+            logActivityButtonColor,
+            logActivityButtonOutlined,
+            // logActivityRightIconColor,
+            offDaySelected,
+        } = PlanLogic.handleMyPlanRenderTrainTabLogic(dailyPlanObj, store.getState().plan);
+        return (
+            <ScrollView
+                contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, paddingLeft: AppSizes.padding, paddingRight: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg,}}
+                tabLabel={tabs[index]}
+            >
+                { (dailyPlanObj && !dailyPlanObj.sessions_planned) && filteredTrainingSessions && filteredTrainingSessions.length === 0 ?
+                    <View>
+                        <ListItem
+                            disabled={!isDailyReadinessSurveyCompleted}
+                            hideChevron={true}
+                            leftIcon={
+                                <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={false}
+                                        source={require('../../../assets/animation/checkmark-circle.json')}
+                                    />
+                                </View>
+                            }
+                            title={'OFF DAY'}
+                            titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
+                        />
+                        <View style={{flexDirection: 'row',}}>
+                            <View style={{borderRightColor: AppColors.primary.grey.thirtyPercent, borderRightWidth: 1, paddingLeft: 22,}} />{/* standard padding of 10 and 5 for half the default size of icons */}
+                            <View style={{flex: 1, margin: 20,}}>
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(16),}]}>{offDayLoggedText}</Text>
+                            </View>
+                        </View>
+                    </View>
+                    :
+                    null
+                }
+                {_.map(filteredTrainingSessions, (postPracticeSurvey, i) => {
+                    let cleanedPostSessionName = MyPlanConstants.cleanedPostSessionName(postPracticeSurvey).fullName;
+                    return(
+                        <View key={`postPracticeSurveys${i}`}>
+                            <ListItem
+                                disabled={!isDailyReadinessSurveyCompleted}
+                                hideChevron={true}
+                                leftIcon={
+                                    <View style={[{height: AppStyles.h3.lineHeight, marginBottom: AppStyles.h3.marginBottom, width: AppFonts.scaleFont(24),}]}>
+                                        <LottieView
+                                            autoPlay={true}
+                                            loop={false}
+                                            source={require('../../../assets/animation/checkmark-circle.json')}
+                                        />
+                                    </View>
+                                }
+                                title={cleanedPostSessionName}
+                                titleStyle={[AppStyles.h3, AppStyles.oswaldMedium, {color: AppColors.activeTabText, fontSize: AppFonts.scaleFont(24),}]}
+                            />
+                            <DefaultListGap
+                                size={24}
+                            />
+                        </View>
+                    );
+                })}
+                <Spacer size={15} />
+                <Button
+                    buttonStyle={{backgroundColor: logActivityButtonBackgroundColor, borderColor: isDailyReadinessSurveyCompleted ? logActivityButtonBackgroundColor : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
+                    icon={{
+                        color: logActivityButtonColor,
+                        name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                        size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                    }}
+                    onPress={() => isDailyReadinessSurveyCompleted ? this._togglePostSessionSurveyModal() : null}
+                    title={'Log completed activity'}
+                    titleStyle={{color: logActivityButtonColor, flex: 8, fontSize: AppFonts.scaleFont(18), textAlign: 'left',}}
+                    type={logActivityButtonOutlined ? 'outline' : 'solid'}
+                />
+                <Spacer size={10} />
+                { !offDaySelected ?
+                    <Button
+                        buttonStyle={{backgroundColor: AppColors.white, borderColor: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText, justifyContent: 'space-between',}}
+                        icon={{
+                            color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText,
+                            name:  isDailyReadinessSurveyCompleted ? 'add' : 'lock',
+                            size:  isDailyReadinessSurveyCompleted ? AppFonts.scaleFont(30) : 20,
+                        }}
+                        onPress={() => isDailyReadinessSurveyCompleted ? this.props.noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)) : null}
+                        title={'Off day'}
+                        titleStyle={{color: isDailyReadinessSurveyCompleted ? AppColors.zeplin.yellow : AppColors.zeplin.greyText, flex: 8, fontSize: AppFonts.scaleFont(18), textAlign: 'left',}}
+                        type={'outline'}
+                    />
+                    :
+                    null
+                }
+                <SessionsCompletionModal
+                    isModalOpen={isTrainSessionsCompletionModalOpen}
+                    onClose={this._closeTrainSessionsCompletionModal}
+                    sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
+                />
+            </ScrollView>
+        );
+    }
+
+    renderRecover = index => {
+        let {
+            // isPageLoading,
+            // isFSCalculating,
+            // isPrepCalculating,
+            isRecoverCalculating,
+            postRecoveryPriority,
+            // recover,
+        } = this.state;
+        let { plan, /*user,*/ } = this.props;
+        // let completedExercises = plan.completedExercises;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        // let isCompleted = false;
+        let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active;
+        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.length > 0;
+        // let {
+        //     // disabled,
+        //     // exerciseList,
+        //     // isActive,
+        //     isCompleted,
+        //     // recoveryObj,
+        // } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj, postRecoveryPriority, plan.goals);
+        return (
+            <ScrollView
+                contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, paddingLeft: AppSizes.padding, paddingRight: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg,}}
+                tabLabel={tabs[index]}
+            >
+                { isCareAndActivateActive &&
+                    <ActivityTab
+                        backgroundImage={require('../../../assets/images/standard/active_rest.png')}
+                        calculating={isRecoverCalculating}
+                        onPress={() => console.log('hi from RENDERRECOVER - CARE & ACTIVATE')}
+                        showBottomGap={isIceActive}
+                        subtitle={isRecoverCalculating ? '' : 'Anytime before training'}
+                        title={'CARE & ACTIVATE'}
+                    />
+                }
+                { isIceActive && !isRecoverCalculating &&
+                    <ActivityTab
+                        backgroundImage={require('../../../assets/images/standard/ice.png')}
+                        onPress={() => console.log('hi from RENDERRECOVER - ICE')}
+                        showBottomGap={false}
+                        subtitle={'After all training complete'}
+                        title={'ICE'}
+                    />
+                }
+            </ScrollView>
+        )
+    }
+
 
     render = () => {
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
+        const { plan, user, } = this.props;
+        const {
+            dailyReadiness,
+            healthData,
+            isPostSessionSurveyModalOpen,
+            isPrepCalculating,
+            isReadinessSurveyModalOpen,
+            isRecoverCalculating,
+            loading,
+            postSession,
+            showLoadingText,
+            trainLoadingScreenText,
+        } = this.state;
         let isScrollLocked = (
-            this.state.isReadinessSurveyModalOpen ||
-            this.state.isPostSessionSurveyModalOpen ||
-            this.state.loading ||
-            this.state.isSelectedExerciseModalOpen ||
+            isReadinessSurveyModalOpen ||
+            isPostSessionSurveyModalOpen ||
+            loading ||
+            // this.state.isSelectedExerciseModalOpen ||
             this.state.isPrepareSessionsCompletionModalOpen ||
             this.state.isTrainSessionsCompletionModalOpen ||
-            this.state.isFunctionalStrengthModalOpen ||
-            this.state.isFSCalculating ||
-            this.state.isPrepCalculating ||
-            this.state.isRecoverCalculating
+            isPrepCalculating ||
+            isRecoverCalculating
         );
         return(
             <View style={{flex: 1,}}>
@@ -1843,9 +2230,45 @@ class MyPlan extends Component {
                     {this.renderTrain(1)}
                     {this.renderRecover(2)}
                 </ScrollableTabView>
-                { this.state.loading ?
+                <FathomModal
+                    isVisible={isReadinessSurveyModalOpen}
+                    style={{margin: 0,}}
+                >
+                    <ReadinessSurvey
+                        dailyReadiness={dailyReadiness}
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                        handleFormChange={this._handleDailyReadinessFormChange}
+                        handleFormSubmit={this._handleReadinessSurveySubmit}
+                        handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+                        healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                        soreBodyParts={plan.soreBodyParts}
+                        typicalSessions={plan.typicalSessions}
+                        user={user}
+                    />
+                </FathomModal>
+                <FathomModal
+                    isVisible={isPostSessionSurveyModalOpen}
+                    style={{margin: 0,}}
+                >
+                    <PostSessionSurvey
+                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                        handleFormChange={this._handlePostSessionFormChange}
+                        handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
+                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                        healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                        postSession={postSession}
+                        soreBodyParts={plan.soreBodyParts}
+                        typicalSessions={plan.typicalSessions}
+                        user={user}
+                    />
+                </FathomModal>
+                { loading ?
                     <Loading
-                        text={this.state.showLoadingText ? this.state.trainLoadingScreenText : null}
+                        text={showLoadingText ? trainLoadingScreenText : null}
                     />
                     :
                     null

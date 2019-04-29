@@ -51,15 +51,15 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, listLength, }) => {
     let wrapperWidths = {};
-    let isActivateTooShort = (cleanedExerciseList['ACTIVATE'].length / listLength) < minActivatePercent;
+    let isActivateTooShort = (cleanedExerciseList['ACTIVE STRETCH'].length / listLength) < minActivatePercent;
     /*eslint dot-notation: 0*/
     _.map(cleanedExerciseList, (exerciseList, index) => {
         if(availableSectionsCount === 3 && isActivateTooShort) {
-            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercent;
-            let stretchLength = (cleanedExerciseList['STRETCH'].length / (listLength - cleanedExerciseList['ACTIVATE'].length)) * maxOtherExercisesPercent;
+            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVE STRETCH'].length)) * maxOtherExercisesPercent;
+            let stretchLength = (cleanedExerciseList['STATIC STRETCH'].length / (listLength - cleanedExerciseList['ACTIVE STRETCH'].length)) * maxOtherExercisesPercent;
             wrapperWidths['FOAM ROLL'] = foamRollLength;
-            wrapperWidths['STRETCH'] = stretchLength;
-            wrapperWidths['ACTIVATE'] = minActivatePercent;
+            wrapperWidths['STATIC STRETCH'] = stretchLength;
+            wrapperWidths['ACTIVE STRETCH'] = minActivatePercent;
         } else {
             wrapperWidths[index] = (exerciseList.length / listLength);
         }

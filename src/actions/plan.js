@@ -15,7 +15,7 @@ import { Platform, } from 'react-native';
 // consts & libs
 import { Actions, } from '../constants';
 import { store } from '../store';
-import { AppAPI, } from '../lib';
+import { AppAPI, PlanLogic, } from '../lib';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -60,6 +60,13 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 dispatch({
                     type: Actions.SET_TYPICAL_SESSIONS,
                     data: response.typical_sessions,
+                });
+            } else {
+                let goals = PlanLogic.handleFindGoals(response.daily_plans[0]);
+                // update goals if readiness survey is completed
+                dispatch({
+                    type: Actions.SET_GOALS,
+                    data: goals,
                 });
             }
             return Promise.resolve(response);
@@ -149,9 +156,11 @@ const postReadinessSurvey = dailyReadinessObj => {
     // continue logic
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
         .then(myPlanData => {
+            let goals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0]);
             dispatch({
-                type: Actions.POST_READINESS_SURVEY,
-                data: myPlanData.daily_plans,
+                type:  Actions.POST_READINESS_SURVEY,
+                data:  myPlanData.daily_plans,
+                goals: goals,
             });
             return Promise.resolve(myPlanData);
         })
@@ -182,9 +191,11 @@ const postSessionSurvey = postSessionObj => {
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {
+            let goals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0]);
             dispatch({
-                type: Actions.POST_SESSION_SURVEY,
-                data: myPlanData.daily_plans,
+                type:  Actions.POST_SESSION_SURVEY,
+                data:  myPlanData.daily_plans,
+                goals: goals,
             });
             return Promise.resolve(myPlanData);
         })

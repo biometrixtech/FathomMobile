@@ -219,7 +219,7 @@ class SportScheduleBuilder extends PureComponent {
                     currentStep={1}
                     onBack={step === 1 ? () => this._resetStep(true) : step === 0 && goBack ? () => goBack() : null}
                     onClose={handleTogglePostSessionSurvey}
-                    totalSteps={2}
+                    totalSteps={3}
                 />
                 { step === 0 ?
                     <View>

@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2018-07-13 02:17:24
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-14 12:52:01
- */
-
 import moment from 'moment';
 
 /**
@@ -31,35 +24,29 @@ export default {
     completedExercises:   [],
     completedFSExercises: [],
     dailyPlan:            [{
-        completed_functional_strength_sessions: 0,
-        daily_readiness_survey_completed:       false,
-        date:                                   moment().format('YYYY-MM-DD'),
-        functional_strength_completed:          false,
-        functional_strength_eligible:           false,
-        functional_strength_session:            null,
-        landing_screen:                         0,
-        last_sensor_sync:                       null,
-        nav_bar_indicator:                      0,
-        post_recovery:                          {
-            1: recoveryObj,
-            2: recoveryObj,
-            3: recoveryObj,
-        },
-        post_recovery_completed: false,
-        pre_recovery:            {
-            1: recoveryObj,
-            2: recoveryObj,
-            3: recoveryObj,
-        },
-        pre_recovery_completed: false,
-        sessions_planned:       true,
-        training_sessions:      [],
+        active_recovery:                  null,
+        cold_water_immersion:             null,
+        cool_down:                        null,
+        cross_training_sessions:          [],
+        daily_readiness_survey_completed: false,
+        date:                             moment().format('YYYY-MM-DD'),
+        day_of_week:                      0,
+        heat:                             [],
+        ice:                              [],
+        landing_screen:                   0,
+        last_sensor_sync:                 null,
+        last_updated:                     moment().format('YYYY-MM-DD'),
+        nav_bar_indicator:                null,
+        post_active_rest:                 recoveryObj,
+        post_recovery_completed:          false,
+        pre_active_rest:                  recoveryObj,
+        pre_recovery_completed:           false,
+        sessions_planned:                 true,
+        train_later:                      true,
+        training_sessions:                [],
+        warm_up:                          null,
     }],
-    goals: [
-        {show: true, text: '0-GOAL', shape: 'square', isSelected: true,},
-        {show: true, text: '1-GOAL', shape: 'square', isSelected: true,},
-        {show: true, text: '2-GOAL', shape: 'square', isSelected: true,},
-    ],
+    goals:           [],
     healthData:      { ignoredWorkouts: [], sleep: [], workouts: [], },
     lastOpened:      { date: '', userId: '' },
     postSession:     {},

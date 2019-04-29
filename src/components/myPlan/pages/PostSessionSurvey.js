@@ -18,10 +18,10 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View, } from 'react-native';
+import { Platform, ScrollView, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
 import { Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
@@ -50,6 +50,7 @@ class PostSessionSurvey extends Component {
             isActionButtonVisible:      false,
             isSlideUpPanelExpanded:     true,
             isSlideUpPanelOpen:         false,
+            lockTrainLaterBtn:          false,
             pageIndex:                  healthKitWorkouts && healthKitWorkouts.length > 0 ? 0 : 1,
             resetHealthKitFirstPage:    false,
             resetSportBuilderFirstPage: false,
@@ -117,6 +118,9 @@ class PostSessionSurvey extends Component {
         } else if(currentStep === 2 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
             let lastSessionsIndex = _.findLastIndex(postSession.sessions);
             this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
+        } else if(currentStep === 3) { // reset train later?
+            this.setState({ lockTrainLaterBtn: !this.state.lockTrainLaterBtn, });
+            handleFormChange('sessions_planned', null);
         }
     }
 
@@ -282,6 +286,88 @@ class PostSessionSurvey extends Component {
                         )
                     }) : <View />}
 
+                    <View style={{flex: 1,}}>
+                        <ProgressPill
+                            currentStep={2}
+                            onBack={() => this._renderPreviousPage(2)}
+                            totalSteps={3}
+                        />
+                        <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
+                            <Spacer size={20} />
+                            <View
+                                style={{
+                                    flexDirection:  'row',
+                                    justifyContent: 'space-between',
+                                    width:          220,
+                                }}
+                            >
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockTrainLaterBtn) {
+                                            this.setState(
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn, },
+                                                () => {
+                                                    handleFormChange('sessions_planned', false);
+                                                    this._checkNextStep(2);
+                                                }
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, AppStyles.scaleButtonShadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: postSession.sessions_planned === false ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    postSession.sessions_planned === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'NO'}
+                                    </Text>
+                                </TouchableHighlight>
+                                <Spacer size={20} />
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        if(!this.state.lockTrainLaterBtn) {
+                                            this.setState(
+                                                { lockTrainLaterBtn: !this.state.lockTrainLaterBtn, },
+                                                () => {
+                                                    handleFormChange('sessions_planned', true);
+                                                    this._checkNextStep(2);
+                                                }
+                                            );
+                                        }
+                                    }}
+                                    style={[AppStyles.xxLrgCircle, AppStyles.scaleButtonShadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {
+                                        backgroundColor: postSession.sessions_planned === true ? AppColors.zeplin.yellow : AppColors.primary.white.hundredPercent,
+                                    }]}
+                                    underlayColor={AppColors.transparent}
+                                >
+                                    <Text
+                                        oswaldMedium
+                                        style={[
+                                            AppStyles.textCenterAligned,
+                                            {
+                                                color:    postSession.sessions_planned === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                fontSize: AppFonts.scaleFont(27),
+                                            }
+                                        ]}
+                                    >
+                                        {'YES'}
+                                    </Text>
+                                </TouchableHighlight>
+                            </View>
+                        </View>
+                        <Spacer size={AppSizes.progressPillsHeight + AppSizes.statusBarHeight} />
+                    </View>
+
                     { newSoreBodyParts.length > 0 ?
                         <ScrollView
                             contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
@@ -290,10 +376,10 @@ class PostSessionSurvey extends Component {
                             stickyHeaderIndices={[0]}
                         >
                             <ProgressPill
-                                currentStep={2}
-                                onBack={() => this._renderPreviousPage(2)}
+                                currentStep={3}
+                                onBack={() => this._renderPreviousPage(3)}
                                 onClose={handleTogglePostSessionSurvey}
-                                totalSteps={2}
+                                totalSteps={3}
                             />
                             { _.map(newSoreBodyParts, (bodyPart, i) =>
                                 <View
@@ -326,7 +412,7 @@ class PostSessionSurvey extends Component {
                             )}
                             <BackNextButtons
                                 isValid={isFormValidItems.isPrevSorenessValid}
-                                onNextClick={() => this._checkNextStep(2)}
+                                onNextClick={() => this._checkNextStep(3)}
                                 showNextBtn={true}
                             />
                         </ScrollView>
@@ -345,10 +431,10 @@ class PostSessionSurvey extends Component {
                         stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
-                            currentStep={2}
-                            onBack={() => this._renderPreviousPage(3)}
+                            currentStep={3}
+                            onBack={() => this._renderPreviousPage(4)}
                             onClose={handleTogglePostSessionSurvey}
-                            totalSteps={2}
+                            totalSteps={3}
                         />
                         <AreasOfSoreness
                             handleAreaOfSorenessClick={(body, isAllGood, showFAB, resetSections) => {
@@ -383,7 +469,7 @@ class PostSessionSurvey extends Component {
                             }
                             onNextClick={() => {
                                 this.setState({ isActionButtonVisible: false, });
-                                this._renderNextPage(3, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
+                                this._renderNextPage(4, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
                             }}
                             showSubmitBtn={
                                 (this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea) ?
@@ -401,10 +487,10 @@ class PostSessionSurvey extends Component {
                         stickyHeaderIndices={[0]}
                     >
                         <ProgressPill
-                            currentStep={2}
-                            onBack={() => this._renderPreviousPage(4)}
+                            currentStep={3}
+                            onBack={() => this._renderPreviousPage(5)}
                             onClose={handleTogglePostSessionSurvey}
-                            totalSteps={2}
+                            totalSteps={3}
                         />
                         {_.map(areaOfSorenessClicked, (area, i) => (
                             <View
@@ -438,7 +524,7 @@ class PostSessionSurvey extends Component {
                         <BackNextButtons
                             handleFormSubmit={() => handleFormSubmit()}
                             isValid={isFormValidItems.areAreasOfSorenessValid}
-                            onNextClick={() => this._renderNextPage(4, isFormValidItems)}
+                            onNextClick={() => this._renderNextPage(5, isFormValidItems)}
                             showSubmitBtn={true}
                         />
                     </ScrollView>

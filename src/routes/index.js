@@ -46,6 +46,9 @@ import BluetoothConnect3SensorComponent from '../components/kit/BluetoothConnect
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
+import ExerciseListContainer from '../containers/myPlan/ExerciseList';
+import ExerciseListComponent from '../components/myPlan/ExerciseList';
+
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
@@ -186,6 +189,13 @@ const Index = (
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
                 type={'replace'}
+            />
+            <Scene
+                Layout={ExerciseListComponent}
+                component={ExerciseListContainer}
+                hideNavBar={true}
+                key={'exerciseList'}
+                panHandlers={null}
             />
             <Scene
                 Layout={CoachesDashboardComponent}

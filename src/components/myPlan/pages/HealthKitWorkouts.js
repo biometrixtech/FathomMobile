@@ -222,7 +222,7 @@ class HealthKitWorkouts extends PureComponent {
                     currentStep={1}
                     onBack={pageIndex > 0 ? () => this._updateBackPageIndex(pageIndex - 1) : null}
                     onClose={handleTogglePostSessionSurvey}
-                    totalSteps={isPostSession ? 2 : 3}
+                    totalSteps={3}
                 />
 
                 <Pages

@@ -17,6 +17,7 @@ import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
 import Indicator from './Indicator';
 import ListItem from './ListItem';
+import MultiSwitch from './MultiSwitch';
 import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
@@ -45,6 +46,7 @@ export {
     FormInput,
     Indicator,
     ListItem,
+    MultiSwitch,
     ProgressBar,
     ProgressCircle,
     RadioButton,

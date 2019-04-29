@@ -4871,6 +4871,13 @@ prop-types@15.5.10:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
 
+prop-types@15.6.2:
+  version "15.6.2"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
+  dependencies:
+    loose-envify "^1.3.1"
+    object-assign "^4.1.1"
+
 prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.5.9, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
@@ -5656,6 +5663,12 @@ rimraf@~2.2.6:
 "rn-apple-healthkit@https://github.com/mazenchami/rn-apple-healthkit":
   version "0.6.4"
   resolved "https://github.com/mazenchami/rn-apple-healthkit#f962761282b7397c98586fc27f1f7ec7ef271405"
+
+rn-placeholder@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rn-placeholder/-/rn-placeholder-2.0.0.tgz#8d72a432e9a6b02f0b3cb7de8ddf22b200b80ffd"
+  dependencies:
+    prop-types "15.6.2"
 
 rn-sliding-up-panel@^2.1.0:
   version "2.1.1"

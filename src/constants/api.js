@@ -5,7 +5,7 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/3_1';
+const plansAPIVersion = '/plans/4_0';
 const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_2';
 

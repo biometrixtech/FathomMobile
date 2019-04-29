@@ -5,7 +5,7 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/3_1';
+const plansAPIVersion = '/plans/4_0';
 const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_2';
 
@@ -94,6 +94,7 @@ export default {
 
     PREPROCESSING_APIs: {
         DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        TEST: 'https://apis.test.fathomai.com',
         QA:   'https://apis.qa.fathomai.com/preprocessing',
         PROD: 'https://apis.production.fathomai.com/preprocessing',
     },
@@ -108,9 +109,10 @@ export default {
     ]),
 
     HARDWARE_APIs: {
-        DEV:  'https://apis.dev.fathomai.com/hardware',
-        QA:   'https://apis.qa.fathomai.com/hardware',
-        PROD: 'https://apis.production.fathomai.com/hardware',
+        DEV:  'https://apis.dev.fathomai.com',
+        TEST: 'https://apis.test.fathomai.com',
+        QA:   'https://apis.qa.fathomai.com',
+        PROD: 'https://apis.production.fathomai.com',
     },
 
     // hardwareHostname: 'https://apis.production.fathomai.com', // deployment

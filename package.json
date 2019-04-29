@@ -74,6 +74,7 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "rn-apple-healthkit": "https://github.com/mazenchami/rn-apple-healthkit",
+    "rn-placeholder": "^2.0.0",
     "rn-sliding-up-panel": "^2.1.0",
     "tcomb-form-native": "^0.6.20",
     "uuid-by-string": "0.6.0"

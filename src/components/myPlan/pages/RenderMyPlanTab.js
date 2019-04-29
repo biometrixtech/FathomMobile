@@ -61,9 +61,9 @@ const RenderMyPlanTab = ({
     let page0Width = AppSizes.screen.widthThird;
     let page1Width = AppSizes.screen.widthThird;
     let page2Width = AppSizes.screen.widthThird;
-    let page0ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
-    let page1ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
-    let page2ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+    let page0ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkSlate : AppColors.zeplin.lightSlate, borderBottomWidth: 3,};
+    let page1ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkSlate : AppColors.zeplin.lightSlate, borderBottomWidth: 3,};
+    let page2ExtraStyles = {borderBottomColor: isTabActive ? AppColors.zeplin.darkSlate : AppColors.zeplin.lightSlate, borderBottomWidth: 3,};
     let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page0Width,}];
     let page1Styles = [AppStyles.centerTabBar, page1ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page1Width,}];
     let page2Styles = [AppStyles.rightTabBar, page2ExtraStyles, {paddingBottom: AppSizes.paddingXSml, width: page2Width,}];
@@ -95,7 +95,7 @@ const RenderMyPlanTab = ({
                             updatePageState(page === 0 ? event.nativeEvent.layout : page0, page === 1 ? event.nativeEvent.layout : page1, page === 2 ? event.nativeEvent.layout : page2)
                         }
                         style={{
-                            color:    isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate,
+                            color:    isTabActive ? AppColors.zeplin.darkSlate : AppColors.zeplin.lightSlate,
                             fontSize: isTabActive ? AppFonts.scaleFont(22) : AppFonts.scaleFont(18),
                         }}
                     >
