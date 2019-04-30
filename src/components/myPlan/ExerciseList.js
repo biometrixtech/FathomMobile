@@ -2,7 +2,6 @@
  * Exercise List
  *
     <ExerciseList
-        clearCompletedExercises={clearCompletedExercises}
         markStartedRecovery={markStartedRecovery}
         plan={plan}
         setCompletedExercises={setCompletedExercises}
@@ -17,13 +16,13 @@ import PropTypes from 'prop-types';
 import { ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
 import { Button, FathomModal, MultiSwitch, Spacer, TabIcon, Text, } from '../custom';
-import { PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 import { store, } from '../../store';
 
 // Components
-import { ExerciseListItem, Exercises, GoalPill, } from './pages';
+import { ExerciseCompletionModal, ExerciseListItem, Exercises, GoalPill, } from './pages';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -47,22 +46,29 @@ class ExerciseList extends Component {
                     :
                     1;
         this.state = {
-            isSelectedExerciseModalOpen: false,
-            priority:                    priorityIndex,
-            selectedExercise:            {},
+            isExerciseCompletionModalOpen: false,
+            isSelectedExerciseModalOpen:   false,
+            priority:                      priorityIndex,
+            selectedExercise:              {},
         };
         this._scrollViewRef = {};
         this._exerciseListRef = {};
+        this._timer = null;
+    }
+
+    componentWillUnmount = () => {
+        // clear timers
+        clearInterval(this._timer);
     }
 
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
         this.setState({
             isSelectedExerciseModalOpen: isModalOpen,
-            selectedExercise:            exerciseObj ? exerciseObj : {},
+            selectedExercise:            exerciseObj,
         });
     }
 
-    _handleCompleteExercise = (exerciseId, setNumber, recovery_type) => {
+    _handleCompleteExercise = (exerciseId, setNumber) => {
         const { markStartedRecovery, plan, setCompletedExercises, } = this.props;
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         // add or remove exercise
@@ -74,6 +80,9 @@ class ExerciseList extends Component {
         }
         // Mark Recovery as started, if logic passes
         let clonedPlan = _.cloneDeep(plan);
+        let dailyPlanObj = clonedPlan ? clonedPlan.dailyPlan[0] : false;
+        let isPrepareActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active;
+        let recovery_type = isPrepareActive ? 'pre' : 'post';
         let startDate = recovery_type === 'pre' ?
             clonedPlan.dailyPlan[0].pre_active_rest.start_date
             : recovery_type === 'post' ?
@@ -93,12 +102,6 @@ class ExerciseList extends Component {
         setCompletedExercises(newCompletedExercises);
     }
 
-    _toggleCompletedAMPMRecoveryModal = () => {
-        this.props.clearCompletedExercises();
-        // TODO: FIX MEEE
-        this.setState({ isCompletedAMPMRecoveryModalOpen: !this.state.isCompletedAMPMRecoveryModalOpen, });
-    }
-
     _scrollToExerciseList = () => {
         this._scrollViewRef.scrollTo({
             x:        this._exerciseListRef.x,
@@ -115,10 +118,11 @@ class ExerciseList extends Component {
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
+        let { updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
-        let newUserObj = _.cloneDeep(this.props.user);
+        let newUserObj = _.cloneDeep(user);
         newUserObj.first_time_experience.push(value);
         // update reducer as API might take too long to return a value
         store.dispatch({
@@ -126,7 +130,7 @@ class ExerciseList extends Component {
             data: newUserObj
         });
         // update user object
-        this.props.updateUser(newUserPayloadObj, this.props.user.id)
+        updateUser(newUserPayloadObj, user.id)
             .then(res => {
                 if(callback) {
                     callback();
@@ -135,8 +139,8 @@ class ExerciseList extends Component {
     }
 
     render = () => {
-        const { isSelectedExerciseModalOpen, priority, selectedExercise, } = this.state;
-        let { plan, user, } = this.props;
+        const { isExerciseCompletionModalOpen, isSelectedExerciseModalOpen, priority, selectedExercise, } = this.state;
+        let { patchActiveRecovery, plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let completedExercises = plan.completedExercises;
         let isPrepareActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active;
@@ -211,7 +215,7 @@ class ExerciseList extends Component {
                             buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                             containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
                             disabled={!firstExerciseFound}
-                            onPress={() => this._toggleSelectedExercise(firstExerciseFound, !this.state.isSelectedExerciseModalOpen)}
+                            onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
                             title={'Start'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}
                         />
@@ -244,7 +248,7 @@ class ExerciseList extends Component {
                                 disabledStyle={buttonDisabledStyle}
                                 disabledTitleStyle={{color: AppColors.white,}}
                                 disabled={isButtonDisabled}
-                                onPress={this._toggleCompletedAMPMRecoveryModal}
+                                onPress={() => this.setState({ isExerciseCompletionModalOpen: true, })}
                                 title={buttonTitle}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
                             />
@@ -262,11 +266,11 @@ class ExerciseList extends Component {
                         completedExercises={completedExercises}
                         exerciseList={exerciseList}
                         handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
-                            this._handleCompleteExercise(exerciseId, setNumber, isPrepareActive ? 'pre' : 'post');
+                            this._handleCompleteExercise(exerciseId, setNumber);
                             if(!hasNextExercise) {
                                 this.setState(
                                     { isSelectedExerciseModalOpen: false, },
-                                    // () => { this.goToPageTimer = _.delay(() => this.setState({ isRecoverExerciseCompletionModalOpen: true, }), 750); }
+                                    () => { this._timer = _.delay(() => this.setState({ isExerciseCompletionModalOpen: true, }), 750); }
                                 );
                             }
                         }}
@@ -275,18 +279,31 @@ class ExerciseList extends Component {
                         user={user}
                     />
                 </FathomModal>
+                <ExerciseCompletionModal
+                    completedExercises={completedExercises}
+                    exerciseList={exerciseList}
+                    isModalOpen={isExerciseCompletionModalOpen}
+                    onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
+                    onComplete={() => {
+                        this.setState({ isExerciseCompletionModalOpen: false, });
+                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
+                        patchActiveRecovery(newCompletedExercises, isPrepareActive ? 'pre' : 'post')
+                            .then(res => Actions.myPlan())
+                            .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
+                    }}
+                    user={user}
+                />
             </View>
         );
     }
 }
 
 ExerciseList.propTypes = {
-    clearCompletedExercises: PropTypes.func.isRequired,
-    markStartedRecovery:     PropTypes.func.isRequired,
-    plan:                    PropTypes.object.isRequired,
-    setCompletedExercises:   PropTypes.func.isRequired,
-    updateUser:              PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    markStartedRecovery:   PropTypes.func.isRequired,
+    plan:                  PropTypes.object.isRequired,
+    setCompletedExercises: PropTypes.func.isRequired,
+    updateUser:            PropTypes.func.isRequired,
+    user:                  PropTypes.object.isRequired,
 };
 
 ExerciseList.defaultProps = {};

@@ -14,9 +14,9 @@ import Routes from './routes';
 // import third-party libraries
 import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
+import * as Fabric from 'react-native-fabric';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
-import * as Fabric from 'react-native-fabric';
 import PushNotification from 'react-native-push-notification';
 
 // setup consts

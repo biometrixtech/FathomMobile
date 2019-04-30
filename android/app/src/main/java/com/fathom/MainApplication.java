@@ -27,6 +27,7 @@ import com.smixx.fabric.FabricPackage;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 import com.reactlibrary.RNWifiPackage;
+import com.ijzerenhein.magicmove.ReactMagicMovePackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +61,8 @@ public class MainApplication extends Application implements ReactApplication {
                 new LinearGradientPackage(),
                 new ReactNativePushNotificationPackage(),
                 new FabricPackage(),
-                new RNWifiPackage()
+                new RNWifiPackage(),
+                new ReactMagicMovePackage()
             );
         }
 

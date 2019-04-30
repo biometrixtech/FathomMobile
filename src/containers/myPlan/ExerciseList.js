@@ -6,7 +6,6 @@ import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const ExerciseList = ({
     Layout,
-    clearCompletedExercises,
     markStartedRecovery,
     plan,
     setCompletedExercises,
@@ -15,7 +14,6 @@ const ExerciseList = ({
     user,
 }) => (
     <Layout
-        clearCompletedExercises={clearCompletedExercises}
         markStartedRecovery={markStartedRecovery}
         plan={plan}
         setCompletedExercises={setCompletedExercises}
@@ -26,13 +24,12 @@ const ExerciseList = ({
 );
 
 ExerciseList.propTypes = {
-    clearCompletedExercises: PropTypes.func.isRequired,
-    markStartedRecovery:     PropTypes.func.isRequired,
-    plan:                    PropTypes.object.isRequired,
-    setCompletedExercises:   PropTypes.func.isRequired,
-    toggleRecoveryGoal:      PropTypes.func.isRequired,
-    updateUser:              PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    markStartedRecovery:   PropTypes.func.isRequired,
+    plan:                  PropTypes.object.isRequired,
+    setCompletedExercises: PropTypes.func.isRequired,
+    toggleRecoveryGoal:    PropTypes.func.isRequired,
+    updateUser:            PropTypes.func.isRequired,
+    user:                  PropTypes.object.isRequired,
 };
 
 ExerciseList.defaultProps = {};
@@ -43,11 +40,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearCompletedExercises: PropTypes.func.isRequired,
-    markStartedRecovery:     PlanActions.markStartedRecovery,
-    setCompletedExercises:   PlanActions.setCompletedExercises,
-    toggleRecoveryGoal:      PlanActions.toggleRecoveryGoal,
-    updateUser:              UserActions.updateUser,
+    markStartedRecovery:   PlanActions.markStartedRecovery,
+    setCompletedExercises: PlanActions.setCompletedExercises,
+    toggleRecoveryGoal:    PlanActions.toggleRecoveryGoal,
+    updateUser:            UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExerciseList);
