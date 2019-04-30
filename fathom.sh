@@ -115,12 +115,12 @@ initialize() {
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
-            android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
-            nvm_string='/.nvm'
-            android_nvm_location=${android_nvm_location%$nvm_string}
-            android_nvm_location=${android_nvm_location////\\/}
-            old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
-            sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
+            # android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
+            # nvm_string='/.nvm'
+            # android_nvm_location=${android_nvm_location%$nvm_string}
+            # android_nvm_location=${android_nvm_location////\\/}
+            # old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
+            # sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
             # iOS patches
             # none for now...

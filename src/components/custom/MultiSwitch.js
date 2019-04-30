@@ -17,7 +17,6 @@ import {
     Platform,
     StyleSheet,
     TouchableOpacity,
-    Vibration,
     View,
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -198,10 +197,7 @@ export default class MultiSwitch extends Component {
         }
         this.setState(
             { selectedPosition: index, },
-            () => {
-                Vibration.vibrate(1000);
-                this.props.onStatusChanged(index);
-            }
+            () => this.props.onStatusChanged(index),
         );
     }
 
