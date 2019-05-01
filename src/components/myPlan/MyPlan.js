@@ -787,7 +787,7 @@ class MyPlan extends Component {
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
-            completedPreActiveReset,
+            compiledActivities,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -835,12 +835,12 @@ class MyPlan extends Component {
                                         />
                                     }
                                 </View>
-                                { _.map(completedPreActiveReset, (activeRest, key) =>
+                                { _.map(compiledActivities, (activity, key) =>
                                     <ActivityTab
                                         completed={true}
                                         key={key}
                                         showBottomGap={true}
-                                        title={'CARE & ACTIVATE'}
+                                        title={activity.title}
                                     />
                                 )}
                                 { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) &&
@@ -1009,7 +1009,7 @@ class MyPlan extends Component {
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
-            completedPostActiveReset,
+            compiledActivities,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -1038,13 +1038,13 @@ class MyPlan extends Component {
                     animation={'fade'}
                     whenReadyRender={() =>
                         <View>
-                            { _.map(completedPostActiveReset, (activeRest, key) =>
+                            { _.map(compiledActivities, (activity, key) =>
                                 <ActivityTab
                                     completed={true}
                                     key={key}
                                     paddingStyle={key === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
                                     showBottomGap={true}
-                                    title={'CARE & ACTIVATE'}
+                                    title={activity.title}
                                 />
                             )}
                             { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) ?
@@ -1054,7 +1054,7 @@ class MyPlan extends Component {
                                     id={'recoverCareActivate'}
                                     locked={isCareAndActivateLocked}
                                     onPress={() => Actions.exerciseList()}
-                                    paddingStyle={isCareAndActivateCompleted && completedPostActiveReset.length === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
+                                    paddingStyle={isCareAndActivateCompleted && compiledActivities.length === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
                                     showBottomGap={isIceActive}
                                     subtitle={isCareAndActivateLocked ? '' : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                     title={'CARE & ACTIVATE'}

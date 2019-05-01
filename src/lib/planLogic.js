@@ -1064,22 +1064,35 @@ const PlanLogic = {
         };
     },
 
+    addTitleToCompletedActivityHelper: (obj, title) => {
+        if(!obj) {
+            return [];
+        }
+        return _.map(obj, activity => {
+            let newCompletedActivity = _.cloneDeep(activity);
+            newCompletedActivity.title = title;
+            return newCompletedActivity;
+        });
+    },
+
     /**
       * Handle MyPlan Render Recover Tab Logic
       * - MyPlan
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
-        let completedPostActiveReset = dailyPlanObj.completed_post_active_rest && dailyPlanObj.completed_post_active_rest.length > 0 ?
-            _.sortBy(dailyPlanObj.completed_post_active_rest, ['event_date'])
-            :
-            [];
+        let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
+        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
+        let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
+        let completedActiveRecovery = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_active_recovery, 'ACTIVE RECOVERY');
+        let compiledActivities = _.concat(completedActiveRest, completedIce, completedCWI, completedActiveRecovery);
+        compiledActivities = _.sortBy(compiledActivities, ['event_date']);
         let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.post_active_rest && !dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
         let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.length > 0;
         return {
-            completedPostActiveReset,
+            compiledActivities,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -1093,17 +1106,18 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
-        let completedPreActiveReset = dailyPlanObj.completed_pre_active_rest && dailyPlanObj.completed_pre_active_rest.length > 0 ?
-            _.sortBy(dailyPlanObj.completed_pre_active_rest, ['event_date'])
-            :
-            [];
+        let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
+        let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
+        let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
+        let compiledActivities = _.concat(completedActiveRest, completedHeat, completedWarmUp);
+        compiledActivities = _.sortBy(compiledActivities, ['event_date']);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.pre_active_rest && !dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
         let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.length > 0;
         return {
-            completedPreActiveReset,
+            compiledActivities,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
