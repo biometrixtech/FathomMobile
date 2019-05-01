@@ -200,6 +200,7 @@ class MyPlan extends Component {
         super(props);
         let defaultState = _.cloneDeep(defaultPlanState);
         defaultState.healthData = props.healthData;
+        defaultState.isReadinessSurveyCompleted = !props.plan.dailyPlan[0].daily_readiness_survey_completed;
         this.state = defaultState;
         this.tabView = null;
         this.renderTab = this.renderTab.bind(this);
@@ -1126,7 +1127,7 @@ class MyPlan extends Component {
             isRecoverCalculating
         );
         return(
-            <MagicMove.Scene debug={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <MagicMove.Scene debug={false} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollableTabView
                         locked={isScrollLocked}
@@ -1163,6 +1164,7 @@ class MyPlan extends Component {
                     <FathomModal
                         isVisible={isPostSessionSurveyModalOpen}
                         style={{margin: 0,}}
+                        useNativeDriver={true}
                     >
                         <PostSessionSurvey
                             handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}

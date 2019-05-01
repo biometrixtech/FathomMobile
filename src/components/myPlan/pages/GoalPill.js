@@ -39,12 +39,12 @@ class GoalPill extends Component {
     componentDidUpdate = prevProps => {
         if(prevProps.isSelected !== this.props.isSelected && this.props.isSelected) {
             Animated.timing(this._animatedValue, {
-                duration: 500,
+                duration: 250,
                 toValue:  1,
             }).start();
         } else if(prevProps.isSelected !== this.props.isSelected && !this.props.isSelected) {
             Animated.timing(this._animatedValue, {
-                duration: 500,
+                duration: 250,
                 toValue:  0,
             }).start();
         }
@@ -78,7 +78,7 @@ class GoalPill extends Component {
                         <TabIcon
                             color={isSelected ? AppColors.white : AppColors.zeplin.lightSplash}
                             icon={'add'}
-                            size={AppFonts.scaleFont(14)}
+                            size={AppFonts.scaleFont(20)}
                         />
                     </Animated.View>
                 </View>

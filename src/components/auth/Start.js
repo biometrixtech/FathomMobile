@@ -202,11 +202,7 @@ class Start extends Component {
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() =>
-                _.delay(() => {
-                    this.hideSplash(() => AppUtil.routeOnLogin(userObj));
-                }, 500)
-            )
+            .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);

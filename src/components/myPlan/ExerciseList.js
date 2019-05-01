@@ -168,7 +168,6 @@ class ExerciseList extends Component {
         return (
             <MagicMove.Scene debug={false} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
-                    <View style={{height: AppSizes.statusBarHeight,}} />
                     <ScrollView
                         nestedScrollEnabled={true}
                         ref={ref => {this._scrollViewRef = ref;}}
@@ -218,10 +217,10 @@ class ExerciseList extends Component {
                                     onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
                                     selectedIndex={priority}
                                 />
-                                <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginTop: AppSizes.paddingXSml, width: AppSizes.screen.width,}}>
-                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(9), textAlign: 'center', width: AppSizes.screen.widthThird,}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
-                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(9), textAlign: 'center', width: AppSizes.screen.widthThird,}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
-                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(9), textAlign: 'center', width: AppSizes.screen.widthThird,}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
+                                <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingXSml, width: (AppSizes.screen.width - AppSizes.paddingLrg),}}>
+                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
+                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
+                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                 </View>
                                 {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
                                     <View>

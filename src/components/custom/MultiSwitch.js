@@ -25,13 +25,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 // consts and custom components
-import { AppColors, AppFonts, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, } from '../../constants';
 import { Text, } from './';
 
 // setup variables
 const { width, } = Dimensions.get('window');
 const Metrics = {
-    containerWidth: (width - 30),
+    containerWidth: (width - AppSizes.paddingLrg),
     switchWidth:    (width / 2.7),
 };
 
@@ -93,13 +93,10 @@ export default class MultiSwitch extends Component {
         this.isParentScrollDisabled = false;
     }
 
-    componentWillMount() {
+    componentWillMount = () => {
         this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder:        () => true,
-            onStartShouldSetPanResponderCapture: () => true,
-            onMoveShouldSetPanResponder:         () => true,
-            onMoveShouldSetPanResponderCapture:  () => true,
-            onPanResponderGrant: () => {
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderGrant:         () => {
                 // disable parent scroll if slider is inside a scrollview
                 if (!this.isParentScrollDisabled) {
                     this.props.disableScroll(false);
@@ -114,9 +111,11 @@ export default class MultiSwitch extends Component {
                     }
                 }
             },
-            onPanResponderTerminationRequest: () => true,
-            onPanResponderRelease: (evt, gestureState) => {
+            onPanResponderTerminationRequest: () => false,
+            onPanResponderRelease:            (evt, gestureState) => {
+                console.log('hello onPanResponderRelease');
                 if (!this.props.disableSwitch) {
+                    console.log(gestureState);
                     let finalValue = gestureState.dx + this.state.posValue;
                     this.isParentScrollDisabled = false;
                     this.props.disableScroll(true);
@@ -148,7 +147,8 @@ export default class MultiSwitch extends Component {
                 // Returns whether this component should block native components from becoming the JS
                 // responder. Returns true by default. Is currently only supported on android.
                 return true;
-            }
+            },
+            onStartShouldSetPanResponder: () => false,
         });
         this._onStatusChanged(this.props.selectedIndex);
     }
@@ -201,7 +201,7 @@ export default class MultiSwitch extends Component {
         );
     }
 
-    render() {
+    render = () => {
         const { buttons, selectedIndex, } = this.props;
         return (
             <View style={styles.containerWrapper}>
