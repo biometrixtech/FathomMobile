@@ -7,6 +7,7 @@ import { plan as PlanActions, user as UserActions, } from '../../actions';
 const ExerciseList = ({
     Layout,
     markStartedRecovery,
+    patchActiveRecovery,
     plan,
     setCompletedExercises,
     toggleRecoveryGoal,
@@ -15,6 +16,7 @@ const ExerciseList = ({
 }) => (
     <Layout
         markStartedRecovery={markStartedRecovery}
+        patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         setCompletedExercises={setCompletedExercises}
         toggleRecoveryGoal={toggleRecoveryGoal}
@@ -25,6 +27,7 @@ const ExerciseList = ({
 
 ExerciseList.propTypes = {
     markStartedRecovery:   PropTypes.func.isRequired,
+    patchActiveRecovery:   PropTypes.func.isRequired,
     plan:                  PropTypes.object.isRequired,
     setCompletedExercises: PropTypes.func.isRequired,
     toggleRecoveryGoal:    PropTypes.func.isRequired,
@@ -41,6 +44,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
     markStartedRecovery:   PlanActions.markStartedRecovery,
+    patchActiveRecovery:   PlanActions.patchActiveRecovery,
     setCompletedExercises: PlanActions.setCompletedExercises,
     toggleRecoveryGoal:    PlanActions.toggleRecoveryGoal,
     updateUser:            UserActions.updateUser,

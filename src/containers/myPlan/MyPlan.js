@@ -15,7 +15,6 @@ const MyPlan = ({
     network,
     noSessions,
     notification,
-    patchActiveRecovery,
     plan,
     postReadinessSurvey,
     postSessionSurvey,
@@ -34,7 +33,6 @@ const MyPlan = ({
         network={network}
         noSessions={noSessions}
         notification={notification}
-        patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
@@ -59,7 +57,6 @@ MyPlan.propTypes = {
         PropTypes.bool,
         PropTypes.string,
     ]).isRequired,
-    patchActiveRecovery:  PropTypes.func.isRequired,
     plan:                 PropTypes.object.isRequired,
     postReadinessSurvey:  PropTypes.func.isRequired,
     postSessionSurvey:    PropTypes.func.isRequired,
@@ -89,7 +86,6 @@ const mapDispatchToProps = {
     getMyPlan:               PlanActions.getMyPlan,
     getSoreBodyParts:        PlanActions.getSoreBodyParts,
     noSessions:              PlanActions.noSessions,
-    patchActiveRecovery:     PlanActions.patchActiveRecovery,
     postReadinessSurvey:     PlanActions.postReadinessSurvey,
     postSessionSurvey:       PlanActions.postSessionSurvey,
     setAppLogs:              PlanActions.setAppLogs,

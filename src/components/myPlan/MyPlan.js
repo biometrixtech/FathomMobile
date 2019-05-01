@@ -10,7 +10,6 @@
           network={network}
           noSessions={noSessions}
           notification={notification}
-          patchActiveRecovery={patchActiveRecovery}
           plan={plan}
           postReadinessSurvey={postReadinessSurvey}
           postSessionSurvey={postSessionSurvey}
@@ -24,7 +23,6 @@ import React, { Component, } from 'react';
 import {
     AppState,
     BackHandler,
-    ImageBackground,
     Platform,
     RefreshControl,
     ScrollView,
@@ -37,7 +35,7 @@ import PropTypes from 'prop-types';
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
 import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
-// import * as MagicMove from 'react-native-magic-move';
+import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
 import Placeholder, { Line, Media, } from 'rn-placeholder';
@@ -51,7 +49,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { ListItem, TabIcon, Text, } from '../custom';
+import { TabIcon, Text, } from '../custom';
 import { Button, FathomModal, Spacer, } from '../custom';
 import {
     DefaultListGap,
@@ -66,7 +64,6 @@ import { Loading, } from '../general';
 const tabs = ['PREPARE', 'TRAIN', 'RECOVER'];
 
 // global constants
-// const errorInARAPMessage = '\nPlease Swipe Down to Refresh!';
 // const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
 const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
 const timerDelay = 30000; // delay for X ms
@@ -92,13 +89,14 @@ const ActivityTab = ({
     id,
     locked = true,
     onPress = () => {},
+    paddingStyle = {paddingVertical: AppSizes.paddingMed,},
     showBottomGap = true,
     subtitle = 'Anytime before training',
     title = 'CARE & ACTIVATE',
 }) => (
     completed ?
         <View>
-            <View style={{flex: 1, flexDirection: 'row', paddingVertical: AppSizes.paddingMed,}}>
+            <View style={[paddingStyle, {flex: 1, flexDirection: 'row',}]}>
                 <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
                     <LottieView
                         autoPlay={true}
@@ -126,44 +124,40 @@ const ActivityTab = ({
                         type={locked ? 'material' : 'material-community'}
                     />
                 </View>
-                <View style={{flex: 1,}}>
-                    <ImageBackground
-                        imageStyle={{borderRadius: AppSizes.padding,}}
-                        source={backgroundImage}
-                        style={{flex: 1, marginLeft: AppSizes.padding,}}
-                    >
-                        <TouchableOpacity onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
-                            <ListItem
-                                chevron={
-                                    locked ?
-                                        false
-                                        :
-                                        <TabIcon
-                                            color={AppColors.white}
-                                            icon={'chevron-right'}
-                                            size={AppFonts.scaleFont(28)}
-                                            type={'material-community'}
-                                        />
-                                }
-                                containerStyle={{backgroundColor: 'transparent', padding: 0,}}
-                                subtitle={subtitle}
-                                subtitleStyle={[AppStyles.robotoRegular, {color: AppColors.white,}]}
-                                title={title}
-                                titleStyle={[AppStyles.oswaldRegular, {color: AppColors.white,}]}
-                            />
-                        </TouchableOpacity>
-                    </ImageBackground>
-                </View>
-                {/*<TouchableOpacity onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
-                    <View style={{backgroundColor: AppColors.transparent, flex: 1, padding: 0,}}>
+                <View style={{borderRadius: AppSizes.padding, flex: 1, marginLeft: AppSizes.padding,}}>
+                    <TouchableOpacity onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
                         <MagicMove.Image
-                            id={id}
+                            id={`${id}.image`}
                             resizeMode={'cover'}
                             source={backgroundImage}
-                            style={[{flex: 1,}, StyleSheet.absoluteFill]}
+                            style={[{borderRadius: AppSizes.padding, height: 'auto', width: null,}, StyleSheet.absoluteFill,]}
+                            useNativeDriver={false}
                         />
-                    </View>
-                </TouchableOpacity>*/}
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                            <View>
+                                <MagicMove.Text
+                                    id={`${id}.title`}
+                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(24),}]}
+                                    useNativeDriver={false}
+                                >
+                                    {title}
+                                </MagicMove.Text>
+                                { subtitle && subtitle.length > 0 &&
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12), marginTop: AppSizes.paddingXSml,}}>{subtitle}</Text>
+                                }
+                            </View>
+                            { !locked &&
+                                <TabIcon
+                                    color={AppColors.white}
+                                    containerStyle={[{justifyContent: 'center',}]}
+                                    icon={'chevron-right'}
+                                    size={AppFonts.scaleFont(28)}
+                                    type={'material-community'}
+                                />
+                            }
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
             { showBottomGap &&
                 <DefaultListGap
@@ -189,7 +183,6 @@ class MyPlan extends Component {
             PropTypes.bool,
             PropTypes.string,
         ]),
-        patchActiveRecovery:  PropTypes.func.isRequired,
         plan:                 PropTypes.object.isRequired,
         postReadinessSurvey:  PropTypes.func.isRequired,
         postSessionSurvey:    PropTypes.func.isRequired,
@@ -294,13 +287,9 @@ class MyPlan extends Component {
             !areObjectsDifferent &&
             plan.dailyPlan[0] &&
             prevProps.plan.dailyPlan[0] &&
-            prevProps.plan.dailyPlan[0].landing_screen !== plan.dailyPlan[0].landing_screen &&
-            (
-                prevProps.plan.dailyPlan[0].post_recovery_completed ||
-                prevProps.plan.dailyPlan[0].pre_recovery_completed
-            )
+            prevProps.plan.dailyPlan[0].landing_screen !== plan.dailyPlan[0].landing_screen
         ) {
-            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(prevProps.plan.dailyPlan[0]));
+            this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(plan.dailyPlan[0]));
         }
         // if we have workouts, handle RS or PSS
         if(!_.isEqual(prevProps.healthData, healthData) && healthData && healthData.workouts && healthData.workouts.length > 0) {
@@ -558,6 +547,7 @@ class MyPlan extends Component {
         const { clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
+            landingScreen,
             newPostSession,
             newPostSessionSessions,
             newRecoverObject,
@@ -565,6 +555,7 @@ class MyPlan extends Component {
         } = PlanLogic.handlePostSessionSurveySubmitLogic(postSession, train, recover, healthData);
         this.setState(
             {
+                goToScreen:                   landingScreen,
                 healthData:                   [],
                 train:                        newTrainObject,
                 isPostSessionSurveyModalOpen: false,
@@ -585,13 +576,8 @@ class MyPlan extends Component {
                 if(!areAllDeleted) {
                     clearCompletedExercises();
                 }
-                let landingScreen = areAllDeleted ?
-                    1
-                    : newPostSession.sessions_planned ?
-                        0
-                        :
-                        1;
-                this._goToScrollviewPage(landingScreen);
+                let newLandingScreen = response.daily_plans[0].landing_screen;
+                this._goToScrollviewPage(newLandingScreen);
             })
             .catch(error => {
                 this.setState({ isRecoverCalculating: false, });
@@ -716,12 +702,13 @@ class MyPlan extends Component {
     }
 
     _closeTrainSessionsCompletionModal = () => {
+        const { goToScreen, } = this.state;
         this.setState(
             {
                 isTrainSessionsCompletionModalOpen: false,
                 postSession:                        _.cloneDeep(defaultPlanState.postSession),
             },
-            () => { this.goToPageTimer = _.delay(() => { this._goToScrollviewPage(2) }, 500); }
+            () => { this.goToPageTimer = _.delay(() => this._goToScrollviewPage(goToScreen), 500); }
         );
     }
 
@@ -743,7 +730,7 @@ class MyPlan extends Component {
             !isPrepareSessionsCompletionModalOpen &&
             !isTrainSessionsCompletionModalOpen &&
             !loading &&
-            pageIndex
+            (pageIndex || pageIndex === 0)
         ) {
             this.goToPageTimer = _.delay(() => {
                 this.tabView.goToPage(pageIndex);
@@ -799,6 +786,7 @@ class MyPlan extends Component {
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
+            completedPreActiveReset,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -846,6 +834,14 @@ class MyPlan extends Component {
                                         />
                                     }
                                 </View>
+                                { _.map(completedPreActiveReset, (activeRest, key) =>
+                                    <ActivityTab
+                                        completed={true}
+                                        key={key}
+                                        showBottomGap={true}
+                                        title={'CARE & ACTIVATE'}
+                                    />
+                                )}
                                 { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) &&
                                     <ActivityTab
                                         backgroundImage={isCareAndActivateLocked ? require('../../../assets/images/standard/active_rest_locked.png') : require('../../../assets/images/standard/active_rest.png')}
@@ -1012,6 +1008,7 @@ class MyPlan extends Component {
         let { plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
+            completedPostActiveReset,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -1040,6 +1037,15 @@ class MyPlan extends Component {
                     animation={'fade'}
                     whenReadyRender={() =>
                         <View>
+                            { _.map(completedPostActiveReset, (activeRest, key) =>
+                                <ActivityTab
+                                    completed={true}
+                                    key={key}
+                                    paddingStyle={key === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
+                                    showBottomGap={true}
+                                    title={'CARE & ACTIVATE'}
+                                />
+                            )}
                             { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) ?
                                 <ActivityTab
                                     backgroundImage={isCareAndActivateLocked ? require('../../../assets/images/standard/active_rest_locked.png') : require('../../../assets/images/standard/active_rest.png')}
@@ -1047,6 +1053,7 @@ class MyPlan extends Component {
                                     id={'recoverCareActivate'}
                                     locked={isCareAndActivateLocked}
                                     onPress={() => Actions.exerciseList()}
+                                    paddingStyle={isCareAndActivateCompleted && completedPostActiveReset.length === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
                                     showBottomGap={isIceActive}
                                     subtitle={isCareAndActivateLocked ? '' : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                     title={'CARE & ACTIVATE'}
@@ -1118,69 +1125,68 @@ class MyPlan extends Component {
             isPrepCalculating ||
             isRecoverCalculating
         );
-        /*
-        <MagicMove.Scene debug={true} style={{flex: 1, backgroundColor: AppColors.white, flexDirection: 'column',}}></MagicMove.Scene>
-        */
         return(
-            <View style={{flex: 1,}}>
-                <ScrollableTabView
-                    locked={isScrollLocked}
-                    onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
-                    ref={tabView => { this.tabView = tabView; }}
-                    renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
-                    style={{backgroundColor: AppColors.white,}}
-                    tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
-                    tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
-                    tabBarUnderlineStyle={{height: 0,}}
-                >
-                    {this.renderPrepare(0)}
-                    {this.renderTrain(1)}
-                    {this.renderRecover(2)}
-                </ScrollableTabView>
-                <FathomModal
-                    isVisible={isReadinessSurveyModalOpen}
-                    style={{margin: 0,}}
-                >
-                    <ReadinessSurvey
-                        dailyReadiness={dailyReadiness}
-                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                        handleFormChange={this._handleDailyReadinessFormChange}
-                        handleFormSubmit={this._handleReadinessSurveySubmit}
-                        handleHealthDataFormChange={this._handleHealthDataFormChange}
-                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                        handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
-                        healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
-                        soreBodyParts={plan.soreBodyParts}
-                        typicalSessions={plan.typicalSessions}
-                        user={user}
-                    />
-                </FathomModal>
-                <FathomModal
-                    isVisible={isPostSessionSurveyModalOpen}
-                    style={{margin: 0,}}
-                >
-                    <PostSessionSurvey
-                        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
-                        handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
-                        handleHealthDataFormChange={this._handleHealthDataFormChange}
-                        handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
-                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                        healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
-                        postSession={postSession}
-                        soreBodyParts={plan.soreBodyParts}
-                        typicalSessions={plan.typicalSessions}
-                        user={user}
-                    />
-                </FathomModal>
-                { loading ?
-                    <Loading
-                        text={showLoadingText ? trainLoadingScreenText : null}
-                    />
-                    :
-                    null
-                }
-            </View>
+            <MagicMove.Scene debug={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+                <View style={{flex: 1,}}>
+                    <ScrollableTabView
+                        locked={isScrollLocked}
+                        onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
+                        ref={tabView => { this.tabView = tabView; }}
+                        renderTabBar={() => <ScrollableTabBar renderTab={this.renderTab} style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}} />}
+                        style={{backgroundColor: AppColors.white,}}
+                        tabBarActiveTextColor={AppColors.secondary.blue.hundredPercent}
+                        tabBarInactiveTextColor={AppColors.primary.grey.hundredPercent}
+                        tabBarUnderlineStyle={{height: 0,}}
+                    >
+                        {this.renderPrepare(0)}
+                        {this.renderTrain(1)}
+                        {this.renderRecover(2)}
+                    </ScrollableTabView>
+                    <FathomModal
+                        isVisible={isReadinessSurveyModalOpen}
+                        style={{margin: 0,}}
+                    >
+                        <ReadinessSurvey
+                            dailyReadiness={dailyReadiness}
+                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                            handleFormChange={this._handleDailyReadinessFormChange}
+                            handleFormSubmit={this._handleReadinessSurveySubmit}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
+                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
+                            healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                            soreBodyParts={plan.soreBodyParts}
+                            typicalSessions={plan.typicalSessions}
+                            user={user}
+                        />
+                    </FathomModal>
+                    <FathomModal
+                        isVisible={isPostSessionSurveyModalOpen}
+                        style={{margin: 0,}}
+                    >
+                        <PostSessionSurvey
+                            handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                            handleFormChange={this._handlePostSessionFormChange}
+                            handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
+                            handleHealthDataFormChange={this._handleHealthDataFormChange}
+                            handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
+                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
+                            postSession={postSession}
+                            soreBodyParts={plan.soreBodyParts}
+                            typicalSessions={plan.typicalSessions}
+                            user={user}
+                        />
+                    </FathomModal>
+                    { loading ?
+                        <Loading
+                            text={showLoadingText ? trainLoadingScreenText : null}
+                        />
+                        :
+                        null
+                    }
+                </View>
+            </MagicMove.Scene>
         );
     }
 }

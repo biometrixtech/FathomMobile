@@ -637,7 +637,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
 };
 
 const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Mobilize ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Mobilize' : ' Recovery'}`;
+    let buttonTitle = completedExercises.length > 0 ? 'Care & Activate Complete' : 'Check Boxes to Complete Care & Activate';
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.lightSlate,};

@@ -12,9 +12,11 @@ import { store } from './store';
 import Routes from './routes';
 
 // import third-party libraries
+import 'react-native-magic-move';
 import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import * as Fabric from 'react-native-fabric';
+import * as MagicMove from 'react-native-magic-move';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
@@ -205,39 +207,41 @@ class Root extends Component {
             );
         }
         return(
-            <View style={{flex: 1,}}>
-                <Provider store={this.props.store}>
-                    <PersistGate
-                        loading={null}
-                        persistor={this.props.persistor}
-                    >
-                        <Router
-                            closeDropdownAlert={this._closeDropdownAlert}
-                            showDropdownAlert={this._showDropdownAlert}
+            <MagicMove.Provider>
+                <View style={{flex: 1,}}>
+                    <Provider store={this.props.store}>
+                        <PersistGate
+                            loading={null}
+                            persistor={this.props.persistor}
                         >
-                            <Stack key={'root'}>
-                                {Routes}
-                            </Stack>
-                        </Router>
-                    </PersistGate>
-                </Provider>
-                <DropdownAlert
-                    closeInterval={0}
-                    containerStyle={{backgroundColor: AppColors.alerts.errorBackground,}}
-                    defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
-                    defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
-                    messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
-                    onCancel={data => {}}
-                    onClose={data => {}}
-                    ref={ref => {this._dropdown = ref;}}
-                    renderCancel={props => this._renderDropdownImage(props, 'cancel')}
-                    renderImage={props => this._renderDropdownImage(props, 'left')}
-                    showCancel={true}
-                    translucent={Platform.OS === 'ios' ? false : true}
-                    updateStatusBar={Platform.OS === 'ios' ? true : false}
-                    useNativeDriver={true}
-                />
-            </View>
+                            <Router
+                                closeDropdownAlert={this._closeDropdownAlert}
+                                showDropdownAlert={this._showDropdownAlert}
+                            >
+                                <Stack key={'root'}>
+                                    {Routes}
+                                </Stack>
+                            </Router>
+                        </PersistGate>
+                    </Provider>
+                    <DropdownAlert
+                        closeInterval={0}
+                        containerStyle={{backgroundColor: AppColors.alerts.errorBackground,}}
+                        defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
+                        defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
+                        messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
+                        onCancel={data => {}}
+                        onClose={data => {}}
+                        ref={ref => {this._dropdown = ref;}}
+                        renderCancel={props => this._renderDropdownImage(props, 'cancel')}
+                        renderImage={props => this._renderDropdownImage(props, 'left')}
+                        showCancel={true}
+                        translucent={Platform.OS === 'ios' ? false : true}
+                        updateStatusBar={Platform.OS === 'ios' ? true : false}
+                        useNativeDriver={true}
+                    />
+                </View>
+            </MagicMove.Provider>
         );
     }
 }

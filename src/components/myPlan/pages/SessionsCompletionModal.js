@@ -71,7 +71,7 @@ class SessionsCompletionModal extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen) {
+        if(prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) {
             let filteredIconSessions = _.filter(this.props.sessions, session => {
                 return (session.sport_name || session.sport_name === 0) ||
                     (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
@@ -128,10 +128,12 @@ class SessionsCompletionModal extends Component {
                     if(this.animation && this.animation.reset) { this.animation.reset(); }
                     if(this.animation2 && this.animation2.reset) { this.animation2.reset(); }
                     if(this.animation3 && this.animation3.reset) { this.animation3.reset(); }
+                    if((i + 1) === filteredIconSessions.length) {
+                        onClose();
+                    }
                 }
             );
         });
-        onClose();
     }
 
     render = () => {

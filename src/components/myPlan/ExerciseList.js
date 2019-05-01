@@ -3,6 +3,7 @@
  *
     <ExerciseList
         markStartedRecovery={markStartedRecovery}
+        patchActiveRecovery={patchActiveRecovery}
         plan={plan}
         setCompletedExercises={setCompletedExercises}
         toggleRecoveryGoal={toggleRecoveryGoal}
@@ -13,7 +14,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { Easing, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
@@ -26,6 +27,7 @@ import { ExerciseCompletionModal, ExerciseListItem, Exercises, GoalPill, } from 
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
+import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 
 /* Component ==================================================================== */
@@ -94,7 +96,7 @@ class ExerciseList extends Component {
             if(recovery_type === 'pre') {
                 newMyPlan[0].pre_active_rest.start_date = true;
             } else if(recovery_type === 'post') {
-                newMyPlan[0].post_recovery.start_date = true;
+                newMyPlan[0].post_active_rest.start_date = true;
             }
             markStartedRecovery(recovery_type, newMyPlan);
         }
@@ -160,20 +162,29 @@ class ExerciseList extends Component {
             return false;
         });
         let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(isPrepareActive, completedExercises);
+        let imageId = isPrepareActive ? 'prepareCareActivate' : 'recoverCareActivate';
+        let textId = isPrepareActive ? 'prepareCareActivate' : 'recoverCareActivate';
+        let sceneId = isPrepareActive ? 'prepareScene' : 'recoverScene';
         return (
-            <View style={{flex: 1,}}>
-                <View style={{height: AppSizes.statusBarHeight,}} />
-                <ScrollView
-                    nestedScrollEnabled={true}
-                    ref={ref => {this._scrollViewRef = ref;}}
-                    style={{backgroundColor: AppColors.white, flex: 1,}}
-                >
-                    <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
-                        <ImageBackground
-                            source={require('../../../assets/images/standard/active_rest.png')}
-                            style={{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg),}}
-                        >
+            <MagicMove.Scene debug={false} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+                <View style={{flex: 1,}}>
+                    <View style={{height: AppSizes.statusBarHeight,}} />
+                    <ScrollView
+                        nestedScrollEnabled={true}
+                        ref={ref => {this._scrollViewRef = ref;}}
+                        style={{backgroundColor: AppColors.white, flex: 1,}}
+                    >
+                        <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
                             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                                <MagicMove.Image
+                                    easing={Easing.in(Easing.cubic)}
+                                    id={`${imageId}.image`}
+                                    resizeMode={'cover'}
+                                    source={require('../../../assets/images/standard/active_rest.png')}
+                                    style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
+                                    transition={MagicMove.Transition.morph}
+                                    useNativeDriver={false}
+                                />
                                 <TabIcon
                                     color={AppColors.white}
                                     containerStyle={[{position: 'absolute', top: AppSizes.padding, left: AppSizes.padding,}]}
@@ -182,7 +193,16 @@ class ExerciseList extends Component {
                                     size={AppFonts.scaleFont(30)}
                                     type={'material-community'}
                                 />
-                                <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35),}}>{'CARE & ACTIVATE'}</Text>
+                                <MagicMove.Text
+                                    duration={600}
+                                    id={`${textId}.title`}
+                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35),}]}
+                                    transition={MagicMove.Transition.move}
+                                    useNativeDriver={false}
+                                    zIndex={10}
+                                >
+                                    {'CARE & ACTIVATE'}
+                                </MagicMove.Text>
                                 <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{`Anytime ${isPrepareActive ? 'before' : 'after'} training`}</Text>
                                 {_.map(plan.goals, (goal, key) =>
                                     <GoalPill
@@ -210,98 +230,104 @@ class ExerciseList extends Component {
                                     </View>
                                 }
                             </View>
-                        </ImageBackground>
-                        <Button
-                            buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
-                            containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
-                            disabled={!firstExerciseFound}
-                            onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
-                            title={'Start'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}
-                        />
-                    </View>
-                    <View onLayout={event => {this._exerciseListRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,};}}>
-                        <Text onPress={() => this._scrollToExerciseList()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingVertical: AppSizes.paddingSml, textAlign: 'center', textDecorationLine: 'none',}}>{'Preview'}</Text>
-                        {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
-                            exerciseIndex && exerciseIndex.length > 0 ?
-                                <View key={index}>
-                                    <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{index}</Text>
-                                    {_.map(exerciseIndex, (exercise, i) =>
-                                        <ExerciseListItem
-                                            completedExercises={completedExercises}
-                                            exercise={exercise}
-                                            goals={plan.goals}
-                                            handleCompleteExercise={this._handleCompleteExercise}
-                                            isLastItem={i + 1 === exerciseList.totalLength}
-                                            key={exercise.library_id+i}
-                                            priority={priority}
-                                            toggleSelectedExercise={this._toggleSelectedExercise}
-                                        />
-                                    )}
-                                </View>
+                            <Button
+                                buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
+                                containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
+                                disabled={!firstExerciseFound}
+                                onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
+                                title={'Start'}
+                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}
+                            />
+                        </View>
+                        <View onLayout={event => {this._exerciseListRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,};}}>
+                            <Text onPress={() => this._scrollToExerciseList()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingVertical: AppSizes.paddingSml, textAlign: 'center', textDecorationLine: 'none',}}>{'Preview'}</Text>
+                            {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
+                                exerciseIndex && exerciseIndex.length > 0 ?
+                                    <View key={index}>
+                                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{index}</Text>
+                                        {_.map(exerciseIndex, (exercise, i) =>
+                                            <ExerciseListItem
+                                                completedExercises={completedExercises}
+                                                exercise={exercise}
+                                                goals={plan.goals}
+                                                handleCompleteExercise={this._handleCompleteExercise}
+                                                isLastItem={i + 1 === exerciseList.totalLength}
+                                                key={exercise.library_id+i}
+                                                priority={priority}
+                                                toggleSelectedExercise={this._toggleSelectedExercise}
+                                            />
+                                        )}
+                                    </View>
+                                    :
+                                    null
+                            )}
+                            { exerciseList.totalLength > 0 ?
+                                <Button
+                                    buttonStyle={{backgroundColor: buttonBackgroundColor, borderRadius: 0, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}}
+                                    disabledStyle={buttonDisabledStyle}
+                                    disabledTitleStyle={{color: AppColors.white,}}
+                                    disabled={isButtonDisabled}
+                                    onPress={() => this.setState({ isExerciseCompletionModalOpen: true, })}
+                                    title={buttonTitle}
+                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
+                                />
                                 :
                                 null
-                        )}
-                        { exerciseList.totalLength > 0 ?
-                            <Button
-                                buttonStyle={{backgroundColor: buttonBackgroundColor, borderRadius: 0, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}}
-                                disabledStyle={buttonDisabledStyle}
-                                disabledTitleStyle={{color: AppColors.white,}}
-                                disabled={isButtonDisabled}
-                                onPress={() => this.setState({ isExerciseCompletionModalOpen: true, })}
-                                title={buttonTitle}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
-                            />
-                            :
-                            null
-                        }
-                    </View>
-                </ScrollView>
-                <FathomModal
-                    isVisible={isSelectedExerciseModalOpen}
-                    style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
-                >
-                    <Exercises
-                        closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                            }
+                        </View>
+                    </ScrollView>
+                    <FathomModal
+                        isVisible={isSelectedExerciseModalOpen}
+                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                    >
+                        <Exercises
+                            closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                            completedExercises={completedExercises}
+                            exerciseList={exerciseList}
+                            handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
+                                this._handleCompleteExercise(exerciseId, setNumber);
+                                if(!hasNextExercise) {
+                                    this.setState(
+                                        { isSelectedExerciseModalOpen: false, },
+                                        () => { this._timer = _.delay(() => this.setState({ isExerciseCompletionModalOpen: true, }), 750); }
+                                    );
+                                }
+                            }}
+                            handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            selectedExercise={selectedExercise}
+                            user={user}
+                        />
+                    </FathomModal>
+                    <ExerciseCompletionModal
                         completedExercises={completedExercises}
                         exerciseList={exerciseList}
-                        handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
-                            this._handleCompleteExercise(exerciseId, setNumber);
-                            if(!hasNextExercise) {
-                                this.setState(
-                                    { isSelectedExerciseModalOpen: false, },
-                                    () => { this._timer = _.delay(() => this.setState({ isExerciseCompletionModalOpen: true, }), 750); }
-                                );
-                            }
+                        isModalOpen={isExerciseCompletionModalOpen}
+                        onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
+                        onComplete={() => {
+                            this.setState(
+                                { isExerciseCompletionModalOpen: false, },
+                                () => {
+                                    let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
+                                    patchActiveRecovery(newCompletedExercises, isPrepareActive ? 'pre' : 'post')
+                                        .then(res => Actions.pop())
+                                        .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
+                                }
+                            );
                         }}
-                        handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-                        selectedExercise={selectedExercise}
                         user={user}
                     />
-                </FathomModal>
-                <ExerciseCompletionModal
-                    completedExercises={completedExercises}
-                    exerciseList={exerciseList}
-                    isModalOpen={isExerciseCompletionModalOpen}
-                    onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
-                    onComplete={() => {
-                        this.setState({ isExerciseCompletionModalOpen: false, });
-                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
-                        patchActiveRecovery(newCompletedExercises, isPrepareActive ? 'pre' : 'post')
-                            .then(res => Actions.myPlan())
-                            .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
-                    }}
-                    user={user}
-                />
-            </View>
+                </View>
+            </MagicMove.Scene>
         );
     }
 }
 
 ExerciseList.propTypes = {
     markStartedRecovery:   PropTypes.func.isRequired,
+    patchActiveRecovery:   PropTypes.func.isRequired,
     plan:                  PropTypes.object.isRequired,
     setCompletedExercises: PropTypes.func.isRequired,
+    toggleRecoveryGoal:    PropTypes.func.isRequired,
     updateUser:            PropTypes.func.isRequired,
     user:                  PropTypes.object.isRequired,
 };

@@ -71,7 +71,7 @@ class ExerciseCompletionModal extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen) {
+        if(prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) {
             this.mainTimer = _.delay(() => {
                 const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
@@ -108,10 +108,14 @@ class ExerciseCompletionModal extends Component {
             newProgressCounters[group] = 0;
             this.setState(
                 { progressCounters: newProgressCounters, },
-                () => { if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); } }
+                () => {
+                    if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); }
+                    if((_.indexOf(Object.keys(completionModalExerciseList), group) + 1) === Object.keys(completionModalExerciseList).length) {
+                        callback();
+                    }
+                }
             );
         });
-        callback();
     }
 
     render = () => {

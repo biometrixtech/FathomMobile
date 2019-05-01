@@ -2044,117 +2044,117 @@ it('Post Session Form Change - Strength and Conditioning Type Input', () => {
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('strength_and_conditioning_type', strengthConditioningType, false, false, false, postSessionDefaultState)).toEqual(expectedResult);
 });
 
-it('Active Prep Push Notification Result - FFF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - FFT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - FTT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - FTF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - TFF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - TTF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - TFT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Prep Push Notification Result - TTT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - FFF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - FFT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - FTT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - FTF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - TFF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - TTF', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, false);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - TFT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
-
-it('Active Recovery Push Notification Result - TTT', () => {
-    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, true);
-    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-});
+// it('Active Prep Push Notification Result - FFF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - FFT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - FTT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - FTF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - TFF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - TTF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - TFT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Prep Push Notification Result - TTT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - FFF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - FFT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - FTT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - FTF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - TFF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - TTF', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, false);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - TFT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
+//
+// it('Active Recovery Push Notification Result - TTT', () => {
+//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, true);
+//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+// });
 
 it('Daily Readiness Push Notification Result - FFF', () => {
     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_DAILY_READINESS', false, false, false);

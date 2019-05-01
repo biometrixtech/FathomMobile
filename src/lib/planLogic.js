@@ -23,12 +23,12 @@ const PlanLogic = {
             updatePushNotificationFlag: false,
         }
         // logic
-        if(props.notification === 'COMPLETE_ACTIVE_PREP' && !dailyPlan.pre_recovery_completed) {
+        if(props.notification === 'COMPLETE_ACTIVE_PREP' && !dailyPlan.pre_active_rest_completed) {
             // go to screen 0 & open active prep
             pushNotificationUpdate.newStateFields = _.update( state.prepare, 'isActiveRecoveryCollapsed', () => false);
             pushNotificationUpdate.stateName = 'prepare';
             pushNotificationUpdate.updatePushNotificationFlag = true;
-        } else if(props.notification === 'COMPLETE_ACTIVE_RECOVERY' && !dailyPlan.post_recovery.completed) {
+        } else if(props.notification === 'COMPLETE_ACTIVE_RECOVERY' && !dailyPlan.post_active_rest.completed) {
             // go to screen 2 & open active recovery
             pushNotificationUpdate.page = 2;
             pushNotificationUpdate.newStateFields = _.update( state.recover, 'isActiveRecoveryCollapsed', () => false);
@@ -963,6 +963,7 @@ const PlanLogic = {
             sessions:         [],
             sessions_planned: postSession.sessions_planned,
         };
+        let landingScreen = postSession.sessions_planned ? 0 : 2;
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
         let loggedSessions = postSession.sessions ?
             _.filter(postSession.sessions, session => session.sport_name && session.session_type && (session.post_session_survey.RPE === 0 || session.post_session_survey.RPE > 0))
@@ -1000,6 +1001,7 @@ const PlanLogic = {
             isActiveRecoveryCollapsed: false,
         });
         return {
+            landingScreen,
             newPostSession,
             newPostSessionSessions,
             newRecoverObject,
@@ -1068,11 +1070,16 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
+        let completedPostActiveReset = dailyPlanObj.completed_post_active_rest && dailyPlanObj.completed_post_active_rest.length > 0 ?
+            _.sortBy(dailyPlanObj.completed_post_active_rest, ['event_date'])
+            :
+            [];
         let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.post_active_rest && !dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
         let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.length > 0;
         return {
+            completedPostActiveReset,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
@@ -1086,12 +1093,17 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
+        let completedPreActiveReset = dailyPlanObj.completed_pre_active_rest && dailyPlanObj.completed_pre_active_rest.length > 0 ?
+            _.sortBy(dailyPlanObj.completed_pre_active_rest, ['event_date'])
+            :
+            [];
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.pre_active_rest && !dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
         let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.length > 0;
         return {
+            completedPreActiveReset,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
