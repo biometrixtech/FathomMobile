@@ -13,7 +13,7 @@
 import { Platform, } from 'react-native';
 
 // consts & libs
-import { Actions, } from '../constants';
+import { Actions, MyPlan as MyPlanConstants, } from '../constants';
 import { store } from '../store';
 import { AppAPI, PlanLogic, } from '../lib';
 
@@ -62,15 +62,37 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                     data: response.typical_sessions,
                 });
             } else {
-                let goals = PlanLogic.handleFindGoals(response.daily_plans[0]);
+                // setup variables to be used
+                let isPreActiveRest = response.daily_plans[0].pre_active_rest && response.daily_plans[0].pre_active_rest.active;
+                let activeRestObj = isPreActiveRest ? response.daily_plans[0].pre_active_rest : response.daily_plans[0].post_active_rest;
+                let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+                // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
+                let coolDownGoals = PlanLogic.handleFindGoals(response.daily_plans[0].cool_down, MyPlanConstants.coolDownExerciseListOrder);
+                let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+                let warmUpGoals = PlanLogic.handleFindGoals(response.daily_plans[0].warm_up, MyPlanConstants.warmUpExerciseListOrder);
+                let currentActiveRestGoals = store.getState().plan.activeRestGoals;
+                let areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoals, currentActiveRestGoals, 'goal_type').length;
+                let currentCoolDownGoals = store.getState().plan.coolDownGoals;
+                let areCoolDownGoalsAlreadySet = _.differenceBy(coolDownGoals, currentCoolDownGoals, 'goal_type').length;
+                let currentWarmUpGoals = store.getState().plan.warmUpGoals;
+                let areWarmUpGoalsAlreadySet = _.differenceBy(warmUpGoals, currentWarmUpGoals, 'goal_type').length;
                 // update goals if readiness survey is completed
                 dispatch({
-                    type: Actions.SET_GOALS,
-                    data: goals,
+                    type: Actions.SET_ACTIVE_REST_GOALS,
+                    data: areActiveRestGoalsAlreadySet > 0 ? activeRestGoals : currentActiveRestGoals,
+                });
+                dispatch({
+                    type: Actions.SET_COOL_DOWN_GOALS,
+                    data: areCoolDownGoalsAlreadySet > 0 ? coolDownGoals : currentCoolDownGoals,
+                });
+                dispatch({
+                    type: Actions.SET_WARM_UP_GOALS,
+                    data: areWarmUpGoalsAlreadySet > 0 ? warmUpGoals : currentWarmUpGoals,
                 });
             }
             return Promise.resolve(response);
-        }).catch(err => Promise.reject(AppAPI.handleError(err)));
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -91,6 +113,17 @@ const clearCompletedExercises = () => {
     return dispatch => Promise.resolve(
         dispatch({
             type: Actions.CLEAR_COMPLETED_EXERCISES,
+        })
+    );
+};
+
+/**
+  * Clear Completed Cool Down Exercises
+  */
+const clearCompletedCoolDownExercises = () => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.CLEAR_COMPLETED_COOL_DOWN_EXERCISES,
         })
     );
 };
@@ -142,6 +175,18 @@ const setCompletedFSExercises = exercise => {
 };
 
 /**
+  * Set Completed Cool Down Exercise
+  */
+const setCompletedCoolDownExercises = exercise => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.SET_COMPLETED_COOL_DOWN_EXERCISES,
+            data: exercise,
+        })
+    );
+};
+
+/**
   * Post Readiness Survey Data
   */
 const postReadinessSurvey = dailyReadinessObj => {
@@ -156,11 +201,20 @@ const postReadinessSurvey = dailyReadinessObj => {
     // continue logic
     return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
         .then(myPlanData => {
-            let goals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0]);
+            // setup variables to be used
+            let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest && myPlanData.daily_plans[0].pre_active_rest.active;
+            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest : myPlanData.daily_plans[0].post_active_rest;
+            let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+            let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+            let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down, MyPlanConstants.coolDownExerciseListOrder);
+            // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
+            let warmUpGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].warm_up, MyPlanConstants.warmUpExerciseListOrder);
             dispatch({
-                type:  Actions.POST_READINESS_SURVEY,
-                data:  myPlanData.daily_plans,
-                goals: goals,
+                type:            Actions.POST_READINESS_SURVEY,
+                data:            myPlanData.daily_plans,
+                activeRestGoals: activeRestGoals,
+                coolDownGoals:   coolDownGoals,
+                warmUpGoals:     warmUpGoals,
             });
             return Promise.resolve(myPlanData);
         })
@@ -191,11 +245,20 @@ const postSessionSurvey = postSessionObj => {
     // call api
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {
-            let goals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0]);
+            // setup variables to be used
+            let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest && myPlanData.daily_plans[0].pre_active_rest.active;
+            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest : myPlanData.daily_plans[0].post_active_rest;
+            let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+            let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+            let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down, MyPlanConstants.coolDownExerciseListOrder);
+            // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
+            let warmUpGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].warm_up, MyPlanConstants.warmUpExerciseListOrder);
             dispatch({
-                type:  Actions.POST_SESSION_SURVEY,
-                data:  myPlanData.daily_plans,
-                goals: goals,
+                type:            Actions.POST_SESSION_SURVEY,
+                data:            myPlanData.daily_plans,
+                activeRestGoals: activeRestGoals,
+                coolDownGoals:   coolDownGoals,
+                warmUpGoals:     warmUpGoals,
             });
             return Promise.resolve(myPlanData);
         })
@@ -238,6 +301,25 @@ const patchActiveRecovery = (completed_exercises, recovery_type) => {
             });
             dispatch({
                 type: Actions.CLEAR_COMPLETED_EXERCISES,
+            });
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+};
+
+/**
+  * Patch Body Active Recovery
+  */
+const patchBodyActiveRecovery = (completed_body_parts, recovery_type) => {
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.recovery_type = recovery_type;
+    bodyObj.completed_body_parts = completed_body_parts;
+    return dispatch => AppAPI.body_active_recovery.patch(false, bodyObj)
+        .then(myPlanData => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: myPlanData.daily_plans,
             });
             return Promise.resolve(myPlanData);
         })
@@ -424,19 +506,59 @@ const patchSession = (session_id, payload) => {
 }
 
 /**
-  * Set Completed FS Exercise
+  * toggle recovery goals
   */
-const toggleRecoveryGoal = newGoals => {
+const toggleCoolDownGoal = newGoals => {
     return dispatch => Promise.resolve(
         dispatch({
-            type:  Actions.TOGGLE_RECOVERY_GOAL,
-            goals: newGoals,
+            type:          Actions.TOGGLE_COOL_DOWN_GOAL,
+            coolDownGoals: newGoals,
+        })
+    );
+};
+
+/**
+  * toggle recovery goals
+  */
+const toggleActiveRestGoal = newGoals => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type:            Actions.TOGGLE_ACTIVE_REST_GOAL,
+            activeRestGoals: newGoals,
+        })
+    );
+};
+
+/**
+  * toggle recovery goals
+  */
+const toggleWarmUpGoal = newGoals => {
+    return dispatch => Promise.resolve(
+        dispatch({
+            type:        Actions.TOGGLE_WARM_UP_GOAL,
+            warmUpGoals: newGoals,
+        })
+    );
+};
+
+/**
+  * handle body modality clicked
+  */
+const handleBodyPartClick = (dailyPlan, bodyPartyId, side, modality) => {
+    let newDailyPlanObj = _.clone(dailyPlan);
+    let bodyPartyIndex = _.findIndex(dailyPlan[modality].body_parts, o => o.body_part_location === bodyPartyId && o.side === side);
+    newDailyPlanObj[modality].body_parts[bodyPartyIndex].active = !newDailyPlanObj[modality].body_parts[bodyPartyIndex].active;
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.GET_MY_PLAN,
+            data: [newDailyPlanObj],
         })
     );
 };
 
 export default {
     activateFunctionalStrength,
+    clearCompletedCoolDownExercises,
     clearCompletedExercises,
     clearCompletedFSExercises,
     clearHealthKitWorkouts,
@@ -444,11 +566,13 @@ export default {
     getCoachesDashboardData,
     getMyPlan,
     getSoreBodyParts,
+    handleBodyPartClick,
     markStartedFunctionalStrength,
     markStartedRecovery,
     noSessions,
     patchActiveRecovery,
     patchActiveTime,
+    patchBodyActiveRecovery,
     patchFunctionalStrength,
     patchSession,
     postHealthData,
@@ -457,7 +581,10 @@ export default {
     postSingleSensorData,
     postSurvey,
     setAppLogs,
+    setCompletedCoolDownExercises,
     setCompletedExercises,
     setCompletedFSExercises,
-    toggleRecoveryGoal,
+    toggleActiveRestGoal,
+    toggleCoolDownGoal,
+    toggleWarmUpGoal,
 };

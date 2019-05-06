@@ -18,7 +18,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, SectionList, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -298,7 +298,7 @@ class SportScheduleBuilder extends PureComponent {
                                                 source={item.imagePath}
                                                 style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
                                             />
-                                            <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
+                                            <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
                                         </TouchableOpacity>
                                     }
                                     renderSectionHeader={({section: {title}}) =>
@@ -450,49 +450,22 @@ class SportScheduleBuilder extends PureComponent {
                                         <Text robotoMedium>{sportText}</Text>
                                         {' today?'}
                                     </Text>
-                                    <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
-                                        { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
+                                    <View style={{paddingVertical: AppSizes.paddingSml,}}>
+                                        { _.map(MyPlanConstants.postSessionFeel, (scale, key) => {
                                             let RPEValue = postSession.post_session_survey.RPE;
-                                            let isSelected = RPEValue === key;
-                                            let opacity = isSelected ? 1 : (key * 0.1);
+                                            let isSelected = RPEValue === scale.value;
                                             return(
-                                                <TouchableHighlight
-                                                    key={value+key}
-                                                    onPress={() => {
-                                                        handleFormChange('post_session_survey.RPE', key);
-                                                        if(key === 0 || key >= 1) {
+                                                <ScaleButton
+                                                    isSelected={isSelected}
+                                                    key={key}
+                                                    scale={scale}
+                                                    updateStateAndForm={() => {
+                                                        handleFormChange('post_session_survey.RPE', scale.value);
+                                                        if(scale.value === 0 || scale.value >= 1) {
                                                             this._scrollToBottom();
                                                         }
                                                     }}
-                                                    underlayColor={AppColors.transparent}
-                                                >
-                                                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
-                                                        <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
-                                                            <ScaleButton
-                                                                isSelected={isSelected}
-                                                                keyLabel={key}
-                                                                opacity={opacity}
-                                                                updateStateAndForm={() => {
-                                                                    handleFormChange('post_session_survey.RPE', key);
-                                                                    if(key === 0 || key >= 1) {
-                                                                        this._scrollToBottom();
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </View>
-                                                        <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
-                                                            <Text
-                                                                oswaldMedium
-                                                                style={{
-                                                                    color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
-                                                                    fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
-                                                                }}
-                                                            >
-                                                                {value.toUpperCase()}
-                                                            </Text>
-                                                        </View>
-                                                    </View>
-                                                </TouchableHighlight>
+                                                />
                                             )
                                         })}
                                     </View>

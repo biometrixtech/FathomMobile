@@ -211,36 +211,77 @@ const postExerciseListOrder = [
     },
 ];
 
-const postSessionFeel = [
-    'Rest',
-    'Very, Very Easy',
-    'Easy',
-    'Moderate',
-    'Somewhat Hard',
-    'Hard',
-    ' ',
-    'Very Hard',
-    ' ',
-    ' ',
-    'Max effort',
+// TODO: UPDATE TITLES
+const coolDownExerciseListOrder = [
+    {
+        index: 'dynamic_integrate_exercises',
+        title: 'INTEGRATE',
+    },
+    {
+        index: 'dynamic_stretch_exercises',
+        title: 'STRETCH',
+    },
 ];
 
-function cleanExerciseList(recoveryObj, priority = 1, goals, isPrepare) {
+// TODO: UPDATE TITLES
+const warmUpExerciseListOrder = [
+    {
+        index: 'inhibit_exercises',
+        title: 'FOAM ROLL',
+    },
+    {
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'active_or_dynamic_stretch_exercises',
+        title: 'INTEGRATE',
+    },
+    {
+        index: 'isolated_activate_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'dynamic_integrate_exercises',
+        title: 'ACTIVATE',
+    },
+    {
+        index: 'dynamic_integrate_with_speed_exercises',
+        title: 'INTEGRATE',
+    },
+];
+
+const postSessionFeel = [
+    { index: 1, label: 'REST', subtitle: 'Light, restful, word', value: 1, },
+    { index: 2, label: 'EASY', subtitle: 'Light, restful, word', value: 3, },
+    { index: 3, label: 'AVERAGE', subtitle: 'Light, restful, word', value: 5, },
+    { index: 4, label: 'HIGH', subtitle: 'Light, restful, word', value: 7, },
+    { index: 5, label: 'MAX', subtitle: 'Light, restful, word', value: 10, },
+];
+
+function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
     // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
     let largestSetCount = {};
     let equipmentRequired = [];
     let totalSeconds = 0;
-    // let exerciseGoals = [];
     // let unFilteredExerciseArray = [];
-    let exerciseListOrder = isPrepare ? preExerciseListOrder : postExerciseListOrder;
+    let exerciseListOrder = modality === 'prepare' ?
+        preExerciseListOrder
+        : modality === 'recover' ?
+            postExerciseListOrder
+            : modality === 'warmUp' ?
+                warmUpExerciseListOrder
+                : modality === 'coolDown' ?
+                    coolDownExerciseListOrder
+                    :
+                    preExerciseListOrder;
     // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
         largestSetCount[list.index] = 0;
         // loop through our specific exercise to update our variables
         _.map(recoveryObj[list.index], exercise => {
-            // exerciseGoals = _.concat(exerciseGoals, exercise.goals);
             equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
             let filteredReducerGoals = _.filter(goals, {isSelected: true,});
             let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
@@ -293,11 +334,9 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, isPrepare) {
     // clean variables as needed
     equipmentRequired = _.uniq(equipmentRequired);
     equipmentRequired = _.filter(equipmentRequired, o => o !== 'None');
-    // exerciseGoals = _.uniqBy(exerciseGoals, 'text');
     // return variables
     return {
         cleanedExerciseList,
-        // exerciseGoals,
         equipmentRequired,
         totalLength,
         totalSeconds,
@@ -361,7 +400,8 @@ function cleanExercise(exercise, priority, goals) {
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
     cleanedExercise.repsAssigned = cleanedExercise && dosage.length > 0 ?
-        priority === 0 ? dosage[0].efficient_reps_assigned
+        priority === 0 ?
+            dosage[0].efficient_reps_assigned
             : priority === 1 ?
                 dosage[0].complete_reps_assigned
                 :
@@ -636,7 +676,7 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     }
 };
 
-const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
+const exerciseListButtonStyles = (completedExercises, isFSCompleteValid, isFunctionalStrength) => {
     let buttonTitle = completedExercises.length > 0 ? 'Care & Activate Complete' : 'Check Boxes to Complete Care & Activate';
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
@@ -891,6 +931,7 @@ export default {
     coachesDashboardSortBy,
     coachesDashboardCardsData,
     completionModalExerciseList,
+    coolDownExerciseListOrder,
     durationOptionGroups,
     exerciseListButtonStyles,
     fathomSliderText,
@@ -916,4 +957,5 @@ export default {
     timeOptionGroups,
     translateStrengthConditioningTypeToSport,
     userSelectedActiveTimeMessage,
+    warmUpExerciseListOrder,
 };

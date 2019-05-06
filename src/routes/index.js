@@ -46,8 +46,11 @@ import BluetoothConnect3SensorComponent from '../components/kit/BluetoothConnect
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
-import ExerciseListContainer from '../containers/myPlan/ExerciseList';
-import ExerciseListComponent from '../components/myPlan/ExerciseList';
+import ExerciseModalityContainer from '../containers/myPlan/ExerciseModality';
+import ExerciseModalityComponent from '../components/myPlan/ExerciseModality';
+
+import BodyModalityContainer from '../containers/myPlan/BodyModality';
+import BodyModalityComponent from '../components/myPlan/BodyModality';
 
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
@@ -191,10 +194,17 @@ const Index = (
                 type={'replace'}
             />
             <Scene
-                Layout={ExerciseListComponent}
-                component={ExerciseListContainer}
+                Layout={ExerciseModalityComponent}
+                component={ExerciseModalityContainer}
                 hideNavBar={true}
-                key={'exerciseList'}
+                key={'exerciseModality'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={BodyModalityComponent}
+                component={BodyModalityContainer}
+                hideNavBar={true}
+                key={'bodyModality'}
                 panHandlers={null}
             />
             <Scene

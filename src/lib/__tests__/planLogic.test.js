@@ -1166,29 +1166,29 @@ it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
 });
 
-it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
-    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
-    let selectedExercise = {library_id: 8, set_number: 1,};
-    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-        2,
-        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
-        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-        8
-    );
-    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-});
-
-it('Exercises Render Logic - Two Sections - Selected First Item', () => {
-    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
-    let selectedExercise = {library_id: 0, set_number: 1,};
-    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-        2,
-        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
-        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-        0
-    );
-    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-});
+// it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
+//     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+//     let selectedExercise = {library_id: 8, set_number: 1,};
+//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+//         2,
+//         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+//         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+//         8
+//     );
+//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+// });
+//
+// it('Exercises Render Logic - Two Sections - Selected First Item', () => {
+//     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+//     let selectedExercise = {library_id: 0, set_number: 1,};
+//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+//         2,
+//         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+//         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+//         0
+//     );
+//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+// });
 
 it('Exercises Render Logic - Single Section', () => {
     let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();

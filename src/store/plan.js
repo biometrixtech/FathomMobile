@@ -20,11 +20,21 @@ const recoveryObj = {
 };
 
 export default {
-    coachesDashboardData: [],
-    completedExercises:   [],
-    completedFSExercises: [],
-    dailyPlan:            [{
+    activeRestGoals:            [],
+    coachesDashboardData:       [],
+    completedCoolDownExercises: [],
+    completedExercises:         [],
+    completedFSExercises:       [],
+    coolDownGoals:              [],
+    dailyPlan:                  [{
         active_recovery:                  null,
+        completed_cold_water_immersion:   [],
+        completed_cool_down:              [],
+        completed_heat:                   [],
+        completed_ice:                    [],
+        completed_post_active_rest:       [],
+        completed_pre_active_rest:        [],
+        completed_warm_up:                [],
         cold_water_immersion:             null,
         cool_down:                        null,
         cross_training_sessions:          [],
@@ -37,7 +47,7 @@ export default {
         last_sensor_sync:                 null,
         last_updated:                     moment().format('YYYY-MM-DD'),
         nav_bar_indicator:                null,
-        post_active_rest:                 recoveryObj,
+        post_active_rest:                 null,
         post_active_rest_completed:       false,
         pre_active_rest:                  recoveryObj,
         pre_active_rest_completed:        false,
@@ -46,10 +56,10 @@ export default {
         training_sessions:                [],
         warm_up:                          null,
     }],
-    goals:           [],
     healthData:      { ignoredWorkouts: [], sleep: [], workouts: [], },
     lastOpened:      { date: '', userId: '' },
     postSession:     {},
     soreBodyParts:   {},
     typicalSessions: [],
+    warmUpGoals:     [],
 };

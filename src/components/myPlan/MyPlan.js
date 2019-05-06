@@ -1,6 +1,7 @@
 /**
  * MyPlan View
       <MyPlan
+          clearCompletedCoolDownExercises={clearCompletedCoolDownExercises}
           clearCompletedExercises={clearCompletedExercises}
           clearHealthKitWorkouts={clearHealthKitWorkouts}
           getMyPlan={getMyPlan}
@@ -87,11 +88,11 @@ const ActivityTab = ({
     backgroundImage = require('../../../assets/images/standard/active_rest_locked.png'),
     completed = false,
     id,
-    locked = true,
+    locked = false,
     onPress = () => {},
     paddingStyle = {paddingVertical: AppSizes.paddingMed,},
     showBottomGap = true,
-    subtitle = 'Anytime before training',
+    subtitle,
     title = 'CARE & ACTIVATE',
 }) => (
     completed ?
@@ -125,7 +126,7 @@ const ActivityTab = ({
                     />
                 </View>
                 <View style={{borderRadius: AppSizes.padding, flex: 1, marginLeft: AppSizes.padding,}}>
-                    <TouchableOpacity onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
+                    <TouchableOpacity activeOpacity={locked ? 1 : 0.2} onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
                         <MagicMove.Image
                             id={`${id}.image`}
                             resizeMode={'cover'}
@@ -171,15 +172,16 @@ class MyPlan extends Component {
     static componentName = 'MyPlan';
 
     static propTypes = {
-        clearCompletedExercises: PropTypes.func.isRequired,
-        clearHealthKitWorkouts:  PropTypes.func.isRequired,
-        getMyPlan:               PropTypes.func.isRequired,
-        getSoreBodyParts:        PropTypes.func.isRequired,
-        healthData:              PropTypes.object.isRequired,
-        lastOpened:              PropTypes.object.isRequired,
-        network:                 PropTypes.object.isRequired,
-        noSessions:              PropTypes.func.isRequired,
-        notification:            PropTypes.oneOfType([
+        clearCompletedCoolDownExercises: PropTypes.func.isRequired,
+        clearCompletedExercises:         PropTypes.func.isRequired,
+        clearHealthKitWorkouts:          PropTypes.func.isRequired,
+        getMyPlan:                       PropTypes.func.isRequired,
+        getSoreBodyParts:                PropTypes.func.isRequired,
+        healthData:                      PropTypes.object.isRequired,
+        lastOpened:                      PropTypes.object.isRequired,
+        network:                         PropTypes.object.isRequired,
+        noSessions:                      PropTypes.func.isRequired,
+        notification:                    PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.string,
         ]),
@@ -198,10 +200,18 @@ class MyPlan extends Component {
 
     constructor(props) {
         super(props);
+        // setup variables
         let defaultState = _.cloneDeep(defaultPlanState);
+        let planObj = props.plan.dailyPlan[0] || {};
+        let newDailyReadiness = _.cloneDeep(defaultState.dailyReadiness);
+        newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(props.plan.soreBodyParts);
+        // update state
         defaultState.healthData = props.healthData;
         defaultState.isReadinessSurveyCompleted = !props.plan.dailyPlan[0].daily_readiness_survey_completed;
+        defaultState.dailyReadiness = newDailyReadiness;
+        defaultState.isReadinessSurveyModalOpen = !planObj.daily_readiness_survey_completed;
         this.state = defaultState;
+        // set variables for MyPlan
         this.tabView = null;
         this.renderTab = this.renderTab.bind(this);
         this.goToPageTimer = null;
@@ -214,17 +224,9 @@ class MyPlan extends Component {
         }
         // we've already fetched MyPlan, make necessary state updates
         const { plan, } = this.props;
-        const { dailyReadiness, } = this.state;
         let planObj = plan.dailyPlan[0] || {};
         if(planObj.daily_readiness_survey_completed) {
             this.goToPageTimer = _.delay(() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(planObj)), 500);
-        } else {
-            let newDailyReadiness = _.cloneDeep(dailyReadiness);
-            newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(plan.soreBodyParts);
-            this.setState({
-                dailyReadiness:             newDailyReadiness,
-                isReadinessSurveyModalOpen: true,
-            });
         }
     }
 
@@ -392,7 +394,7 @@ class MyPlan extends Component {
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
-        const { clearCompletedExercises, getMyPlan, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, user, } = this.props;
         const { dailyReadiness, } = this.state;
         // clear timer
         clearInterval(this._timer);
@@ -404,6 +406,7 @@ class MyPlan extends Component {
                 this.goToPageTimer = _.delay(() => this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(dailyPlanObj)), 500);
                 if(shouldClearCompletedExercises) {
                     clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
                 }
                 let newDailyReadiness = _.cloneDeep(dailyReadiness);
                 this.setState({
@@ -502,7 +505,7 @@ class MyPlan extends Component {
     }
 
     _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
-        const { clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
             newDailyReadiness,
@@ -537,6 +540,7 @@ class MyPlan extends Component {
                 }
                 clearHealthKitWorkouts();
                 clearCompletedExercises();
+                clearCompletedCoolDownExercises();
             })
             .catch(error => {
                 this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
@@ -545,7 +549,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        const { clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
             landingScreen,
@@ -576,6 +580,7 @@ class MyPlan extends Component {
                 this.setState({ isRecoverCalculating: false, });
                 if(!areAllDeleted) {
                     clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
                 }
                 let newLandingScreen = response.daily_plans[0].landing_screen;
                 this._goToScrollviewPage(newLandingScreen);
@@ -642,7 +647,7 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        const { clearCompletedExercises, getSoreBodyParts, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, } = this.props;
         const { isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
         this.setState({ loading: isLoading, showLoadingText: true, });
@@ -674,6 +679,7 @@ class MyPlan extends Component {
                 });
         } else {
             clearCompletedExercises();
+            clearCompletedCoolDownExercises();
             this.goToPageTimer = _.delay(() => {
                 this.setState({
                     isPostSessionSurveyModalOpen: false,
@@ -792,6 +798,7 @@ class MyPlan extends Component {
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
             isHeatActive,
+            isHeatCompleted,
             isReadinessSurveyCompleted,
         } = PlanLogic.handleMyPlanRenderPrepareTabLogic(dailyPlanObj);
         return (
@@ -849,22 +856,23 @@ class MyPlan extends Component {
                                         completed={isCareAndActivateCompleted}
                                         id={'prepareCareActivate'}
                                         locked={isCareAndActivateLocked}
-                                        onPress={() => Actions.exerciseList()}
-                                        showBottomGap={isHeatActive}
-                                        subtitle={isCareAndActivateLocked ? '' : 'Anytime before training'} // TODO: ADD LOCKED TEXT
+                                        onPress={() => Actions.exerciseModality({ modality: 'prepare', })}
+                                        showBottomGap={isHeatActive || isHeatCompleted}
+                                        subtitle={isCareAndActivateLocked ? false : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                         title={'CARE & ACTIVATE'}
                                     />
                                 }
-                                {/* isHeatActive && !isPrepCalculating &&
+                                { (isHeatActive || isHeatCompleted) && !isPrepCalculating &&
                                     <ActivityTab
                                         backgroundImage={require('../../../assets/images/standard/heat.png')}
-                                        id={'prepareHeat'}
-                                        onPress={() => console.log('hi from RENDERPREPARE - HEAT')}
+                                        completed={isHeatCompleted}
+                                        id={'heat'}
+                                        onPress={() => Actions.bodyModality({ modality: 'heat', })}
                                         showBottomGap={false}
                                         subtitle={'30 minutes before training'}
                                         title={'HEAT'}
                                     />
-                                  */}
+                                }
                             </View>
                         }
                     >
@@ -1010,10 +1018,16 @@ class MyPlan extends Component {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let {
             compiledActivities,
+            cooldownTitle,
+            isCWIActive,
+            isCWICompleted,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
+            isCoolDownActive,
+            isCoolDownCompleted,
             isIceActive,
+            isIceCompleted,
         } = PlanLogic.handleMyPlanRenderRecoverTabLogic(dailyPlanObj);
         return (
             <ScrollView
@@ -1047,16 +1061,27 @@ class MyPlan extends Component {
                                     title={activity.title}
                                 />
                             )}
+                            { (isCoolDownActive || isCoolDownCompleted) && !isRecoverCalculating &&
+                                <ActivityTab
+                                    backgroundImage={require('../../../assets/images/standard/cool_down.png')}
+                                    completed={isCoolDownCompleted}
+                                    id={'coolDown'}
+                                    onPress={() => Actions.exerciseModality({ modality: 'coolDown', })}
+                                    showBottomGap={isCoolDownActive || isCoolDownCompleted}
+                                    subtitle={'Immediately after training'}
+                                    title={cooldownTitle}
+                                />
+                            }
                             { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) ?
                                 <ActivityTab
                                     backgroundImage={isCareAndActivateLocked ? require('../../../assets/images/standard/active_rest_locked.png') : require('../../../assets/images/standard/active_rest.png')}
                                     completed={isCareAndActivateCompleted}
                                     id={'recoverCareActivate'}
                                     locked={isCareAndActivateLocked}
-                                    onPress={() => Actions.exerciseList()}
+                                    onPress={() => Actions.exerciseModality({ modality: 'recover', })}
                                     paddingStyle={isCareAndActivateCompleted && compiledActivities.length === 0 ? {paddingBottom: AppSizes.paddingMed,} : {paddingVertical: AppSizes.paddingMed,}}
-                                    showBottomGap={isIceActive}
-                                    subtitle={isCareAndActivateLocked ? '' : 'Anytime before training'} // TODO: ADD LOCKED TEXT
+                                    showBottomGap={isIceActive || isIceCompleted}
+                                    subtitle={isCareAndActivateLocked ? false : 'Anytime after training'} // TODO: ADD LOCKED TEXT
                                     title={'CARE & ACTIVATE'}
                                 />
                                 :
@@ -1069,16 +1094,28 @@ class MyPlan extends Component {
                                     title={'CARE & ACTIVATE'}
                                 />
                             }
-                            {/* isIceActive && !isRecoverCalculating &&
+                            { (isIceActive || isIceCompleted) && !isRecoverCalculating &&
                                 <ActivityTab
                                     backgroundImage={require('../../../assets/images/standard/ice.png')}
-                                    id={'recoverIce'}
-                                    onPress={() => console.log('hi from RENDERRECOVER - ICE')}
-                                    showBottomGap={false}
-                                    subtitle={'After all training complete'}
+                                    completed={isIceCompleted}
+                                    id={'ice'}
+                                    onPress={() => Actions.bodyModality({ modality: 'ice', })}
+                                    showBottomGap={isCWIActive || isCWICompleted}
+                                    subtitle={'After all training is complete'}
                                     title={'ICE'}
                                 />
-                            */}
+                            }
+                            { (isCWIActive || isCWICompleted) && !isRecoverCalculating &&
+                                <ActivityTab
+                                    backgroundImage={require('../../../assets/images/standard/cwi.png')}
+                                    completed={isCWICompleted}
+                                    id={'cwi'}
+                                    onPress={() => Actions.bodyModality({ modality: 'cwi', })}
+                                    showBottomGap={false}
+                                    subtitle={'After all training is complete'}
+                                    title={'COLD WATER BATH'}
+                                />
+                            }
                         </View>
                     }
                 >

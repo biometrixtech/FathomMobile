@@ -7,6 +7,9 @@
         exerciseList={exerciseList}
         handleCompleteExercise={this._handleCompleteExercise}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+        modality={Actions.currentParams.modality}
+        planActiveRestGoals={plan.activeRestGoals}
+        priority={priority}
         selectedExercise={this.state.selectedExercise}
         user={this.props.user}
     />
@@ -34,61 +37,65 @@ const maxOtherExercisesPercent = (1 - minActivatePercent);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    progressPillsWrapper: {
-        alignItems:        'flex-end',
-        flex:              1,
-        flexDirection:     'row',
-        justifyContent:    'space-between',
-        paddingHorizontal: AppSizes.padding,
-    },
     progressPill: {
         backgroundColor: AppColors.zeplin.superLight,
-        borderRadius:    5,
-        height:          AppSizes.paddingSml,
-    }
+        borderRadius:    10,
+        width:           '90%',
+    },
+    progressPillsContainer: {
+        flex:           1,
+        flexDirection:  'row',
+        justifyContent: 'center',
+        paddingTop:     AppSizes.statusBarHeight,
+    },
+    progressPillsWrapper: {
+        alignItems:     'center',
+        height:         AppSizes.padding,
+        justifyContent: 'center',
+        width:          '100%',
+    },
+    progressPillsText: {
+        color:     AppColors.white,
+        fontSize:  AppFonts.scaleFont(20),
+        marginTop: AppSizes.paddingXSml,
+        textAlign: 'center',
+    },
 });
 
 /* Component ==================================================================== */
-const ProgressPills = ({ availableSectionsCount, cleanedExerciseList, completedExercises, listLength, }) => {
-    let wrapperWidths = {};
-    let isActivateTooShort = (cleanedExerciseList['ACTIVE STRETCH'].length / listLength) < minActivatePercent;
-    /*eslint dot-notation: 0*/
-    _.map(cleanedExerciseList, (exerciseList, index) => {
-        if(availableSectionsCount === 3 && isActivateTooShort) {
-            let foamRollLength = (cleanedExerciseList['FOAM ROLL'].length / (listLength - cleanedExerciseList['ACTIVE STRETCH'].length)) * maxOtherExercisesPercent;
-            let stretchLength = (cleanedExerciseList['STATIC STRETCH'].length / (listLength - cleanedExerciseList['ACTIVE STRETCH'].length)) * maxOtherExercisesPercent;
-            wrapperWidths['FOAM ROLL'] = foamRollLength;
-            wrapperWidths['STATIC STRETCH'] = stretchLength;
-            wrapperWidths['ACTIVE STRETCH'] = minActivatePercent;
-        } else {
-            wrapperWidths[index] = (exerciseList.length / listLength);
-        }
-    });
-    return (
-        <View style={[styles.progressPillsWrapper, availableSectionsCount === 2 ? {paddingHorizontal: AppSizes.paddingLrg,} : {}]}>
-            {_.map(cleanedExerciseList, (exerciseList, index) => {
-                let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
-                let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
-                return(
-                    exerciseList.length > 0 &&
-                        <View
-                            key={index}
-                            style={{
-                                alignItems: 'center',
-                                flex:       wrapperWidths[index],
-                            }}
-                        >
-                            <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{index}</Text>
-                            <Spacer size={AppSizes.paddingXSml} />
-                            <View style={[styles.progressPill, {width: '90%',}]}>
-                                <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.seaBlue, width: `${progressWidth}%`,}]} />
-                            </View>
+const ProgressPills = ({
+    availableSectionsCount,
+    cleanedExerciseList,
+    completedExercises,
+    selectedExercise,
+    totalLength,
+}) => (
+    <View style={[styles.progressPillsContainer,]}>
+        { _.map(cleanedExerciseList, (exerciseList, index) => {
+            const {
+                isSelectedExerciseInCurrentIndex,
+                progressWidth,
+                scaledItemWidth,
+            } = PlanLogic.handleExercisesProgressPillsLogic(availableSectionsCount, cleanedExerciseList, completedExercises, exerciseList, index, selectedExercise, totalLength);
+            if(exerciseList.length === 0) { return(null); }
+            return(
+                <View key={index} style={{width: scaledItemWidth,}}>
+                    <View style={[styles.progressPillsWrapper,]}>
+                        <View style={[
+                            styles.progressPill,
+                            isSelectedExerciseInCurrentIndex ? {height: AppSizes.padding,} : {height: AppSizes.paddingSml,},
+                        ]}>
+                            <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.success, width: `${progressWidth}%`,}]} />
                         </View>
-                );
-            })}
-        </View>
-    );
-};
+                    </View>
+                    { isSelectedExerciseInCurrentIndex &&
+                        <Text oswaldMedium style={[styles.progressPillsText,]}>{index}</Text>
+                    }
+                </View>
+            );
+        })}
+    </View>
+);
 
 class Exercises extends PureComponent {
     constructor(props) {
@@ -115,11 +122,11 @@ class Exercises extends PureComponent {
         clearInterval(this.state.timer);
     }
 
-    _renderItem = ({item, index}, nextItem, progressPillsHeight) => {
+    _renderItem = ({item, index}, nextItem, progressPillsHeight, planActiveRestGoals, priority, isStaticExercise) => {
         const { closeModal, completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
         const { currentSlideIndex, } = this.state;
-        const exercise = MyPlanConstants.cleanExercise(item);
-        const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem) : null;
+        const exercise = MyPlanConstants.cleanExercise(item, priority, planActiveRestGoals);
+        const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem, priority, planActiveRestGoals) : null;
         const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
         let timer = { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval };
         if(
@@ -146,7 +153,7 @@ class Exercises extends PureComponent {
                     { exercise.videoUrl.length > 0 ?
                         <Video
                             paused={currentSlideIndex === index ? false : true}
-                            repeat={true}
+                            repeat={!isStaticExercise}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                             source={{uri: exercise.videoUrl}}
                             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.85), width: (AppSizes.screen.width * 0.85),}]}
@@ -198,14 +205,16 @@ class Exercises extends PureComponent {
     }
 
     render = () => {
-        const { completedExercises, exerciseList, } = this.props;
+        const { completedExercises, exerciseList, modality, planActiveRestGoals, priority, } = this.props;
         const { isScrollEnabled, selectedExercise, } = this.state;
         let {
             availableSectionsCount,
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
-        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise);
+            isStaticExercise,
+            totalLength,
+        } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, modality);
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
                 <View
@@ -216,7 +225,8 @@ class Exercises extends PureComponent {
                         availableSectionsCount={availableSectionsCount}
                         cleanedExerciseList={cleanedExerciseList}
                         completedExercises={completedExercises}
-                        listLength={flatListExercises.length}
+                        selectedExercise={selectedExercise}
+                        totalLength={totalLength}
                     />
                 </View>
                 <View style={{flex: 9,}}>
@@ -235,7 +245,7 @@ class Exercises extends PureComponent {
                         }
                         ref={c => {this._carousel = c;}}
                         removeClippedSubviews={true}
-                        renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight)}
+                        renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight, planActiveRestGoals, priority, isStaticExercise)}
                         scrollEnabled={isScrollEnabled}
                         sliderWidth={AppSizes.screen.width}
                         windowSize={flatListExercises.length}
@@ -252,11 +262,16 @@ Exercises.propTypes = {
     exerciseList:                    PropTypes.object.isRequired,
     handleCompleteExercise:          PropTypes.func.isRequired,
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
+    modality:                        PropTypes.string,
+    planActiveRestGoals:             PropTypes.array.isRequired,
+    priority:                        PropTypes.number.isRequired,
     selectedExercise:                PropTypes.object.isRequired,
     user:                            PropTypes.object.isRequired,
 };
 
-Exercises.defaultProps = {};
+Exercises.defaultProps = {
+    modality: 'prepare',
+};
 
 Exercises.componentName = 'Exercises';
 

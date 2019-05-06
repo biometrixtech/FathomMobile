@@ -1,12 +1,16 @@
 /**
- * Exercise List
+ * Exercise Modality
  *
-    <ExerciseList
+    <ExerciseModality
         markStartedRecovery={markStartedRecovery}
+        modality={modality}
         patchActiveRecovery={patchActiveRecovery}
         plan={plan}
+        setCompletedCoolDownExercises={setCompletedCoolDownExercises}
         setCompletedExercises={setCompletedExercises}
-        toggleRecoveryGoal={toggleRecoveryGoal}
+        toggleActiveRestGoal={toggleActiveRestGoal}
+        toggleCoolDownGoal={toggleCoolDownGoal}
+        toggleWarmUpGoal={toggleWarmUpGoal}
         updateUser={updateUser}
         user={user}
     />
@@ -14,7 +18,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Easing, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { Easing, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
@@ -31,7 +35,7 @@ import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 
 /* Component ==================================================================== */
-class ExerciseList extends Component {
+class ExerciseModality extends Component {
     constructor(props) {
         super(props);
         let dailyPlanObj = props.plan ? props.plan.dailyPlan[0] : false;
@@ -71,37 +75,56 @@ class ExerciseList extends Component {
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
-        const { markStartedRecovery, plan, setCompletedExercises, } = this.props;
+        const { markStartedRecovery, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
+        let clonedPlan = _.cloneDeep(plan);
+        let modality = this.props.modality;
         // add or remove exercise
-        let newCompletedExercises = _.cloneDeep(store.getState().plan.completedExercises);
+        let reducerCompletedExercises = clonedPlan.dailyPlan[0].cool_down && clonedPlan.dailyPlan[0].cool_down.active && modality === 'coolDown' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+        let newCompletedExercises = _.cloneDeep(reducerCompletedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
         } else {
             newCompletedExercises.push(newExerciseId);
         }
         // Mark Recovery as started, if logic passes
-        let clonedPlan = _.cloneDeep(plan);
-        let dailyPlanObj = clonedPlan ? clonedPlan.dailyPlan[0] : false;
-        let isPrepareActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active;
-        let recovery_type = isPrepareActive ? 'pre' : 'post';
-        let startDate = recovery_type === 'pre' ?
-            clonedPlan.dailyPlan[0].pre_active_rest.start_date
-            : recovery_type === 'post' ?
-                clonedPlan.dailyPlan[0].post_active_rest.start_date
-                :
-                true;
+        let recoveryType = clonedPlan.dailyPlan[0].post_active_rest && clonedPlan.dailyPlan[0].post_active_rest.active && modality === 'recover' ?
+            'post_active_rest'
+            : clonedPlan.dailyPlan[0].warm_up && clonedPlan.dailyPlan[0].warm_up.active && modality === 'warmUp' ?
+                'warm_up'
+                : clonedPlan.dailyPlan[0].cool_down && clonedPlan.dailyPlan[0].cool_down.active && modality === 'coolDown' ?
+                    'cool_down'
+                    :
+                    'pre_active_rest';
+        let startDate = recoveryType === 'pre_active_rest' ?
+            clonedPlan.dailyPlan[0].pre_active_rest.start_date_time
+            : recoveryType === 'post_active_rest' ?
+                clonedPlan.dailyPlan[0].post_active_rest.start_date_time
+                : recoveryType === 'warm_up' ?
+                    clonedPlan.dailyPlan[0].warm_up.start_date_time
+                    : recoveryType === 'cool_down' ?
+                        clonedPlan.dailyPlan[0].cool_down.start_date_time
+                        :
+                        true;
         if(newCompletedExercises.length === 1 && !startDate) {
             let newMyPlan =  _.cloneDeep(plan.dailyPlan);
-            if(recovery_type === 'pre') {
-                newMyPlan[0].pre_active_rest.start_date = true;
-            } else if(recovery_type === 'post') {
-                newMyPlan[0].post_active_rest.start_date = true;
+            if(recoveryType === 'pre_active_rest') {
+                newMyPlan[0].pre_active_rest.start_date_time = true;
+            } else if(recoveryType === 'post_active_rest') {
+                newMyPlan[0].post_active_rest.start_date_time = true;
+            } else if(recoveryType === 'warm_up') {
+                newMyPlan[0].warm_up.start_date_time = true;
+            } else if(recoveryType === 'cool_down') {
+                newMyPlan[0].cool_down.start_date_time = true;
             }
-            markStartedRecovery(recovery_type, newMyPlan);
+            markStartedRecovery(recoveryType, newMyPlan);
         }
         // continue by updating reducer and state
-        setCompletedExercises(newCompletedExercises);
+        if(recoveryType === 'cool_down') {
+            setCompletedCoolDownExercises(newCompletedExercises)
+        } else {
+            setCompletedExercises(newCompletedExercises);
+        }
     }
 
     _scrollToExerciseList = () => {
@@ -112,11 +135,21 @@ class ExerciseList extends Component {
         });
     }
 
-    _toggleRecoveryGoal = selectedIndex => {
-        const { plan, toggleRecoveryGoal, } = this.props;
-        let newGoals = _.cloneDeep(plan.goals);
-        newGoals = _.update(newGoals, `[${selectedIndex}].isSelected`, () => !plan.goals[selectedIndex].isSelected);
-        toggleRecoveryGoal(newGoals);
+    _toggleGoal = selectedIndex => {
+        const { modality, plan, toggleCoolDownGoal, toggleActiveRestGoal, toggleWarmUpGoal, } = this.props;
+        if(modality === 'coolDown') {
+            let newGoals = _.cloneDeep(plan.coolDownGoals);
+            newGoals = _.update(newGoals, `[${selectedIndex}].isSelected`, () => !plan.coolDownGoals[selectedIndex].isSelected);
+            toggleCoolDownGoal(newGoals);
+        } else if(modality === 'warmUp') {
+            let newGoals = _.cloneDeep(plan.warmUpGoals);
+            newGoals = _.update(newGoals, `[${selectedIndex}].isSelected`, () => !plan.warmUpGoals[selectedIndex].isSelected);
+            toggleWarmUpGoal(newGoals);
+        } else {
+            let newGoals = _.cloneDeep(plan.activeRestGoals);
+            newGoals = _.update(newGoals, `[${selectedIndex}].isSelected`, () => !plan.activeRestGoals[selectedIndex].isSelected);
+            toggleActiveRestGoal(newGoals);
+        }
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -141,34 +174,35 @@ class ExerciseList extends Component {
     }
 
     render = () => {
-        const { isExerciseCompletionModalOpen, isSelectedExerciseModalOpen, priority, selectedExercise, } = this.state;
+        const {
+            isExerciseCompletionModalOpen,
+            isSelectedExerciseModalOpen,
+            priority,
+            selectedExercise,
+        } = this.state;
         let { patchActiveRecovery, plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let completedExercises = plan.completedExercises;
-        let isPrepareActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active;
-        let recoveryObj = isPrepareActive ? dailyPlanObj.pre_active_rest : dailyPlanObj.post_active_rest;
-        let buttons = [
-            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 0, plan.goals, isPrepareActive).totalSeconds / 60))} minutes`,
-            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 1, plan.goals, isPrepareActive).totalSeconds / 60))} minutes`,
-            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 2, plan.goals, isPrepareActive).totalSeconds / 60))} minutes`
-        ];
-        let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj, priority, plan.goals, isPrepareActive);
-        let firstExerciseFound = false;
-        _.forEach(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
-            if(exerciseIndex && exerciseIndex.length > 0 & !firstExerciseFound) {
-                firstExerciseFound = exerciseIndex[0];
-                return exerciseIndex;
-            }
-            return false;
-        });
-        let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(isPrepareActive, completedExercises);
-        let imageId = isPrepareActive ? 'prepareCareActivate' : 'recoverCareActivate';
-        let textId = isPrepareActive ? 'prepareCareActivate' : 'recoverCareActivate';
-        let sceneId = isPrepareActive ? 'prepareScene' : 'recoverScene';
+        let modality = this.props.modality;
+        let completedExercises = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && modality === 'coolDown' ? plan.completedCoolDownExercises : plan.completedExercises;
+        let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(completedExercises);
+        const {
+            buttons,
+            exerciseList,
+            firstExerciseFound,
+            goals,
+            imageId,
+            imageSource,
+            pageSubtitle,
+            pageTitle,
+            recoveryObj,
+            recoveryType,
+            textId,
+        } = PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality);
         return (
-            <MagicMove.Scene debug={false} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <MagicMove.Scene debug={false} duration={500} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollView
+                        bounces={false}
                         nestedScrollEnabled={true}
                         ref={ref => {this._scrollViewRef = ref;}}
                         style={{backgroundColor: AppColors.white, flex: 1,}}
@@ -179,35 +213,40 @@ class ExerciseList extends Component {
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
-                                    source={require('../../../assets/images/standard/active_rest.png')}
+                                    source={imageSource}
                                     style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}
                                     useNativeDriver={false}
                                 />
-                                <TabIcon
-                                    color={AppColors.white}
-                                    containerStyle={[{position: 'absolute', top: AppSizes.padding, left: AppSizes.padding,}]}
-                                    icon={'chevron-left'}
+                                <TouchableOpacity
+                                    activeOpacity={1}
                                     onPress={() => Actions.pop()}
-                                    size={AppFonts.scaleFont(30)}
-                                    type={'material-community'}
-                                />
+                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.padding,}}
+                                >
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        icon={'chevron-left'}
+                                        onPress={() => Actions.pop()}
+                                        size={AppFonts.scaleFont(40)}
+                                        type={'material-community'}
+                                    />
+                                </TouchableOpacity>
                                 <MagicMove.Text
                                     duration={600}
                                     id={`${textId}.title`}
-                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35),}]}
+                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
                                     transition={MagicMove.Transition.move}
                                     useNativeDriver={false}
                                     zIndex={10}
                                 >
-                                    {'CARE & ACTIVATE'}
+                                    {pageTitle}
                                 </MagicMove.Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{`Anytime ${isPrepareActive ? 'before' : 'after'} training`}</Text>
-                                {_.map(plan.goals, (goal, key) =>
+                                <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
+                                {_.map(goals, (goal, key) =>
                                     <GoalPill
                                         isSelected={goal.isSelected}
                                         key={key}
-                                        onPress={() => this._toggleRecoveryGoal(key)}
+                                        onPress={() => this._toggleGoal(key)}
                                         text={goal.text}
                                     />
                                 )}
@@ -248,7 +287,7 @@ class ExerciseList extends Component {
                                             <ExerciseListItem
                                                 completedExercises={completedExercises}
                                                 exercise={exercise}
-                                                goals={plan.goals}
+                                                goals={goals}
                                                 handleCompleteExercise={this._handleCompleteExercise}
                                                 isLastItem={i + 1 === exerciseList.totalLength}
                                                 key={exercise.library_id+i}
@@ -283,6 +322,7 @@ class ExerciseList extends Component {
                             closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
                             completedExercises={completedExercises}
                             exerciseList={exerciseList}
+                            modality={this.props.modality}
                             handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
                                 this._handleCompleteExercise(exerciseId, setNumber);
                                 if(!hasNextExercise) {
@@ -293,6 +333,8 @@ class ExerciseList extends Component {
                                 }
                             }}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            planActiveRestGoals={goals}
+                            priority={priority}
                             selectedExercise={selectedExercise}
                             user={user}
                         />
@@ -306,8 +348,9 @@ class ExerciseList extends Component {
                             this.setState(
                                 { isExerciseCompletionModalOpen: false, },
                                 () => {
-                                    let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(store.getState().plan.completedExercises);
-                                    patchActiveRecovery(newCompletedExercises, isPrepareActive ? 'pre' : 'post')
+                                    let reducerCompletedExercises = plan.dailyPlan[0].cool_down && plan.dailyPlan[0].cool_down.active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+                                    let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
+                                    patchActiveRecovery(newCompletedExercises, recoveryType)
                                         .then(res => Actions.pop())
                                         .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
                                 }
@@ -321,19 +364,23 @@ class ExerciseList extends Component {
     }
 }
 
-ExerciseList.propTypes = {
-    markStartedRecovery:   PropTypes.func.isRequired,
-    patchActiveRecovery:   PropTypes.func.isRequired,
-    plan:                  PropTypes.object.isRequired,
-    setCompletedExercises: PropTypes.func.isRequired,
-    toggleRecoveryGoal:    PropTypes.func.isRequired,
-    updateUser:            PropTypes.func.isRequired,
-    user:                  PropTypes.object.isRequired,
+ExerciseModality.propTypes = {
+    markStartedRecovery:           PropTypes.func.isRequired,
+    modality:                      PropTypes.string.isRequired,
+    patchActiveRecovery:           PropTypes.func.isRequired,
+    plan:                          PropTypes.object.isRequired,
+    setCompletedCoolDownExercises: PropTypes.func.isRequired,
+    setCompletedExercises:         PropTypes.func.isRequired,
+    toggleActiveRestGoal:          PropTypes.func.isRequired,
+    toggleCoolDownGoal:            PropTypes.func.isRequired,
+    toggleWarmUpGoal:              PropTypes.func.isRequired,
+    updateUser:                    PropTypes.func.isRequired,
+    user:                          PropTypes.object.isRequired,
 };
 
-ExerciseList.defaultProps = {};
+ExerciseModality.defaultProps = {};
 
-ExerciseList.componentName = 'ExerciseList';
+ExerciseModality.componentName = 'ExerciseModality';
 
 /* Export Component ================================================================== */
-export default ExerciseList;
+export default ExerciseModality;

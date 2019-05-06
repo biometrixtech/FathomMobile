@@ -6,6 +6,7 @@ import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const MyPlan = ({
     Layout,
+    clearCompletedCoolDownExercises,
     clearCompletedExercises,
     clearHealthKitWorkouts,
     getMyPlan,
@@ -24,6 +25,7 @@ const MyPlan = ({
     user,
 }) => (
     <Layout
+        clearCompletedCoolDownExercises={clearCompletedCoolDownExercises}
         clearCompletedExercises={clearCompletedExercises}
         clearHealthKitWorkouts={clearHealthKitWorkouts}
         getMyPlan={getMyPlan}
@@ -44,16 +46,17 @@ const MyPlan = ({
 );
 
 MyPlan.propTypes = {
-    Layout:                  PropTypes.func.isRequired,
-    clearCompletedExercises: PropTypes.func.isRequired,
-    clearHealthKitWorkouts:  PropTypes.func.isRequired,
-    getMyPlan:               PropTypes.func.isRequired,
-    getSoreBodyParts:        PropTypes.func.isRequired,
-    healthData:              PropTypes.object.isRequired,
-    lastOpened:              PropTypes.object.isRequired,
-    network:                 PropTypes.object.isRequired,
-    noSessions:              PropTypes.func.isRequired,
-    notification:            PropTypes.oneOfType([
+    Layout:                          PropTypes.func.isRequired,
+    clearCompletedCoolDownExercises: PropTypes.func.isRequired,
+    clearCompletedExercises:         PropTypes.func.isRequired,
+    clearHealthKitWorkouts:          PropTypes.func.isRequired,
+    getMyPlan:                       PropTypes.func.isRequired,
+    getSoreBodyParts:                PropTypes.func.isRequired,
+    healthData:                      PropTypes.object.isRequired,
+    lastOpened:                      PropTypes.object.isRequired,
+    network:                         PropTypes.object.isRequired,
+    noSessions:                      PropTypes.func.isRequired,
+    notification:                    PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.string,
     ]).isRequired,
@@ -81,15 +84,16 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    clearCompletedExercises: PlanActions.clearCompletedExercises,
-    clearHealthKitWorkouts:  PlanActions.clearHealthKitWorkouts,
-    getMyPlan:               PlanActions.getMyPlan,
-    getSoreBodyParts:        PlanActions.getSoreBodyParts,
-    noSessions:              PlanActions.noSessions,
-    postReadinessSurvey:     PlanActions.postReadinessSurvey,
-    postSessionSurvey:       PlanActions.postSessionSurvey,
-    setAppLogs:              PlanActions.setAppLogs,
-    updateUser:              UserActions.updateUser,
+    clearCompletedCoolDownExercises: PlanActions.clearCompletedCoolDownExercises,
+    clearCompletedExercises:         PlanActions.clearCompletedExercises,
+    clearHealthKitWorkouts:          PlanActions.clearHealthKitWorkouts,
+    getMyPlan:                       PlanActions.getMyPlan,
+    getSoreBodyParts:                PlanActions.getSoreBodyParts,
+    noSessions:                      PlanActions.noSessions,
+    postReadinessSurvey:             PlanActions.postReadinessSurvey,
+    postSessionSurvey:               PlanActions.postSessionSurvey,
+    setAppLogs:                      PlanActions.setAppLogs,
+    updateUser:                      UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyPlan);

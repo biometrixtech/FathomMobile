@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
 
 const PlanLogic = {
 
@@ -796,18 +796,38 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
-    handleExercisesRenderLogic: (exerciseList, selectedExercise) => {
+    handleExercisesRenderLogic: (exerciseList, selectedExercise, modality) => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
-        let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
-        let stretchExercises = cleanedExerciseList['STRETCH'] ? cleanedExerciseList['STRETCH'] : [];
-        let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
-        let flatListExercises = _.concat(foamRollExercises, stretchExercises, activateExercises);
+        let isStaticExercise = _.find(cleanedExerciseList['STATIC STRETCH'], { library_id: selectedExercise.library_id, });
+        let flatListExercises = [];
+        if(modality === 'prepare') {
+            let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
+            let staticStretchExercises = cleanedExerciseList['STATIC STRETCH'] ? cleanedExerciseList['STATIC STRETCH'] : [];
+            let activeStretchExercises = cleanedExerciseList['ACTIVE STRETCH'] ? cleanedExerciseList['ACTIVE STRETCH'] : [];
+            let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
+            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
+            flatListExercises = _.concat(foamRollExercises, staticStretchExercises, activeStretchExercises, activateExercises, integrateExercises);
+        } else if(modality === 'recover') {
+            let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
+            let staticStretchExercises = cleanedExerciseList['STATIC STRETCH'] ? cleanedExerciseList['STATIC STRETCH'] : [];
+            let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
+            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
+            flatListExercises = _.concat(foamRollExercises, staticStretchExercises, activateExercises, integrateExercises);
+        } else if(modality === 'warmUp') {
+            flatListExercises = [];
+        } else if(modality === 'coolDown') {
+            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
+            let stretchExercises = cleanedExerciseList['STRETCH'] ? cleanedExerciseList['STRETCH'] : [];
+            flatListExercises = _.concat(stretchExercises,integrateExercises);
+        }
         let availableSectionsCount = 0;
+        let totalLength = 0;
         let firstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
         _.map(exerciseList.cleanedExerciseList, (exerciseArray, index) => {
             if(exerciseArray.length > 0) {
                 availableSectionsCount = availableSectionsCount + 1;
+                totalLength += exerciseArray.length;
             }
         });
         return {
@@ -815,6 +835,8 @@ const PlanLogic = {
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
+            isStaticExercise,
+            totalLength,
         };
     },
 
@@ -1070,7 +1092,11 @@ const PlanLogic = {
         }
         return _.map(obj, activity => {
             let newCompletedActivity = _.cloneDeep(activity);
-            newCompletedActivity.title = title;
+            let newTitle = title;
+            if(!title && obj.sport_name) {
+                newTitle = `${_.filter(MyPlanConstants.teamSports, ['index', obj.sport_name])[0].label.toUpperCase()} RECOVERY`;
+            }
+            newCompletedActivity.title = newTitle;
             return newCompletedActivity;
         });
     },
@@ -1084,19 +1110,31 @@ const PlanLogic = {
         let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
         let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
         let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
-        let completedActiveRecovery = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_active_recovery, 'ACTIVE RECOVERY');
-        let compiledActivities = _.concat(completedActiveRest, completedIce, completedCWI, completedActiveRecovery);
-        compiledActivities = _.sortBy(compiledActivities, ['event_date']);
+        let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
+        let compiledActivities = _.concat(completedActiveRest, completedIce, completedCWI, completedCoolDown);
+        compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
         let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.post_active_rest && !dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
-        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.length > 0;
+        let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
+        let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
+        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
+        let isCoolDownActive = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && !dailyPlanObj.cool_down.completed;
+        let isCoolDownCompleted = dailyPlanObj.cool_down && dailyPlanObj.cool_down.completed;
+        let cooldownTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`;
         return {
             compiledActivities,
+            cooldownTitle,
+            isCWIActive,
+            isCWICompleted,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
+            isCoolDownActive,
+            isCoolDownCompleted,
             isIceActive,
+            isIceCompleted,
         };
     },
 
@@ -1110,18 +1148,20 @@ const PlanLogic = {
         let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
         let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
         let compiledActivities = _.concat(completedActiveRest, completedHeat, completedWarmUp);
-        compiledActivities = _.sortBy(compiledActivities, ['event_date']);
+        compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateCompleted = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.completed;
         let isCareAndActivateLocked = dailyPlanObj.pre_active_rest && !dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
-        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.length > 0;
+        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
+        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
         return {
             compiledActivities,
             isCareAndActivateActive,
             isCareAndActivateCompleted,
             isCareAndActivateLocked,
             isHeatActive,
+            isHeatCompleted,
             isReadinessSurveyCompleted,
         };
     },
@@ -1131,20 +1171,17 @@ const PlanLogic = {
       * - /actions/plan.js
       */
     // TODO: UNIT TEST ME
-    handleFindGoals: dailyPlan => {
+    handleFindGoals: (object, exerciseListOrder) => {
         // setup variables
-        let isPrepareActiveRest = dailyPlan.pre_active_rest && dailyPlan.pre_active_rest.active;
-        let activeRest = isPrepareActiveRest ? dailyPlan.pre_active_rest : dailyPlan.post_active_rest;
-        let exerciseListOrder = isPrepareActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
         let tmpGoals = [];
         let goals = [];
         // return empty if we don't have an *_active_rest
-        if(!activeRest) {
+        if(!object) {
             return goals;
         }
         // loop through our exercise order and sections
         _.map(exerciseListOrder, list => {
-            _.map(activeRest[list.index], exercise => {
+            _.map(object[list.index], exercise => {
                 _.map(exercise.dosages, dosage => {
                     tmpGoals = _.concat(tmpGoals, dosage.goal);
                 })
@@ -1159,6 +1196,194 @@ const PlanLogic = {
         });
         // return array of object(s)
         return goals;
+    },
+
+    /**
+      * Handle Exercises Progress Pills Logic
+      * - Exercises
+      */
+    // TODO: UNIT TEST ME
+    handleExercisesProgressPillsLogic: (availableSectionsCount, cleanedExerciseList, completedExercises, exerciseList, index, selectedExercise, totalLength) => {
+        let usableScreenWidth = (AppSizes.screen.width - (AppSizes.padding * 2));
+        let currentIndex = Object.keys(cleanedExerciseList).indexOf(index);
+        let isSelectedExerciseInCurrentIndex = _.find(exerciseList, ['library_id', selectedExercise.library_id]);
+        let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
+        let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
+        let itemWidth = ((exerciseList.length / totalLength) * usableScreenWidth);
+        console.log('HII',exerciseList,totalLength,itemWidth);
+        let activeScale = 1.5;
+        let remainingScale = 1 - ((activeScale - 1) / (availableSectionsCount - 1));
+        let scaledItemWidth = isSelectedExerciseInCurrentIndex ? (itemWidth * activeScale) : (itemWidth * remainingScale);
+        console.log(currentIndex, usableScreenWidth, isSelectedExerciseInCurrentIndex, scaledItemWidth);
+        return {
+            currentIndex,
+            isSelectedExerciseInCurrentIndex,
+            progressWidth,
+            scaledItemWidth,
+        };
+    },
+
+    /**
+      * Handle Exercises Modality Render Logic
+      * - ExerciseModality
+      */
+    // TODO: UNIT TEST ME
+    handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality) => {
+        let goals = plan.activeRestGoals;
+        let imageId = 'prepareCareActivate';
+        let imageSource = require('../../assets/images/standard/active_rest.png');
+        let pageSubtitle = 'Anytime before training';
+        let pageTitle = 'CARE & ACTIVATE';
+        let recoveryObj = dailyPlanObj.pre_active_rest;
+        let recoveryType = 'pre_active_rest';
+        let sceneId = 'prepareScene';
+        let textId = 'prepareCareActivate';
+        if(dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && modality === 'recover') {
+            goals = plan.activeRestGoals;
+            imageId = 'recoverCareActivate';
+            pageSubtitle = 'Anytime after training';
+            pageTitle = 'CARE & ACTIVATE';
+            recoveryObj = dailyPlanObj.post_active_rest;
+            recoveryType = 'post_active_rest';
+            sceneId = 'recoverScene';
+            textId = 'recoverCareActivate';
+        } else if(dailyPlanObj.warm_up && dailyPlanObj.warm_up.active && modality === 'warmUp') {
+            goals = plan.warmUpGoals;
+            imageId = 'warmUp';
+            // imageSource = require('../../assets/images/standard/warm_up.png');
+            pageSubtitle = 'Anytime before training';
+            pageTitle = 'WARM UP';
+            recoveryObj = dailyPlanObj.warm_up;
+            recoveryType = 'warm_up';
+            sceneId = 'warmUpScene';
+            textId = 'warmUp';
+        } else if(dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && modality === 'coolDown') {
+            goals = plan.coolDownGoals;
+            imageId = 'coolDown';
+            imageSource = require('../../assets/images/standard/cool_down.png');
+            pageSubtitle = 'Immediately after training';
+            pageTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`;
+            recoveryObj = dailyPlanObj.cool_down;
+            recoveryType = 'cool_down';
+            sceneId = 'coolDownScene';
+            textId = 'coolDown';
+        }
+        let buttons = [
+            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 0, goals, modality).totalSeconds / 60))} minutes`,
+            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 1, goals, modality).totalSeconds / 60))} minutes`,
+            `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 2, goals, modality).totalSeconds / 60))} minutes`
+        ];
+        let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj, priority, goals, modality);
+        let firstExerciseFound = false;
+        _.forEach(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
+            if(exerciseIndex && exerciseIndex.length > 0 & !firstExerciseFound) {
+                firstExerciseFound = exerciseIndex[0];
+                return exerciseIndex;
+            }
+            return false;
+        });
+        return {
+            buttons,
+            exerciseList,
+            firstExerciseFound,
+            goals,
+            imageId,
+            imageSource,
+            pageSubtitle,
+            pageTitle,
+            recoveryObj,
+            recoveryType,
+            sceneId,
+            textId,
+        };
+    },
+
+    /**
+      * Handle Body Modality Render Logic
+      * - BodyModality
+      */
+    // TODO: UNIT TEST ME
+    handleBodyModalityRenderLogic: (dailyPlanObj, modality) => {
+        let equipmentRequired = 'Heating Pad, Wet Towel';
+        let extraTimeText = 'per body part';
+        let imageId = 'heat';
+        let imageSource = require('../../assets/images/standard/heat.png');
+        let pageSubtitle = '30 minutes before training';
+        let pageText = 'Heat increases circulation & loosens up soft tissues to improve the benefits of foam rolling, stretching, & dynamic warmup.';
+        let pageTitle = 'HEAT';
+        let recoveryObj = dailyPlanObj.heat;
+        let sceneId = 'heatScene';
+        let textId = 'heat';
+        let time = recoveryObj ? recoveryObj.minutes : 0;
+        if(dailyPlanObj.ice && dailyPlanObj.ice.active && modality === 'ice') {
+            equipmentRequired = 'Ice, Towel';
+            extraTimeText = 'per body part';
+            imageId = 'ice';
+            imageSource = require('../../assets/images/standard/ice.png');
+            pageSubtitle = 'After all training is complete';
+            pageText = 'Ice can help minimize swelling due to a minor injury & reduce inflammation in your tissues, muscle spasms, & pain.';
+            pageTitle = 'ICE';
+            recoveryObj = dailyPlanObj.ice;
+            sceneId = 'iceScene';
+            textId = 'ice';
+            time = dailyPlanObj.ice.minutes;
+        } else if(dailyPlanObj.cwi && dailyPlanObj.cwi.active && modality === 'cwi') {
+            equipmentRequired = 'Tub, Cold Water';
+            extraTimeText = false;
+            imageId = 'cwi';
+            imageSource = require('../../assets/images/standard/cwi.png');
+            pageSubtitle = 'After all training is complete';
+            pageText = 'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.';
+            pageTitle = 'COLD WATER BATH';
+            recoveryObj = dailyPlanObj.cold_water_immersion;
+            sceneId = 'cwiScene';
+            textId = 'cwi';
+            time = dailyPlanObj.cold_water_immersion.minutes;
+        }
+        return {
+            equipmentRequired,
+            extraTimeText,
+            imageId,
+            imageSource,
+            pageSubtitle,
+            pageText,
+            pageTitle,
+            recoveryObj,
+            sceneId,
+            textId,
+            time,
+        };
+    },
+
+    /**
+      * BodyModality Body Part
+      * - BodyModality
+      */
+    // TODO: UNIT TEST ME
+    handleBodyModalityBodyPart: (body, soreBodyParts) => {
+        let isSelected = body.active;
+        let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, ['index', body.body_part_location]);
+        let bodyImage = filteredBodyPartMap[0].image[body.side];
+        let mainBodyPartName = (
+            filteredBodyPartMap[0].label.slice(-1) === 's' && filteredBodyPartMap[0].bilateral
+        ) ?
+            filteredBodyPartMap[0].label === 'Achilles' ?
+                filteredBodyPartMap[0].label.toUpperCase()
+                : filteredBodyPartMap[0].label === 'Calves' ?
+                    'CALF'
+                    :
+                    filteredBodyPartMap[0].label.slice(0, -1).toUpperCase()
+            :
+            filteredBodyPartMap[0].label.toUpperCase();
+        if(body.side === 1 || body.side === 2) {
+            let sideText = body.side === 1 ? 'LEFT' : 'RIGHT';
+            mainBodyPartName = `${sideText}\n${mainBodyPartName}`;
+        }
+        return {
+            bodyImage,
+            isSelected,
+            mainBodyPartName,
+        };
     },
 
 };

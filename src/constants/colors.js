@@ -120,7 +120,7 @@ const zeplin = {
     superLight:             '#F5F5F5',
     warning:                '#EBBA2D',
     xLightSlate:            '#E2E4E6',
-    yellow:                 '#EBBA2D',
+    yellow:                 '#EBBA2D', // 235, 186, 45
 }
 
 const alerts = {

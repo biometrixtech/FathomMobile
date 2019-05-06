@@ -83,12 +83,13 @@ export default class MultiSwitch extends Component {
             currentStatus:     props.currentStatus,
             duration:          100,
             isComponentReady:  false,
-            mainWidth:         width - 30,
+            isPanning:         false,
+            mainWidth:         (width - 30),
             posValue:          0,
             position:          new Animated.Value(0),
             selectedPosition:  props.selectedIndex,
-            switcherWidth:     width / 2.7,
-            thresholdDistance: width - 8 - width / 2.4
+            switcherWidth:     (width / 2.7),
+            thresholdDistance: (width - 8 - width / 2.4),
         };
         this.isParentScrollDisabled = false;
     }
@@ -102,6 +103,7 @@ export default class MultiSwitch extends Component {
                     this.props.disableScroll(false);
                     this.isParentScrollDisabled = true;
                 }
+                this.setState({ isPanning: true, });
             },
             onPanResponderMove: (evt, gestureState) => {
                 if (!this.props.disableSwitch) {
@@ -113,9 +115,7 @@ export default class MultiSwitch extends Component {
             },
             onPanResponderTerminationRequest: () => false,
             onPanResponderRelease:            (evt, gestureState) => {
-                console.log('hello onPanResponderRelease');
                 if (!this.props.disableSwitch) {
-                    console.log(gestureState);
                     let finalValue = gestureState.dx + this.state.posValue;
                     this.isParentScrollDisabled = false;
                     this.props.disableScroll(true);
@@ -141,6 +141,7 @@ export default class MultiSwitch extends Component {
                         }
                     }
                 }
+                this.setState({ isPanning: false, });
             },
             onPanResponderTerminate:      () => {},
             onShouldBlockNativeResponder: () => {
@@ -203,6 +204,7 @@ export default class MultiSwitch extends Component {
 
     render = () => {
         const { buttons, selectedIndex, } = this.props;
+        const { isPanning, } = this.state;
         return (
             <View style={styles.containerWrapper}>
                 <View style={styles.container}>
@@ -218,13 +220,19 @@ export default class MultiSwitch extends Component {
                 </View>
                 <Animated.View
                     {...this._panResponder.panHandlers}
-                    style={[styles.switcher, {transform: [{ translateX: this.state.position, }]},]}
+                    style={[
+                        styles.switcher,
+                        {transform: [{ translateX: this.state.position, }]},
+                        isPanning ? {backgroundColor: 'rgba(235, 186, 45, 0.75)',} : {},
+                    ]}
                 >
                     <TouchableOpacity
                         onPress={() => {}}
                         style={styles.buttonStyle}
                     >
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{buttons[selectedIndex]}</Text>
+                        { !isPanning &&
+                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{buttons[selectedIndex]}</Text>
+                        }
                     </TouchableOpacity>
                 </Animated.View>
             </View>
