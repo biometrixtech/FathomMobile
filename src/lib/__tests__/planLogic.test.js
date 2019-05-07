@@ -26,9 +26,9 @@ const helperFunctions = {
         pushNotificationHelperProps.plan = {};
         pushNotificationHelperProps.plan.dailyPlan = [];
         pushNotificationHelperProps.plan.dailyPlan[0] = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].pre_recovery_completed = preRecoveryCompleted;
-        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery.completed = postRecoveryCompleted;
+        pushNotificationHelperProps.plan.dailyPlan[0].pre_active_rest_completed = preRecoveryCompleted;
+        pushNotificationHelperProps.plan.dailyPlan[0].post_active_rest = {};
+        pushNotificationHelperProps.plan.dailyPlan[0].post_active_rest.completed = postRecoveryCompleted;
         pushNotificationHelperProps.plan.dailyPlan[0].daily_readiness_survey_completed = isReadinessSurveyCompleted;
         return pushNotificationHelperProps;
     },
@@ -36,7 +36,7 @@ const helperFunctions = {
     getPushNotificationHelperState: (notificationString, helperProps) => {
         let pushNotificationHelperState = {};
         pushNotificationHelperState.prepare = {
-            finishedRecovery:           helperProps.plan && helperProps.plan.dailyPlan[0] && helperProps.plan.dailyPlan[0].pre_recovery_completed ? true : false,
+            finishedRecovery:           helperProps.plan && helperProps.plan.dailyPlan[0] && helperProps.plan.dailyPlan[0].pre_active_rest_completed ? true : false,
             isActiveRecoveryCollapsed:  true,
             isReadinessSurveyCollapsed: true,
             isReadinessSurveyCompleted: false,
@@ -974,12 +974,13 @@ const helperFunctions = {
         };
     },
 
-    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid, selectAreasOfSorenessValid, areQuestionsValid) => {
+    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid, selectAreasOfSorenessValid, areQuestionsValid, willTrainLaterValid) => {
         return {
             areAreasOfSorenessValid,
             areQuestionsValid,
             isPrevSorenessValid,
             selectAreasOfSorenessValid,
+            willTrainLaterValid,
         };
     },
 
@@ -1073,18 +1074,20 @@ const helperFunctions = {
         }
     },
 
-    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex) => {
+    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex, isStaticExercise, totalLength) => {
         return {
             availableSectionsCount,
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
+            isStaticExercise,
+            totalLength,
         }
     },
 
     getSingleSectionSampleExerciseList: () => {
         return {
-            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
+            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STATIC STRETCH': [], 'ACTIVE STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
             flatListExercises:   [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
         }
     },
@@ -1092,10 +1095,11 @@ const helperFunctions = {
     getTwoSectionsSampleExerciseList: () => {
         return {
             cleanedExerciseList: {
-                'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
-                'STRETCH':   [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
-                'ACTIVATE':  [],
-                'INTEGRATE': [],
+                'FOAM ROLL':      [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+                'STATIC STRETCH': [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+                'ACTIVE STRETCH': [],
+                'ACTIVATE':       [],
+                'INTEGRATE':      [],
             },
             flatListExercises: [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}, {library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
         }
@@ -1166,41 +1170,49 @@ it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
 });
 
-// it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
-//     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
-//     let selectedExercise = {library_id: 8, set_number: 1,};
-//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-//         2,
-//         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
-//         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-//         8
-//     );
-//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-// });
-//
-// it('Exercises Render Logic - Two Sections - Selected First Item', () => {
-//     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
-//     let selectedExercise = {library_id: 0, set_number: 1,};
-//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-//         2,
-//         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
-//         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-//         0
-//     );
-//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-// });
+it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 8, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        8,
+        {library_id: 8, set_number: 1,},
+        10
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
 
-// it('Exercises Render Logic - Single Section', () => {
-//     let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
-//     let selectedExercise = {library_id: 2, set_number: 1,};
-//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-//         1,
-//         helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
-//         helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
-//         2
-//     );
-//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-// });
+it('Exercises Render Logic - Two Sections - Selected First Item', () => {
+    /*eslint no-undefined: 0*/
+    let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
+    let selectedExercise = {library_id: 0, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        2,
+        helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
+        0,
+        undefined,
+        10
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - Single Section', () => {
+    /*eslint no-undefined: 0*/
+    let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
+    let selectedExercise = {library_id: 2, set_number: 1,};
+    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+        1,
+        helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
+        helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
+        2,
+        undefined,
+        5
+    );
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+});
 
 it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - NOT Valid', () => {
     let functionalStrength = {current_sport_name: 14};
@@ -1226,45 +1238,45 @@ it('FS Modal Render Logic - Empty State', () => {
     expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
 });
 
-// it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
-//     let currentPage = 4;
-//     let pageState = {pageIndex: 6,};
-//     let newSoreBodyParts = [];
-//     let expectedResult = {pageNum: 5,};
-//     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
-// });
+it('Post Session Survey Previous Page & Validation Logic - Page 5 (Selected Areas of Soreness)', () => {
+    let currentPage = 5;
+    let pageState = {pageIndex: 7,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 6,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
 
-// it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO HK SESSIONS', () => {
-//     let currentPage = 3;
-//     let pageState = {pageIndex: 4,};
-//     let newSoreBodyParts = [];
-//     let expectedResult = {pageNum: 1,};
-//     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, null, [{}, {}])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO SESSIONS', () => {
-//     let currentPage = 3;
-//     let pageState = {pageIndex: 4,};
-//     let newSoreBodyParts = [];
-//     let expectedResult = {pageNum: 2,};
-//     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - NO Sessions', () => {
-//     let currentPage = 3;
-//     let pageState = {pageIndex: 4,};
-//     let newSoreBodyParts = [];
-//     let expectedResult = {pageNum: 1,};
-//     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
-//     let currentPage = 3;
-//     let pageState = {pageIndex: 4,};
-//     let newSoreBodyParts = [{}];
-//     let expectedResult = {pageNum: 3,};
-//     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
-// });
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO HK SESSIONS', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 5,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, null, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO SESSIONS', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 5,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - NO Sessions', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 5,};
+    let newSoreBodyParts = [];
+    let expectedResult = {pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
+    let currentPage = 3;
+    let pageState = {pageIndex: 5,};
+    let newSoreBodyParts = [{}];
+    let expectedResult = {pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
+});
 
 it('Post Session Survey Previous Page & Validation Logic - Page 2 (F/U P/S) - NO Sessions', () => {
     let currentPage = 2;
@@ -1351,75 +1363,75 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-// it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - NOT Valid', () => {
-//     let isFormValidItems = {areAreasOfSorenessValid: false};
-//     let pageState = { pageIndex: 5, };
-//     let expectedResult = {isValid: false, pageNum: 5,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - Valid', () => {
-//     let isFormValidItems = {areAreasOfSorenessValid: true};
-//     let pageState = { pageIndex: 5, };
-//     let expectedResult = {isValid: true, pageNum: 5,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - NOT Valid', () => {
-//     let isFormValidItems = {selectAreasOfSorenessValid: false};
-//     let pageState = { pageIndex: 4, };
-//     let expectedResult = {isValid: false, pageNum: 5,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - Valid', () => {
-//     let isFormValidItems = {selectAreasOfSorenessValid: true};
-//     let pageState = { pageIndex: 4, };
-//     let expectedResult = {isValid: true, pageNum: 5,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - NOT Valid', () => {
-//     let isFormValidItems = {isPrevSorenessValid: false};
-//     let pageState = { pageIndex: 3, };
-//     let expectedResult = {isValid: false, pageNum: 4,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - Valid', () => {
-//     let isFormValidItems = {isPrevSorenessValid: true};
-//     let pageState = { pageIndex: 3, };
-//     let expectedResult = {isValid: true, pageNum: 4,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
-//     let isFormValidItems = {};
-//     let pageState = { pageIndex: 2, };
-//     let expectedResult = {isValid: true, pageNum: 4,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
-//     let isFormValidItems = {};
-//     let pageState = { pageIndex: 2, };
-//     let expectedResult = {isValid: true, pageNum: 3,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
-//     let isFormValidItems = {};
-//     let pageState = { pageIndex: 2, };
-//     let expectedResult = {isValid: true, pageNum: 4,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
-//     let isFormValidItems = {};
-//     let pageState = { pageIndex: 2, };
-//     let expectedResult = {isValid: true, pageNum: 3,};
-//     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
-// });
+it('Post Session Survey Next Page & Validation Logic - Page 5 (Selected Areas of Soreness) - NOT Valid', () => {
+    let isFormValidItems = {areAreasOfSorenessValid: false};
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 5, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 5 (Selected Areas of Soreness) - Valid', () => {
+    let isFormValidItems = {areAreasOfSorenessValid: true};
+    let pageState = { pageIndex: 5, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 5, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Areas of Soreness) - NOT Valid', () => {
+    let isFormValidItems = {selectAreasOfSorenessValid: false};
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: false, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Areas of Soreness) - Valid', () => {
+    let isFormValidItems = {selectAreasOfSorenessValid: true};
+    let pageState = { pageIndex: 4, };
+    let expectedResult = {isValid: true, pageNum: 5,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 3 (F/U P/S) - NOT Valid', () => {
+    let isFormValidItems = {isPrevSorenessValid: false};
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: false, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 3 (F/U P/S) - Valid', () => {
+    let isFormValidItems = {isPrevSorenessValid: true};
+    let pageState = { pageIndex: 3, };
+    let expectedResult = {isValid: true, pageNum: 4,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
+});
+
+it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
+    let isFormValidItems = {};
+    let pageState = { pageIndex: 2, };
+    let expectedResult = {isValid: true, pageNum: 3,};
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [{}, {}])).toEqual(expectedResult);
+});
 
 it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
     let isFormValidItems = {};
@@ -1711,37 +1723,37 @@ it('Sore Body Part Render Logic - On Enter, Left Glute', () => {
     expect(PlanLogic.handleSoreBodyPartRenderLogic(bodyPart, bodyPartSide, pageStateType)).toEqual(expectedResult);
 });
 
-// it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
-//     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-//     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
-//     let areasOfSorenessRef = {state: {isAllGood: true}};
-//     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true, true), newSoreBodyParts: []};
-//     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Previous Soreness', () => {
-//     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
-//     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
-//     let areasOfSorenessRef = {state: {isAllGood: false}};
-//     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
-//     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness', () => {
-//     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
-//     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
-//     let areasOfSorenessRef = {state: {isAllGood: false}};
-//     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
-//     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
-// });
-//
-// it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
-//     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
-//     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
-//     let areasOfSorenessRef = {state: {isAllGood: false}};
-//     let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, false), newSoreBodyParts: []};
-//     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
-// });
+it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Good Selected, NO Previous Soreness', () => {
+    let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
+    let areasOfSorenessRef = {state: {isAllGood: true}};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true, true, true), newSoreBodyParts: []};
+    expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Previous Soreness', () => {
+    let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
+    let areasOfSorenessRef = {state: {isAllGood: false}};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true, true), newSoreBodyParts: []};
+    expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness', () => {
+    let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
+    let areasOfSorenessRef = {state: {isAllGood: false}};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true, true), newSoreBodyParts: []};
+    expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+});
+
+it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
+    let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
+    let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
+    let areasOfSorenessRef = {state: {isAllGood: false}};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, false, true), newSoreBodyParts: []};
+    expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
+});
 
 it('Area Of Soreness Render Logic - On Enter, NO Previous Soreness', () => {
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
@@ -2044,117 +2056,117 @@ it('Post Session Form Change - Strength and Conditioning Type Input', () => {
     expect(PlanLogic.handleDailyReadinessAndPostSessionFormChange('strength_and_conditioning_type', strengthConditioningType, false, false, false, postSessionDefaultState)).toEqual(expectedResult);
 });
 
-// it('Active Prep Push Notification Result - FFF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - FFT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - FTT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - FTF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - TFF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - TTF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - TFT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Prep Push Notification Result - TTT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - FFF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - FFT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - FTT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - FTF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - TFF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - TTF', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, false);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - TFT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
-//
-// it('Active Recovery Push Notification Result - TTT', () => {
-//     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, true);
-//     let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
-//     let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
-//     expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
-// });
+it('Active Prep Push Notification Result - FFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - FFT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, false, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - FTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - FTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', false, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationAPExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TFT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, false, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Prep Push Notification Result - TTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_PREP', true, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_PREP', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - FFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - FFT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, false, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - FTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - FTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', false, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - TFF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - TTF', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, false);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - TFT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, false, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationARExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
+
+it('Active Recovery Push Notification Result - TTT', () => {
+    let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_ACTIVE_RECOVERY', true, true, true);
+    let helperState = helperFunctions.getPushNotificationHelperState('COMPLETE_ACTIVE_RECOVERY', helperProps);
+    let expectedResult = helperFunctions.getPushNotificationIgnoreExpectedResult();
+    expect(PlanLogic.handlePushNotification(helperProps, helperState)).toEqual(expectedResult);
+});
 
 it('Daily Readiness Push Notification Result - FFF', () => {
     let helperProps = helperFunctions.getPushNotificationHelperProps('COMPLETE_DAILY_READINESS', false, false, false);

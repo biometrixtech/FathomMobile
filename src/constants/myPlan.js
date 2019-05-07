@@ -214,12 +214,12 @@ const postExerciseListOrder = [
 // TODO: UPDATE TITLES
 const coolDownExerciseListOrder = [
     {
-        index: 'dynamic_integrate_exercises',
-        title: 'INTEGRATE',
-    },
-    {
         index: 'dynamic_stretch_exercises',
         title: 'STRETCH',
+    },
+    {
+        index: 'dynamic_integrate_exercises',
+        title: 'INTEGRATE',
     },
 ];
 

@@ -796,7 +796,7 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
-    handleExercisesRenderLogic: (exerciseList, selectedExercise, modality) => {
+    handleExercisesRenderLogic: (exerciseList, selectedExercise, modality = 'prepare') => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
         let isStaticExercise = _.find(cleanedExerciseList['STATIC STRETCH'], { library_id: selectedExercise.library_id, });
