@@ -207,7 +207,7 @@ class Root extends Component {
             );
         }
         return(
-            <MagicMove.Provider>
+            <MagicMove.Provider disabled={true}>
                 <View style={{flex: 1,}}>
                     <Provider store={this.props.store}>
                         <PersistGate

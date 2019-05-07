@@ -1190,17 +1190,17 @@ it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
 //     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
 // });
 
-it('Exercises Render Logic - Single Section', () => {
-    let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
-    let selectedExercise = {library_id: 2, set_number: 1,};
-    let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
-        1,
-        helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
-        helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
-        2
-    );
-    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
-});
+// it('Exercises Render Logic - Single Section', () => {
+//     let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
+//     let selectedExercise = {library_id: 2, set_number: 1,};
+//     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
+//         1,
+//         helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
+//         helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
+//         2
+//     );
+//     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
+// });
 
 it('FS Modal Render Logic - Sport (Soccer) WITH Position(s) - NOT Valid', () => {
     let functionalStrength = {current_sport_name: 14};

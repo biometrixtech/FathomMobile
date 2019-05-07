@@ -1122,7 +1122,10 @@ const PlanLogic = {
         let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
         let isCoolDownActive = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && !dailyPlanObj.cool_down.completed;
         let isCoolDownCompleted = dailyPlanObj.cool_down && dailyPlanObj.cool_down.completed;
-        let cooldownTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`;
+        let cooldownTitle = dailyPlanObj && dailyPlanObj.cool_down && dailyPlanObj.cool_down.sport_name ?
+            `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`
+            :
+            'RECOVERY';
         return {
             compiledActivities,
             cooldownTitle,
@@ -1210,11 +1213,9 @@ const PlanLogic = {
         let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
         let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
         let itemWidth = ((exerciseList.length / totalLength) * usableScreenWidth);
-        console.log('HII',exerciseList,totalLength,itemWidth);
         let activeScale = 1.5;
         let remainingScale = 1 - ((activeScale - 1) / (availableSectionsCount - 1));
         let scaledItemWidth = isSelectedExerciseInCurrentIndex ? (itemWidth * activeScale) : (itemWidth * remainingScale);
-        console.log(currentIndex, usableScreenWidth, isSelectedExerciseInCurrentIndex, scaledItemWidth);
         return {
             currentIndex,
             isSelectedExerciseInCurrentIndex,

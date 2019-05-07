@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     progressPill: {
         backgroundColor: AppColors.zeplin.superLight,
         borderRadius:    10,
-        width:           '90%',
+        width:           '100%',
     },
     progressPillsContainer: {
         flex:           1,
@@ -49,10 +49,11 @@ const styles = StyleSheet.create({
         paddingTop:     AppSizes.statusBarHeight,
     },
     progressPillsWrapper: {
-        alignItems:     'center',
-        height:         AppSizes.padding,
-        justifyContent: 'center',
-        width:          '100%',
+        alignItems:        'center',
+        height:            AppSizes.padding,
+        justifyContent:    'center',
+        paddingHorizontal: 2,
+        width:             '100%',
     },
     progressPillsText: {
         color:     AppColors.white,
@@ -89,7 +90,7 @@ const ProgressPills = ({
                         </View>
                     </View>
                     { isSelectedExerciseInCurrentIndex &&
-                        <Text oswaldMedium style={[styles.progressPillsText,]}>{index}</Text>
+                        <Text numberOfLines={1} oswaldMedium style={[styles.progressPillsText,]}>{index}</Text>
                     }
                 </View>
             );
@@ -236,7 +237,7 @@ class Exercises extends PureComponent {
                         initialNumToRender={flatListExercises.length}
                         itemWidth={AppSizes.screen.width * 0.85}
                         lockScrollWhileSnapping={true}
-                        maxToRenderPerBatch={flatListExercises.length}
+                        maxToRenderPerBatch={3}
                         onSnapToItem={slideIndex =>
                             this.setState({
                                 currentSlideIndex: slideIndex,
@@ -248,7 +249,7 @@ class Exercises extends PureComponent {
                         renderItem={obj => this._renderItem(obj, flatListExercises[(obj.index + 1)], this.state.progressPillsHeight, planActiveRestGoals, priority, isStaticExercise)}
                         scrollEnabled={isScrollEnabled}
                         sliderWidth={AppSizes.screen.width}
-                        windowSize={flatListExercises.length}
+                        windowSize={3}
                     />
                 </View>
             </View>

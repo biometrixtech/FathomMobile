@@ -199,7 +199,7 @@ class ExerciseModality extends Component {
             textId,
         } = PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality);
         return (
-            <MagicMove.Scene debug={false} duration={500} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <MagicMove.Scene debug={false} disabled={true} duration={500} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollView
                         bounces={false}
@@ -210,6 +210,7 @@ class ExerciseModality extends Component {
                         <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
                             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                                 <MagicMove.Image
+                                    disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
@@ -232,6 +233,7 @@ class ExerciseModality extends Component {
                                     />
                                 </TouchableOpacity>
                                 <MagicMove.Text
+                                    disabled={true}
                                     duration={600}
                                     id={`${textId}.title`}
                                     style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}

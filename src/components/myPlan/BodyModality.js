@@ -131,7 +131,7 @@ class BodyModality extends Component {
         });
         const animatedStyle = {transform: [{rotate: interpolateRotation,}]};
         return (
-            <MagicMove.Scene debug={false} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <MagicMove.Scene debug={false} disabled={true} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollView
                         bounces={false}
@@ -141,6 +141,7 @@ class BodyModality extends Component {
                         <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
                             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                                 <MagicMove.Image
+                                    disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
@@ -163,6 +164,7 @@ class BodyModality extends Component {
                                     />
                                 </TouchableOpacity>
                                 <MagicMove.Text
+                                    disabled={true}
                                     duration={600}
                                     id={`${textId}.title`}
                                     style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}

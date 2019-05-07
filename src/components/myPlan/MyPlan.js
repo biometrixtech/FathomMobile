@@ -128,6 +128,7 @@ const ActivityTab = ({
                 <View style={{borderRadius: AppSizes.padding, flex: 1, marginLeft: AppSizes.padding,}}>
                     <TouchableOpacity activeOpacity={locked ? 1 : 0.2} onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
                         <MagicMove.Image
+                            disabled={true}
                             id={`${id}.image`}
                             resizeMode={'cover'}
                             source={backgroundImage}
@@ -137,6 +138,7 @@ const ActivityTab = ({
                         <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
                             <View>
                                 <MagicMove.Text
+                                    disabled={true}
                                     id={`${id}.title`}
                                     style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(24),}]}
                                     useNativeDriver={false}
@@ -202,14 +204,12 @@ class MyPlan extends Component {
         super(props);
         // setup variables
         let defaultState = _.cloneDeep(defaultPlanState);
-        let planObj = props.plan.dailyPlan[0] || {};
         let newDailyReadiness = _.cloneDeep(defaultState.dailyReadiness);
         newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(props.plan.soreBodyParts);
         // update state
         defaultState.healthData = props.healthData;
         defaultState.isReadinessSurveyCompleted = !props.plan.dailyPlan[0].daily_readiness_survey_completed;
         defaultState.dailyReadiness = newDailyReadiness;
-        defaultState.isReadinessSurveyModalOpen = !planObj.daily_readiness_survey_completed;
         this.state = defaultState;
         // set variables for MyPlan
         this.tabView = null;
@@ -266,6 +266,10 @@ class MyPlan extends Component {
                 this._togglePostSessionSurveyModal();
             });
         }
+        // should we open the RS survey
+        this._timer = _.delay(() => {
+            this.setState({ isReadinessSurveyModalOpen: !planObj.daily_readiness_survey_completed, });
+        }, 600);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -334,7 +338,7 @@ class MyPlan extends Component {
     }
 
     _handleEnteringApp = callback => {
-        const { getMyPlan, getSoreBodyParts, lastOpened, setAppLogs, user, } = this.props;
+        const { getMyPlan, getSoreBodyParts, healthData, lastOpened, plan, setAppLogs, user, } = this.props;
         const { dailyReadiness, } = this.state;
         // when we arrive, load MyPlan, if it hasn't been loaded today yet
         let userId = user.id;
@@ -347,6 +351,17 @@ class MyPlan extends Component {
         this.setState({ isPageLoading: true, });
         getMyPlan(userId, moment().format('YYYY-MM-DD'), false, clearMyPlan)
             .then(response => {
+                // reset state if clearMyPlan is true
+                if(clearMyPlan) {
+                    let defaultState = _.cloneDeep(defaultPlanState);
+                    let newDailyReadiness = _.cloneDeep(defaultState.dailyReadiness);
+                    newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(plan.soreBodyParts);
+                    // update state
+                    defaultState.healthData = healthData;
+                    defaultState.isReadinessSurveyCompleted = !plan.dailyPlan[0].daily_readiness_survey_completed;
+                    defaultState.dailyReadiness = newDailyReadiness;
+                    this.state = defaultState;
+                }
                 if(response.daily_plans[0].daily_readiness_survey_completed) {
                     this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(response.daily_plans[0]));
                     this.setState({ isPageLoading: false, });
@@ -836,7 +851,7 @@ class MyPlan extends Component {
                                         </View>
                                         <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(24), marginLeft: (AppSizes.padding + AppSizes.paddingMed),}}>{'READINESS SURVEY'}</Text>
                                     </View>
-                                    { (isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) &&
+                                    { ((compiledActivities && compiledActivities.length > 0) || isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked) &&
                                         <DefaultListGap
                                             size={AppSizes.paddingLrg}
                                         />
@@ -1067,7 +1082,7 @@ class MyPlan extends Component {
                                     completed={isCoolDownCompleted}
                                     id={'coolDown'}
                                     onPress={() => Actions.exerciseModality({ modality: 'coolDown', })}
-                                    showBottomGap={isCoolDownActive || isCoolDownCompleted}
+                                    showBottomGap={isCareAndActivateActive || isCareAndActivateCompleted || isCareAndActivateLocked}
                                     subtitle={'Immediately after training'}
                                     title={cooldownTitle}
                                 />
@@ -1164,7 +1179,7 @@ class MyPlan extends Component {
             isRecoverCalculating
         );
         return(
-            <MagicMove.Scene debug={false} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollableTabView
                         locked={isScrollLocked}

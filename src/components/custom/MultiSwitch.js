@@ -175,24 +175,18 @@ export default class MultiSwitch extends Component {
             setTimeout(() => {
                 this.setState({
                     posValue:         this.state.mainWidth / 2 - this.state.switcherWidth / 2,
-                    selectedPosition: 1
+                    selectedPosition: 1,
                 });
             }, 100);
         } else if(index === 2) {
             Animated.timing(this.state.position, {
                 duration: this.state.duration,
-                toValue:  Platform.OS === 'ios' ?
-                    this.state.mainWidth - this.state.switcherWidth
-                    :
-                    this.state.mainWidth - this.state.switcherWidth - 2,
+                toValue:  this.state.mainWidth - this.state.switcherWidth,
             }).start();
             setTimeout(() => {
                 this.setState({
-                    posValue: Platform.OS === 'ios' ?
-                        this.state.mainWidth - this.state.switcherWidth
-                        :
-                        this.state.mainWidth - this.state.switcherWidth - 2,
-                    selectedPosition: 2
+                    posValue:         this.state.mainWidth - this.state.switcherWidth,
+                    selectedPosition: 2,
                 });
             }, 100);
         }
