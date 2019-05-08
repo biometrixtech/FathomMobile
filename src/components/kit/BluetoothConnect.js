@@ -548,7 +548,6 @@ class BluetoothConnectView extends Component {
             </Pages>
             <FathomModal
                 isVisible={this.state.isAlertModalOpen}
-                style={{margin: 0,}}
             >
                 <View style={{backgroundColor: AppColors.black, flex: 1}}></View>
             </FathomModal>

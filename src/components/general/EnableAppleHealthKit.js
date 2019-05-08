@@ -50,10 +50,7 @@ const EnableAppleHealthKit = ({
     isModalOpen,
 }) => (
     <FathomModal
-        backdropColor={AppColors.white}
-        backdropOpacity={1}
         isVisible={isModalOpen}
-        style={{margin: 0,}}
     >
         <View style={{flex: 1,}}>
             <ImageBackground

@@ -63,13 +63,13 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 });
             } else {
                 // setup variables to be used
-                let isPreActiveRest = response.daily_plans[0].pre_active_rest && response.daily_plans[0].pre_active_rest.active;
-                let activeRestObj = isPreActiveRest ? response.daily_plans[0].pre_active_rest : response.daily_plans[0].post_active_rest;
+                let isPreActiveRest = response.daily_plans[0].pre_active_rest[0] && response.daily_plans[0].pre_active_rest[0].active;
+                let activeRestObj = isPreActiveRest ? response.daily_plans[0].pre_active_rest[0] : response.daily_plans[0].post_active_rest[0];
                 let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
                 // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
-                let coolDownGoals = PlanLogic.handleFindGoals(response.daily_plans[0].cool_down, MyPlanConstants.coolDownExerciseListOrder);
+                let coolDownGoals = PlanLogic.handleFindGoals(response.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
                 let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
-                let warmUpGoals = PlanLogic.handleFindGoals(response.daily_plans[0].warm_up, MyPlanConstants.warmUpExerciseListOrder);
+                let warmUpGoals = PlanLogic.handleFindGoals(response.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
                 let currentActiveRestGoals = store.getState().plan.activeRestGoals;
                 let areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoals, currentActiveRestGoals, 'goal_type').length;
                 let currentCoolDownGoals = store.getState().plan.coolDownGoals;

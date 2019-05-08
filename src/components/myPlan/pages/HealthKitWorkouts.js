@@ -11,7 +11,7 @@
     />
  *
  */
-import React, { PureComponent, } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Keyboard, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
@@ -90,7 +90,7 @@ const WorkoutListDetail = ({
     )
 };
 
-class HealthKitWorkouts extends PureComponent {
+class HealthKitWorkouts extends Component {
     constructor(props) {
         super(props);
         this.state = {

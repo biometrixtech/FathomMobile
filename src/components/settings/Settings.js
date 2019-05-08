@@ -573,7 +573,6 @@ class Settings extends Component {
                 />
                 <FathomModal
                     isVisible={this.state.is3SensorFilesModalVisible}
-                    style={{margin: 0,}}
                 >
                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
                         { this.state.areSessionFinishedFetching ?

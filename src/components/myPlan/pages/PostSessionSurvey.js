@@ -273,9 +273,7 @@ class PostSessionSurvey extends Component {
                                                 :
                                                 null
                                     }
-                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
-                                        handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide);
-                                    }}
+                                    handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => handleFormChange(`sessions[${index}].${location}`, value, isPain, bodyPartMapIndex, bodyPartSide)}
                                     handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
                                     postSession={session}
                                     ref={ref => {this.sportScheduleBuilderRefs[index] = ref;}}

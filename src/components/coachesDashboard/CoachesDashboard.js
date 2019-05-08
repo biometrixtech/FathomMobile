@@ -881,7 +881,7 @@ class CoachesDashboard extends Component {
                 </ScrollableTabView>
                 <FathomModal
                     isVisible={isComplianceModalOpen}
-                    style={{alignItems: 'center', margin: 0,}}
+                    style={{alignItems: 'center',}}
                 >
                     <View
                         style={[
@@ -909,7 +909,7 @@ class CoachesDashboard extends Component {
                 </FathomModal>
                 <FathomModal
                     isVisible={isAthleteCardModalOpen}
-                    style={{alignItems: 'center', margin: 0,}}
+                    style={{alignItems: 'center',}}
                 >
                     <View
                         style={[

@@ -114,7 +114,7 @@ const JoinATeamModal = ({
 }) => (
     <FathomModal
         isVisible={isOpen}
-        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
     >
         <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon

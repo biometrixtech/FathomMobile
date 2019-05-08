@@ -5,6 +5,7 @@
  *
  */
 import React, { Component, } from 'react';
+import { StyleSheet, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -20,13 +21,17 @@ class FathomSlider extends Component {
     static defaultProps = {};
 
     modalProps = () => {
-        const props = {
+        let props = {
             backdropColor:   AppColors.zeplin.darkNavy,
             backdropOpacity: 0.8,
             deviceHeight:    AppSizes.screen.height,
             deviceWidth:     AppSizes.screen.width,
+            style:           {margin: 0,},
             ...this.props,
         };
+        if(this.props.style) {
+            props.style = [{margin: 0,}, StyleSheet.flatten(this.props.style)];
+        }
         return props;
     }
 

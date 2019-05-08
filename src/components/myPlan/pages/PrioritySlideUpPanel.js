@@ -41,7 +41,6 @@ class PrioritySlideUpPanel extends Component {
         return(
             <FathomModal
                 isVisible={isSlideUpPanelOpen}
-                style={{margin: 0,}}
             >
                 <SlidingUpPanel
                     allowDragging={false}

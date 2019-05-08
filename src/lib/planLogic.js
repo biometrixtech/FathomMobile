@@ -1393,30 +1393,38 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderLogic: dailyPlanObj => {
-        let completedPostActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
-        let completedPreActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
-        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
+        // setup completed modalities
         let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
         let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
         let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
+        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
+        let completedPostActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
+        let completedPreActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
         let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
         let completedModalities = _.concat(completedPostActiveRest, completedPreActiveRest, completedIce, completedCWI, completedCoolDown, completedHeat, completedWarmUp);
         completedModalities = _.sortBy(completedModalities, ['completed_date_time']);
-        let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
-        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
-        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
-        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
-        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
+        // setup active, completed, and locked states for each modality
         let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
         let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
+        let isCWILocked = dailyPlanObj.cold_water_immersion && !dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
+        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
+        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
+        let isHeatLocked = dailyPlanObj.heat && !dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
+        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
+        let isIceLocked = dailyPlanObj.ice && !dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         return {
             completedModalities,
             isCWIActive,
             isCWICompleted,
+            isCWILocked,
             isHeatActive,
             isHeatCompleted,
+            isHeatLocked,
             isIceActive,
             isIceCompleted,
+            isIceLocked,
             isReadinessSurveyCompleted,
         };
     },

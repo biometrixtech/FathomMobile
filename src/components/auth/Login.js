@@ -347,7 +347,7 @@ class Login extends Component {
 
                 <FathomModal
                     isVisible={this.state.isModalVisible}
-                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
                 >
                     <View>
                         <Card title={'Select environment'}>

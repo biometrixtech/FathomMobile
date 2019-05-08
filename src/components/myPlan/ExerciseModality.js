@@ -317,7 +317,7 @@ class ExerciseModality extends Component {
                     </ScrollView>
                     <FathomModal
                         isVisible={isSelectedExerciseModalOpen}
-                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                        style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
                     >
                         <Exercises
                             closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}

@@ -220,7 +220,7 @@ class KitManagementView extends Component {
             </Egg>
             <FathomModal
                 isVisible={this.state.isModal1Visible}
-                style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent,}]}
             >
                 <View onLayout={(ev) => this.resizeModal1(ev)}>
                     <Card title={'Connect to WiFi'}>
@@ -259,7 +259,7 @@ class KitManagementView extends Component {
             </FathomModal>
             <FathomModal
                 isVisible={this.state.isModal2Visible}
-                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, margin: 0,}]}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1,}]}
             >
                 <Wrapper>
                     <Card title={`${this.state.other ? 'Hidden network' : this.state.SSID} security settings${this.state.other ? '' : ' (if needed'}`}>
@@ -354,7 +354,7 @@ class KitManagementView extends Component {
             </FathomModal>
             <FathomModal
                 isVisible={this.state.isModal3Visible}
-                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, margin: 0,}]}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1,}]}
             >
                 <Wrapper behavior={'padding'}>
                     <Card title={'Gyro Calibration'}>
@@ -387,7 +387,7 @@ class KitManagementView extends Component {
             </FathomModal>
             <FathomModal
                 isVisible={this.state.isResetModalVisible}
-                style={[AppStyles.containerCentered, this.state.resetModalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                style={[AppStyles.containerCentered, this.state.resetModalStyle, {backgroundColor: AppColors.transparent,}]}
             >
                 <View onLayout={(ev) => { this.resizeResetModal(ev); }}>
                     <Card title={'Factory Reset'}>

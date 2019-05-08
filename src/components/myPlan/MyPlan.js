@@ -21,7 +21,17 @@
       />
  */
 import React, { Component, } from 'react';
-import { AppState, BackHandler, Image, Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import {
+    AppState,
+    BackHandler,
+    Image,
+    Platform,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -47,15 +57,11 @@ import { DefaultListGap, PostSessionSurvey, ReadinessSurvey, SessionsCompletionM
 import { Loading, } from '../general';
 
 // global constants
-// const highSorenessMessage = 'Based on your reported discomfort we recommend you rest & utilize self-care techniques like heat, ice, or massage to help reduce swelling, ease pain, & speed up healing.\n\nIf you have pain or swelling that gets worse or doesn\'t go away, please seek appropriate medical attention.';
 const numberOfPlaceholders = 8;
-// const offDayLoggedText = 'Make the most of your training by resting well today: hydrate, eat well and sleep early.';
 const timerDelay = 30000; // delay for X ms
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
-
-/* Styles ==================================================================== */
 
 /* Component ==================================================================== */
 const ActivityTab = ({
@@ -208,25 +214,6 @@ class MyPlan extends Component {
         this.scrollToTimer = null;
     }
 
-    componentWillMount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', () => true);
-        }
-        // scroll to first active activity tab
-        this._scrollToFirstActiveActivityTab();
-    }
-
-    componentWillUnmount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress');
-        }
-        AppState.removeEventListener('change', this._handleAppStateChange);
-        // clear timers
-        clearInterval(this._timer);
-        clearInterval(this.goToPageTimer);
-        clearInterval(this.scrollToTimer);
-    }
-
     componentDidMount = () => {
         const { notification, plan, scheduledMaintenance, user, } = this.props;
         const { healthData, } = this.state;
@@ -274,16 +261,16 @@ class MyPlan extends Component {
             this._handlePushNotification(this.props);
         }
         // navigate to new page if we have a new plan
-        // const areObjectsDifferent = _.isEqual(prevProps.plan, plan);
-        // if(
-        //     !areObjectsDifferent &&
-        //     plan.dailyPlan[0] &&
-        //     prevProps.plan.dailyPlan[0] &&
-        //     prevProps.plan.dailyPlan[0].landing_screen !== plan.dailyPlan[0].landing_screen
-        // ) {
-        //     // TODO: this should now scroll??
-        //     this._goToScrollviewPage(MyPlanConstants.scrollableTabViewPage(plan.dailyPlan[0]));
-        // }
+        const areObjectsDifferent = _.isEqual(prevProps.plan, plan);
+        if(
+            !areObjectsDifferent &&
+            plan.dailyPlan[0] &&
+            prevProps.plan.dailyPlan[0] &&
+            prevProps.plan.dailyPlan[0].landing_screen !== plan.dailyPlan[0].landing_screen
+        ) {
+            // scroll to first active activity tab
+            this._scrollToFirstActiveActivityTab();
+        }
         // if we have workouts, handle RS or PSS
         if(!_.isEqual(prevProps.healthData, healthData) && healthData && healthData.workouts && healthData.workouts.length > 0) {
             let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
@@ -321,8 +308,26 @@ class MyPlan extends Component {
         }
     }
 
+    componentWillMount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.addEventListener('hardwareBackPress', () => true);
+        }
+        // scroll to first active activity tab
+        this._scrollToFirstActiveActivityTab();
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === 'android') {
+            BackHandler.removeEventListener('hardwareBackPress');
+        }
+        AppState.removeEventListener('change', this._handleAppStateChange);
+        // clear timers
+        clearInterval(this._timer);
+        clearInterval(this.goToPageTimer);
+        clearInterval(this.scrollToTimer);
+    }
+
     _closePrepareSessionsCompletionModal = () => {
-        const { dailyReadiness, } = this.state;
         this.goToPageTimer = _.delay(() => {
             this.setState(
                 {
@@ -331,9 +336,7 @@ class MyPlan extends Component {
                     isPrepareSessionsCompletionModalOpen: false,
                     isRecoverCalculating:                 false,
                 },
-                () => {
-                    if(!dailyReadiness.sessions_planned && dailyReadiness.sessions.length > 0) { this._goToScrollviewPage(2); }
-                }
+                () => this._scrollToFirstActiveActivityTab(),
             );
         }, 500);
     }
@@ -346,6 +349,90 @@ class MyPlan extends Component {
                 postSession:                        _.cloneDeep(defaultPlanState.postSession),
             },
         );
+    }
+
+    _handleAppStateChange = nextAppState => {
+        const { lastOpened, notification, user, } = this.props;
+        let clearMyPlan = (
+            !lastOpened ||
+            !lastOpened.date ||
+            lastOpened.userId !== user.id ||
+            !moment().isSame(lastOpened.date, 'day')
+        );
+        if(nextAppState === 'active' && notification) {
+            this._handleEnteringApp(() => this._handlePushNotification(this.props));
+        } else if(nextAppState === 'active' && (!lastOpened.date || clearMyPlan)) {
+            Actions.reset('key1');
+        } else if(
+            nextAppState === 'active' &&
+            user.health_enabled &&
+            (
+                !user.health_sync_date ||
+                (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
+            )
+        ) {
+            AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
+        }
+    }
+
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
+        const { plan, } = this.props;
+        const { dailyReadiness, postSession, } = this.state;
+        let stateObject = isDailyReadiness ? dailyReadiness : postSession;
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections);
+        let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
+        if (isDailyReadiness) {
+            this.setState({ dailyReadiness: newFormFields, });
+        } else {
+            this.setState({ postSession: newFormFields, });
+        }
+    }
+
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+        const { dailyReadiness, } = this.state;
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, dailyReadiness, isClearCandidate, isMovementValue);
+        this.setState({ dailyReadiness: newFormFields, });
+    }
+
+    _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, } = this.props;
+        const { dailyReadiness, healthData, prepare, recover, } = this.state;
+        let {
+            newDailyReadiness,
+            newDailyReadinessState,
+            newPrepareObject,
+            newRecoverObject,
+            nonDeletedSessions,
+        } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData);
+        this.setState(
+            {
+                dailyReadiness:             newDailyReadinessState,
+                healthData:                 _.cloneDeep(defaultPlanState.healthData),
+                isPrepCalculating:          newDailyReadiness.sessions_planned,
+                isReadinessSurveyModalOpen: false,
+                isRecoverCalculating:       !newDailyReadiness.sessions_planned,
+                prepare:                    newPrepareObject,
+                recover:                    newRecoverObject,
+            },
+            () => {
+                this.goToPageTimer = _.delay(() => {
+                    this.setState({ isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0, });
+                }, 500)
+            },
+        );
+        postReadinessSurvey(newDailyReadiness)
+            .then(response => {
+                if(nonDeletedSessions.length === 0) {
+                    this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                }
+                clearHealthKitWorkouts();
+                clearCompletedExercises();
+                clearCompletedCoolDownExercises();
+            })
+            .catch(error => {
+                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
+            });
     }
 
     _handleEnteringApp = callback => {
@@ -444,72 +531,6 @@ class MyPlan extends Component {
             .catch(error => this.setState({ isPageLoading: false, }));
     }
 
-    _handleAppStateChange = nextAppState => {
-        const { lastOpened, notification, user, } = this.props;
-        let clearMyPlan = (
-            !lastOpened ||
-            !lastOpened.date ||
-            lastOpened.userId !== user.id ||
-            !moment().isSame(lastOpened.date, 'day')
-        );
-        if(nextAppState === 'active' && notification) {
-            this._handleEnteringApp(() => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && (!lastOpened.date || clearMyPlan)) {
-            Actions.reset('key1');
-        } else if(
-            nextAppState === 'active' &&
-            user.health_enabled &&
-            (
-                !user.health_sync_date ||
-                (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
-            )
-        ) {
-            AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
-        }
-    }
-
-    _handlePushNotification = props => {
-        // need to update our state to clear all 'open' items
-        this.setState(
-            {
-                isPostSessionSurveyModalOpen: false,
-                isReadinessSurveyModalOpen:   false,
-                loading:                      false,
-            },
-            () => {
-                // continue current logic
-                const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
-                // scroll to first active activity tab
-                this._scrollToFirstActiveActivityTab();
-                if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
-                    this.setState({
-                        [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
-                        isPrepCalculating:                  false,
-                        isRecoverCalculating:               false,
-                    });
-                }
-                if(pushNotificationUpdate.updateExerciseList) {
-                    this._handleExerciseListRefresh(true, true);
-                }
-                if(pushNotificationUpdate.updatePushNotificationFlag) {
-                    AppUtil.updatePushNotificationFlag();
-                }
-            }
-        );
-    }
-
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
-        const { dailyReadiness, } = this.state;
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, dailyReadiness, isClearCandidate, isMovementValue);
-        this.setState({ dailyReadiness: newFormFields, });
-    }
-
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
-        const { postSession, } = this.state;
-        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, postSession, isClearCandidate, isMovementValue);
-        this.setState({ postSession: newFormFields, });
-    }
-
     _handleHealthDataFormChange = (index, name, value, callback) => {
         const { healthData, } = this.state;
         let newHealthData = _.cloneDeep(healthData.workouts);
@@ -529,45 +550,10 @@ class MyPlan extends Component {
         });
     }
 
-    _handleReadinessSurveySubmit = isSecondFunctionalStrength => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, } = this.props;
-        const { dailyReadiness, healthData, prepare, recover, } = this.state;
-        let {
-            newDailyReadiness,
-            newDailyReadinessState,
-            newPrepareObject,
-            newRecoverObject,
-            nonDeletedSessions,
-        } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData);
-        this.setState(
-            {
-                dailyReadiness:             newDailyReadinessState,
-                healthData:                 _.cloneDeep(defaultPlanState.healthData),
-                isPrepCalculating:          newDailyReadiness.sessions_planned,
-                isReadinessSurveyModalOpen: false,
-                isRecoverCalculating:       !newDailyReadiness.sessions_planned,
-                prepare:                    newPrepareObject,
-                recover:                    newRecoverObject,
-            },
-            () => {
-                this.goToPageTimer = _.delay(() => {
-                    this.setState({ isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0, });
-                }, 500)
-            },
-        );
-        postReadinessSurvey(newDailyReadiness)
-            .then(response => {
-                if(nonDeletedSessions.length === 0) {
-                    this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
-                }
-                clearHealthKitWorkouts();
-                clearCompletedExercises();
-                clearCompletedCoolDownExercises();
-            })
-            .catch(error => {
-                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
-            });
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+        const { postSession, } = this.state;
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, postSession, isClearCandidate, isMovementValue);
+        this.setState({ postSession: newFormFields, });
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
@@ -613,17 +599,34 @@ class MyPlan extends Component {
             });
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
-        const { plan, } = this.props;
-        const { dailyReadiness, postSession, } = this.state;
-        let stateObject = isDailyReadiness ? dailyReadiness : postSession;
-        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections);
-        let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
-        if (isDailyReadiness) {
-            this.setState({ dailyReadiness: newFormFields, });
-        } else {
-            this.setState({ postSession: newFormFields, });
-        }
+    _handlePushNotification = props => {
+        // need to update our state to clear all 'open' items
+        this.setState(
+            {
+                isPostSessionSurveyModalOpen: false,
+                isReadinessSurveyModalOpen:   false,
+                loading:                      false,
+            },
+            () => {
+                // continue current logic
+                const pushNotificationUpdate = PlanLogic.handlePushNotification(props, this.state);
+                // scroll to first active activity tab
+                this._scrollToFirstActiveActivityTab();
+                if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
+                    this.setState({
+                        [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
+                        isPrepCalculating:                  false,
+                        isRecoverCalculating:               false,
+                    });
+                }
+                if(pushNotificationUpdate.updateExerciseList) {
+                    this._handleExerciseListRefresh(true, true);
+                }
+                if(pushNotificationUpdate.updatePushNotificationFlag) {
+                    AppUtil.updatePushNotificationFlag();
+                }
+            }
+        );
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -749,10 +752,13 @@ class MyPlan extends Component {
             completedModalities,
             isCWIActive,
             isCWICompleted,
+            isCWILocked,
             isHeatActive,
             isHeatCompleted,
+            isHeatLocked,
             isIceActive,
             isIceCompleted,
+            isIceLocked,
             isReadinessSurveyCompleted,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
@@ -771,17 +777,14 @@ class MyPlan extends Component {
                                 <ScrollView
                                     ref={ref => {this._scrollViewRef = ref;}}
                                     refreshControl={
-                                        isPrepCalculating || isRecoverCalculating ?
-                                            null
-                                            :
-                                            <RefreshControl
-                                                colors={[AppColors.zeplin.yellow]}
-                                                onRefresh={() => this._handleExerciseListRefresh(false)}
-                                                refreshing={isPageLoading}
-                                                title={'Loading...'}
-                                                titleColor={AppColors.zeplin.yellow}
-                                                tintColor={AppColors.zeplin.yellow}
-                                            />
+                                        <RefreshControl
+                                            colors={[AppColors.zeplin.yellow]}
+                                            onRefresh={() => this._handleExerciseListRefresh(false)}
+                                            refreshing={isPageLoading}
+                                            title={'Loading...'}
+                                            titleColor={AppColors.zeplin.yellow}
+                                            tintColor={AppColors.zeplin.yellow}
+                                        />
                                     }
                                 >
 
@@ -824,7 +827,7 @@ class MyPlan extends Component {
                                                 locked={isLocked}
                                                 onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                                 onPress={() => Actions.exerciseModality({ index: key, modality: 'prepare', })}
-                                                showBottomGap={isLastIndex ? (isHeatActive || isHeatCompleted || dailyPlanObj.cool_down.length > 0 || dailyPlanObj.post_active_rest.length === 0 || dailyPlanObj.post_active_rest.length > 0) : true}
+                                                showBottomGap={dailyPlanObj && !isHeatActive && dailyPlanObj.cool_down.length === 0 && dailyPlanObj.sessions_planned ? false : isLastIndex ? (isHeatActive || isHeatCompleted || isHeatLocked || dailyPlanObj.cool_down.length > 0 || dailyPlanObj.post_active_rest.length === 0 || dailyPlanObj.post_active_rest.length > 0) : true}
                                                 subtitle={isLocked ? false : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                                 title={'CARE & ACTIVATE'}
                                             />
@@ -832,11 +835,12 @@ class MyPlan extends Component {
                                     })}
 
                                     {/*heat*/}
-                                    { (isHeatActive || isHeatCompleted) && !isPrepCalculating &&
+                                    { isHeatActive || isHeatCompleted || isHeatLocked &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/heat.png')}
                                             completed={isHeatCompleted}
                                             id={'heat'}
+                                            locked={isHeatLocked}
                                             onLayout={isHeatActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                             onPress={() => Actions.bodyModality({ modality: 'heat', })}
                                             showBottomGap={false}
@@ -851,6 +855,7 @@ class MyPlan extends Component {
                                             cooldownTitle,
                                             isActive,
                                             isCompleted,
+                                            isLocked,
                                         } = PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, key, dailyPlanObj.cool_down);
                                         if(!isActive) { return(null); }
                                         return (
@@ -859,6 +864,7 @@ class MyPlan extends Component {
                                                 completed={isCompleted}
                                                 id={'coolDown'}
                                                 key={key}
+                                                locked={isLocked}
                                                 onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                                 onPress={() => Actions.exerciseModality({ index: key, modality: 'coolDown', })}
                                                 showBottomGap={true}
@@ -926,7 +932,7 @@ class MyPlan extends Component {
                                                     locked={isLocked}
                                                     onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                                     onPress={() => Actions.exerciseModality({ index: key, modality: 'recover', })}
-                                                    showBottomGap={isLastIndex ? (isIceActive || isIceCompleted) : true}
+                                                    showBottomGap={isLastIndex ? (isIceActive || isIceCompleted || isIceLocked) : true}
                                                     subtitle={isLocked ? false : 'Anytime after training'} // TODO: ADD LOCKED TEXT
                                                     title={'CARE & ACTIVATE'}
                                                 />
@@ -935,25 +941,27 @@ class MyPlan extends Component {
                                     }
 
                                     {/*ice*/}
-                                    { (isIceActive || isIceCompleted) && !isRecoverCalculating &&
+                                    { isIceActive || isIceCompleted || isIceLocked &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/ice.png')}
                                             completed={isIceCompleted}
                                             id={'ice'}
+                                            locked={isIceLocked}
                                             onLayout={isIceActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                             onPress={() => Actions.bodyModality({ modality: 'ice', })}
-                                            showBottomGap={isCWIActive || isCWICompleted}
+                                            showBottomGap={isCWIActive || isCWICompleted || isCWILocked}
                                             subtitle={'After all training is complete'}
                                             title={'ICE'}
                                         />
                                     }
 
                                     {/*cold_water_immersion*/}
-                                    { (isCWIActive || isCWICompleted) && !isRecoverCalculating &&
+                                    { isCWIActive || isCWICompleted || isCWILocked &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/cwi.png')}
                                             completed={isCWICompleted}
                                             id={'cwi'}
+                                            locked={isCWILocked}
                                             onLayout={isCWIActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                             onPress={() => Actions.bodyModality({ modality: 'cwi', })}
                                             showBottomGap={false}
@@ -963,54 +971,6 @@ class MyPlan extends Component {
                                     }
 
                                 </ScrollView>
-                                :
-                                null
-                            }
-
-                            { isReadinessSurveyCompleted ?
-                                <ActionButton
-                                    bgColor={'rgba(15, 19, 32, 0.8)'}
-                                    buttonColor={AppColors.zeplin.yellow}
-                                    renderIcon={() =>
-                                        <TabIcon
-                                            color={AppColors.white}
-                                            icon={'add'}
-                                            size={40}
-                                        />
-                                    }
-                                    shadowStyle={{
-                                        shadowColor:   'rgba(235, 186, 45, 0.4)',
-                                        shadowOffset:  { height: 3, width: 0, },
-                                        shadowOpacity: 1,
-                                        shadowRadius:  6,
-                                    }}
-                                    size={65}
-                                >
-                                    <ActionButton.Item
-                                        buttonColor={AppColors.zeplin.yellow}
-                                        onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
-                                        textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                                        textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
-                                        title={'OFF DAY'}
-                                    >
-                                        <Image
-                                            source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
-                                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                        />
-                                    </ActionButton.Item>
-                                    <ActionButton.Item
-                                        buttonColor={AppColors.zeplin.yellow}
-                                        onPress={() => this._togglePostSessionSurveyModal()}
-                                        textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                                        textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
-                                        title={'LOG TRAINING'}
-                                    >
-                                        <Image
-                                            source={require('../../../assets/images/sports_images/icons8-exercise-200.png')}
-                                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                        />
-                                    </ActionButton.Item>
-                                </ActionButton>
                                 :
                                 null
                             }
@@ -1041,15 +1001,62 @@ class MyPlan extends Component {
                     )}
                 </Placeholder>
 
+                { isReadinessSurveyCompleted ?
+                    <ActionButton
+                        bgColor={'rgba(15, 19, 32, 0.8)'}
+                        buttonColor={AppColors.zeplin.yellow}
+                        renderIcon={() =>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'add'}
+                                size={40}
+                            />
+                        }
+                        shadowStyle={{
+                            shadowColor:   'rgba(235, 186, 45, 0.4)',
+                            shadowOffset:  { height: 3, width: 0, },
+                            shadowOpacity: 1,
+                            shadowRadius:  6,
+                        }}
+                        size={65}
+                    >
+                        <ActionButton.Item
+                            buttonColor={AppColors.zeplin.yellow}
+                            onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={'OFF DAY'}
+                        >
+                            <Image
+                                source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
+                                style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                            />
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                            buttonColor={AppColors.zeplin.yellow}
+                            onPress={() => this._togglePostSessionSurveyModal()}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={'LOG TRAINING'}
+                        >
+                            <Image
+                                source={require('../../../assets/images/sports_images/icons8-exercise-200.png')}
+                                style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                            />
+                        </ActionButton.Item>
+                    </ActionButton>
+                    :
+                    null
+                }
+
                 <FathomModal
                     isVisible={isReadinessSurveyModalOpen}
-                    style={{margin: 0,}}
                 >
                     <ReadinessSurvey
                         dailyReadiness={dailyReadiness}
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handleDailyReadinessFormChange}
-                        handleFormSubmit={this._handleReadinessSurveySubmit}
+                        handleFormSubmit={this._handleDailyReadinessSurveySubmit}
                         handleHealthDataFormChange={this._handleHealthDataFormChange}
                         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                         handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
@@ -1061,8 +1068,6 @@ class MyPlan extends Component {
                 </FathomModal>
                 <FathomModal
                     isVisible={isPostSessionSurveyModalOpen}
-                    style={{margin: 0,}}
-                    useNativeDriver={true}
                 >
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}

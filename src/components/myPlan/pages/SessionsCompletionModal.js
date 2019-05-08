@@ -155,7 +155,7 @@ class SessionsCompletionModal extends Component {
         return(
             <FathomModal
                 isVisible={isModalOpen}
-                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient

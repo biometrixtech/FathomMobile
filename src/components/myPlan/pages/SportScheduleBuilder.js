@@ -16,7 +16,7 @@
     />
  *
  */
-import React, { PureComponent, } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, SectionList, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class SportScheduleBuilder extends PureComponent {
+class SportScheduleBuilder extends Component {
     constructor(props) {
         super(props);
         this.state = {
