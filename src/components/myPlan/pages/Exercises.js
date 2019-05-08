@@ -7,7 +7,7 @@
         exerciseList={exerciseList}
         handleCompleteExercise={this._handleCompleteExercise}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
-        modality={Actions.currentParams.modality}
+        modality={modality}
         planActiveRestGoals={plan.activeRestGoals}
         priority={priority}
         selectedExercise={this.state.selectedExercise}

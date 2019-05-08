@@ -12,8 +12,7 @@ import { Actions, Router, Scene, Stack, } from 'react-native-router-flux';
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 // Consts, Libs, and Utils
-import { CustomMyPlanNavBar, CustomNavBar, } from '../components/custom';
-import { store } from '../store';
+import { CustomNavBar, } from '../components/custom';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -186,10 +185,8 @@ const Index = (
             <Scene
                 Layout={MyPlanComponent}
                 component={MyPlanContainer}
-                hideNavBar={false}
+                hideNavBar={true}
                 key={'myPlan'}
-                navBar={CustomMyPlanNavBar}
-                onLeft={() => Actions.settings()}
                 panHandlers={null}
                 type={'replace'}
             />
@@ -215,7 +212,6 @@ const Index = (
                 navBar={CustomNavBar}
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
-                type={'replace'}
             />
             <Scene
                 Layout={SettingsComponent}
@@ -223,10 +219,9 @@ const Index = (
                 hideNavBar={false}
                 key={'settings'}
                 navBar={CustomNavBar}
-                onLeft={() => store.getState().user.role === 'athlete' ? Actions.myPlan() : Actions.coachesDashboard()}
+                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'SETTINGS'}
-                type={'replace'}
             />
             <Scene
                 Layout={BluetoothConnectComponent}

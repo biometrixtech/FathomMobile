@@ -1229,42 +1229,42 @@ const PlanLogic = {
       * - ExerciseModality
       */
     // TODO: UNIT TEST ME
-    handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality) => {
+    handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index = 0) => {
         let goals = plan.activeRestGoals;
         let imageId = 'prepareCareActivate';
         let imageSource = require('../../assets/images/standard/active_rest.png');
         let pageSubtitle = 'Anytime before training';
         let pageTitle = 'CARE & ACTIVATE';
-        let recoveryObj = dailyPlanObj.pre_active_rest;
+        let recoveryObj = dailyPlanObj.pre_active_rest[index];
         let recoveryType = 'pre_active_rest';
         let sceneId = 'prepareScene';
         let textId = 'prepareCareActivate';
-        if(dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && modality === 'recover') {
+        if(dailyPlanObj.post_active_rest[index] && dailyPlanObj.post_active_rest[index].active && modality === 'recover') {
             goals = plan.activeRestGoals;
             imageId = 'recoverCareActivate';
             pageSubtitle = 'Anytime after training';
             pageTitle = 'CARE & ACTIVATE';
-            recoveryObj = dailyPlanObj.post_active_rest;
+            recoveryObj = dailyPlanObj.post_active_rest[index];
             recoveryType = 'post_active_rest';
             sceneId = 'recoverScene';
             textId = 'recoverCareActivate';
-        } else if(dailyPlanObj.warm_up && dailyPlanObj.warm_up.active && modality === 'warmUp') {
+        } else if(dailyPlanObj.warm_up[index] && dailyPlanObj.warm_up[index].active && modality === 'warmUp') {
             goals = plan.warmUpGoals;
             imageId = 'warmUp';
             // imageSource = require('../../assets/images/standard/warm_up.png');
             pageSubtitle = 'Anytime before training';
             pageTitle = 'WARM UP';
-            recoveryObj = dailyPlanObj.warm_up;
+            recoveryObj = dailyPlanObj.warm_up[index];
             recoveryType = 'warm_up';
             sceneId = 'warmUpScene';
             textId = 'warmUp';
-        } else if(dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && modality === 'coolDown') {
+        } else if(dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown') {
             goals = plan.coolDownGoals;
             imageId = 'coolDown';
             imageSource = require('../../assets/images/standard/cool_down.png');
             pageSubtitle = 'Immediately after training';
-            pageTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`;
-            recoveryObj = dailyPlanObj.cool_down;
+            pageTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down[index].sport_name])[0].label.toUpperCase()} RECOVERY`;
+            recoveryObj = dailyPlanObj.cool_down[index];
             recoveryType = 'cool_down';
             sceneId = 'coolDownScene';
             textId = 'coolDown';
@@ -1276,7 +1276,7 @@ const PlanLogic = {
         ];
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj, priority, goals, modality);
         let firstExerciseFound = false;
-        _.forEach(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
+        _.forEach(exerciseList.cleanedExerciseList, exerciseIndex => {
             if(exerciseIndex && exerciseIndex.length > 0 & !firstExerciseFound) {
                 firstExerciseFound = exerciseIndex[0];
                 return exerciseIndex;
@@ -1384,6 +1384,63 @@ const PlanLogic = {
             bodyImage,
             isSelected,
             mainBodyPartName,
+        };
+    },
+
+    /**
+      * Handle MyPlan Single Page Render Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleMyPlanRenderLogic: dailyPlanObj => {
+        let completedPostActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
+        let completedPreActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
+        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
+        let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
+        let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
+        let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
+        let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
+        let completedModalities = _.concat(completedPostActiveRest, completedPreActiveRest, completedIce, completedCWI, completedCoolDown, completedHeat, completedWarmUp);
+        completedModalities = _.sortBy(completedModalities, ['completed_date_time']);
+        let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
+        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
+        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
+        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
+        let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
+        let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
+        return {
+            completedModalities,
+            isCWIActive,
+            isCWICompleted,
+            isHeatActive,
+            isHeatCompleted,
+            isIceActive,
+            isIceCompleted,
+            isReadinessSurveyCompleted,
+        };
+    },
+
+    /**
+      * Handle Single Exercise Modality Render Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleSingleExerciseModalityRenderLogic: (activeRest, index, activeRests) => {
+        let cooldownTitle = activeRest.sport_name ?
+            `${_.filter(MyPlanConstants.teamSports, ['index', activeRest.sport_name])[0].label.toUpperCase()} RECOVERY`
+            :
+            'RECOVERY';
+        let isActive = activeRest && activeRest.active && !activeRest.completed;
+        let isCompleted = activeRest && activeRest.completed;
+        let isLastIndex = activeRests.length === (index + 1);
+        let isLocked = activeRest && !activeRest.active && !activeRest.completed;
+        return {
+            cooldownTitle,
+            isActive,
+            isCompleted,
+            isLastIndex,
+            isLocked,
         };
     },
 

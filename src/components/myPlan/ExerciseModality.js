@@ -2,6 +2,7 @@
  * Exercise Modality
  *
     <ExerciseModality
+        index={index}
         markStartedRecovery={markStartedRecovery}
         modality={modality}
         patchActiveRecovery={patchActiveRecovery}
@@ -75,12 +76,11 @@ class ExerciseModality extends Component {
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
-        const { markStartedRecovery, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
+        const { index, markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         let clonedPlan = _.cloneDeep(plan);
-        let modality = this.props.modality;
         // add or remove exercise
-        let reducerCompletedExercises = clonedPlan.dailyPlan[0].cool_down && clonedPlan.dailyPlan[0].cool_down.active && modality === 'coolDown' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+        let reducerCompletedExercises = clonedPlan.dailyPlan[0].cool_down[index] && clonedPlan.dailyPlan[0].cool_down[index].active && modality === 'coolDown' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
         let newCompletedExercises = _.cloneDeep(reducerCompletedExercises);
         if(newCompletedExercises && newCompletedExercises.indexOf(newExerciseId) > -1) {
             newCompletedExercises.splice(newCompletedExercises.indexOf(newExerciseId), 1)
@@ -88,22 +88,22 @@ class ExerciseModality extends Component {
             newCompletedExercises.push(newExerciseId);
         }
         // Mark Recovery as started, if logic passes
-        let recoveryType = clonedPlan.dailyPlan[0].post_active_rest && clonedPlan.dailyPlan[0].post_active_rest.active && modality === 'recover' ?
+        let recoveryType = clonedPlan.dailyPlan[0].post_active_rest[index] && clonedPlan.dailyPlan[0].post_active_rest[index].active && modality === 'recover' ?
             'post_active_rest'
-            : clonedPlan.dailyPlan[0].warm_up && clonedPlan.dailyPlan[0].warm_up.active && modality === 'warmUp' ?
+            : clonedPlan.dailyPlan[0].warm_up[index] && clonedPlan.dailyPlan[0].warm_up[index].active && modality === 'warmUp' ?
                 'warm_up'
-                : clonedPlan.dailyPlan[0].cool_down && clonedPlan.dailyPlan[0].cool_down.active && modality === 'coolDown' ?
+                : clonedPlan.dailyPlan[0].cool_down[index] && clonedPlan.dailyPlan[0].cool_down[index].active && modality === 'coolDown' ?
                     'cool_down'
                     :
                     'pre_active_rest';
         let startDate = recoveryType === 'pre_active_rest' ?
-            clonedPlan.dailyPlan[0].pre_active_rest.start_date_time
+            clonedPlan.dailyPlan[0].pre_active_rest[index].start_date_time
             : recoveryType === 'post_active_rest' ?
-                clonedPlan.dailyPlan[0].post_active_rest.start_date_time
+                clonedPlan.dailyPlan[0].post_active_rest[index].start_date_time
                 : recoveryType === 'warm_up' ?
-                    clonedPlan.dailyPlan[0].warm_up.start_date_time
+                    clonedPlan.dailyPlan[0].warm_up[index].start_date_time
                     : recoveryType === 'cool_down' ?
-                        clonedPlan.dailyPlan[0].cool_down.start_date_time
+                        clonedPlan.dailyPlan[0].cool_down[index].start_date_time
                         :
                         true;
         if(newCompletedExercises.length === 1 && !startDate) {
@@ -180,10 +180,9 @@ class ExerciseModality extends Component {
             priority,
             selectedExercise,
         } = this.state;
-        let { patchActiveRecovery, plan, user, } = this.props;
+        let { index, modality, patchActiveRecovery, plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let modality = this.props.modality;
-        let completedExercises = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && modality === 'coolDown' ? plan.completedCoolDownExercises : plan.completedExercises;
+        let completedExercises = dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown' ? plan.completedCoolDownExercises : plan.completedExercises;
         let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(completedExercises);
         const {
             buttons,
@@ -197,7 +196,7 @@ class ExerciseModality extends Component {
             recoveryObj,
             recoveryType,
             textId,
-        } = PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality);
+        } = PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index);
         return (
             <MagicMove.Scene debug={false} disabled={true} duration={500} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
@@ -281,10 +280,10 @@ class ExerciseModality extends Component {
                         </View>
                         <View onLayout={event => {this._exerciseListRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,};}}>
                             <Text onPress={() => this._scrollToExerciseList()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingVertical: AppSizes.paddingSml, textAlign: 'center', textDecorationLine: 'none',}}>{'Preview'}</Text>
-                            {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) =>
+                            {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, key) =>
                                 exerciseIndex && exerciseIndex.length > 0 ?
-                                    <View key={index}>
-                                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{index}</Text>
+                                    <View key={key}>
+                                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{key}</Text>
                                         {_.map(exerciseIndex, (exercise, i) =>
                                             <ExerciseListItem
                                                 completedExercises={completedExercises}
@@ -324,7 +323,6 @@ class ExerciseModality extends Component {
                             closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
                             completedExercises={completedExercises}
                             exerciseList={exerciseList}
-                            modality={this.props.modality}
                             handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
                                 this._handleCompleteExercise(exerciseId, setNumber);
                                 if(!hasNextExercise) {
@@ -335,6 +333,7 @@ class ExerciseModality extends Component {
                                 }
                             }}
                             handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
+                            modality={modality}
                             planActiveRestGoals={goals}
                             priority={priority}
                             selectedExercise={selectedExercise}
@@ -350,7 +349,7 @@ class ExerciseModality extends Component {
                             this.setState(
                                 { isExerciseCompletionModalOpen: false, },
                                 () => {
-                                    let reducerCompletedExercises = plan.dailyPlan[0].cool_down && plan.dailyPlan[0].cool_down.active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+                                    let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
                                     let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
                                     patchActiveRecovery(newCompletedExercises, recoveryType)
                                         .then(res => Actions.pop())
@@ -367,6 +366,7 @@ class ExerciseModality extends Component {
 }
 
 ExerciseModality.propTypes = {
+    index:                         PropTypes.number.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
     modality:                      PropTypes.string.isRequired,
     patchActiveRecovery:           PropTypes.func.isRequired,

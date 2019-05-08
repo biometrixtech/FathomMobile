@@ -6,6 +6,7 @@ import { plan as PlanActions, user as UserActions, } from '../../actions';
 
 const ExerciseModality = ({
     Layout,
+    index,
     markStartedRecovery,
     modality,
     patchActiveRecovery,
@@ -19,6 +20,7 @@ const ExerciseModality = ({
     user,
 }) => (
     <Layout
+        index={index}
         markStartedRecovery={markStartedRecovery}
         modality={modality}
         patchActiveRecovery={patchActiveRecovery}
@@ -34,6 +36,7 @@ const ExerciseModality = ({
 );
 
 ExerciseModality.propTypes = {
+    index:                         PropTypes.number.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
     modality:                      PropTypes.string.isRequired,
     patchActiveRecovery:           PropTypes.func.isRequired,
@@ -50,6 +53,7 @@ ExerciseModality.propTypes = {
 ExerciseModality.defaultProps = {};
 
 const mapStateToProps = (state, props) => ({
+    index:    props.index,
     modality: props.modality,
     plan:     state.plan,
     user:     state.user,
