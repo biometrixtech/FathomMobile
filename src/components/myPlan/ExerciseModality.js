@@ -183,7 +183,7 @@ class ExerciseModality extends Component {
         let { index, modality, patchActiveRecovery, plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let completedExercises = dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown' ? plan.completedCoolDownExercises : plan.completedExercises;
-        let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(completedExercises);
+        let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(completedExercises, modality);
         const {
             buttons,
             exerciseList,
@@ -302,7 +302,13 @@ class ExerciseModality extends Component {
                             )}
                             { exerciseList.totalLength > 0 ?
                                 <Button
-                                    buttonStyle={{backgroundColor: buttonBackgroundColor, borderRadius: 0, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}}
+                                    buttonStyle={{
+                                        backgroundColor: buttonBackgroundColor,
+                                        borderRadius:    0,
+                                        marginTop:       AppSizes.paddingSml,
+                                        paddingBottom:   AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                                        paddingTop:      AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                                    }}
                                     disabledStyle={buttonDisabledStyle}
                                     disabledTitleStyle={{color: AppColors.white,}}
                                     disabled={isButtonDisabled}

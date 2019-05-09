@@ -676,8 +676,11 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     }
 };
 
-const exerciseListButtonStyles = (completedExercises, isFSCompleteValid, isFunctionalStrength) => {
+const exerciseListButtonStyles = (completedExercises, modality, isFSCompleteValid, isFunctionalStrength) => {
     let buttonTitle = completedExercises.length > 0 ? 'Care & Activate Complete' : 'Check Boxes to Complete Care & Activate';
+    if(modality === 'coolDown') {
+        buttonTitle = completedExercises.length > 0 ? 'Recovery Complete' : 'Check Boxes to Complete Recovery';
+    }
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.lightSlate,};

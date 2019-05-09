@@ -43,6 +43,7 @@ export default {
     tabbarHeight:    51,
 
     iphoneXBottomBarPadding: isIphoneX ? 30 : Platform.OS === 'ios' ? 20 : 0,
+    isIphoneX,
 
     progressPillsHeight: screenHeight * 0.08,
 

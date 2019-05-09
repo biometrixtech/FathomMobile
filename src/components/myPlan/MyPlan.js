@@ -28,6 +28,7 @@ import {
     Platform,
     RefreshControl,
     ScrollView,
+    StatusBar,
     StyleSheet,
     TouchableOpacity,
     View,
@@ -69,14 +70,14 @@ const ActivityTab = ({
     completed = false,
     id,
     locked = false,
-    onLayout = () => {},
+    onLayout,
     onPress = () => {},
     paddingStyle = {paddingVertical: AppSizes.paddingMed,},
     showBottomGap = true,
     subtitle,
     title = 'CARE & ACTIVATE',
 }) => (
-    <View onLayout={event => onLayout(event)}>
+    <View onLayout={onLayout ? event => onLayout(event) : null}>
         <View style={{flex: 1, flexDirection: 'row',}}>
             { completed ?
                 <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
@@ -98,7 +99,7 @@ const ActivityTab = ({
                 </View>
             }
             <View style={{borderRadius: AppSizes.padding, flex: 1, marginLeft: AppSizes.padding,}}>
-                <TouchableOpacity activeOpacity={locked ? 1 : 0.2} onPress={locked ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
+                <TouchableOpacity activeOpacity={locked || completed ? 1 : 0.5} onPress={locked || completed ? () => {} : onPress} style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
                     <MagicMove.Image
                         disabled={true}
                         id={`${id}.image`}
@@ -146,9 +147,9 @@ const MyPlanNavBar = ({
     onLeft = () => {},
 }) => (
     <View>
-        <View style={{backgroundColor: AppColors.white, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-        <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
+        <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
+        <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
+            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
                 <TabIcon
                     icon={'dehaze'}
                     iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
@@ -239,9 +240,12 @@ class MyPlan extends Component {
             this._togglePostSessionSurveyModal();
         }
         // should we open the RS survey
-        this._timer = _.delay(() => {
-            this.setState({ isReadinessSurveyModalOpen: !planObj.daily_readiness_survey_completed, });
-        }, 600);
+        if(!planObj.daily_readiness_survey_completed) {
+            this._timer = _.delay(() => this.setState({ isReadinessSurveyModalOpen: !planObj.daily_readiness_survey_completed, }), 600);
+        } else {
+            // scroll to first active activity tab
+            this._timer = _.delay(() => this._scrollToFirstActiveActivityTab(), 600);
+        }
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -312,8 +316,6 @@ class MyPlan extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        // scroll to first active activity tab
-        this._scrollToFirstActiveActivityTab();
     }
 
     componentWillUnmount = () => {
@@ -513,22 +515,27 @@ class MyPlan extends Component {
         // clear timer
         clearInterval(this._timer);
         let userId = user.id;
-        this.setState({ isPageLoading: isFromPushNotification ? false : true, });
-        getMyPlan(userId, moment().format('YYYY-MM-DD'))
-            .then(response => {
-                if(shouldClearCompletedExercises) {
-                    clearCompletedExercises();
-                    clearCompletedCoolDownExercises();
-                }
-                let newDailyReadiness = _.cloneDeep(dailyReadiness);
-                this.setState({
-                    dailyReadiness:       newDailyReadiness,
-                    isPageLoading:        false,
-                    isPrepCalculating:    false,
-                    isRecoverCalculating: false,
-                });
-            })
-            .catch(error => this.setState({ isPageLoading: false, }));
+        this.setState(
+            { isPageLoading: isFromPushNotification ? false : true, },
+            () => {
+                getMyPlan(userId, moment().format('YYYY-MM-DD'))
+                    .then(response => {
+                        if(shouldClearCompletedExercises) {
+                            clearCompletedExercises();
+                            clearCompletedCoolDownExercises();
+                        }
+                        let newDailyReadiness = _.cloneDeep(dailyReadiness);
+                        this.setState({
+                            dailyReadiness:             newDailyReadiness,
+                            isPageLoading:              false,
+                            isPrepCalculating:          false,
+                            isReadinessSurveyModalOpen: !response.daily_plans[0].daily_readiness_survey_completed,
+                            isRecoverCalculating:       false,
+                        });
+                    })
+                    .catch(error => this.setState({ isPageLoading: false, }));
+            }
+        );
     }
 
     _handleHealthDataFormChange = (index, name, value, callback) => {
@@ -760,6 +767,8 @@ class MyPlan extends Component {
             isIceCompleted,
             isIceLocked,
             isReadinessSurveyCompleted,
+            offDaySelected,
+            showLogActivityText,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
             <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
@@ -769,12 +778,17 @@ class MyPlan extends Component {
                 />
 
                 <Placeholder
-                    isReady={!isRecoverCalculating || !isPrepCalculating}
+                    isReady={!isRecoverCalculating && !isPrepCalculating}
                     animation={'fade'}
                     whenReadyRender={() =>
-                        <View style={{flexGrow: 1, padding: AppSizes.paddingMed,}}>
+                        <View style={{flex: 1,}}>
                             { isReadinessSurveyCompleted ?
                                 <ScrollView
+                                    contentContainerStyle={{
+                                        padding:       AppSizes.paddingMed,
+                                        paddingBottom: AppSizes.isIphoneX ? (AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) : AppSizes.paddingMed,
+
+                                    }}
                                     ref={ref => {this._scrollViewRef = ref;}}
                                     refreshControl={
                                         <RefreshControl
@@ -814,10 +828,9 @@ class MyPlan extends Component {
                                         const {
                                             isActive,
                                             isCompleted,
-                                            isLastIndex,
                                             isLocked,
                                         } = PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, key, dailyPlanObj.pre_active_rest);
-                                        if(!isActive) { return(null); }
+                                        if(!isActive && !isCompleted) { return(null); }
                                         return (
                                             <ActivityTab
                                                 backgroundImage={isLocked ? require('../../../assets/images/standard/active_rest_locked.png') : require('../../../assets/images/standard/active_rest.png')}
@@ -825,9 +838,9 @@ class MyPlan extends Component {
                                                 id={'prepareCareActivate'}
                                                 key={key}
                                                 locked={isLocked}
-                                                onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
+                                                onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                                 onPress={() => Actions.exerciseModality({ index: key, modality: 'prepare', })}
-                                                showBottomGap={dailyPlanObj && !isHeatActive && dailyPlanObj.cool_down.length === 0 && dailyPlanObj.sessions_planned ? false : isLastIndex ? (isHeatActive || isHeatCompleted || isHeatLocked || dailyPlanObj.cool_down.length > 0 || dailyPlanObj.post_active_rest.length === 0 || dailyPlanObj.post_active_rest.length > 0) : true}
+                                                showBottomGap={showLogActivityText ? false : true}
                                                 subtitle={isLocked ? false : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                                 title={'CARE & ACTIVATE'}
                                             />
@@ -835,7 +848,7 @@ class MyPlan extends Component {
                                     })}
 
                                     {/*heat*/}
-                                    { isHeatActive || isHeatCompleted || isHeatLocked &&
+                                    { (isHeatActive || isHeatCompleted || isHeatLocked) &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/heat.png')}
                                             completed={isHeatCompleted}
@@ -857,7 +870,7 @@ class MyPlan extends Component {
                                             isCompleted,
                                             isLocked,
                                         } = PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, key, dailyPlanObj.cool_down);
-                                        if(!isActive) { return(null); }
+                                        if(!isActive && !isCompleted) { return(null); }
                                         return (
                                             <ActivityTab
                                                 backgroundImage={require('../../../assets/images/standard/cool_down.png')}
@@ -865,9 +878,9 @@ class MyPlan extends Component {
                                                 id={'coolDown'}
                                                 key={key}
                                                 locked={isLocked}
-                                                onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
+                                                onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                                 onPress={() => Actions.exerciseModality({ index: key, modality: 'coolDown', })}
-                                                showBottomGap={true}
+                                                showBottomGap={showLogActivityText ? false : true}
                                                 subtitle={'Immediately after training'}
                                                 title={cooldownTitle}
                                             />
@@ -875,7 +888,7 @@ class MyPlan extends Component {
                                     })}
 
                                     {/*LOG TRAINING...(TEXT)*/}
-                                    { dailyPlanObj && dailyPlanObj.sessions_planned &&
+                                    { showLogActivityText &&
                                         <View style={{flexDirection: 'row',}}>
                                             <DefaultListGap
                                                 size={AppSizes.paddingLrg}
@@ -911,18 +924,7 @@ class MyPlan extends Component {
                                                 isLastIndex,
                                                 isLocked,
                                             } = PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, key, dailyPlanObj.post_active_rest);
-                                            if(!isActive || !isCompleted || !isLocked) {
-                                                return(
-                                                    <ActivityTab
-                                                        backgroundImage={require('../../../assets/images/standard/active_rest_locked.png')}
-                                                        id={'recoverCareActivate'}
-                                                        locked={true}
-                                                        showBottomGap={false}
-                                                        subtitle={'Log an activity to generate a Recovery'}
-                                                        title={'CARE & ACTIVATE'}
-                                                    />
-                                                );
-                                            }
+                                            if(!isActive && !isCompleted) { return(null); }
                                             return (
                                                 <ActivityTab
                                                     backgroundImage={isLocked ? require('../../../assets/images/standard/active_rest_locked.png') : require('../../../assets/images/standard/active_rest.png')}
@@ -930,7 +932,7 @@ class MyPlan extends Component {
                                                     id={'recoverCareActivate'}
                                                     key={key}
                                                     locked={isLocked}
-                                                    onLayout={isActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
+                                                    onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                                     onPress={() => Actions.exerciseModality({ index: key, modality: 'recover', })}
                                                     showBottomGap={isLastIndex ? (isIceActive || isIceCompleted || isIceLocked) : true}
                                                     subtitle={isLocked ? false : 'Anytime after training'} // TODO: ADD LOCKED TEXT
@@ -941,7 +943,7 @@ class MyPlan extends Component {
                                     }
 
                                     {/*ice*/}
-                                    { isIceActive || isIceCompleted || isIceLocked &&
+                                    { (isIceActive || isIceCompleted || isIceLocked) &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/ice.png')}
                                             completed={isIceCompleted}
@@ -949,14 +951,14 @@ class MyPlan extends Component {
                                             locked={isIceLocked}
                                             onLayout={isIceActive ? ev => this._onLayoutOfActivityTabs(ev) : null}
                                             onPress={() => Actions.bodyModality({ modality: 'ice', })}
-                                            showBottomGap={isCWIActive || isCWICompleted || isCWILocked}
+                                            showBottomGap={(isCWIActive || isCWICompleted || isCWILocked)}
                                             subtitle={'After all training is complete'}
                                             title={'ICE'}
                                         />
                                     }
 
                                     {/*cold_water_immersion*/}
-                                    { isCWIActive || isCWICompleted || isCWILocked &&
+                                    { (isCWIActive || isCWICompleted || isCWILocked) &&
                                         <ActivityTab
                                             backgroundImage={require('../../../assets/images/standard/cwi.png')}
                                             completed={isCWICompleted}
@@ -1001,7 +1003,7 @@ class MyPlan extends Component {
                     )}
                 </Placeholder>
 
-                { isReadinessSurveyCompleted ?
+                { isReadinessSurveyCompleted && !isPrepCalculating && !isRecoverCalculating &&
                     <ActionButton
                         bgColor={'rgba(15, 19, 32, 0.8)'}
                         buttonColor={AppColors.zeplin.yellow}
@@ -1020,18 +1022,20 @@ class MyPlan extends Component {
                         }}
                         size={65}
                     >
-                        <ActionButton.Item
-                            buttonColor={AppColors.zeplin.yellow}
-                            onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
-                            title={'OFF DAY'}
-                        >
-                            <Image
-                                source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
-                                style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                            />
-                        </ActionButton.Item>
+                        { !offDaySelected &&
+                            <ActionButton.Item
+                                buttonColor={AppColors.zeplin.yellow}
+                                onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'OFF DAY'}
+                            >
+                                <Image
+                                    source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
+                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                                />
+                            </ActionButton.Item>
+                        }
                         <ActionButton.Item
                             buttonColor={AppColors.zeplin.yellow}
                             onPress={() => this._togglePostSessionSurveyModal()}
@@ -1045,8 +1049,6 @@ class MyPlan extends Component {
                             />
                         </ActionButton.Item>
                     </ActionButton>
-                    :
-                    null
                 }
 
                 <FathomModal

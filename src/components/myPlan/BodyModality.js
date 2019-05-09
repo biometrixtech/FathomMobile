@@ -375,7 +375,12 @@ class BodyModality extends Component {
                                 </View>
                             </View>
                             <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: AppSizes.paddingMed,}}
+                                buttonStyle={{
+                                    backgroundColor: AppColors.zeplin.yellow,
+                                    borderRadius:    0,
+                                    paddingBottom:   AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                                    paddingTop:      AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                                }}
                                 onPress={() => this._completeBodyPartModality()}
                                 title={`Complete ${_.chain(pageTitle).toLower().upperFirst()}`}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}

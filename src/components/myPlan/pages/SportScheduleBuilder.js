@@ -75,7 +75,7 @@ class SportScheduleBuilder extends Component {
             },
             isFormValid:       false,
             pickerScrollCount: 0,
-            showMoreOptions:   this.props.typicalSessions.length === 0,
+            showMoreOptions:   false,
             step:              0,
             timeValueGroups:   {
                 hours:   2,
@@ -85,6 +85,12 @@ class SportScheduleBuilder extends Component {
         };
         this._activityRPERef = {};
         this._moreOptionsRef = {};
+    }
+
+    componentDidMount = () => {
+        if(this.props.typicalSession && this.props.typicalSession.length === 0) {
+            this.setState({ delayTimerId: _.delay(() => this.setState({ showMoreOptions: true, }), 600) });
+        }
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
