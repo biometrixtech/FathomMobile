@@ -1288,11 +1288,14 @@ const PlanLogic = {
             }
             return false;
         });
+        let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
+        let goalsHeader = `${priorityText} Routine to:`;
         return {
             buttons,
             exerciseList,
             firstExerciseFound,
             goals,
+            goalsHeader,
             imageId,
             imageSource,
             pageSubtitle,

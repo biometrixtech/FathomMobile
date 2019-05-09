@@ -189,6 +189,7 @@ class ExerciseModality extends Component {
             exerciseList,
             firstExerciseFound,
             goals,
+            goalsHeader,
             imageId,
             imageSource,
             pageSubtitle,
@@ -221,7 +222,7 @@ class ExerciseModality extends Component {
                                 <TouchableOpacity
                                     activeOpacity={1}
                                     onPress={() => Actions.pop()}
-                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.padding,}}
+                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
                                 >
                                     <TabIcon
                                         color={AppColors.white}
@@ -243,15 +244,6 @@ class ExerciseModality extends Component {
                                     {pageTitle}
                                 </MagicMove.Text>
                                 <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
-                                {_.map(goals, (goal, key) =>
-                                    <GoalPill
-                                        isSelected={goal.isSelected}
-                                        key={key}
-                                        onPress={() => this._toggleGoal(key)}
-                                        text={goal.text}
-                                    />
-                                )}
-                                <Spacer size={AppSizes.padding} />
                                 <MultiSwitch
                                     buttons={buttons}
                                     onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
@@ -262,9 +254,19 @@ class ExerciseModality extends Component {
                                     <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
                                     <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                 </View>
+                                <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
+                                {_.map(goals, (goal, key) =>
+                                    <GoalPill
+                                        isSelected={goal.isSelected}
+                                        key={key}
+                                        onPress={() => this._toggleGoal(key)}
+                                        text={goal.text}
+                                    />
+                                )}
+                                <Spacer size={AppSizes.padding} />
                                 {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
                                     <View>
-                                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Equipment:'}</Text>
+                                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
                                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
                                     </View>
                                 }

@@ -134,6 +134,7 @@ class BodyModality extends Component {
             <MagicMove.Scene debug={false} disabled={true} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
                 <View style={{flex: 1,}}>
                     <ScrollView
+                        automaticallyAdjustContentInsets={false}
                         bounces={false}
                         nestedScrollEnabled={true}
                         style={{backgroundColor: AppColors.white, flex: 1,}}
@@ -153,7 +154,7 @@ class BodyModality extends Component {
                                 <TouchableOpacity
                                     activeOpacity={1}
                                     onPress={() => Actions.pop()}
-                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.padding,}}
+                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
                                 >
                                     <TabIcon
                                         color={AppColors.white}

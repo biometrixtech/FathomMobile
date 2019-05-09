@@ -18,7 +18,8 @@ const defaultPlanState = {
         // won't be submitted, help with UI
         already_trained_number:    null,
     },
-    healthData: {
+    expandNotifications: false,
+    healthData:          {
         ignoredWorkouts: [],
         sleep:           [],
         workouts:        [],

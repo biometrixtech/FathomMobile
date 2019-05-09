@@ -10,7 +10,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
+import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Platform, StatusBar, Switch, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -19,7 +19,7 @@ import AppleHealthKit from 'rn-apple-healthkit';
 import Toast, { DURATION, } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, UserAccount, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
 import { FathomModal, ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { PrivacyPolicyModal, } from '../general';
@@ -31,6 +31,28 @@ import { store, } from '../../store';
 import { JoinATeamModal, } from './pages';
 
 /* Component ==================================================================== */
+const SettingsNavBar = () => (
+    <View>
+        <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
+        <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.xLightSlate, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
+            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
+                <TabIcon
+                    icon={'arrow-left'}
+                    iconStyle={[{color: AppColors.black,}]}
+                    onPress={() => Actions.pop()}
+                    reverse={false}
+                    size={26}
+                    type={'simple-line-icon'}
+                />
+            </View>
+            <View style={{flex: 8, justifyContent: 'center',}}>
+                <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>
+            </View>
+            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}} />
+        </View>
+    </View>
+);
+
 class Settings extends Component {
     static componentName = 'SettingsView';
     static propTypes = {
@@ -372,6 +394,7 @@ class Settings extends Component {
         });
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
+                <SettingsNavBar />
                 { userHas3SensorSensorSystem &&
                     <View>
                         <ListItem

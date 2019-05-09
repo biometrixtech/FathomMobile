@@ -41,6 +41,7 @@ import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
+import Collapsible from 'react-native-collapsible';
 import LottieView from 'lottie-react-native';
 import Placeholder, { Line, Media, } from 'rn-placeholder';
 import moment from 'moment';
@@ -52,7 +53,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { TabIcon, Text, } from '../custom';
+import { DeckCards, TabIcon, Text, } from '../custom';
 import { FathomModal, } from '../custom';
 import { DefaultListGap, PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
 import { Loading, } from '../general';
@@ -60,9 +61,35 @@ import { Loading, } from '../general';
 // global constants
 const numberOfPlaceholders = 8;
 const timerDelay = 30000; // delay for X ms
+const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(13) + (AppSizes.paddingXSml * 2));
+
+const TEMP_CARDS = [
+    {title: 'DO', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: ['Recover from Run', 'Soreness'], start_date: moment(), read: false, },
+    {title: 'MORE', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: [], start_date: moment().subtract(3, 'd'), read: true, },
+    {title: 'OF', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: ['Recover from Run', 'Soreness'], start_date: moment().subtract(1, 'd'), read: false, },
+    {title: 'WHAT', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: [], start_date: moment(), read: true, },
+    {title: 'MAKES', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: ['Delayed', 'tomorrow'], start_date: moment().subtract(2, 'd'), read: false, },
+    {title: 'YOU', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: ['Recover from Run', 'Onset Muscle Soreness'], start_date: moment().subtract(1, 'd'), read: true, },
+    {title: 'HAPPY', text: 'We’ve added Recover from Run to your plan because your run is likely to trigger severe Delayed Onset Muscle Soreness (DOMS) tomorrow', goal_targeted: ['Soreness'], start_date: moment().subtract(3, 'd'), read: false, }
+];
 
 // setup GA Tracker
 const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
+
+/* Styles ==================================================================== */
+const styles = StyleSheet.create({
+    unreadNotificationsWrapper: {
+        alignItems:      'center',
+        backgroundColor: AppColors.zeplin.coachesDashError,
+        borderRadius:    (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 2),
+        height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
+        justifyContent:  'center',
+        position:        'absolute',
+        right:           (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
+        top:             (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
+        width:           UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
+    },
+});
 
 /* Component ==================================================================== */
 const ActivityTab = ({
@@ -144,7 +171,9 @@ const ActivityTab = ({
 );
 
 const MyPlanNavBar = ({
-    onLeft = () => {},
+    expandNotifications,
+    onLeft,
+    onRight,
 }) => (
     <View>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
@@ -161,8 +190,27 @@ const MyPlanNavBar = ({
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
             />
-            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}} />
+            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+                <TabIcon
+                    icon={'notifications'}
+                    iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
+                    onPress={() => onRight()}
+                    size={26}
+                />
+                { !expandNotifications &&
+                    <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(TEMP_CARDS, ['read', false]).length}</Text>
+                    </TouchableOpacity>
+                }
+            </View>
         </View>
+        <Collapsible collapsed={!expandNotifications} style={{}}>
+            <DeckCards
+                cards={TEMP_CARDS}
+                hideDeck={() => onRight()}
+                unreadNotificationsCount={_.filter(TEMP_CARDS, ['read', false]).length}
+            />
+        </Collapsible>
     </View>
 );
 
@@ -740,6 +788,7 @@ class MyPlan extends Component {
     render = () => {
         let {
             dailyReadiness,
+            expandNotifications,
             healthData,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -774,7 +823,9 @@ class MyPlan extends Component {
             <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
 
                 <MyPlanNavBar
+                    expandNotifications={expandNotifications}
                     onLeft={() => Actions.settings()}
+                    onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                 />
 
                 <Placeholder
@@ -1005,8 +1056,10 @@ class MyPlan extends Component {
 
                 { isReadinessSurveyCompleted && !isPrepCalculating && !isRecoverCalculating &&
                     <ActionButton
+                        activeOpacity={1}
                         bgColor={'rgba(15, 19, 32, 0.8)'}
                         buttonColor={AppColors.zeplin.yellow}
+                        fixNativeFeedbackRadius={true}
                         renderIcon={() =>
                             <TabIcon
                                 color={AppColors.white}
@@ -1021,6 +1074,7 @@ class MyPlan extends Component {
                             shadowRadius:  6,
                         }}
                         size={65}
+                        useNativeFeedback={false}
                     >
                         { !offDaySelected &&
                             <ActionButton.Item

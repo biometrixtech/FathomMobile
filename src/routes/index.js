@@ -78,7 +78,7 @@ const Index = (
             hideNavBar={true}
             key={'root'}
             titleStyle={{ alignSelf: 'center' }}
-            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal })}
+            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal, })}
         >
             <Scene
                 Layout={StartComponent}
@@ -216,10 +216,8 @@ const Index = (
             <Scene
                 Layout={SettingsComponent}
                 component={SettingsContainer}
-                hideNavBar={false}
+                hideNavBar={true}
                 key={'settings'}
-                navBar={CustomNavBar}
-                onLeft={() => Actions.pop()}
                 panHandlers={null}
                 title={'SETTINGS'}
             />

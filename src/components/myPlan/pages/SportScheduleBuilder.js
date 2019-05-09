@@ -88,7 +88,7 @@ class SportScheduleBuilder extends Component {
     }
 
     componentDidMount = () => {
-        if(this.props.typicalSession && this.props.typicalSession.length === 0) {
+        if(this.props.typicalSessions && this.props.typicalSessions.length === 0) {
             this.setState({ delayTimerId: _.delay(() => this.setState({ showMoreOptions: true, }), 600) });
         }
     }

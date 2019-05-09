@@ -154,7 +154,7 @@ class Exercises extends PureComponent {
                     { exercise.videoUrl.length > 0 ?
                         <Video
                             paused={currentSlideIndex === index ? false : true}
-                            repeat={!isStaticExercise}
+                            repeat={true}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                             source={{uri: exercise.videoUrl}}
                             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.width * 0.85), width: (AppSizes.screen.width * 0.85),}]}
