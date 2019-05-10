@@ -72,7 +72,7 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }*/
-        if( _.toNumber(user.biometric_data.mass.lb) < 50 || _.toNumber(user.biometric_data.mass.lb) > 1000 ) {
+        if( _.toNumber(user.biometric_data.mass.lb) === 0 ) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
             isValid = false;

@@ -276,7 +276,6 @@ class Onboarding extends Component {
         this.setState({
             ['resultMsg.error']: errorsArray,
         });
-
         if(newUser.injury_status === 'returning_from_injury' || newUser.injury_status === 'returning_from_acute_injury') {
             Alert.alert(
                 '',
@@ -286,6 +285,11 @@ class Onboarding extends Component {
                     {text: 'Not Cleared', onPress: () => this._handlePasswordSpacesCheck(newUser, false, errorsArray)},
                 ],
             );
+        } else if(_.toNumber(newUser.biometric_data.mass.lb) < 50 || _.toNumber(newUser.biometric_data.mass.lb) > 1000) {
+            let newResultMsgFields = _.update( this.state.resultMsg, 'error', () => ['Please enter a valid Weight']);
+            newResultMsgFields = _.update( this.state.resultMsg, 'status', () => '');
+            newResultMsgFields = _.update( this.state.resultMsg, 'success', () => '');
+            this.setState({ resultMsg: newResultMsgFields, });
         } else {
             this._handlePasswordSpacesCheck(newUser, false, errorsArray);
         }
