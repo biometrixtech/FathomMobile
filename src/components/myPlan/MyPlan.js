@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
         justifyContent:  'center',
         position:        'absolute',
-        right:           (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
+        left:            (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
         top:             (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
         width:           UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
     },
@@ -171,6 +171,7 @@ const ActivityTab = ({
 );
 
 const MyPlanNavBar = ({
+    cards = [],
     expandNotifications,
     onLeft,
     onRight,
@@ -178,7 +179,26 @@ const MyPlanNavBar = ({
     <View>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
         <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
+            { cards.length > 0 ?
+                <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
+                    <TabIcon
+                        icon={'notifications'}
+                        iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
+                        onPress={() => onRight()}
+                        size={26}
+                    />
+                    <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
+                    </TouchableOpacity>
+                </View>
+                :
+                <View style={{flex: 1, justifyContent: 'center',}} />
+            }
+            <Image
+                source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
+                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
+            />
+            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
                 <TabIcon
                     icon={'dehaze'}
                     iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
@@ -186,31 +206,16 @@ const MyPlanNavBar = ({
                     size={26}
                 />
             </View>
-            <Image
-                source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
-            />
-            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
-                <TabIcon
-                    icon={'notifications'}
-                    iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
-                    onPress={() => onRight()}
-                    size={26}
-                />
-                { !expandNotifications &&
-                    <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(TEMP_CARDS, ['read', false]).length}</Text>
-                    </TouchableOpacity>
-                }
-            </View>
         </View>
-        <Collapsible collapsed={!expandNotifications} style={{}}>
-            <DeckCards
-                cards={TEMP_CARDS}
-                hideDeck={() => onRight()}
-                unreadNotificationsCount={_.filter(TEMP_CARDS, ['read', false]).length}
-            />
-        </Collapsible>
+        { cards.length > 0 &&
+            <Collapsible collapsed={!expandNotifications}>
+                <DeckCards
+                    cards={cards}
+                    hideDeck={() => onRight()}
+                    unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+                />
+            </Collapsible>
+        }
     </View>
 );
 
@@ -392,12 +397,12 @@ class MyPlan extends Component {
     }
 
     _closeTrainSessionsCompletionModal = () => {
-        // const { goToScreen, } = this.state;
         this.setState(
             {
                 isTrainSessionsCompletionModalOpen: false,
                 postSession:                        _.cloneDeep(defaultPlanState.postSession),
             },
+            () => this._scrollToFirstActiveActivityTab(),
         );
     }
 
@@ -823,6 +828,7 @@ class MyPlan extends Component {
             <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
 
                 <MyPlanNavBar
+                    cards={TEMP_CARDS}
                     expandNotifications={expandNotifications}
                     onLeft={() => Actions.settings()}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
@@ -891,7 +897,7 @@ class MyPlan extends Component {
                                                 locked={isLocked}
                                                 onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                                 onPress={() => Actions.exerciseModality({ index: key, modality: 'prepare', })}
-                                                showBottomGap={showLogActivityText ? false : true}
+                                                showBottomGap={(isHeatActive || isHeatCompleted || isHeatLocked || (dailyPlanObj.cool_down &&dailyPlanObj.cool_down.active)) ? true : showLogActivityText ? false : true}
                                                 subtitle={isLocked ? false : 'Anytime before training'} // TODO: ADD LOCKED TEXT
                                                 title={'CARE & ACTIVATE'}
                                             />
@@ -1078,11 +1084,14 @@ class MyPlan extends Component {
                     >
                         { !offDaySelected &&
                             <ActionButton.Item
+                                activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
+                                fixNativeFeedbackRadius={true}
                                 onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'OFF DAY'}
+                                useNativeFeedback={false}
                             >
                                 <Image
                                     source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
@@ -1091,11 +1100,14 @@ class MyPlan extends Component {
                             </ActionButton.Item>
                         }
                         <ActionButton.Item
+                            activeOpacity={1}
                             buttonColor={AppColors.zeplin.yellow}
+                            fixNativeFeedbackRadius={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
                             textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'LOG TRAINING'}
+                            useNativeFeedback={false}
                         >
                             <Image
                                 source={require('../../../assets/images/sports_images/icons8-exercise-200.png')}

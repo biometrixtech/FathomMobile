@@ -418,7 +418,7 @@ class HealthKitWorkouts extends Component {
                                     }
                                 </View>
 
-                                { showAddContinueBtns && showRPEPicker ?
+                                { showAddContinueBtns && showRPEPicker && workouts[(pageIndex - 1)] && workouts[(pageIndex - 1)].post_session_survey && workouts[(pageIndex - 1)].post_session_survey.RPE ?
                                     <View>
                                         <BackNextButtons
                                             addBtnText={'Add another session'}

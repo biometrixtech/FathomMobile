@@ -9,11 +9,12 @@
  *
  */
 import React, { Component, } from 'react';
-import { StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
 import _ from 'lodash';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import Swiper from 'react-native-deck-swiper';
 import moment from 'moment';
 
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor:   AppColors.white,
         borderRadius:      10,
+        elevation:         2,
         shadowColor:       'rgba(0, 0, 0, 0.16)',
         shadowOffset:      { height: 3, width: 0, },
         shadowOpacity:     1,
@@ -52,13 +54,14 @@ const styles = StyleSheet.create({
     },
     hideTextContainerWrapper: {
         alignItems:     'flex-end',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
         paddingBottom:  AppSizes.paddingSml,
         paddingRight:   AppSizes.padding,
     },
     hideTextWrapper: {
-        alignItems:    'center',
-        flexDirection: 'row',
+        alignItems:     'center',
+        flexDirection:  'row',
+        justifyContent: 'center',
     },
     text: {
         color:    AppColors.zeplin.darkSlate,
@@ -104,6 +107,22 @@ class DeckCards extends Component {
         };
     }
 
+    _handleOnSwiped = index => {
+        const { cards, } = this.props;
+        const options = {
+            enableVibrateFallback:       false,
+            ignoreAndroidSystemSettings: false,
+        };
+        this.setState(
+            { currentCardIndex: (index + 1), },
+            () => {
+                let hapticFeedbackMethod = (index + 1) === cards.length ? 'notificationWarning' : 'impactMedium';
+                ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
+                console.log('trigger API call here? (update reducer before sending API out due to delay)');
+            },
+        );
+    }
+
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
@@ -135,7 +154,7 @@ class DeckCards extends Component {
     }
 
     render = () => {
-        const { cards, hideDeck, unreadNotificationsCount, } = this.props;
+        const { cards, hideDeck, } = this.props;
         const { areAllSwiped, currentCardIndex, } = this.state;
         return (
             <View>
@@ -162,13 +181,15 @@ class DeckCards extends Component {
                         :
                         <Swiper
                             backgroundColor={AppColors.white}
+                            cardHorizontalMargin={AppSizes.padding}
                             cardIndex={currentCardIndex}
+                            cardVerticalMargin={AppSizes.padding}
                             cards={cards}
                             renderCard={(card, index) => {
                                 const {
                                     cardTextArray,
                                     dateText,
-                                    showUnreadNotificationsBadge,
+                                    // showUnreadNotificationsBadge,
                                 } = this._handleRenderCardLogic(card, index);
                                 return (
                                     <View style={[styles.card,]}>
@@ -179,17 +200,18 @@ class DeckCards extends Component {
                                         <Text style={[styles.text,]}>
                                             {cardTextArray}
                                         </Text>
-                                        { showUnreadNotificationsBadge &&
+                                        {/* showUnreadNotificationsBadge &&
                                             <View style={[styles.unreadNotificationsWrapper,]}>
                                                 <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
                                             </View>
-                                        }
+                                        */}
                                     </View>
                                 )
                             }}
-                            onSwiped={index => this.setState({ currentCardIndex: (index + 1), }, () => console.log('trigger API call here?'),)}
+                            onSwiped={index => this._handleOnSwiped(index)}
                             onSwipedAll={() => this.setState({ areAllSwiped: true, currentCardIndex: 0, })}
                             stackSize={2}
+                            useViewOverflow={Platform.OS === 'ios'}
                         />
                     }
                 </View>

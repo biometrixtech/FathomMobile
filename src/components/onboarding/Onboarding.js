@@ -204,7 +204,7 @@ class Onboarding extends Component {
         let errorsArray = this._validateForm();
         this.setState({
             form_fields: { user: newFormFields, },
-            isFormValid: errorsArray.length === 0 ? true : false,
+            isFormValid: errorsArray.length === 0,
             resultMsg:   newResultMsgFields,
         });
         if(name === 'role') {

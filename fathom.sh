@@ -125,6 +125,9 @@ initialize() {
             # iOS patches
             # none for now...
 
+            # libraray patches
+            yes | cp ./custom/javascript/ActionButtonItem.js ./node_modules/react-native-action-button/ActionButtonItem.js
+
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
             newip=$(for i in `ifconfig -l `; do ipconfig getifaddr $i ; done)

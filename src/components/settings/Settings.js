@@ -559,7 +559,7 @@ class Settings extends Component {
                             () => this.props.logout(this.props.user.id)
                                 .then(() => {
                                     this.setState({ isLogoutBtnDisabled: false, });
-                                    Actions.start();
+                                    Actions.reset('key1');
                                 })
                                 .catch(err => {
                                     this.setState({ isLogoutBtnDisabled: false, });

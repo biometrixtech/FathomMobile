@@ -23,6 +23,7 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import _ from 'lodash';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // consts and custom components
 import { AppColors, AppFonts, AppSizes, } from '../../constants';
@@ -192,7 +193,14 @@ export default class MultiSwitch extends Component {
         }
         this.setState(
             { selectedPosition: index, },
-            () => this.props.onStatusChanged(index),
+            () => {
+                const options = {
+                    enableVibrateFallback:       false,
+                    ignoreAndroidSystemSettings: false,
+                };
+                ReactNativeHapticFeedback.trigger('impactMedium', options);
+                this.props.onStatusChanged(index);
+            },
         );
     }
 
