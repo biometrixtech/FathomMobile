@@ -11,6 +11,7 @@ const MyPlan = ({
     clearHealthKitWorkouts,
     getMyPlan,
     getSoreBodyParts,
+    handleReadInsight,
     healthData,
     lastOpened,
     network,
@@ -30,6 +31,7 @@ const MyPlan = ({
         clearHealthKitWorkouts={clearHealthKitWorkouts}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
+        handleReadInsight={handleReadInsight}
         healthData={healthData}
         lastOpened={lastOpened}
         network={network}
@@ -52,6 +54,7 @@ MyPlan.propTypes = {
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
     getSoreBodyParts:                PropTypes.func.isRequired,
+    handleReadInsight:               PropTypes.func.isRequired,
     healthData:                      PropTypes.object.isRequired,
     lastOpened:                      PropTypes.object.isRequired,
     network:                         PropTypes.object.isRequired,
@@ -89,6 +92,7 @@ const mapDispatchToProps = {
     clearHealthKitWorkouts:          PlanActions.clearHealthKitWorkouts,
     getMyPlan:                       PlanActions.getMyPlan,
     getSoreBodyParts:                PlanActions.getSoreBodyParts,
+    handleReadInsight:               PlanActions.handleReadInsight,
     noSessions:                      PlanActions.noSessions,
     postReadinessSurvey:             PlanActions.postReadinessSurvey,
     postSessionSurvey:               PlanActions.postSessionSurvey,

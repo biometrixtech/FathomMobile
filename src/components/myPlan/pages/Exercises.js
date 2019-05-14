@@ -71,29 +71,35 @@ const ProgressPills = ({
     selectedExercise,
     totalLength,
 }) => (
-    <View style={[styles.progressPillsContainer,]}>
+    <View style={{flex: 1,}}>
+        <View style={[styles.progressPillsContainer,]}>
+            { _.map(cleanedExerciseList, (exerciseList, index) => {
+                const {
+                    isSelectedExerciseInCurrentIndex,
+                    progressWidth,
+                    scaledItemWidth,
+                } = PlanLogic.handleExercisesProgressPillsLogic(availableSectionsCount, cleanedExerciseList, completedExercises, exerciseList, index, selectedExercise, totalLength);
+                if(exerciseList.length === 0) { return(null); }
+                return(
+                    <View key={index} style={{width: scaledItemWidth,}}>
+                        <View style={[styles.progressPillsWrapper,]}>
+                            <View style={[
+                                styles.progressPill,
+                                isSelectedExerciseInCurrentIndex ? {height: AppSizes.padding,} : {height: AppSizes.paddingSml,},
+                            ]}>
+                                <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.success, height: '100%', width: `${progressWidth}%`,}]} />
+                            </View>
+                        </View>
+                    </View>
+                );
+            })}
+        </View>
         { _.map(cleanedExerciseList, (exerciseList, index) => {
             const {
                 isSelectedExerciseInCurrentIndex,
-                progressWidth,
-                scaledItemWidth,
             } = PlanLogic.handleExercisesProgressPillsLogic(availableSectionsCount, cleanedExerciseList, completedExercises, exerciseList, index, selectedExercise, totalLength);
-            if(exerciseList.length === 0) { return(null); }
-            return(
-                <View key={index} style={{width: scaledItemWidth,}}>
-                    <View style={[styles.progressPillsWrapper,]}>
-                        <View style={[
-                            styles.progressPill,
-                            isSelectedExerciseInCurrentIndex ? {height: AppSizes.padding,} : {height: AppSizes.paddingSml,},
-                        ]}>
-                            <View style={[styles.progressPill, {backgroundColor: AppColors.zeplin.success, width: `${progressWidth}%`,}]} />
-                        </View>
-                    </View>
-                    { isSelectedExerciseInCurrentIndex &&
-                        <Text numberOfLines={1} oswaldMedium style={[styles.progressPillsText,]}>{index}</Text>
-                    }
-                </View>
-            );
+            if(!isSelectedExerciseInCurrentIndex) { return(null); }
+            return(<Text key={index} numberOfLines={1} oswaldMedium style={[styles.progressPillsText,]}>{index}</Text>);
         })}
     </View>
 );

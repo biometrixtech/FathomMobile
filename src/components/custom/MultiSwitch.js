@@ -86,7 +86,7 @@ export default class MultiSwitch extends Component {
             isComponentReady:  false,
             isPanning:         false,
             mainWidth:         (width - 30),
-            posValue:          0,
+            posValue:           0,
             position:          new Animated.Value(0),
             selectedPosition:  props.selectedIndex,
             switcherWidth:     (width / 2.7),
@@ -205,7 +205,7 @@ export default class MultiSwitch extends Component {
     }
 
     render = () => {
-        const { buttons, selectedIndex, } = this.props;
+        const { buttons, disableSwitch, selectedIndex, } = this.props;
         const { isPanning, } = this.state;
         return (
             <View style={styles.containerWrapper}>
@@ -226,6 +226,7 @@ export default class MultiSwitch extends Component {
                         styles.switcher,
                         {transform: [{ translateX: this.state.position, }]},
                         isPanning ? {backgroundColor: 'rgba(235, 186, 45, 0.75)',} : {},
+                        disableSwitch ? {backgroundColor: AppColors.zeplin.slate,} : {},
                     ]}
                 >
                     <TouchableOpacity

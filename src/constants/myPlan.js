@@ -252,11 +252,11 @@ const warmUpExerciseListOrder = [
 ];
 
 const postSessionFeel = [
-    { index: 1, label: 'REST', subtitle: 'Light, restful, word', value: 1, },
-    { index: 2, label: 'EASY', subtitle: 'Light, restful, word', value: 3, },
-    { index: 3, label: 'AVERAGE', subtitle: 'Light, restful, word', value: 5, },
-    { index: 4, label: 'HIGH', subtitle: 'Light, restful, word', value: 7, },
-    { index: 5, label: 'MAX', subtitle: 'Light, restful, word', value: 10, },
+    { index: 1, label: 'REST', subtitle: 'effortless, helps recovery', value: 1, },
+    { index: 2, label: 'EASY', subtitle: 'can hold a conversation', value: 3, },
+    { index: 3, label: 'MODERATE', subtitle: 'can speak a sentence at a time', value: 5, },
+    { index: 4, label: 'HIGH INTENSITY', subtitle: 'can only speak a few words', value: 7, },
+    { index: 5, label: 'MAXIMAL', subtitle: 'unable to talk', value: 10, },
 ];
 
 function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {

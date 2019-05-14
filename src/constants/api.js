@@ -55,6 +55,7 @@ export default {
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
         ['health_data',           `${plansAPIVersion}/health_data`], // POST
+        ['insights_read',         `${plansAPIVersion}/insights/read`], // POST
         ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
         ['patch_sessions',        `${plansAPIVersion}/session/{session_id}`], // PATCH
         ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST

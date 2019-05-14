@@ -1116,9 +1116,273 @@ const helperFunctions = {
         }
     },
 
+    getSingleExerciseModalityExpectedResult: (cooldownTitle, isActive, isCompleted, isLastIndex, isLocked) => {
+        return {
+            cooldownTitle,
+            isActive,
+            isCompleted,
+            isLastIndex,
+            isLocked,
+        }
+    },
+
 };
 
 // setup tests
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+
+it('Find Goals - WITHOUT OBJECT', () => {
+    let object = null;
+    let exerciseListOrder = MyPlanConstants.preExerciseListOrder;
+    let expectedResult = [];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
+    let object = {
+        dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 5, text: 'Personalized Prepare for Training',}}]}],
+        dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
+    };
+    let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
+    let expectedResult = [
+        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
+        {goal_type: 5, text: 'Personalized Prepare for Training', isSelected: true,},
+    ];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Find Goals - WITH OBJECT (GOALS 0 & 2)', () => {
+    let object = {
+        dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 0, text: 'Care for Pain',}}]}],
+        dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
+    };
+    let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
+    let expectedResult = [
+        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
+        {goal_type: 0, text: 'Care for Pain', isSelected: true,},
+    ];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - LOWER BACK, SELECTED', () => {
+    let body = {active: true, body_part_location: 12, side: 0,};
+    let expectedResult = {
+        bodyImage:        'LowBack.svg',
+        isSelected:       true,
+        mainBodyPartName: 'LOWER BACK',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - LEFT ANKLE, SELECTED', () => {
+    let body = {active: true, body_part_location: 9, side: 1,};
+    let expectedResult = {
+        bodyImage:        'L_Ankle.svg',
+        isSelected:       true,
+        mainBodyPartName: 'LEFT\nANKLE',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - RIGHT HIP, NOT SELECTED', () => {
+    let body = {active: false, body_part_location: 4, side: 2,};
+    let expectedResult = {
+        bodyImage:        'R_Hip.svg',
+        isSelected:       false,
+        mainBodyPartName: 'RIGHT\nHIP',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - EMPTY LIST', () => {
+    let completedExercises = [];
+    let expectedResult = {newCompletedExercises: [],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - ONE EXERCISE', () => {
+    let completedExercises = ['1-2'];
+    let expectedResult = {newCompletedExercises: ['1'],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - MULITPLE EXERCISE', () => {
+    let completedExercises = ['1-2', '2-3', '14-1'];
+    let expectedResult = {newCompletedExercises: ['1', '2', '14'],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+/*it('Add Title To Completed Activity Helper - EMPTY OBJ', () => {
+    let obj = [];
+    let title = 'HEAT';
+    let expectedResult = [];
+    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITH OBJ', () => {
+    let obj = [{}];
+    let title = 'ICE';
+    let subtitle = '';
+    let expectedResult = [{title: 'ICE'}];
+    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITHOUT TITLE', () => {
+    let obj = [{}];
+    let title = false;
+    let subtitle = ' ';
+    let expectedResult = [{title: false}];
+    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITHOUT TITLE & WITH SPORT', () => {
+    let obj = [{sport_name: 17,}];
+    let title = false;
+    let subtitle = ' ';
+    let expectedResult = [{sport_name: 17, title: 'RUNNING  '}];
+    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - HEAT', () => {
+    let dailyPlanObj = {heat: {active: true, minutes: 10,},};
+    let modality = 'heat';
+    let expectedResult = {
+        equipmentRequired: 'Heating Pad, Wet Towel',
+        extraTimeText:     'per body part',
+        imageId:           'heat',
+        imageSource:       require('../../../assets/images/standard/heat.png'),
+        pageSubtitle:      '30 minutes before training',
+        pageText:          'Heat increases circulation & loosens up soft tissues to improve the benefits of foam rolling, stretching, & dynamic warmup.',
+        pageTitle:         'HEAT',
+        recoveryObj:       dailyPlanObj.heat,
+        sceneId:           'heatScene',
+        textId:            'heat',
+        time:              dailyPlanObj.heat ? dailyPlanObj.heat.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - ICE', () => {
+    let dailyPlanObj = {ice: {active: true, minutes: 12,},};
+    let modality = 'ice';
+    let expectedResult = {
+        equipmentRequired: 'Ice, Towel',
+        extraTimeText:     'per body part',
+        imageId:           'ice',
+        imageSource:       require('../../../assets/images/standard/ice.png'),
+        pageSubtitle:      'After all training is complete',
+        pageText:          'Ice can help minimize swelling due to a minor injury & reduce inflammation in your tissues, muscle spasms, & pain.',
+        pageTitle:         'ICE',
+        recoveryObj:       dailyPlanObj.ice,
+        sceneId:           'iceScene',
+        textId:            'ice',
+        time:              dailyPlanObj.ice ? dailyPlanObj.ice.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - CWI', () => {
+    let dailyPlanObj = {cold_water_immersion: {active: true, minutes: 12,},};
+    let modality = 'cwi';
+    let expectedResult = {
+        equipmentRequired: 'Tub, Cold Water',
+        extraTimeText:     false,
+        imageId:           'cwi',
+        imageSource:       require('../../../assets/images/standard/ice.png'),
+        pageSubtitle:      'After all training is complete',
+        pageText:          'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.',
+        pageTitle:         'COLD WATER BATH',
+        recoveryObj:       dailyPlanObj.cold_water_immersion,
+        sceneId:           'cwiScene',
+        textId:            'cwi',
+        time:              dailyPlanObj.cold_water_immersion ? dailyPlanObj.cold_water_immersion.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Single Exercise Modality Render Logic - WITH Sport Name', () => {
+    let activeRest = {active: true, completed: false, sport_name: 17,};
+    let index = 0;
+    let activeRests = [{}];
+    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RUNNING RECOVERY', true, false, true, false);
+    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
+});
+
+it('Single Exercise Modality Render Logic - WITHOUT Sport Name', () => {
+    let activeRest = {active: true, completed: false,};
+    let index = 0;
+    let activeRests = [{}];
+    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', true, false, true, false);
+    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
+});
+
+it('Single Exercise Modality Render Logic - Completed', () => {
+    let activeRest = {active: true, completed: true,};
+    let index = 0;
+    let activeRests = [{}];
+    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', false, true, true, false);
+    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
+});
+
+it('Single Exercise Modality Render Logic - Locked', () => {
+    let activeRest = {active: false, completed: false,};
+    let index = 0;
+    let activeRests = [{}];
+    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', false, false, true, true);
+    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
+});*/
+
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {
         sport_name: 79,

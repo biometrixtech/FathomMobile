@@ -3,6 +3,7 @@
  *
      <DeckCards
          cards={TEMP_CARDS}
+         handleReadInsight={handleReadInsight}
          hideDeck={() => onRight()}
          unreadNotificationsCount={_.filter(TEMP_CARDS, ['read', false]).length}
      />
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
 class DeckCards extends Component {
     static propTypes = {
         cards:                    PropTypes.array.isRequired,
+        handleReadInsight:        PropTypes.func.isRequired,
         hideDeck:                 PropTypes.func.isRequired,
         unreadNotificationsCount: PropTypes.number.isRequired,
     };
@@ -108,7 +110,7 @@ class DeckCards extends Component {
     }
 
     _handleOnSwiped = index => {
-        const { cards, } = this.props;
+        const { cards, handleReadInsight, } = this.props;
         const options = {
             enableVibrateFallback:       false,
             ignoreAndroidSystemSettings: false,
@@ -118,7 +120,7 @@ class DeckCards extends Component {
             () => {
                 let hapticFeedbackMethod = (index + 1) === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
-                console.log('trigger API call here? (update reducer before sending API out due to delay)');
+                handleReadInsight(index);
             },
         );
     }
@@ -153,6 +155,30 @@ class DeckCards extends Component {
         };
     }
 
+    _renderCard = (card, index) => {
+        const {
+            cardTextArray,
+            dateText,
+            // showUnreadNotificationsBadge,
+        } = this._handleRenderCardLogic(card, index);
+        return (
+            <View style={[styles.card,]}>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text robotoBold style={[styles.title,]}>{card.title}</Text>
+                    <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
+                </View>
+                <Text style={[styles.text,]}>
+                    {cardTextArray}
+                </Text>
+                {/* showUnreadNotificationsBadge &&
+                    <View style={[styles.unreadNotificationsWrapper,]}>
+                        <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
+                    </View>
+                */}
+            </View>
+        );
+    }
+
     render = () => {
         const { cards, hideDeck, } = this.props;
         const { areAllSwiped, currentCardIndex, } = this.state;
@@ -185,31 +211,11 @@ class DeckCards extends Component {
                             cardIndex={currentCardIndex}
                             cardVerticalMargin={AppSizes.padding}
                             cards={cards}
-                            renderCard={(card, index) => {
-                                const {
-                                    cardTextArray,
-                                    dateText,
-                                    // showUnreadNotificationsBadge,
-                                } = this._handleRenderCardLogic(card, index);
-                                return (
-                                    <View style={[styles.card,]}>
-                                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
-                                            <Text robotoBold style={[styles.title,]}>{card.title}</Text>
-                                            <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
-                                        </View>
-                                        <Text style={[styles.text,]}>
-                                            {cardTextArray}
-                                        </Text>
-                                        {/* showUnreadNotificationsBadge &&
-                                            <View style={[styles.unreadNotificationsWrapper,]}>
-                                                <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
-                                            </View>
-                                        */}
-                                    </View>
-                                )
-                            }}
                             onSwiped={index => this._handleOnSwiped(index)}
                             onSwipedAll={() => this.setState({ areAllSwiped: true, currentCardIndex: 0, })}
+                            renderCard={(card, index) => this._renderCard(card, index)}
+                            stackScale={10}
+                            stackSeparation={-10}
                             stackSize={2}
                             useViewOverflow={Platform.OS === 'ios'}
                         />

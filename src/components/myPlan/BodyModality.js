@@ -23,6 +23,7 @@ import { Actions } from 'react-native-router-flux';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 
 /* Component ==================================================================== */
 class BodyModality extends Component {
@@ -37,8 +38,9 @@ class BodyModality extends Component {
             isStarted:        false,
             showInstructions: true,
         };
-        this._timer = null;
         this._animatedValue = new Animated.Value(0);
+        this._panel = {};
+        this._timer = null;
     }
 
     componentWillUnmount = () => {
@@ -59,12 +61,16 @@ class BodyModality extends Component {
             .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
     }
 
+    _hideSlideUpPanel = () => this._panel.hide()
+
     _pauseTimer = () => {
         this.setState(
             { isPaused: true, isStarted: false, },
             () => clearInterval(this._timer),
         );
     }
+
+    _showSlideUpPanel = () => this._panel.show()
 
     _toggleInstructions = () => {
         this.setState(
@@ -277,28 +283,25 @@ class BodyModality extends Component {
                                         <View style={{flexDirection: 'row',}}>
                                             <View style={{borderRightColor: AppColors.zeplin.lightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(10),}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' ?
-                                                        'Locate your heating pad, or microwave a damp towel to create your own heating device.'
+                                                        'Prepare a heating pad, hot water bottle, or wet towel to be moderately hot.'
                                                         : modality === 'ice' ?
-                                                            'Locate your ice pack or make your own by placing ice cubes in a plastic bag or in a wet towel; a pack of frozen peas is also ideal.'
+                                                            'Prepare an ice pack'
                                                             :
-                                                            'Fill a tub with cold water (50 \u00B0F). This should be the coldest setting on your bathtub.'
+                                                            'Fill a tub with cold tap water (no ice) high enough to submerge your legs'
                                                     }
                                                 </Text>
-                                                { modality === 'cwi' &&
-                                                    <View style={{flexDirection: 'row', marginTop: AppSizes.paddingXSml,}}>
-                                                        <TabIcon
-                                                            color={AppColors.zeplin.yellow}
-                                                            icon={'alert-circle'}
-                                                            size={AppFonts.scaleFont(15)}
-                                                            type={'material-community'}
-                                                        />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(9), marginLeft: AppSizes.paddingXSml,}}>
-                                                            {'Research shows adding ice to your bath does not provide any additional benefits.'}
-                                                        </Text>
-                                                    </View>
-                                                }
+                                                <Spacer size={AppSizes.paddingXSml} />
+                                                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11),}}>
+                                                    { modality === 'heat' ?
+                                                        'TIP: Dampen a bath towel, wring out excess water, & heat in the microwave for 10-15 seconds.'
+                                                        : modality === 'ice' ?
+                                                            'TIP: You can use ice cubes in a plastic bag or a bag of frozen peas.'
+                                                            :
+                                                            'TIP: Research shows 50-60\u00B0F is most effective to flush waste and reduce inflammation, which matches the coldest setting on most house-hold tubs.'
+                                                    }
+                                                </Text>
                                             </View>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingSml,}}>
@@ -308,17 +311,17 @@ class BodyModality extends Component {
                                         <View style={{flexDirection: 'row',}}>
                                             <View style={{borderRightColor: AppColors.zeplin.lightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                { modality === 'cwi' ?
-                                                    <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(10),}}>
-                                                        {'Place your body in the tub and '}
-                                                        <Text robotoRegular style={{textDecorationLine: 'underline',}}>{'submerge your legs, no higher than the top of you hips'}</Text>
-                                                    </Text>
-                                                    :
-                                                    <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(10),}}>
-                                                        {`Position ${modality} to cover recommended area(s)`}
-                                                    </Text>
-                                                }
-                                                { modality === 'ice' &&
+                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
+                                                    { modality === 'heat' ?
+                                                        'Position the heat to cover the entire muscle or joint.'
+                                                        : modality === 'ice' ?
+                                                            'Position the heat to cover the entire muscle or joint.'
+                                                            :
+                                                            'Completely submerge your lower body, no higher than the top of you hips'
+                                                    }
+                                                </Text>
+                                                <Spacer size={AppSizes.paddingXSml} />
+                                                { (modality === 'heat' || modality === 'ice') &&
                                                     <View style={{flexDirection: 'row', marginTop: AppSizes.paddingXSml,}}>
                                                         <TabIcon
                                                             color={AppColors.zeplin.error}
@@ -326,8 +329,12 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(9), marginLeft: AppSizes.paddingXSml,}}>
-                                                            {'Never place ice directly on an injury; move the pack around the recommended area to avoid ice burns.'}
+                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                            { modality === 'heat' ?
+                                                                'Do not place heat on swollen or bruised areas.'
+                                                                :
+                                                                'Keep the pack moving to avoid ice burns.'
+                                                            }
                                                         </Text>
                                                     </View>
                                                 }
@@ -340,10 +347,15 @@ class BodyModality extends Component {
                                         <View style={{flexDirection: 'row',}}>
                                             <View style={{marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(10),}}>
-                                                    {`Set a timer for ${time} and ${modality === 'cwi' ? 'rest' : 'wait'}.`}
+                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
+                                                    { modality === 'heat' || modality === 'ice' ?
+                                                        `Set a timer for ${time} minutes and wait.`
+                                                        :
+                                                        'Set a timer for 11–15 min and wait.'
+                                                    }
                                                 </Text>
-                                                { modality === 'ice' ?
+                                                <Spacer size={AppSizes.paddingXSml} />
+                                                { (modality === 'heat' || modality === 'ice') &&
                                                     <View style={{flexDirection: 'row', marginTop: AppSizes.paddingXSml,}}>
                                                         <TabIcon
                                                             color={AppColors.zeplin.error}
@@ -351,30 +363,32 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(9), marginLeft: AppSizes.paddingXSml,}}>
-                                                            {'Never use ice for more than 30 minutes at a time; remove ice immediately if the injury appears bright pink or red.'}
+                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                            { modality === 'heat' ?
+                                                                'When using heat, be very careful to use moderate heat for a limited time to avoid burns.'
+                                                                : modality === 'ice' ?
+                                                                    'Never treat a body part with ice for more than 25 minutes, and remove the pack if your skin becomes bright pink or red.'
+                                                                    :
+                                                                    null
+                                                            }
                                                         </Text>
                                                     </View>
-                                                    : modality === 'heat' ?
-                                                        <View style={{flexDirection: 'row', marginTop: AppSizes.paddingXSml,}}>
-                                                            <TabIcon
-                                                                color={AppColors.zeplin.error}
-                                                                icon={'alert-circle'}
-                                                                size={AppFonts.scaleFont(15)}
-                                                                type={'material-community'}
-                                                            />
-                                                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(9), marginLeft: AppSizes.paddingXSml,}}>
-                                                                {'When using heat, be very careful to use moderate heat for a limited time to avoid burns.'}
-                                                            </Text>
-                                                        </View>
-                                                        :
-                                                        null
                                                 }
                                             </View>
                                         </View>
+                                        { (modality === 'heat' || modality === 'ice') &&
+                                            <Text onPress={() => this._showSlideUpPanel()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(13), paddingTop: AppSizes.padding, textAlign: 'center',}}>
+                                                {'Additional precautions'}
+                                            </Text>
+                                        }
                                     </Collapsible>
                                 </View>
                             </View>
+                            { modality === 'cwi' &&
+                                <Text onPress={() => this._showSlideUpPanel()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(13), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                    {'See the science'}
+                                </Text>
+                            }
                             <Button
                                 buttonStyle={{
                                     backgroundColor: AppColors.zeplin.yellow,
@@ -388,6 +402,136 @@ class BodyModality extends Component {
                             />
                         </View>
                     </ScrollView>
+                    <SlidingUpPanel
+                        allowDragging={false}
+                        ref={ref => {this._panel = ref;}}
+                        showBackdrop={false}
+                    >
+                        <View style={{flex: 1, flexDirection: 'column',}}>
+                            <View style={{backgroundColor: AppColors.zeplin.darkBlue, flex: 1, opacity: 0.8,}} />
+                            <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{`${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
+                                <TabIcon
+                                    color={AppColors.zeplin.darkSlate}
+                                    icon={'close'}
+                                    onPress={() => this._hideSlideUpPanel()}
+                                    size={30}
+                                    type={'material-community'}
+                                />
+                            </View>
+                            { modality === 'heat' ?
+                                <View style={{backgroundColor: AppColors.white, padding: AppSizes.paddingLrg,}}>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat treatments after activity.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat after an acute injury.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never use heat where swelling is involved because swelling is caused by bleeding in the tissue, and heat just draws more blood to the area.'}</Text>
+                                    </View>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
+                                    </View>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
+                                        {'If you have questions regarding the proper treatment of an injury, call the '}
+                                        <Text robotoBold>{'doctors'}</Text>
+                                        {' or '}
+                                        <Text robotoBold>{'physical therapists'}</Text>
+                                        {' at your local medical center.'}
+                                    </Text>
+                                </View>
+                                : modality === 'ice' ?
+                                    <View style={{backgroundColor: AppColors.white, padding: AppSizes.paddingLrg,}}>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never place ice directly on an injury'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Keep the ice pack moving to avoid ice burns '}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never treat with ice for more than 25 minutes, and remove the pack immediately if the injury appears bright pink or red'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Don’t use ice packs on the left shoulder if you have a heart condition, and don’t use ice packs around the front or side of the neck.'}</Text>
+                                        </View>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
+                                        </View>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
+                                            {'If you have questions regarding the proper treatment of an injury, call the '}
+                                            <Text robotoBold>{'doctors'}</Text>
+                                            {' or '}
+                                            <Text robotoBold>{'physical therapists'}</Text>
+                                            {' at your local medical center.'}
+                                        </Text>
+                                    </View>
+                                    :
+                                    <View style={{backgroundColor: AppColors.white, flex: 1, padding: AppSizes.paddingLrg,}}>
+                                        <ScrollView>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                                {'A meta-analysis (Dupuy, 2018) evaluated the impact of recovery techniques on delayed onset muscle soreness (DOMS), perceived fatigue, muscle damage, and inflammatory markers after physical exercise. The effect of cold water immersion (CWI) on DOMS and perceived fatigue was significant.'}
+                                            </Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                                {'An exposure of 11–15\u00B0C over 11–15 min was considered to be the optimal circumstance to obtain a positive impact of CWI after exercise to reduce DOMS (Machado et al., 2016).'}
+                                            </Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                                {'A common explanation of the impact of CWI on DOMS and fatigue is a reduction in exercise-induced inflammation and muscle damage. Hydrostatic pressure may facilitate the transport of fluids from the muscle to the blood and therefore eliminate metabolites (Wilcock et al., 2006a,b; Leeder et al., 2012).'}
+                                            </Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                                {'Vasoconstriction due to cold temperature may also reduce fluid diffusion into the interstitial space (Eston and Peters, 1999) and locally diminish the inflammatory reaction (Coté et al., 1988), which in turn may reduce the feeling of pain (Smith, 1991).'}
+                                            </Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14),}}>
+                                                {'Cold alone has also a direct analgesic impact (Leppäluoto et al., 2008). — relieve pain Citation: Dupuy O, Douzi W, Theurot D, Bosquet L and Dugué B (2018) An Evidence-Based Approach for Choosing Post-exercise Recovery Techniques to Reduce Markers of Muscle Damage, Soreness, Fatigue, and Inflammation: A Systematic Review With Meta-Analysis. Front. Physiol. 9:403. doi: 10.3389/fphys.2018.00403'}
+                                            </Text>
+                                        </ScrollView>
+                                    </View>
+                            }
+                        </View>
+                    </SlidingUpPanel>
                 </View>
             </MagicMove.Scene>
         );

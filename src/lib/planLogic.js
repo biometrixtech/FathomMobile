@@ -796,6 +796,7 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
+    // TODO: UPDATE ME WHEN TITLES ARE ALL SETUP
     handleExercisesRenderLogic: (exerciseList, selectedExercise, modality = 'prepare') => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
@@ -1035,7 +1036,6 @@ const PlanLogic = {
       * Handle Completed Exercises
       * - MyPlan
       */
-    // TODO: UNIT TEST ME
     handleCompletedExercises: completedExercises => {
         let newCompletedExercises = _.cloneDeep(completedExercises);
         newCompletedExercises = _.map(newCompletedExercises, exId => {
@@ -1051,7 +1051,7 @@ const PlanLogic = {
       * Handle MyPlan Render Train Tab Logic
       * - MyPlan
       */
-    // TODO: UNIT TEST ME
+    // NOTE: NOT BEING USED
     handleMyPlanRenderTrainTabLogic: (dailyPlanObj, reducerPlan) => {
         let isDailyReadinessSurveyCompleted = dailyPlanObj && dailyPlanObj.daily_readiness_survey_completed ? true : false;
         let trainingSessions = dailyPlanObj ? dailyPlanObj.training_sessions : [];
@@ -1086,22 +1086,65 @@ const PlanLogic = {
         };
     },
 
-    addTitleToCompletedActivityHelper: (obj, title, subtitle) => {
-        if(!obj) {
+    /**
+      * Helper Function for Completed Modalities
+      * - PlanLogc
+      */
+    // TODO: UNIT TEST ME
+    addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive) => {
+        if(!array || !array[0]) {
             return [];
         }
-        return _.map(obj, activity => {
+        if(filterOutActive) {
+            array = _.filter(array, o => o.completed || (!o.active && !o.completed));
+        }
+        return _.map(array, activity => {
             let newCompletedActivity = _.cloneDeep(activity);
             let newTitle = title;
-            if(!title && activity.sport_name) {
+            if(activity.sport_name) {
                 newTitle = `${_.filter(MyPlanConstants.teamSports, ['index', activity.sport_name])[0].label.toUpperCase()}`;
-                if(subtitle.length > 0) {
-                    newTitle = `${newTitle} ${subtitle}`;
-                } else {
-                    newTitle = `${newTitle} RECOVERY`;
-                }
             }
             newCompletedActivity.title = newTitle;
+            if(subtitle) {
+                let goals = PlanLogic.handleFindGoals(newCompletedActivity);
+                if(goals && goals.length > 0) {
+                    newCompletedActivity.subtitle = _.map(goals, g => g.text).join(', ');
+                }
+            }
+            newCompletedActivity.isCompleted = (activity && (activity.sport_name || activity.completed));
+            newCompletedActivity.isLocked = activity && !activity.active && !activity.completed;
+            return newCompletedActivity;
+        });
+    },
+
+    /**
+      * Helper Function for Completed Cool Downs
+      * - PlanLogc
+      */
+    // TODO: UNIT TEST ME
+    addTitleToActiveModalitiesHelper: (dailyPlanObj, title, timingAddOn, exerciseListOrder, modality)=> {
+        if(!dailyPlanObj || !dailyPlanObj[0]) {
+            return [];
+        }
+        let newDailyPlanObj = _.cloneDeep(dailyPlanObj);
+        newDailyPlanObj = _.filter(newDailyPlanObj, o => o.active && !o.completed);
+        return _.map(newDailyPlanObj, activity => {
+            let newCompletedActivity = _.cloneDeep(activity);
+            let goals = PlanLogic.handleFindGoals(newCompletedActivity, exerciseListOrder);
+            if(goals && goals.length > 0) {
+                newCompletedActivity.subtitle = _.map(goals, g => g.text).join(', ');
+            }
+            newCompletedActivity.title = title;
+            let timingTime = '0 min, ';
+            if(newCompletedActivity.minutes) {
+                timingTime = `${newCompletedActivity.minutes} min, `;
+            } else {
+                let priority = newCompletedActivity.default_plan === 'Efficient' ? 0 : newCompletedActivity.default_plan === 'Complete' ? 1 : 2;
+                timingTime = `${(_.round(MyPlanConstants.cleanExerciseList(newCompletedActivity, priority, goals, modality).totalSeconds / 60))} min, `;
+            }
+            newCompletedActivity.timing = [timingTime, timingAddOn];
+            newCompletedActivity.modality = modality;
+            newCompletedActivity.isBodyModality = modality === 'heat' || modality === 'ice' || modality === 'cwi';
             return newCompletedActivity;
         });
     },
@@ -1110,75 +1153,76 @@ const PlanLogic = {
       * Handle MyPlan Render Recover Tab Logic
       * - MyPlan
       */
-    // TODO: UNIT TEST ME
+    // NOTE: NOT BEING USED
     handleMyPlanRenderRecoverTabLogic: dailyPlanObj => {
-        let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
-        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
-        let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
-        let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
-        let compiledActivities = _.concat(completedActiveRest, completedIce, completedCWI, completedCoolDown);
-        compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
-        let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
-        let isCareAndActivateCompleted = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.completed;
-        let isCareAndActivateLocked = dailyPlanObj.post_active_rest && !dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
-        let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
-        let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
-        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
-        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
-        let isCoolDownActive = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && !dailyPlanObj.cool_down.completed;
-        let isCoolDownCompleted = dailyPlanObj.cool_down && dailyPlanObj.cool_down.completed;
-        let cooldownTitle = dailyPlanObj && dailyPlanObj.cool_down && dailyPlanObj.cool_down.sport_name ?
-            `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`
-            :
-            'RECOVERY';
-        return {
-            compiledActivities,
-            cooldownTitle,
-            isCWIActive,
-            isCWICompleted,
-            isCareAndActivateActive,
-            isCareAndActivateCompleted,
-            isCareAndActivateLocked,
-            isCoolDownActive,
-            isCoolDownCompleted,
-            isIceActive,
-            isIceCompleted,
-        };
+        return {};
+        // let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
+        // let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
+        // let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
+        // let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
+        // let compiledActivities = _.concat(completedActiveRest, completedIce, completedCWI, completedCoolDown);
+        // compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
+        // let isCareAndActivateActive = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
+        // let isCareAndActivateCompleted = dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest.completed;
+        // let isCareAndActivateLocked = dailyPlanObj.post_active_rest && !dailyPlanObj.post_active_rest.active && !dailyPlanObj.post_active_rest.completed;
+        // let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
+        // let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
+        // let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        // let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
+        // let isCoolDownActive = dailyPlanObj.cool_down && dailyPlanObj.cool_down.active && !dailyPlanObj.cool_down.completed;
+        // let isCoolDownCompleted = dailyPlanObj.cool_down && dailyPlanObj.cool_down.completed;
+        // let cooldownTitle = dailyPlanObj && dailyPlanObj.cool_down && dailyPlanObj.cool_down.sport_name ?
+        //     `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down.sport_name])[0].label.toUpperCase()} RECOVERY`
+        //     :
+        //     'RECOVERY';
+        // return {
+        //     compiledActivities,
+        //     cooldownTitle,
+        //     isCWIActive,
+        //     isCWICompleted,
+        //     isCareAndActivateActive,
+        //     isCareAndActivateCompleted,
+        //     isCareAndActivateLocked,
+        //     isCoolDownActive,
+        //     isCoolDownCompleted,
+        //     isIceActive,
+        //     isIceCompleted,
+        // };
     },
 
     /**
       * Handle MyPlan Render Prepare Tab Logic
       * - MyPlan
       */
-    // TODO: UNIT TEST ME
+    // NOTE: NOT BEING USED
     handleMyPlanRenderPrepareTabLogic: dailyPlanObj => {
-        let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
-        let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
-        let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
-        let compiledActivities = _.concat(completedActiveRest, completedHeat, completedWarmUp);
-        compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
-        let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
-        let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
-        let isCareAndActivateCompleted = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.completed;
-        let isCareAndActivateLocked = dailyPlanObj.pre_active_rest && !dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
-        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
-        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
-        return {
-            compiledActivities,
-            isCareAndActivateActive,
-            isCareAndActivateCompleted,
-            isCareAndActivateLocked,
-            isHeatActive,
-            isHeatCompleted,
-            isReadinessSurveyCompleted,
-        };
+        return {};
+        // let completedActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
+        // let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
+        // let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
+        // let compiledActivities = _.concat(completedActiveRest, completedHeat, completedWarmUp);
+        // compiledActivities = _.sortBy(compiledActivities, ['completed_date_time']);
+        // let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
+        // let isCareAndActivateActive = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
+        // let isCareAndActivateCompleted = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.completed;
+        // let isCareAndActivateLocked = dailyPlanObj.pre_active_rest && !dailyPlanObj.pre_active_rest.active && !dailyPlanObj.pre_active_rest.completed;
+        // let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
+        // let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
+        // return {
+        //     compiledActivities,
+        //     isCareAndActivateActive,
+        //     isCareAndActivateCompleted,
+        //     isCareAndActivateLocked,
+        //     isHeatActive,
+        //     isHeatCompleted,
+        //     isReadinessSurveyCompleted,
+        // };
     },
 
     /**
       * Handle Find Goals Logic
       * - /actions/plan.js
       */
-    // TODO: UNIT TEST ME
     handleFindGoals: (object, exerciseListOrder) => {
         // setup variables
         let tmpGoals = [];
@@ -1187,14 +1231,24 @@ const PlanLogic = {
         if(!object) {
             return goals;
         }
-        // loop through our exercise order and sections
-        _.map(exerciseListOrder, list => {
-            _.map(object[list.index], exercise => {
-                _.map(exercise.dosages, dosage => {
-                    tmpGoals = _.concat(tmpGoals, dosage.goal);
-                })
+        if(exerciseListOrder) {
+            // loop through our exercise order and sections
+            _.map(exerciseListOrder, list => {
+                _.map(object[list.index], exercise => {
+                    _.map(exercise.dosages, dosage => {
+                        tmpGoals = _.concat(tmpGoals, dosage.goal);
+                    })
+                });
             });
-        });
+        } else if(object.triggers) {
+            _.map(object.triggers, o => {
+                tmpGoals = _.concat(o);
+            });
+        } else {
+            _.map(object.body_parts, o => {
+                tmpGoals = _.concat(o.goals);
+            });
+        }
         // filter unique goal object(s)
         tmpGoals = _.uniqBy(tmpGoals, 'goal_type');
         _.map(tmpGoals, goal => {
@@ -1218,8 +1272,8 @@ const PlanLogic = {
         let progressLength = (_.filter(exerciseList, o => completedExercises.indexOf(`${o.library_id}-${o.set_number}`) > -1).length / exerciseList.length);
         let progressWidth = progressLength ? parseInt(progressLength * 100, 10) : 0;
         let itemWidth = ((exerciseList.length / totalLength) * usableScreenWidth);
-        let activeScale = 1.5;
-        let remainingScale = 1 - ((activeScale - 1) / (availableSectionsCount - 1));
+        let activeScale = 1; //1.5;
+        let remainingScale = 1; //(activeScale - 1) * (1 + (activeScale - 1) / (availableSectionsCount - 1));
         let scaledItemWidth = isSelectedExerciseInCurrentIndex ? (itemWidth * activeScale) : (itemWidth * remainingScale);
         return {
             currentIndex,
@@ -1237,9 +1291,9 @@ const PlanLogic = {
     handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index = 0) => {
         let goals = plan.activeRestGoals;
         let imageId = 'prepareCareActivate';
-        let imageSource = require('../../assets/images/standard/active_rest.png');
+        let imageSource = require('../../assets/images/standard/mobilize.png');
         let pageSubtitle = 'Anytime before training';
-        let pageTitle = 'CARE & ACTIVATE';
+        let pageTitle = 'MOBILIZE';
         let recoveryObj = dailyPlanObj.pre_active_rest[index];
         let recoveryType = 'pre_active_rest';
         let sceneId = 'prepareScene';
@@ -1248,7 +1302,7 @@ const PlanLogic = {
             goals = plan.activeRestGoals;
             imageId = 'recoverCareActivate';
             pageSubtitle = 'Anytime after training';
-            pageTitle = 'CARE & ACTIVATE';
+            pageTitle = 'MOBILIZE';
             recoveryObj = dailyPlanObj.post_active_rest[index];
             recoveryType = 'post_active_rest';
             sceneId = 'recoverScene';
@@ -1266,7 +1320,7 @@ const PlanLogic = {
         } else if(dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown') {
             goals = plan.coolDownGoals;
             imageId = 'coolDown';
-            imageSource = require('../../assets/images/standard/cool_down.png');
+            imageSource = require('../../assets/images/standard/mobilize.png');
             pageSubtitle = 'Immediately after training';
             pageTitle = `${_.filter(MyPlanConstants.teamSports, ['index', dailyPlanObj.cool_down[index].sport_name])[0].label.toUpperCase()} RECOVERY`;
             recoveryObj = dailyPlanObj.cool_down[index];
@@ -1311,7 +1365,6 @@ const PlanLogic = {
       * Handle Body Modality Render Logic
       * - BodyModality
       */
-    // TODO: UNIT TEST ME
     handleBodyModalityRenderLogic: (dailyPlanObj, modality) => {
         let equipmentRequired = 'Heating Pad, Wet Towel';
         let extraTimeText = 'per body part';
@@ -1336,11 +1389,11 @@ const PlanLogic = {
             sceneId = 'iceScene';
             textId = 'ice';
             time = dailyPlanObj.ice.minutes;
-        } else if(dailyPlanObj.cwi && dailyPlanObj.cwi.active && modality === 'cwi') {
+        } else if(dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && modality === 'cwi') {
             equipmentRequired = 'Tub, Cold Water';
             extraTimeText = false;
             imageId = 'cwi';
-            imageSource = require('../../assets/images/standard/cwi.png');
+            imageSource = require('../../assets/images/standard/mobilize.png');
             pageSubtitle = 'After all training is complete';
             pageText = 'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.';
             pageTitle = 'COLD WATER BATH';
@@ -1368,8 +1421,7 @@ const PlanLogic = {
       * BodyModality Body Part
       * - BodyModality
       */
-    // TODO: UNIT TEST ME
-    handleBodyModalityBodyPart: (body, soreBodyParts) => {
+    handleBodyModalityBodyPart: body => {
         let isSelected = body.active;
         let filteredBodyPartMap = _.filter(MyPlanConstants.bodyPartMapping, ['index', body.body_part_location]);
         let bodyImage = filteredBodyPartMap[0].image[body.side];
@@ -1401,58 +1453,90 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleMyPlanRenderLogic: dailyPlanObj => {
-        // setup completed modalities
-        let completedCWI = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER IMMERSION');
-        let completedCoolDown = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_cool_down);
-        let completedHeat = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_heat, 'HEAT');
-        let completedIce = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_ice, 'ICE');
-        let completedPostActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_post_active_rest, 'CARE & ACTIVATE');
-        let completedPreActiveRest = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_pre_active_rest, 'CARE & ACTIVATE');
+        let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'HEAT', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
+        let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest));
+        let completedWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_warm_up, '');
         let filteredTrainingSessions = dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 ?
             _.filter(dailyPlanObj.training_sessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
-        let completedTrainingSessions = PlanLogic.addTitleToCompletedActivityHelper(filteredTrainingSessions, false, ' ');
-        let completedWarmUp = PlanLogic.addTitleToCompletedActivityHelper(dailyPlanObj.completed_warm_up, 'WARM UP');
-        let completedModalities = _.concat(completedCWI, completedCoolDown, completedHeat, completedIce, completedPostActiveRest, completedPreActiveRest, completedTrainingSessions, completedWarmUp);
-        completedModalities = _.sortBy(completedModalities, ['completed_date_time']);
-        completedModalities = _.sortBy(completedModalities, ['created_date']);
-        // setup active, completed, and locked states for each modality
-        let isCWIActive = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
-        let isCWICompleted = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.completed;
-        let isCWILocked = dailyPlanObj.cold_water_immersion && !dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed;
-        let isHeatActive = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
-        let isHeatCompleted = dailyPlanObj.heat && dailyPlanObj.heat.completed;
-        let isHeatLocked = dailyPlanObj.heat && !dailyPlanObj.heat.active && !dailyPlanObj.heat.completed;
-        let isIceActive = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
-        let isIceCompleted = dailyPlanObj.ice && dailyPlanObj.ice.completed;
-        let isIceLocked = dailyPlanObj.ice && !dailyPlanObj.ice.active && !dailyPlanObj.ice.completed;
+        let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'ACTIVE RECOVERY');
+        let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'HEAT', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
+        let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest), true);
+        let completedCurrentWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', '', true);
+        let beforeCompletedLockedModalities = _.concat(
+            completedHeat,
+            completedPreActiveRest,
+            completedWarmUp,
+            completedTrainingSessions,
+            completedCurrentHeat,
+            completedCurrentPreActiveRest,
+            completedCurrentWarmUp,
+        );
+        beforeCompletedLockedModalities = _.sortBy(beforeCompletedLockedModalities, ['completed_date_time']);
+        beforeCompletedLockedModalities = _.sortBy(beforeCompletedLockedModalities, ['created_date']);
+        let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER BATH', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
+        let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down));
+        let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'ICE', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
+        let completedPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_post_active_rest));
+        let completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', PlanLogic.handleFindGoals([dailyPlanObj.cold_water_immersion]), true);
+        let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.cool_down), true);
+        let completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'ICE', PlanLogic.handleFindGoals([dailyPlanObj.ice]), true);
+        let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest), true);
+        let afterCompletedLockedModalities = _.concat(
+            completedCWI,
+            completedCoolDown,
+            completedIce,
+            completedPostActiveRest,
+            completedCurrentCWI,
+            completedCurrentCoolDown,
+            completedCurrentIce,
+            completedCurrentPostActiveRest,
+        );
+        afterCompletedLockedModalities = _.sortBy(afterCompletedLockedModalities, ['completed_date_time']);
+        afterCompletedLockedModalities = _.sortBy(afterCompletedLockedModalities, ['created_date']);
+        let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare');
+        let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat');
+        let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
+        let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown');
+        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime after training', MyPlanConstants.postExerciseListOrder, 'recover');
+        let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'ICE', 'after all training is complete', false, 'ice');
+        let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', 'after all training is complete', false, 'cwi');
+        let activeAfterModalities = _.concat(activeCoolDown, activePostActiveRest, activeIce, activeCWI);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
-        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned || filteredTrainingSessions.length > 0;
-        let showLogActivityText = dailyPlanObj && dailyPlanObj.train_later;
+        let offDaySelected = dailyPlanObj && !dailyPlanObj.sessions_planned && !dailyPlanObj.train_later;
+        let askForNewMobilize = (dailyPlanObj.train_later && (!dailyPlanObj.pre_active_rest[0] || dailyPlanObj.pre_active_rest[0].completed)) || (!dailyPlanObj.train_later && (!dailyPlanObj.post_active_rest[0] || dailyPlanObj.post_active_rest[0].completed));
+        let noTriggerCoreLogic = dailyPlanObj.train_later && !dailyPlanObj.heat && !dailyPlanObj.ice && !dailyPlanObj.cold_water_immersion && dailyPlanObj.cool_down === [] && dailyPlanObj.pre_active_rest === [] && dailyPlanObj.post_active_rest === [];
+        let firstTrigger = offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let secondTrigger = noTriggerCoreLogic && filteredTrainingSessions.length > 0;
+        let thirdTrigger = noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let triggerStep = firstTrigger ?
+            'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand. Enjoy your off day!'
+            : secondTrigger ?
+                'You should recover from this workout naturally, but you can tap the "+" for a recovery-focused Mobilize to go the extra mile!'
+                : thirdTrigger ?
+                    'You\'re well recovered so a Mobilize before you train isn\'t high priority, but you can tap the "+" below to add a recovery-focused Mobilize on demand!\n\nOtherwise tap the "+" to log your workout & we\'ll update your recovery recommendations accordingly!'
+                    :
+                    false;
         return {
-            completedModalities,
-            isCWIActive,
-            isCWICompleted,
-            isCWILocked,
-            isHeatActive,
-            isHeatCompleted,
-            isHeatLocked,
-            isIceActive,
-            isIceCompleted,
-            isIceLocked,
+            activeAfterModalities,
+            activeBeforeModalities,
+            afterCompletedLockedModalities,
+            askForNewMobilize,
+            beforeCompletedLockedModalities,
+            filteredTrainingSessions,
             isReadinessSurveyCompleted,
             offDaySelected,
-            showLogActivityText,
+            triggerStep,
         };
     },
 
     /**
-      * Handle Single Exercise Modality Render Logic
+      * Handle Single Active Modality Render Logic
       * - MyPlan
       */
-    // TODO: UNIT TEST ME
-    handleSingleExerciseModalityRenderLogic: (activeRest, index, activeRests) => {
+    // NOTE: NOT BEING USED
+    handleSingleActiveModalityRenderLogic: (activeRest, index, activeRests) => {
         let cooldownTitle = activeRest.sport_name ?
             `${_.filter(MyPlanConstants.teamSports, ['index', activeRest.sport_name])[0].label.toUpperCase()} RECOVERY`
             :

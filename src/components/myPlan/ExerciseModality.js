@@ -40,18 +40,18 @@ class ExerciseModality extends Component {
     constructor(props) {
         super(props);
         let dailyPlanObj = props.plan ? props.plan.dailyPlan[0] : false;
-        let recoveryObj = dailyPlanObj.pre_active_rest && dailyPlanObj.pre_active_rest.active ?
-            dailyPlanObj.pre_active_rest
-            :
-            dailyPlanObj.post_active_rest;
+        let recoveryObj = props.modality === 'prepare' ?
+            dailyPlanObj.pre_active_rest[0]
+            : props.modality === 'recover' ?
+                dailyPlanObj.post_active_rest[0]
+                :
+                dailyPlanObj.cool_down[0];
         let priorityIndex = recoveryObj.default_plan === 'Efficient' ?
             0
             : recoveryObj.default_plan === 'Complete' ?
                 1
-                : recoveryObj.default_plan === 'Comprehensive' ?
-                    2
-                    :
-                    1;
+                :
+                2;
         this.state = {
             isExerciseCompletionModalOpen: false,
             isSelectedExerciseModalOpen:   false,
@@ -76,7 +76,8 @@ class ExerciseModality extends Component {
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
-        const { index, markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
+        const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
+        let index = 0; // NOTE: THIS WOULD NEED TO UPDATE SOON
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         let clonedPlan = _.cloneDeep(plan);
         // add or remove exercise
@@ -180,7 +181,8 @@ class ExerciseModality extends Component {
             priority,
             selectedExercise,
         } = this.state;
-        let { index, modality, patchActiveRecovery, plan, user, } = this.props;
+        let { modality, patchActiveRecovery, plan, user, } = this.props;
+        let index = 0; // NOTE: THIS WOULD NEED TO UPDATE SOON
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let completedExercises = dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown' ? plan.completedCoolDownExercises : plan.completedExercises;
         let { buttonTitle, isButtonDisabled, buttonDisabledStyle, buttonBackgroundColor, } = MyPlanConstants.exerciseListButtonStyles(completedExercises, modality);
@@ -246,6 +248,7 @@ class ExerciseModality extends Component {
                                 <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                 <MultiSwitch
                                     buttons={buttons}
+                                    disableSwitch={!firstExerciseFound}
                                     onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
                                     selectedIndex={priority}
                                 />
@@ -275,13 +278,17 @@ class ExerciseModality extends Component {
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                                 containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
                                 disabled={!firstExerciseFound}
+                                disabledStyle={{backgroundColor: AppColors.zeplin.slate,}}
+                                disabledTitleStyle={{color: AppColors.white,}}
                                 onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
                                 title={'Start'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}
                             />
                         </View>
                         <View onLayout={event => {this._exerciseListRef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,};}}>
-                            <Text onPress={() => this._scrollToExerciseList()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingVertical: AppSizes.paddingSml, textAlign: 'center', textDecorationLine: 'none',}}>{'Preview'}</Text>
+                            { exerciseList.totalLength > 0 &&
+                                <Text onPress={() => this._scrollToExerciseList()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingVertical: AppSizes.paddingSml, textAlign: 'center', textDecorationLine: 'none',}}>{'Preview'}</Text>
+                            }
                             {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, key) =>
                                 exerciseIndex && exerciseIndex.length > 0 ?
                                     <View key={key}>
@@ -319,7 +326,9 @@ class ExerciseModality extends Component {
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
                                 />
                                 :
-                                null
+                                <View style={{backgroundColorflex: 1, paddingHorizontal: AppSizes.paddingXLrg, paddingVertical: AppSizes.padding,}}>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Add at least one goal to receive your Mobilize.'}</Text>
+                                </View>
                             }
                         </View>
                     </ScrollView>

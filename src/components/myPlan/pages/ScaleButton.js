@@ -23,13 +23,17 @@ import { Text, } from '../../custom';
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
-    buttonWrapper: {},
-    textWrapper:   {
+    buttonWrapper: {
+        flex: 1,
+    },
+    textWrapper: {
         alignItems:     'flex-start',
+        flex:           1,
         paddingLeft:    AppSizes.padding,
         justifyContent: 'center',
     },
     wrapper: {
+        flex:           1,
         flexDirection:  'row',
         justifyContent: 'center',
         marginBottom:   AppSizes.paddingMed,

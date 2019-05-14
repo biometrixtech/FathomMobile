@@ -66,7 +66,6 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 let isPreActiveRest = response.daily_plans[0].pre_active_rest[0] && response.daily_plans[0].pre_active_rest[0].active;
                 let activeRestObj = isPreActiveRest ? response.daily_plans[0].pre_active_rest[0] : response.daily_plans[0].post_active_rest[0];
                 let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
-                // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
                 let coolDownGoals = PlanLogic.handleFindGoals(response.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
                 let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
                 let warmUpGoals = PlanLogic.handleFindGoals(response.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
@@ -207,7 +206,6 @@ const postReadinessSurvey = dailyReadinessObj => {
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
-            // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
             let warmUpGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
             dispatch({
                 type:            Actions.POST_READINESS_SURVEY,
@@ -251,7 +249,6 @@ const postSessionSurvey = postSessionObj => {
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
-            // TODO: UPDATE exerciseListOrder below on warmUpGoals variable
             let warmUpGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
             dispatch({
                 type:            Actions.POST_SESSION_SURVEY,
@@ -556,6 +553,35 @@ const handleBodyPartClick = (dailyPlan, bodyPartyId, side, modality) => {
     );
 };
 
+/**
+  * Handle Read Insight
+  */
+const handleReadInsight = (dailyPlan, insightIndex) => {
+    let newDailyPlanObj = _.clone(dailyPlan);
+    let wasInsightPreviouslyRead = !newDailyPlanObj.insights[insightIndex].read;
+    newDailyPlanObj.insights[insightIndex].read = true;
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.insights = [newDailyPlanObj.insights[insightIndex]];
+    if(wasInsightPreviouslyRead) {
+        return dispatch => new Promise((resolve, reject) => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: [newDailyPlanObj],
+            });
+            return AppAPI.insights_read.post(false, bodyObj)
+                .then(response => resolve(response))
+                .catch(err => reject(AppAPI.handleError(err)));
+        });
+    }
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.GET_MY_PLAN,
+            data: [newDailyPlanObj],
+        })
+    );
+};
+
 export default {
     activateFunctionalStrength,
     clearCompletedCoolDownExercises,
@@ -567,6 +593,7 @@ export default {
     getMyPlan,
     getSoreBodyParts,
     handleBodyPartClick,
+    handleReadInsight,
     markStartedFunctionalStrength,
     markStartedRecovery,
     noSessions,
