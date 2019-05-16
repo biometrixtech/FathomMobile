@@ -1,12 +1,16 @@
 /**
  * Modal
  *
-     <Modal />
+    <FathomModal
+        isVisible={isReadinessSurveyModalOpen}
+    >
+        {...}
+    </FathomModal>
  *
  */
 import React, { Component, } from 'react';
-import { StyleSheet, } from 'react-native';
 import PropTypes from 'prop-types';
+import { Platform, StatusBar, StyleSheet, } from 'react-native';
 
 // import third-party libraries
 import Modal from 'react-native-modal';
@@ -15,10 +19,36 @@ import Modal from 'react-native-modal';
 import { AppColors, AppSizes, } from '../../constants';
 
 /* Component ==================================================================== */
-class FathomSlider extends Component {
-    static propTypes = {}
+class FathomModal extends Component {
+    static propTypes = {
+        isVisible:       PropTypes.bool.isRequired,
+        updateStatusBar: PropTypes.bool,
+    }
 
-    static defaultProps = {};
+    static defaultProps = {
+        updateStatusBar: false,
+    };
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        const { isVisible, updateStatusBar, } = this.props;
+        if(
+            Platform.OS === 'android' &&
+            isVisible &&
+            updateStatusBar &&
+            prevProps.isVisible !== isVisible
+        ) {
+            StatusBar.setBackgroundColor('rgba(15, 19, 32, 0.8)', true);
+            StatusBar.setBarStyle('dark-content', true);
+        } else if(
+            Platform.OS === 'android' &&
+            !isVisible &&
+            updateStatusBar &&
+            prevProps.isVisible !== isVisible
+        ) {
+            StatusBar.setBackgroundColor(AppColors.white, true);
+            StatusBar.setBarStyle('dark-content', true);
+        }
+    }
 
     modalProps = () => {
         let props = {
@@ -39,4 +69,4 @@ class FathomSlider extends Component {
 }
 
 /* Export Component ==================================================================== */
-export default FathomSlider;
+export default FathomModal;

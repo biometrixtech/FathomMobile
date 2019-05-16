@@ -110,7 +110,8 @@ class PostSessionSurvey extends Component {
     }
 
     _resetStep = currentStep => {
-        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, postSession, } = this.props;
+        const { handleFormChange, handleHealthDataFormChange, healthKitWorkouts, postSession, soreBodyParts, } = this.props;
+        let { newSoreBodyParts, } = PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, this.areasOfSorenessRef);
         if(currentStep === 2 && healthKitWorkouts && healthKitWorkouts.length > 0) { // reset last index of AppleHealthKit
             let lastHealthKitIndex = _.findLastIndex(healthKitWorkouts);
             handleHealthDataFormChange(lastHealthKitIndex, 'deleted', false);
@@ -118,7 +119,10 @@ class PostSessionSurvey extends Component {
         } else if(currentStep === 2 || (healthKitWorkouts && healthKitWorkouts.length === 0)) { // reset SportScheduleBuilder
             let lastSessionsIndex = _.findLastIndex(postSession.sessions);
             this.sportScheduleBuilderRefs[lastSessionsIndex]._resetStep(false);
-        } else if(currentStep === 3) { // reset train later?
+        } else if(currentStep === 3) { // reset train later? - from previous soreness
+            this.setState({ lockTrainLaterBtn: !this.state.lockTrainLaterBtn, });
+            handleFormChange('sessions_planned', null);
+        } else if(currentStep === 4 && newSoreBodyParts.length === 0) { // reset train later? - from AoS and no Previous soreness
             this.setState({ lockTrainLaterBtn: !this.state.lockTrainLaterBtn, });
             handleFormChange('sessions_planned', null);
         }

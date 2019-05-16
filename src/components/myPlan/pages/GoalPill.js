@@ -20,7 +20,7 @@ import { TabIcon, Text, } from '../../custom';
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
     goalPillWrapper: {
-        borderColor:       AppColors.zeplin.lightSplash,
+        borderColor:       AppColors.white,
         borderRadius:      20,
         borderWidth:       1,
         marginBottom:      AppSizes.paddingSml,
@@ -61,13 +61,13 @@ class GoalPill extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onPress={onPress}
-                style={[customStyles.goalPillWrapper, {backgroundColor: isSelected ? AppColors.zeplin.lightSplash : AppColors.transparent,}]}
+                style={[customStyles.goalPillWrapper, {backgroundColor: isSelected ? AppColors.white : AppColors.transparent,}]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
                     <Text
                         robotoBold
                         style={{
-                            color:        isSelected ? AppColors.white : AppColors.zeplin.lightSplash,
+                            color:        isSelected ? AppColors.zeplin.darkSlate : AppColors.white,
                             fontSize:     AppFonts.scaleFont(14),
                             paddingRight: AppSizes.paddingSml,
                         }}
@@ -76,7 +76,7 @@ class GoalPill extends Component {
                     </Text>
                     <Animated.View style={[animatedStyle,]}>
                         <TabIcon
-                            color={isSelected ? AppColors.white : AppColors.zeplin.lightSplash}
+                            color={isSelected ? AppColors.zeplin.darkSlate : AppColors.white}
                             icon={'add'}
                             size={AppFonts.scaleFont(20)}
                         />

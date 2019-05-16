@@ -4,6 +4,7 @@
  *
     <MultiSwitch
         buttons={[]} // must be array of length 3 for now
+        isDisabled={!firstExerciseFound}
         onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
         selectedIndex={priority}
     />
@@ -86,7 +87,7 @@ export default class MultiSwitch extends Component {
             isComponentReady:  false,
             isPanning:         false,
             mainWidth:         (width - 30),
-            posValue:           0,
+            posValue:          0,
             position:          new Animated.Value(0),
             selectedPosition:  props.selectedIndex,
             switcherWidth:     (width / 2.7),
@@ -205,7 +206,7 @@ export default class MultiSwitch extends Component {
     }
 
     render = () => {
-        const { buttons, disableSwitch, selectedIndex, } = this.props;
+        const { buttons, isDisabled, selectedIndex, } = this.props;
         const { isPanning, } = this.state;
         return (
             <View style={styles.containerWrapper}>
@@ -226,7 +227,7 @@ export default class MultiSwitch extends Component {
                         styles.switcher,
                         {transform: [{ translateX: this.state.position, }]},
                         isPanning ? {backgroundColor: 'rgba(235, 186, 45, 0.75)',} : {},
-                        disableSwitch ? {backgroundColor: AppColors.zeplin.slate,} : {},
+                        isDisabled ? {backgroundColor: AppColors.zeplin.slate,} : {},
                     ]}
                 >
                     <TouchableOpacity
@@ -247,6 +248,7 @@ MultiSwitch.propTypes = {
     buttons:         PropTypes.array.isRequired,
     disableScroll:   PropTypes.func,
     disableSwitch:   PropTypes.bool,
+    isDisabled:      PropTypes.bool,
     onStatusChanged: PropTypes.func.isRequired,
     selectedIndex:   PropTypes.number,
 };
@@ -254,5 +256,6 @@ MultiSwitch.propTypes = {
 MultiSwitch.defaultProps = {
     disableScroll: () => {},
     disableSwitch: false,
+    isDisabled:    false,
     selectedIndex: 1,
 };

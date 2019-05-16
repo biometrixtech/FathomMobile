@@ -1349,38 +1349,6 @@ it('Body Part Modality Render Logic - CWI', () => {
         time:              dailyPlanObj.cold_water_immersion ? dailyPlanObj.cold_water_immersion.minutes : 0,
     };
     expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
-});
-
-it('Single Exercise Modality Render Logic - WITH Sport Name', () => {
-    let activeRest = {active: true, completed: false, sport_name: 17,};
-    let index = 0;
-    let activeRests = [{}];
-    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RUNNING RECOVERY', true, false, true, false);
-    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
-});
-
-it('Single Exercise Modality Render Logic - WITHOUT Sport Name', () => {
-    let activeRest = {active: true, completed: false,};
-    let index = 0;
-    let activeRests = [{}];
-    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', true, false, true, false);
-    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
-});
-
-it('Single Exercise Modality Render Logic - Completed', () => {
-    let activeRest = {active: true, completed: true,};
-    let index = 0;
-    let activeRests = [{}];
-    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', false, true, true, false);
-    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
-});
-
-it('Single Exercise Modality Render Logic - Locked', () => {
-    let activeRest = {active: false, completed: false,};
-    let index = 0;
-    let activeRests = [{}];
-    let expectedResult = helperFunctions.getSingleExerciseModalityExpectedResult('RECOVERY', false, false, true, true);
-    expect(PlanLogic.handleSingleExerciseModalityRenderLogic(activeRest, index, activeRests)).toEqual(expectedResult);
 });*/
 
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {

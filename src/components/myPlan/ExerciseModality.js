@@ -34,6 +34,7 @@ import { ExerciseCompletionModal, ExerciseListItem, Exercises, GoalPill, } from 
 import { Actions } from 'react-native-router-flux';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 
 /* Component ==================================================================== */
 class ExerciseModality extends Component {
@@ -209,70 +210,77 @@ class ExerciseModality extends Component {
                         ref={ref => {this._scrollViewRef = ref;}}
                         style={{backgroundColor: AppColors.white, flex: 1,}}
                     >
-                        <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
-                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <View style={{height: Platform.OS === 'android' ? (AppSizes.screen.height * 0.85) : AppSizes.screen.heightThreeQuarters,}}>
+                            <View style={{flex: 1,}}>
                                 <MagicMove.Image
                                     disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
                                     source={imageSource}
-                                    style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
+                                    style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}
                                     useNativeDriver={false}
                                 />
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => Actions.pop()}
-                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                <LinearGradient
+                                    colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
+                                    end={{x: 1.0, y: 1.0}}
+                                    start={{x: 0.1, y: 0.1}}
+                                    style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
                                 >
-                                    <TabIcon
-                                        color={AppColors.white}
-                                        icon={'chevron-left'}
+                                    <TouchableOpacity
+                                        activeOpacity={1}
                                         onPress={() => Actions.pop()}
-                                        size={AppFonts.scaleFont(40)}
-                                        type={'material-community'}
+                                        style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                    >
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            icon={'chevron-left'}
+                                            onPress={() => Actions.pop()}
+                                            size={AppFonts.scaleFont(40)}
+                                            type={'material-community'}
+                                        />
+                                    </TouchableOpacity>
+                                    <MagicMove.Text
+                                        disabled={true}
+                                        duration={600}
+                                        id={`${textId}.title`}
+                                        style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
+                                        transition={MagicMove.Transition.move}
+                                        useNativeDriver={false}
+                                        zIndex={10}
+                                    >
+                                        {pageTitle}
+                                    </MagicMove.Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
+                                    <MultiSwitch
+                                        buttons={buttons}
+                                        isDisabled={!firstExerciseFound}
+                                        onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
+                                        selectedIndex={priority}
                                     />
-                                </TouchableOpacity>
-                                <MagicMove.Text
-                                    disabled={true}
-                                    duration={600}
-                                    id={`${textId}.title`}
-                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
-                                    transition={MagicMove.Transition.move}
-                                    useNativeDriver={false}
-                                    zIndex={10}
-                                >
-                                    {pageTitle}
-                                </MagicMove.Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
-                                <MultiSwitch
-                                    buttons={buttons}
-                                    disableSwitch={!firstExerciseFound}
-                                    onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
-                                    selectedIndex={priority}
-                                />
-                                <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingXSml, width: (AppSizes.screen.width - AppSizes.paddingLrg),}}>
-                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
-                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
-                                    <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
-                                </View>
-                                <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
-                                {_.map(goals, (goal, key) =>
-                                    <GoalPill
-                                        isSelected={goal.isSelected}
-                                        key={key}
-                                        onPress={() => this._toggleGoal(key)}
-                                        text={goal.text}
-                                    />
-                                )}
-                                <Spacer size={AppSizes.padding} />
-                                {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
-                                    <View>
-                                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
+                                    <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingXSml, width: (AppSizes.screen.width - AppSizes.paddingLrg),}}>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                     </View>
-                                }
+                                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
+                                    {_.map(goals, (goal, key) =>
+                                        <GoalPill
+                                            isSelected={goal.isSelected}
+                                            key={key}
+                                            onPress={() => this._toggleGoal(key)}
+                                            text={goal.text}
+                                        />
+                                    )}
+                                    <Spacer size={AppSizes.padding} />
+                                    {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
+                                        <View>
+                                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
+                                        </View>
+                                    }
+                                </LinearGradient>
                             </View>
                             <Button
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
@@ -335,6 +343,7 @@ class ExerciseModality extends Component {
                     <FathomModal
                         isVisible={isSelectedExerciseModalOpen}
                         style={[AppStyles.containerCentered, AppStyles.modalShadowEffect, {backgroundColor: AppColors.transparent,}]}
+                        updateStatusBar={true}
                     >
                         <Exercises
                             closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}

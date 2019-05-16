@@ -30,11 +30,14 @@ const ExercisesExercise = ({
     return(
         <View style={{paddingHorizontal: AppSizes.paddingMed, width: AppSizes.screen.width * 0.85,}}>
             <Spacer size={10} />
-            <View style={{flexDirection: 'row',}}>
+            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: displayNameFontSize,}]}>
+                {exercise.displayName}
+            </Text>
+            <View style={{alignItems: 'center', flexDirection: 'row',}}>
                 <View style={{flex: 1,}} />
                 <View style={{flex: 8,}}>
-                    <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: displayNameFontSize,}]}>
-                        {exercise.displayName}
+                    <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
+                        {exercise.longDosage.toUpperCase()}
                     </Text>
                 </View>
                 <View style={{flex: 1,}}>
@@ -46,9 +49,6 @@ const ExercisesExercise = ({
                     />
                 </View>
             </View>
-            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(14),}]}>
-                {exercise.longDosage.toUpperCase()}
-            </Text>
             <Spacer size={10} />
             <View style={{alignItems: 'center', flexDirection: 'row', height: timerWrapperHeight, justifyContent: exerciseTimer ? 'space-between' : 'center',}}>
                 { exerciseTimer ?

@@ -349,14 +349,13 @@ const noSessions = () => {
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.no_sessions.post(false, bodyObj)
         .then(data => {
-            let myPlanData = {};
-            myPlanData.daily_plans = [data.daily_plan];
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
-                data: myPlanData.daily_plans,
+                data: data.daily_plans,
             });
             return Promise.resolve(data);
-        }).catch(err => Promise.reject(AppAPI.handleError(err)));
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
 /**
@@ -582,6 +581,23 @@ const handleReadInsight = (dailyPlan, insightIndex) => {
     );
 };
 
+/**
+  * Log Device/App Information and Usage
+  */
+const getMobilize = () => {
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    return dispatch => AppAPI.get_mobilize.post(false, bodyObj)
+        .then(data => {
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: data.daily_plans,
+            });
+            return Promise.resolve(data);
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+};
+
 export default {
     activateFunctionalStrength,
     clearCompletedCoolDownExercises,
@@ -590,6 +606,7 @@ export default {
     clearHealthKitWorkouts,
     clearMyPlanData,
     getCoachesDashboardData,
+    getMobilize,
     getMyPlan,
     getSoreBodyParts,
     handleBodyPartClick,

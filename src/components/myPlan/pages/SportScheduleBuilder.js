@@ -283,7 +283,9 @@ class SportScheduleBuilder extends Component {
                             <Spacer size={30} />
                             { showMoreOptions ?
                                 <SectionList
+                                    initialNumToRender={10}
                                     keyExtractor={(item, index) => item + index}
+                                    removeClippedSubviews={true}
                                     renderItem={({item, index, section}) =>
                                         <TouchableOpacity
                                             key={index}
@@ -320,6 +322,7 @@ class SportScheduleBuilder extends Component {
                                 :
                                 null
                             }
+                            <Spacer size={AppSizes.iphoneXBottomBarPadding} />
                         </View>
                     </View>
                     : step === 1 ?

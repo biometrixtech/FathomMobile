@@ -11,6 +11,7 @@ import Coach from './Coach';
 import CoachesDashboardTabBar from './CoachesDashboardTabBar';
 import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
+import CustomTabBar from './CustomTabBar';
 import DeckCards from './DeckCards';
 import FathomModal from './FathomModal';
 import FathomPicker from './FathomPicker';
@@ -41,6 +42,7 @@ export {
     CoachesDashboardTabBar,
     CustomMyPlanNavBar,
     CustomNavBar,
+    CustomTabBar,
     DeckCards,
     FathomModal,
     FathomPicker,

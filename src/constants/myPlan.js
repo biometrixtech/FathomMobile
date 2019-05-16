@@ -211,11 +211,10 @@ const postExerciseListOrder = [
     },
 ];
 
-// TODO: UPDATE TITLES
 const coolDownExerciseListOrder = [
     {
         index: 'dynamic_stretch_exercises',
-        title: 'STRETCH',
+        title: 'DYNAMIC STRETCH',
     },
     {
         index: 'dynamic_integrate_exercises',
@@ -286,14 +285,16 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             let filteredReducerGoals = _.filter(goals, {isSelected: true,});
             let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
             let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-            dosage = _.sortBy(dosage, ['ranking']);
+            dosage = _.orderBy(dosage, ['ranking'], ['desc']);
             let exerciseSetsAssigned = dosage.length > 0 ?
-                priority === 0 ?
+                priority === 0 && dosage[0].efficient_sets_assigned && dosage[0].efficient_sets_assigned > 0 ?
                     dosage[0].efficient_sets_assigned
-                    : priority === 1 ?
+                    : priority === 1 && dosage[0].complete_sets_assigned && dosage[0].complete_sets_assigned > 0 ?
                         dosage[0].complete_sets_assigned
-                        :
-                        dosage[0].comprehensive_sets_assigned
+                        : priority === 2 && dosage[0].comprehensive_sets_assigned && dosage[0].comprehensive_sets_assigned > 0 ?
+                            dosage[0].comprehensive_sets_assigned
+                            :
+                            dosage[0].default_sets_assigned
                 :
                 0;
             if(exerciseSetsAssigned > largestSetCount[list.index]) {
@@ -309,14 +310,16 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
                 let filteredReducerGoals = _.filter(goals, {isSelected: true,});
                 let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
                 let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-                dosage = _.sortBy(dosage, ['ranking']);
+                dosage = _.orderBy(dosage, ['ranking'], ['desc']);
                 let newExerciseSetsAssigned = dosage.length > 0 ?
-                    priority === 0 ?
+                    priority === 0 && dosage[0].efficient_sets_assigned && dosage[0].efficient_sets_assigned > 0 ?
                         dosage[0].efficient_sets_assigned
-                        : priority === 1 ?
+                        : priority === 1 && dosage[0].complete_sets_assigned && dosage[0].complete_sets_assigned > 0 ?
                             dosage[0].complete_sets_assigned
-                            :
-                            dosage[0].comprehensive_sets_assigned
+                            : priority === 2 && dosage[0].comprehensive_sets_assigned && dosage[0].comprehensive_sets_assigned > 0 ?
+                                dosage[0].comprehensive_sets_assigned
+                                :
+                                dosage[0].default_sets_assigned
                     :
                     0;
                 let newExerciseSecondsDuration = priority === 0 ? exercise.duration_efficient : priority === 1 ? exercise.duration_complete : exercise.duration_comprehensive;
@@ -400,12 +403,14 @@ function cleanExercise(exercise, priority, goals) {
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
     cleanedExercise.repsAssigned = cleanedExercise && dosage.length > 0 ?
-        priority === 0 ?
+        priority === 0 && dosage[0].efficient_reps_assigned && dosage[0].efficient_reps_assigned > 0 ?
             dosage[0].efficient_reps_assigned
-            : priority === 1 ?
+            : priority === 1 && dosage[0].complete_reps_assigned && dosage[0].complete_reps_assigned > 0 ?
                 dosage[0].complete_reps_assigned
-                :
-                dosage[0].comprehensive_reps_assigned
+                : priority === 2 && dosage[0].comprehensive_reps_assigned && dosage[0].comprehensive_reps_assigned > 0 ?
+                    dosage[0].comprehensive_reps_assigned
+                    :
+                    dosage[0].default_reps_assigned
         :
         0;
     let cleanedDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
@@ -677,9 +682,9 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
 };
 
 const exerciseListButtonStyles = (completedExercises, modality, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? 'Care & Activate Complete' : 'Check Boxes to Complete Care & Activate';
+    let buttonTitle = completedExercises.length > 0 ? 'Mobilize Complete' : 'Check Boxes to Complete Mobilize';
     if(modality === 'coolDown') {
-        buttonTitle = completedExercises.length > 0 ? 'Recovery Complete' : 'Check Boxes to Complete Recovery';
+        buttonTitle = completedExercises.length > 0 ? 'Active Recovery Complete' : 'Check Boxes to Complete Active Recovery';
     }
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;

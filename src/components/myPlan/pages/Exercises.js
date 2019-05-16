@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         width:           '100%',
     },
     progressPillsContainer: {
-        flex:           1,
+        // flex:           1,
         flexDirection:  'row',
         justifyContent: 'center',
         paddingTop:     AppSizes.statusBarHeight,
@@ -56,10 +56,10 @@ const styles = StyleSheet.create({
         width:             '100%',
     },
     progressPillsText: {
-        color:     AppColors.white,
-        fontSize:  AppFonts.scaleFont(20),
-        marginTop: AppSizes.paddingXSml,
-        textAlign: 'center',
+        color:          AppColors.white,
+        fontSize:       Platform.OS === 'ios' ? AppFonts.scaleFont(25) : AppFonts.scaleFont(20),
+        marginVertical: AppSizes.paddingXSml,
+        textAlign:      'center',
     },
 });
 
@@ -71,7 +71,7 @@ const ProgressPills = ({
     selectedExercise,
     totalLength,
 }) => (
-    <View style={{flex: 1,}}>
+    <View>
         <View style={[styles.progressPillsContainer,]}>
             { _.map(cleanedExerciseList, (exerciseList, index) => {
                 const {
@@ -224,10 +224,7 @@ class Exercises extends PureComponent {
         } = PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, modality);
         return(
             <View style={{backgroundColor: AppColors.transparent, flex: 1, flexDirection: 'column',}}>
-                <View
-                    onLayout={ev => this._resizeModal(ev)}
-                    style={{flex: 1,}}
-                >
+                <View onLayout={ev => this._resizeModal(ev)}>
                     <ProgressPills
                         availableSectionsCount={availableSectionsCount}
                         cleanedExerciseList={cleanedExerciseList}
@@ -236,7 +233,7 @@ class Exercises extends PureComponent {
                         totalLength={totalLength}
                     />
                 </View>
-                <View style={{flex: 9,}}>
+                <View style={{alignItems: 'center', flex: 1,}}>
                     <Carousel
                         data={flatListExercises}
                         firstItem={firstItemIndex}

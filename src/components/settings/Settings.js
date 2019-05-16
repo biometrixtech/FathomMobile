@@ -597,7 +597,7 @@ class Settings extends Component {
                 <FathomModal
                     isVisible={this.state.is3SensorFilesModalVisible}
                 >
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.white, flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
                         { this.state.areSessionFinishedFetching ?
                             <View>
                                 <TabIcon

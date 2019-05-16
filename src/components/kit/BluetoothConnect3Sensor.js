@@ -236,7 +236,7 @@ class BluetoothConnect3Sensor extends Component {
 
     _connectSensorToWifi = () => {
         Keyboard.dismiss();
-        const { bluetooth, startDisconnection, user, writeWifiDetailsToSensor, } = this.props;
+        const { assignKitIndividual, bluetooth, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
         const { currentWifiConnection, } = this.state;
         if(currentWifiConnection && currentWifiConnection.password && currentWifiConnection.ssid && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.sensor_pid !== 'None') {
             let sensorId = bluetooth.accessoryData.sensor_pid;
@@ -249,7 +249,7 @@ class BluetoothConnect3Sensor extends Component {
                     let newUserPayloadObj = {};
                     newUserPayloadObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
                     newUserPayloadObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    let newUserObj = _.cloneDeep(this.props.user);
+                    let newUserObj = _.cloneDeep(user);
                     newUserObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
                     newUserObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
                     // update reducer as API might take too long to return a value
@@ -258,8 +258,8 @@ class BluetoothConnect3Sensor extends Component {
                         data: newUserObj
                     });
                     // send commands
-                    this.props.updateUser(newUserPayloadObj, this.props.user.id) // 1. PATCH user specific endpoint
-                        .then(() => this.props.assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
+                    updateUser(newUserPayloadObj, user.id) // 1. PATCH user specific endpoint
+                        .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
                         .then(() => startDisconnection(sensorId, true)) // 3. disconnect from sensor
                         .then(() => this.setState({ loading: false, }, () => this._renderNextPage())); // 4. route to next page
                 })

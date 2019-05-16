@@ -4,6 +4,7 @@
           clearCompletedCoolDownExercises={clearCompletedCoolDownExercises}
           clearCompletedExercises={clearCompletedExercises}
           clearHealthKitWorkouts={clearHealthKitWorkouts}
+          getMobilize={getMobilize}
           getMyPlan={getMyPlan}
           getSoreBodyParts={getSoreBodyParts}
           handleReadInsight={handleReadInsight}
@@ -198,17 +199,10 @@ const MyPlanNavBar = ({
     onLeft,
     onRight,
 }) => (
-    <View style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white,}]}>
+    <View style={{backgroundColor: AppColors.white,}}>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
         <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
-                <TabIcon
-                    icon={'dehaze'}
-                    iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
-                    onPress={() => onLeft()}
-                    size={26}
-                />
-            </View>
+            <View style={{flex: 1, justifyContent: 'center',}} />
             <Image
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
@@ -251,6 +245,7 @@ class MyPlan extends Component {
         clearCompletedCoolDownExercises: PropTypes.func.isRequired,
         clearCompletedExercises:         PropTypes.func.isRequired,
         clearHealthKitWorkouts:          PropTypes.func.isRequired,
+        getMobilize:                     PropTypes.func.isRequired,
         getMyPlan:                       PropTypes.func.isRequired,
         getSoreBodyParts:                PropTypes.func.isRequired,
         handleReadInsight:               PropTypes.func.isRequired,
@@ -329,11 +324,10 @@ class MyPlan extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         const {
-            isPrepCalculating,
+            isPageCalculating,
             isPrepareSessionsCompletionModalOpen,
             isPostSessionSurveyModalOpen,
             isReadinessSurveyModalOpen,
-            isRecoverCalculating,
             isTrainSessionsCompletionModalOpen,
             loading,
         } = this.state;
@@ -368,10 +362,7 @@ class MyPlan extends Component {
         }
         // handle if PN is delayed to come in
         if(
-            (
-                (prevState.isPrepCalculating !== isPrepCalculating && isPrepCalculating) ||
-                (prevState.isRecoverCalculating !== isRecoverCalculating && isRecoverCalculating)
-            ) &&
+            (prevState.isPageCalculating !== isPageCalculating && isPageCalculating) &&
             (
                 isReadinessSurveyModalOpen ||
                 isPostSessionSurveyModalOpen ||
@@ -382,10 +373,7 @@ class MyPlan extends Component {
         ) {
             // start timer
             this._timer = _.delay(() => this._handleExerciseListRefresh(false, false), timerDelay);
-        } else if(
-            (prevState.isPrepCalculating !== isPrepCalculating && !isPrepCalculating) ||
-            (prevState.isRecoverCalculating !== isRecoverCalculating && !isRecoverCalculating)
-        ) {
+        } else if(prevState.isPageCalculating !== isPageCalculating && !isPageCalculating) {
             // clear timer
             clearInterval(this._timer);
         }
@@ -413,9 +401,8 @@ class MyPlan extends Component {
             this.setState(
                 {
                     dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
-                    isPrepCalculating:                    false,
+                    isPageCalculating:                    false,
                     isPrepareSessionsCompletionModalOpen: false,
-                    isRecoverCalculating:                 false,
                 },
                 () => this._scrollToFirstActiveActivityTab(),
             );
@@ -489,9 +476,8 @@ class MyPlan extends Component {
             {
                 dailyReadiness:             newDailyReadinessState,
                 healthData:                 _.cloneDeep(defaultPlanState.healthData),
-                isPrepCalculating:          newDailyReadiness.sessions_planned,
+                isPageCalculating:          true,
                 isReadinessSurveyModalOpen: false,
-                isRecoverCalculating:       !newDailyReadiness.sessions_planned,
                 prepare:                    newPrepareObject,
                 recover:                    newRecoverObject,
             },
@@ -504,14 +490,14 @@ class MyPlan extends Component {
         postReadinessSurvey(newDailyReadiness)
             .then(response => {
                 if(nonDeletedSessions.length === 0) {
-                    this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                    this.setState({ isPageCalculating: false, });
                 }
                 clearHealthKitWorkouts();
                 clearCompletedExercises();
                 clearCompletedCoolDownExercises();
             })
             .catch(error => {
-                this.setState({ isPrepCalculating: false, isRecoverCalculating: false, });
+                this.setState({ isPageCalculating: false, });
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
             });
     }
@@ -606,14 +592,24 @@ class MyPlan extends Component {
                         let newDailyReadiness = _.cloneDeep(dailyReadiness);
                         this.setState({
                             dailyReadiness:             newDailyReadiness,
+                            isPageCalculating:          false,
                             isPageLoading:              false,
-                            isPrepCalculating:          false,
                             isReadinessSurveyModalOpen: !response.daily_plans[0].daily_readiness_survey_completed,
-                            isRecoverCalculating:       false,
                         });
                     })
                     .catch(error => this.setState({ isPageLoading: false, }));
             }
+        );
+    }
+
+    _handleGetMobilize = () => {
+        const { getMobilize, } = this.props;
+        this.setState(
+            { isPageCalculating: true, },
+            () =>
+                getMobilize()
+                    .then(res => this.setState({ isPageCalculating: false, }))
+                    .catch(() => this.setState({ isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
     }
 
@@ -634,6 +630,17 @@ class MyPlan extends Component {
         }, () => {
             if(callback) { callback(); }
         });
+    }
+
+    _handleNoSessions = () => {
+        const { noSessions, } = this.props;
+        this.setState(
+            { isPageCalculating: true, },
+            () =>
+                noSessions()
+                    .then(res => this.setState({ isPageCalculating: false, }))
+                    .catch(() => this.setState({ isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
+        );
     }
 
     _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
@@ -657,8 +664,8 @@ class MyPlan extends Component {
                 goToScreen:                   landingScreen,
                 healthData:                   [],
                 train:                        newTrainObject,
+                isPageCalculating:            !areAllDeleted,
                 isPostSessionSurveyModalOpen: false,
-                isRecoverCalculating:         !areAllDeleted,
                 postSession:                  {
                     description: '',
                     sessions:    newPostSessionSessions,
@@ -671,7 +678,7 @@ class MyPlan extends Component {
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession))
             .then(response => {
-                this.setState({ isRecoverCalculating: false, });
+                this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
                     clearCompletedExercises();
                     clearCompletedCoolDownExercises();
@@ -680,7 +687,7 @@ class MyPlan extends Component {
                 this._scrollToFirstActiveActivityTab();
             })
             .catch(error => {
-                this.setState({ isRecoverCalculating: false, });
+                this.setState({ isPageCalculating: false, });
                 AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
             });
     }
@@ -701,8 +708,7 @@ class MyPlan extends Component {
                 if(pushNotificationUpdate.stateName !== '' || pushNotificationUpdate.newStateFields !== '') {
                     this.setState({
                         [pushNotificationUpdate.stateName]: pushNotificationUpdate.newStateFields,
-                        isPrepCalculating:                  false,
-                        isRecoverCalculating:               false,
+                        isPageCalculating:                  false,
                     });
                 }
                 if(pushNotificationUpdate.updateExerciseList) {
@@ -821,19 +827,18 @@ class MyPlan extends Component {
             dailyReadiness,
             expandNotifications,
             healthData,
+            isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
-            isPrepCalculating,
             isPrepareSessionsCompletionModalOpen,
             isReadinessSurveyModalOpen,
-            isRecoverCalculating,
             isTrainSessionsCompletionModalOpen,
             loading,
             postSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { handleReadInsight, noSessions, plan, user, } = this.props;
+        let { handleReadInsight, plan, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -858,7 +863,7 @@ class MyPlan extends Component {
                 />
 
                 <Placeholder
-                    isReady={!isRecoverCalculating && !isPrepCalculating}
+                    isReady={!isPageCalculating}
                     animation={'fade'}
                     whenReadyRender={() =>
                         <View style={{flex: 1,}}>
@@ -886,6 +891,13 @@ class MyPlan extends Component {
                                         <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
                                     }
 
+                                    { offDaySelected &&
+                                        <ActivityTab
+                                            completed={true}
+                                            title={'OFF DAY'}
+                                        />
+                                    }
+
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
                                             completed={completedLockedModality.isCompleted}
@@ -898,7 +910,7 @@ class MyPlan extends Component {
 
                                     {_.map(activeBeforeModalities, (activeModality, key) => (
                                         <ActivityTab
-                                            backgroundImage={require('../../../assets/images/standard/mobilize.png')}
+                                            backgroundImage={activeModality.backgroundImage}
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
@@ -908,13 +920,6 @@ class MyPlan extends Component {
                                             title={activeModality.title}
                                         />
                                     ))}
-
-                                    { offDaySelected &&
-                                        <ActivityTab
-                                            completed={true}
-                                            title={'OFF DAY'}
-                                        />
-                                    }
 
                                     { triggerStep &&
                                         <View>
@@ -931,7 +936,7 @@ class MyPlan extends Component {
                                         </View>
                                     }
 
-                                    { dailyPlanObj.train_later &&
+                                    { (dailyPlanObj.train_later && !triggerStep) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
 
@@ -951,7 +956,7 @@ class MyPlan extends Component {
 
                                     {_.map(activeAfterModalities, (activeModality, key) => (
                                         <ActivityTab
-                                            backgroundImage={require('../../../assets/images/standard/mobilize.png')}
+                                            backgroundImage={activeModality.backgroundImage}
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
@@ -982,7 +987,7 @@ class MyPlan extends Component {
                     )}
                 </Placeholder>
 
-                { isReadinessSurveyCompleted && !isPrepCalculating && !isRecoverCalculating &&
+                { isReadinessSurveyCompleted && !isPageCalculating &&
                     <ActionButton
                         activeOpacity={1}
                         bgColor={'rgba(15, 19, 32, 0.8)'}
@@ -1004,12 +1009,14 @@ class MyPlan extends Component {
                         size={65}
                         useNativeFeedback={false}
                     >
-                        { filteredTrainingSessions.length === 0 &&
+                        { (!offDaySelected && filteredTrainingSessions.length === 0) &&
                             <ActionButton.Item
                                 activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
                                 fixNativeFeedbackRadius={true}
-                                onPress={() => noSessions().catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions))}
+                                hideShadow={true}
+                                onPress={() => this._handleNoSessions()}
+                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'OFF DAY'}
@@ -1025,7 +1032,9 @@ class MyPlan extends Component {
                             activeOpacity={1}
                             buttonColor={AppColors.zeplin.yellow}
                             fixNativeFeedbackRadius={true}
+                            hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
+                            spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
                             textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'LOG TRAINING'}
@@ -1041,7 +1050,9 @@ class MyPlan extends Component {
                                 activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
                                 fixNativeFeedbackRadius={true}
-                                onPress={() => console.log('HI')}
+                                hideShadow={true}
+                                onPress={() => this._handleGetMobilize()}
+                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'ADD MOBILIZE'}

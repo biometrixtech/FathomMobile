@@ -105,6 +105,7 @@ class DeckCards extends Component {
         super(props);
         this.state = {
             areAllSwiped:     false,
+            containerStyle:   styles.container,
             currentCardIndex: 0,
         };
     }
@@ -128,22 +129,26 @@ class DeckCards extends Component {
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
-        let daysDiff = moment().diff(card.start_date, 'days');
+        let daysDiff = moment().diff(card.start_date_time, 'days');
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
         let textRegEx = new RegExp(card.goal_targeted.join('|'), 'g');
         let textMatchedArray = card.text.match(textRegEx);
         let splitTextArray = _.split(card.text, textRegEx);
         let cardTextArray = [];
-        _.map(splitTextArray, (text, key) => {
-            if(text.length > 0) {
-                cardTextArray.push(
-                    <Text key={key} robotoLight>
-                        {text}
-                        <Text robotoBold>{textMatchedArray[key]}</Text>
-                    </Text>
-                );
-            }
-        });
+        if(textMatchedArray) {
+            _.map(splitTextArray, (text, key) => {
+                if(text.length > 0) {
+                    cardTextArray.push(
+                        <Text key={key} robotoLight>
+                            {text}
+                            <Text robotoBold>{textMatchedArray[key]}</Text>
+                        </Text>
+                    );
+                }
+            });
+        } else {
+            cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
+        }
         if(card.goal_targeted && card.goal_targeted.length === 0) {
             cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
@@ -155,6 +160,13 @@ class DeckCards extends Component {
         };
     }
 
+    _onLayoutOfCard = (height, index) => {
+        let newHeight = (height + (AppSizes.padding * 2));
+        if(newHeight > this.state.containerStyle.height) {
+            this.setState({ containerStyle: { height: newHeight, }, });
+        }
+    }
+
     _renderCard = (card, index) => {
         const {
             cardTextArray,
@@ -162,9 +174,22 @@ class DeckCards extends Component {
             // showUnreadNotificationsBadge,
         } = this._handleRenderCardLogic(card, index);
         return (
-            <View style={[styles.card,]}>
+            <View onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)} style={[styles.card,]}>
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <Text robotoBold style={[styles.title,]}>{card.title}</Text>
+                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                        { card.styling === 1 &&
+                            <TabIcon
+                                color={AppColors.zeplin.coachesDashError}
+                                containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                icon={'alert-circle-outline'}
+                                size={20}
+                                type={'material-community'}
+                            />
+                        }
+                        <Text robotoBold style={[styles.title, card.styling === 1 ? {color: AppColors.zeplin.coachesDashError,} : {}]}>
+                            {card.title}
+                        </Text>
+                    </View>
                     <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
                 </View>
                 <Text style={[styles.text,]}>
@@ -181,10 +206,10 @@ class DeckCards extends Component {
 
     render = () => {
         const { cards, hideDeck, } = this.props;
-        const { areAllSwiped, currentCardIndex, } = this.state;
+        const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
-                <View style={[styles.container,]}>
+                <View style={[containerStyle,]}>
                     { areAllSwiped ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'You\'re all caught up!'}</Text>

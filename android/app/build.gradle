@@ -130,7 +130,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 30
-        versionName "3.0.0-beta.9"
+        versionName "3.0.0-beta.10"
     }
     configurations.all {
         resolutionStrategy {
@@ -210,6 +210,7 @@ dependencies {
     implementation project(':react-native-wifi')
     implementation project(':react-native-magic-move')
     implementation project(':react-native-haptic-feedback')
+    implementation project(':react-native-svg')
     // For animated GIF support
     implementation 'com.facebook.fresco:animated-gif:1.10.0'
 }

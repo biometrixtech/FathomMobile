@@ -23,6 +23,7 @@ import { Actions } from 'react-native-router-flux';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
+import LinearGradient from 'react-native-linear-gradient';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
 /* Component ==================================================================== */
@@ -145,65 +146,72 @@ class BodyModality extends Component {
                         nestedScrollEnabled={true}
                         style={{backgroundColor: AppColors.white, flex: 1,}}
                     >
-                        <View style={{height: AppSizes.screen.heightThreeQuarters,}}>
-                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <View style={{height: AppSizes.screen.heightTwoThirds,}}>
+                            <View style={{flex: 1,}}>
                                 <MagicMove.Image
                                     disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
                                     source={imageSource}
-                                    style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
+                                    style={[{height: (AppSizes.screen.heightTwoThirds - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}
                                     useNativeDriver={false}
                                 />
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => Actions.pop()}
-                                    style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                <LinearGradient
+                                    colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
+                                    end={{x: 1.0, y: 1.0}}
+                                    start={{x: 0.1, y: 0.1}}
+                                    style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
                                 >
-                                    <TabIcon
-                                        color={AppColors.white}
-                                        icon={'chevron-left'}
+                                    <TouchableOpacity
+                                        activeOpacity={1}
                                         onPress={() => Actions.pop()}
-                                        size={AppFonts.scaleFont(40)}
-                                        type={'material-community'}
-                                    />
-                                </TouchableOpacity>
-                                <MagicMove.Text
-                                    disabled={true}
-                                    duration={600}
-                                    id={`${textId}.title`}
-                                    style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
-                                    transition={MagicMove.Transition.move}
-                                    useNativeDriver={false}
-                                    zIndex={10}
-                                >
-                                    {pageTitle}
-                                </MagicMove.Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
-                                <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.lightSplash, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
-                                </View>
-                                <Spacer size={AppSizes.padding} />
-                                <View style={{flexDirection: 'row',}}>
-                                    <TabIcon
-                                        color={AppColors.white}
-                                        containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                        icon={'clock-outline'}
-                                        size={AppFonts.scaleFont(20)}
-                                        type={'material-community'}
-                                    />
-                                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>
-                                        {`${time} minutes`}
-                                        { extraTimeText &&
-                                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{` ${extraTimeText}`}</Text>
-                                        }
-                                    </Text>
-                                </View>
-                                <Spacer size={AppSizes.padding} />
-                                <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Equipment:'}</Text>
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{equipmentRequired}</Text>
+                                        style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                    >
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            icon={'chevron-left'}
+                                            onPress={() => Actions.pop()}
+                                            size={AppFonts.scaleFont(40)}
+                                            type={'material-community'}
+                                        />
+                                    </TouchableOpacity>
+                                    <MagicMove.Text
+                                        disabled={true}
+                                        duration={600}
+                                        id={`${textId}.title`}
+                                        style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
+                                        transition={MagicMove.Transition.move}
+                                        useNativeDriver={false}
+                                        zIndex={10}
+                                    >
+                                        {pageTitle}
+                                    </MagicMove.Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
+                                    <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.lightSplash, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
+                                    </View>
+                                    <Spacer size={AppSizes.padding} />
+                                    <View style={{flexDirection: 'row',}}>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'clock-outline'}
+                                            size={AppFonts.scaleFont(20)}
+                                            type={'material-community'}
+                                        />
+                                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>
+                                            {`${time} minutes`}
+                                            { extraTimeText &&
+                                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{` ${extraTimeText}`}</Text>
+                                            }
+                                        </Text>
+                                    </View>
+                                    <Spacer size={AppSizes.padding} />
+                                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Equipment:'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{equipmentRequired}</Text>
+                                </LinearGradient>
                             </View>
                             <Button
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), flexDirection: isCompleted ? 'column' : 'row', height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
@@ -227,7 +235,7 @@ class BodyModality extends Component {
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15),}}>{'Recommended Body Parts'}</Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{`Tap on body parts you do not plan to ${modality}.`}</Text>
                                         </View>
-                                        <View style={[AppStyles.row, AppStyles.containerCentered, {flexWrap: 'wrap'}]}>
+                                        <View style={[AppStyles.row, {flexWrap: 'wrap', paddingHorizontal: (AppSizes.paddingLrg - AppSizes.paddingSml),}]}>
                                             {_.map(recoveryObj.body_parts, (body, index) => {
                                                 let bodyPart = PlanLogic.handleBodyModalityBodyPart(body);
                                                 return(
@@ -472,7 +480,7 @@ class BodyModality extends Component {
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Keep the ice pack moving to avoid ice burns '}</Text>
                                         </View>
-                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never treat with ice for more than 25 minutes, and remove the pack immediately if the injury appears bright pink or red'}</Text>
                                         </View>
@@ -513,13 +521,13 @@ class BodyModality extends Component {
                                     <View style={{backgroundColor: AppColors.white, flex: 1, padding: AppSizes.paddingLrg,}}>
                                         <ScrollView>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
-                                                {'A meta-analysis (Dupuy, 2018) evaluated the impact of recovery techniques on delayed onset muscle soreness (DOMS), perceived fatigue, muscle damage, and inflammatory markers after physical exercise. The effect of cold water immersion (CWI) on DOMS and perceived fatigue was significant.'}
+                                                {'A meta-analysis (Dupuy, 2018) evaluated the impact of recovery techniques on delayed onset muscle soreness (DOMS), perceived fatigue, muscle damage, and inflammatory markers after physical exercise. The effect of cold water immersion (CWB) on DOMS and perceived fatigue was significant.'}
                                             </Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
-                                                {'An exposure of 11–15\u00B0C over 11–15 min was considered to be the optimal circumstance to obtain a positive impact of CWI after exercise to reduce DOMS (Machado et al., 2016).'}
+                                                {'An exposure of 11–15\u00B0C over 11–15 min was considered to be the optimal circumstance to obtain a positive impact of CWB after exercise to reduce DOMS (Machado et al., 2016).'}
                                             </Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
-                                                {'A common explanation of the impact of CWI on DOMS and fatigue is a reduction in exercise-induced inflammation and muscle damage. Hydrostatic pressure may facilitate the transport of fluids from the muscle to the blood and therefore eliminate metabolites (Wilcock et al., 2006a,b; Leeder et al., 2012).'}
+                                                {'A common explanation of the impact of CWB on DOMS and fatigue is a reduction in exercise-induced inflammation and muscle damage. Hydrostatic pressure may facilitate the transport of fluids from the muscle to the blood and therefore eliminate metabolites (Wilcock et al., 2006a,b; Leeder et al., 2012).'}
                                             </Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
                                                 {'Vasoconstriction due to cold temperature may also reduce fluid diffusion into the interstitial space (Eston and Peters, 1999) and locally diminish the inflammatory reaction (Coté et al., 1988), which in turn may reduce the feeling of pain (Smith, 1991).'}

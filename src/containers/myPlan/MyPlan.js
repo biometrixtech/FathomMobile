@@ -9,6 +9,7 @@ const MyPlan = ({
     clearCompletedCoolDownExercises,
     clearCompletedExercises,
     clearHealthKitWorkouts,
+    getMobilize,
     getMyPlan,
     getSoreBodyParts,
     handleReadInsight,
@@ -29,6 +30,7 @@ const MyPlan = ({
         clearCompletedCoolDownExercises={clearCompletedCoolDownExercises}
         clearCompletedExercises={clearCompletedExercises}
         clearHealthKitWorkouts={clearHealthKitWorkouts}
+        getMobilize={getMobilize}
         getMyPlan={getMyPlan}
         getSoreBodyParts={getSoreBodyParts}
         handleReadInsight={handleReadInsight}
@@ -52,6 +54,7 @@ MyPlan.propTypes = {
     clearCompletedCoolDownExercises: PropTypes.func.isRequired,
     clearCompletedExercises:         PropTypes.func.isRequired,
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
+    getMobilize:                     PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
     getSoreBodyParts:                PropTypes.func.isRequired,
     handleReadInsight:               PropTypes.func.isRequired,
@@ -90,6 +93,7 @@ const mapDispatchToProps = {
     clearCompletedCoolDownExercises: PlanActions.clearCompletedCoolDownExercises,
     clearCompletedExercises:         PlanActions.clearCompletedExercises,
     clearHealthKitWorkouts:          PlanActions.clearHealthKitWorkouts,
+    getMobilize:                     PlanActions.getMobilize,
     getMyPlan:                       PlanActions.getMyPlan,
     getSoreBodyParts:                PlanActions.getSoreBodyParts,
     handleReadInsight:               PlanActions.handleReadInsight,
