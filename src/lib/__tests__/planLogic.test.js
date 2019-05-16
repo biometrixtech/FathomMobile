@@ -1263,35 +1263,47 @@ it('Completed Exercises - MULITPLE EXERCISE', () => {
     expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
 });
 
-/*it('Add Title To Completed Activity Helper - EMPTY OBJ', () => {
+it('Add Title To Completed Activity Helper - EMPTY OBJ', () => {
     let obj = [];
     let title = 'HEAT';
     let expectedResult = [];
-    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title)).toEqual(expectedResult);
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title)).toEqual(expectedResult);
 });
 
 it('Add Title To Completed Activity Helper - WITH OBJ', () => {
-    let obj = [{}];
+    let date = moment();
+    let obj = [{active: true, completed: false, created_date: date,}];
     let title = 'ICE';
     let subtitle = '';
-    let expectedResult = [{title: 'ICE'}];
-    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+    let expectedResult = [{title: 'ICE', active: true, completed: false, created_date: date, isCompleted: false, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITH OBJ - LOCKED', () => {
+    let date = moment();
+    let obj = [{active: false, completed: false, created_date: date,}];
+    let title = 'ICE';
+    let subtitle = '';
+    let expectedResult = [{title: 'ICE', active: false, completed: false, created_date: date, isCompleted: false, isLocked: true, subtitle: 'Sorry, you missed the optimal window for Ice today.',}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
 });
 
 it('Add Title To Completed Activity Helper - WITHOUT TITLE', () => {
-    let obj = [{}];
+    let date = moment();
+    let obj = [{active: true, completed: true, created_date: date,}];
     let title = false;
     let subtitle = ' ';
-    let expectedResult = [{title: false}];
-    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+    let expectedResult = [{title: false, active: true, completed: true, created_date: date, isCompleted: true, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
 });
 
 it('Add Title To Completed Activity Helper - WITHOUT TITLE & WITH SPORT', () => {
-    let obj = [{sport_name: 17,}];
+    let date = moment();
+    let obj = [{sport_name: 17, active: true, completed: true, created_date: date,}];
     let title = false;
     let subtitle = ' ';
-    let expectedResult = [{sport_name: 17, title: 'RUNNING  '}];
-    expect(PlanLogic.addTitleToCompletedActivityHelper(obj, title, subtitle)).toEqual(expectedResult);
+    let expectedResult = [{sport_name: 17, title: 'RUNNING', active: true, completed: true, created_date: date, isCompleted: 17, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
 });
 
 it('Body Part Modality Render Logic - HEAT', () => {
@@ -1339,7 +1351,7 @@ it('Body Part Modality Render Logic - CWI', () => {
         equipmentRequired: 'Tub, Cold Water',
         extraTimeText:     false,
         imageId:           'cwi',
-        imageSource:       require('../../../assets/images/standard/ice.png'),
+        imageSource:       require('../../../assets/images/standard/cwi.png'),
         pageSubtitle:      'After all training is complete',
         pageText:          'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.',
         pageTitle:         'COLD WATER BATH',
@@ -1349,7 +1361,94 @@ it('Body Part Modality Render Logic - CWI', () => {
         time:              dailyPlanObj.cold_water_immersion ? dailyPlanObj.cold_water_immersion.minutes : 0,
     };
     expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
-});*/
+});
+
+it('Exercise Modality Render Logic - MOBILIZE (PRE)', () => {
+    let dailyPlanObj = {pre_active_rest: [{}]};
+    let plan = {activeRestGoals: [{}, {}]};
+    let priority = 0;
+    let modality = 'prepare';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'ACTIVE STRETCH': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'prepareCareActivate',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime before training',
+        pageTitle:          'MOBILIZE',
+        recoveryObj:        {},
+        recoveryType:       'pre_active_rest',
+        sceneId:            'prepareScene',
+        textId:             'prepareCareActivate',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - MOBILIZE (POST)', () => {
+    let dailyPlanObj = {post_active_rest: [{active: true,}]};
+    let plan = {activeRestGoals: [{},]};
+    let priority = 0;
+    let modality = 'recover';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'recoverCareActivate',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime after training',
+        pageTitle:          'MOBILIZE',
+        recoveryObj:        {active: true,},
+        recoveryType:       'post_active_rest',
+        sceneId:            'recoverScene',
+        textId:             'recoverCareActivate',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - ACTIVE RECOVERY', () => {
+    let dailyPlanObj = {cool_down: [{active: true,}]};
+    let plan = {coolDownGoals: [{}, {}, {}]};
+    let priority = 0;
+    let modality = 'coolDown';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'DYNAMIC STRETCH': [], 'INTEGRATE': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'coolDown',
+        imageSource:        require('../../../assets/images/standard/active_recovery.png'),
+        pageSubtitle:       'Immediately after training',
+        pageTitle:          'ACTIVE RECOVERY',
+        recoveryObj:        {active: true,},
+        recoveryType:       'cool_down',
+        sceneId:            'coolDownScene',
+        textId:             'coolDown',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
 
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {

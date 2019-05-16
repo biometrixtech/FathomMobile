@@ -283,7 +283,7 @@ class SportScheduleBuilder extends Component {
                             <Spacer size={30} />
                             { showMoreOptions ?
                                 <SectionList
-                                    initialNumToRender={10}
+                                    initialNumToRender={30}
                                     keyExtractor={(item, index) => item + index}
                                     removeClippedSubviews={true}
                                     renderItem={({item, index, section}) =>

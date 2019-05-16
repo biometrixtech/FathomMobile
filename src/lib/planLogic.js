@@ -1049,9 +1049,8 @@ const PlanLogic = {
 
     /**
       * Helper Function for Completed Modalities
-      * - PlanLogc
+      * - PlanLogic
       */
-    // TODO: UNIT TEST ME
     addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive) => {
         if(!array || !array[0]) {
             return [];
@@ -1084,7 +1083,7 @@ const PlanLogic = {
 
     /**
       * Helper Function for Completed Cool Downs
-      * - PlanLogc
+      * - PlanLogic
       */
     // TODO: UNIT TEST ME
     addTitleToActiveModalitiesHelper: (dailyPlanObj, title, timingAddOn, exerciseListOrder, modality, backgroundImage) => {
@@ -1185,18 +1184,18 @@ const PlanLogic = {
       * Handle Exercises Modality Render Logic
       * - ExerciseModality
       */
-    // TODO: UNIT TEST ME
+    // TODO: UNIT TEST WARM UP WHEN ADDED
     handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index = 0) => {
         let goals = plan.activeRestGoals;
         let imageId = 'prepareCareActivate';
         let imageSource = require('../../assets/images/standard/mobilize.png');
         let pageSubtitle = 'Anytime before training';
         let pageTitle = 'MOBILIZE';
-        let recoveryObj = dailyPlanObj.pre_active_rest[index];
+        let recoveryObj = dailyPlanObj.pre_active_rest ? dailyPlanObj.pre_active_rest[index] : {};
         let recoveryType = 'pre_active_rest';
         let sceneId = 'prepareScene';
         let textId = 'prepareCareActivate';
-        if(dailyPlanObj.post_active_rest[index] && dailyPlanObj.post_active_rest[index].active && modality === 'recover') {
+        if(dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest[index] && dailyPlanObj.post_active_rest[index].active && modality === 'recover') {
             goals = plan.activeRestGoals;
             imageId = 'recoverCareActivate';
             pageSubtitle = 'Anytime after training';
@@ -1205,7 +1204,7 @@ const PlanLogic = {
             recoveryType = 'post_active_rest';
             sceneId = 'recoverScene';
             textId = 'recoverCareActivate';
-        } else if(dailyPlanObj.warm_up[index] && dailyPlanObj.warm_up[index].active && modality === 'warmUp') {
+        } else if(dailyPlanObj.warm_up && dailyPlanObj.warm_up[index] && dailyPlanObj.warm_up[index].active && modality === 'warmUp') {
             goals = plan.warmUpGoals;
             imageId = 'warmUp';
             // imageSource = require('../../assets/images/standard/warm_up.png');
@@ -1215,7 +1214,7 @@ const PlanLogic = {
             recoveryType = 'warm_up';
             sceneId = 'warmUpScene';
             textId = 'warmUp';
-        } else if(dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown') {
+        } else if(dailyPlanObj.cool_down && dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown') {
             goals = plan.coolDownGoals;
             imageId = 'coolDown';
             imageSource = require('../../assets/images/standard/active_recovery.png');

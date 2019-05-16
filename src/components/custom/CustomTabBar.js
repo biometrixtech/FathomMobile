@@ -44,17 +44,6 @@ const CustomTabBar = ({ navigation, }) => {
     return(
         <View>
             <View style={[styles.container,]}>
-                <TouchableOpacity onPress={() => Actions.settings()} style={{flex: 1,}}>
-                    <TabIcon
-                        color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
-                        icon={'dehaze'}
-                        iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
-                        size={20}
-                    />
-                    <Text robotoRegular style={[styles.text,]}>
-                        {settingsFocused ? 'Settings' : ' '}
-                    </Text>
-                </TouchableOpacity>
                 <TouchableOpacity onPress={() => Actions.myPlan()} style={{flex: 1,}}>
                     <TabIcon
                         color={myPlanFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
@@ -77,6 +66,17 @@ const CustomTabBar = ({ navigation, }) => {
                     />
                     <Text robotoRegular style={[styles.text,]}>
                         {trendsFocused ? 'Trends' : ' '}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => Actions.settings()} style={{flex: 1,}}>
+                    <TabIcon
+                        color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
+                        icon={'dehaze'}
+                        iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
+                        size={20}
+                    />
+                    <Text robotoRegular style={[styles.text,]}>
+                        {settingsFocused ? 'Settings' : ' '}
                     </Text>
                 </TouchableOpacity>
             </View>

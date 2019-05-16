@@ -35,20 +35,11 @@ const SettingsNavBar = () => (
     <View>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
         <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.xLightSlate, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
-                <TabIcon
-                    icon={'arrow-left'}
-                    iconStyle={[{color: AppColors.black,}]}
-                    onPress={() => Actions.pop()}
-                    reverse={false}
-                    size={26}
-                    type={'simple-line-icon'}
-                />
-            </View>
+            <View style={{flex: 1, justifyContent: 'center',}} />
             <View style={{flex: 8, justifyContent: 'center',}}>
                 <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>
             </View>
-            <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXSml,}} />
+            <View style={{flex: 1, justifyContent: 'center',}} />
         </View>
     </View>
 );
