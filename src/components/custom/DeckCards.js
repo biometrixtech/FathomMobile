@@ -108,6 +108,14 @@ class DeckCards extends Component {
             containerStyle:   styles.container,
             currentCardIndex: 0,
         };
+        this._swiperRef = {};
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        const { isVisible, } = this.props;
+        if(!isVisible && prevProps.isVisible !== isVisible) {
+            this.setState({ areAllSwiped: false, currentCardIndex: 0, }, () => this._swiperRef.jumpToCardIndex(0));
+        }
     }
 
     _handleOnSwiped = index => {
@@ -238,6 +246,7 @@ class DeckCards extends Component {
                             cards={cards}
                             onSwiped={index => this._handleOnSwiped(index)}
                             onSwipedAll={() => this.setState({ areAllSwiped: true, currentCardIndex: 0, })}
+                            ref={ref => {this._swiperRef = ref;}}
                             renderCard={(card, index) => this._renderCard(card, index)}
                             stackScale={10}
                             stackSeparation={-10}

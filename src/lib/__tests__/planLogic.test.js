@@ -10,7 +10,7 @@ import moment from 'moment';
 import { PlanLogic, } from '../';
 
 // Consts and Libs
-import { MyPlan as MyPlanConstants, } from '../../constants';
+import { AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
 
 // mock async-storage
 beforeAll(() => {
@@ -1169,18 +1169,194 @@ const helperFunctions = {
 //     let expectedResult = {};
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
+
+
+
+it('Add Title To Active Modality - NO OBJ', () => {
+    expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+});
+
+it('Add Title To Active Modality - MOBILIZE', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/mobilize.png'),
+        completed:       false,
+        isBodyModality:  false,
+        modality:        'prepare',
+        timing:          ['0 min, ', 'within 4 hrs of training'],
+        title:           'MOBILIZE',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+});
+
+it('Add Title To Active Modality - ACTIVE RECOVERY', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
+        completed:       false,
+        isBodyModality:  false,
+        modality:        'coolDown',
+        timing:          ['0 min, ', 'within 6 hrs of training'],
+        title:           'ACTIVE RECOVERY',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+});
+
+it('Add Title To Active Modality - CWI', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/cwi.png'),
+        completed:       false,
+        isBodyModality:  true,
+        modality:        'cwi',
+        timing:          ['0 min, ', 'after all training is completed'],
+        title:           'COLD WATER BATH',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - PREPARE', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'FOAM ROLL':      [{}, {}, {}, {}, {}, {},],
+        'STATIC STRETCH': [{library_id: 1,}],
+        'ACTIVE STRETCH': [{}],
+        'ACTIVATE':       [],
+        'INTEGRATE':      [{}, {}, {}, {},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 4,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {}, {}, {}, {library_id: 1,}, {}, {}, {}, {}, {},],
+        firstItemIndex:         6,
+        isStaticExercise:       { library_id: 1, },
+        totalLength:            12,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'prepare')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - RECOVER', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'FOAM ROLL':      [{}, {}, {}, {library_id: 1,}, {}, {},],
+        'STATIC STRETCH': [],
+        'ACTIVATE':       [],
+        'INTEGRATE':      [{}, {},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 2,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {library_id: 1,}, {}, {}, {}, {},],
+        firstItemIndex:         3,
+        isStaticExercise:       undefined,
+        totalLength:            8,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'recover')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - COOL DOWN', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'DYNAMIC STRETCH': [{}, {}, {}],
+        'INTEGRATE':       [{}, {library_id: 1,},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 2,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {}, {library_id: 1,},],
+        firstItemIndex:         4,
+        isStaticExercise:       undefined,
+        totalLength:            5,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'coolDown')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - WARM UP', () => {
+    let exerciseList = {cleanedExerciseList: {}};
+    let selectedExercise = {};
+    let expectedResult = {
+        availableSectionsCount: 0,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [],
+        firstItemIndex:         -1,
+        isStaticExercise:       undefined,
+        totalLength:            0,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'warmUp')).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 1 Pill', () => {
+    let cleanedExerciseList = { A: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(1, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 2 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(2, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 3 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(3, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 4 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], D: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(4, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 5 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], D: [], E: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(5, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
 
 it('Find Goals - WITHOUT OBJECT', () => {
     let object = null;
@@ -1446,6 +1622,35 @@ it('Exercise Modality Render Logic - ACTIVE RECOVERY', () => {
         recoveryType:       'cool_down',
         sceneId:            'coolDownScene',
         textId:             'coolDown',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - WARM UP', () => {
+    let dailyPlanObj = {warm_up: [{active: true,}]};
+    let plan = {warmUpGoals: [{}, {}, {}]};
+    let priority = 0;
+    let modality = 'warmUp';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'warmUp',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime before training',
+        pageTitle:          'WARM UP',
+        recoveryObj:        {active: true,},
+        recoveryType:       'warm_up',
+        sceneId:            'warmUpScene',
+        textId:             'warmUp',
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });

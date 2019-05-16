@@ -231,6 +231,7 @@ const MyPlanNavBar = ({
                     cards={cards}
                     handleReadInsight={index => handleReadInsight(index)}
                     hideDeck={() => onRight()}
+                    isVisible={expandNotifications}
                     unreadNotificationsCount={_.filter(cards, ['read', false]).length}
                 />
             </Collapsible>
@@ -474,6 +475,7 @@ class MyPlan extends Component {
         } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData);
         this.setState(
             {
+                expandNotifications:        false,
                 dailyReadiness:             newDailyReadinessState,
                 healthData:                 _.cloneDeep(defaultPlanState.healthData),
                 isPageCalculating:          true,
@@ -605,7 +607,7 @@ class MyPlan extends Component {
     _handleGetMobilize = () => {
         const { getMobilize, } = this.props;
         this.setState(
-            { isPageCalculating: true, },
+            { expandNotifications: false, isPageCalculating: true, },
             () =>
                 getMobilize()
                     .then(res => this.setState({ isPageCalculating: false, }))
@@ -635,7 +637,7 @@ class MyPlan extends Component {
     _handleNoSessions = () => {
         const { noSessions, } = this.props;
         this.setState(
-            { isPageCalculating: true, },
+            { expandNotifications: false, isPageCalculating: true, },
             () =>
                 noSessions()
                     .then(res => this.setState({ isPageCalculating: false, }))
@@ -661,6 +663,7 @@ class MyPlan extends Component {
         } = PlanLogic.handlePostSessionSurveySubmitLogic(postSession, train, recover, healthData);
         this.setState(
             {
+                expandNotifications:          false,
                 goToScreen:                   landingScreen,
                 healthData:                   [],
                 train:                        newTrainObject,

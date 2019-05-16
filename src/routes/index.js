@@ -191,9 +191,11 @@ const Index = (
                 title={'FORGOT PASSWORD'}
             />
             <Scene
-                tabBarComponent={CustomTabBar}
+                drawerLockMode={'locked-closed'}
+                gesturesEnabled={false}
                 hideNavBar={true}
                 key={'main'}
+                tabBarComponent={CustomTabBar}
                 tabBarPosition={'bottom'}
                 tabs={true}
             >
@@ -204,7 +206,6 @@ const Index = (
                     key={'myPlan'}
                     panHandlers={null}
                     tabBarLabel={'Plan'}
-                    type={'replace'}
                 />
                 <Scene
                     Layout={TrendsComponent}

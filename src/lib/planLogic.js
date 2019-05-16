@@ -796,7 +796,6 @@ const PlanLogic = {
       * Exercises Render Logic
       * - Exercises
       */
-    // TODO: UNIT TEST ME
     handleExercisesRenderLogic: (exerciseList, selectedExercise, modality = 'prepare') => {
         const cleanedExerciseList = exerciseList.cleanedExerciseList;
         /*eslint dot-notation: 0*/
@@ -1085,7 +1084,6 @@ const PlanLogic = {
       * Helper Function for Completed Cool Downs
       * - PlanLogic
       */
-    // TODO: UNIT TEST ME
     addTitleToActiveModalitiesHelper: (dailyPlanObj, title, timingAddOn, exerciseListOrder, modality, backgroundImage) => {
         if(!dailyPlanObj || !dailyPlanObj[0]) {
             return [];
@@ -1161,7 +1159,6 @@ const PlanLogic = {
       * Handle Exercises Progress Pills Logic
       * - Exercises
       */
-    // TODO: UNIT TEST ME
     handleExercisesProgressPillsLogic: (availableSectionsCount, cleanedExerciseList, completedExercises, exerciseList, index, selectedExercise, totalLength) => {
         let usableScreenWidth = (AppSizes.screen.width - (AppSizes.padding * 2));
         let currentIndex = Object.keys(cleanedExerciseList).indexOf(index);
@@ -1184,7 +1181,6 @@ const PlanLogic = {
       * Handle Exercises Modality Render Logic
       * - ExerciseModality
       */
-    // TODO: UNIT TEST WARM UP WHEN ADDED
     handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index = 0) => {
         let goals = plan.activeRestGoals;
         let imageId = 'prepareCareActivate';
