@@ -71,6 +71,8 @@ class CustomListItem extends Component {
             props.subtitleStyle.push(this.props.subtitleStyle);
         }
 
+        props.titleProps = { allowFontScaling: false, };
+
         return props;
     }
 

@@ -8,13 +8,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
- import { Image, StyleSheet, Text, View } from 'react-native';
+ import { Image, StyleSheet, View } from 'react-native';
 
 // import third-parties libraries
 import LinearGradient from 'react-native-linear-gradient';
 
 // Consts
 import { AppColors, AppFonts, AppStyles, } from '../../constants';
+import { Text, } from './';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({

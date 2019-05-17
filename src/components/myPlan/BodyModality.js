@@ -185,6 +185,7 @@ class BodyModality extends Component {
                                         />
                                     </TouchableOpacity>
                                     <MagicMove.Text
+                                        allowFontScaling={false}
                                         disabled={true}
                                         duration={600}
                                         id={`${textId}.title`}

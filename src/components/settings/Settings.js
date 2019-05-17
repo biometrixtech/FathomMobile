@@ -138,7 +138,7 @@ class Settings extends Component {
                         style: 'cancel',
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             );
         }
     }
@@ -174,7 +174,7 @@ class Settings extends Component {
                         },
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             )
         } else {
             Alert.alert(
@@ -186,7 +186,7 @@ class Settings extends Component {
                         style: 'cancel'
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             )
         }
     }
@@ -209,7 +209,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 
@@ -223,7 +223,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 
@@ -301,7 +301,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 

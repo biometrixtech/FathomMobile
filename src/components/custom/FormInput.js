@@ -62,6 +62,10 @@ class FormInput extends Component {
             props.inputStyle.push(this.props.inputStyle);
         }
 
+        props.allowFontScaling = false;
+        props.errorProps = { allowFontScaling: false, };
+        props.labelProps = { allowFontScaling: false, };
+
         return props;
     }
 

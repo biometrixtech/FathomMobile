@@ -87,6 +87,7 @@ class UserAccountAbout extends Component {
             <View style={[{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1,}]}>
                 <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of birth' : ' '}</Text>
                 <DatePicker
+                    allowFontScaling={false}
                     cancelBtnText={'Cancel'}
                     confirmBtnText={'Confirm'}
                     customStyles={{

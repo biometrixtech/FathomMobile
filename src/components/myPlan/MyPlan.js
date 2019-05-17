@@ -173,6 +173,7 @@ const ActivityTab = ({
                     />
                     <View style={{marginTop: AppSizes.paddingLrg,}}>
                         <MagicMove.Text
+                            allowFontScaling={false}
                             disabled={true}
                             id={`${id}.title`}
                             style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(26),}]}

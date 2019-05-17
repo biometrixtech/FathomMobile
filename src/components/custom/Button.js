@@ -31,6 +31,8 @@ class CustomButton extends Component {
             props.buttonStyle.borderWidth = 1;
         }
 
+        props.titleProps = { allowFontScaling: false, };
+
         return props;
     }
 

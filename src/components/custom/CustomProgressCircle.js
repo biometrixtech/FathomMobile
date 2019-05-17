@@ -185,6 +185,7 @@ export class CustomProgressCircle extends Component {
                       }}
                   >
                       <Text
+                          allowFontScaling={false}
                           style={[
                               {
                                   color,

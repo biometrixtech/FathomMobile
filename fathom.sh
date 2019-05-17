@@ -127,6 +127,7 @@ initialize() {
 
             # libraray patches
             yes | cp ./custom/javascript/ActionButtonItem.js ./node_modules/react-native-action-button/ActionButtonItem.js
+            yes | cp ./custom/javascript/AppIntroSlider.js ./node_modules/react-native-app-intro-slider/AppIntroSlider.js
 
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`

@@ -74,7 +74,7 @@ const CoachesDashboardTabBar = createReactClass({
             onPress={() => onPressHandler(page)}
         >
             <View style={[styles.tab, this.props.tabStyle, ]}>
-                <Text style={[{color: textColor, fontWeight, }, textStyle, ]}>
+                <Text allowFontScaling={false} style={[{color: textColor, fontWeight, }, textStyle, ]}>
                     {name}
                 </Text>
             </View>

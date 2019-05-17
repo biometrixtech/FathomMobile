@@ -105,6 +105,7 @@ const Index = (
             <Scene
                 Layout={ResendEmailComponent}
                 component={ResendEmailContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'resendEmail'}
                 navBar={CustomNavBar}
@@ -116,6 +117,7 @@ const Index = (
             <Scene
                 Layout={ChangeEmailComponent}
                 component={ChangeEmailContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'changeEmail'}
                 navBar={CustomNavBar}
@@ -141,6 +143,7 @@ const Index = (
             <Scene
                 Layout={OnboardingComponent}
                 component={OnboardingContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'onboarding'}
                 navBar={CustomNavBar}
@@ -173,6 +176,7 @@ const Index = (
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
@@ -183,6 +187,7 @@ const Index = (
             <Scene
                 Layout={ResetPasswordComponent}
                 component={ResetPasswordContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
@@ -218,6 +223,7 @@ const Index = (
                 <Scene
                     Layout={SettingsComponent}
                     component={SettingsContainer}
+                    headerTitleAllowFontScaling={false}
                     hideNavBar={true}
                     key={'settings'}
                     panHandlers={null}
