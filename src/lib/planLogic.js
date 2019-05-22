@@ -1,9 +1,12 @@
+import React from 'react';
+
 // import third-party libraries
 import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
+import { Text, } from '../components/custom';
 
 const PlanLogic = {
 
@@ -55,7 +58,7 @@ const PlanLogic = {
       */
     handleDailyReadinessAndPostSessionFormChange: (name, value, isPain, bodyPart, side, state, isClearCandidate = false, isMovementValue) => {
         // setup varibles
-        let newFormFields;
+        let newFormFields = _.cloneDeep(state);
         // logic
         if(name === 'already_trained_number') {
             let newValue = [];
@@ -1050,7 +1053,7 @@ const PlanLogic = {
       * Helper Function for Completed Modalities
       * - PlanLogic
       */
-    addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive) => {
+    addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive, exerciseListOrder) => {
         if(!array || !array[0]) {
             return [];
         }
@@ -1065,7 +1068,7 @@ const PlanLogic = {
             }
             newCompletedActivity.title = newTitle;
             if(subtitle) {
-                let goals = PlanLogic.handleFindGoals(newCompletedActivity);
+                let goals = PlanLogic.handleFindGoals(newCompletedActivity, exerciseListOrder);
                 if(goals && goals.length > 0) {
                     newCompletedActivity.subtitle = _.map(goals, g => g.text).join(', ');
                 }
@@ -1347,7 +1350,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleMyPlanRenderLogic: dailyPlanObj => {
         let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'HEAT', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
-        let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest));
+        let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest, MyPlanConstants.preExerciseListOrder), false, MyPlanConstants.preExerciseListOrder);
         let completedWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_warm_up, '');
         let filteredTrainingSessions = dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 ?
             _.filter(dailyPlanObj.training_sessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
@@ -1355,7 +1358,7 @@ const PlanLogic = {
             [];
         let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'ACTIVE RECOVERY');
         let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'HEAT', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
-        let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest), true);
+        let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
         let completedCurrentWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', '', true);
         let beforeCompletedLockedModalities = _.concat(
             completedHeat,
@@ -1368,13 +1371,13 @@ const PlanLogic = {
         );
         beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['created_date'], ['asc']);
         let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER BATH', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
-        let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down));
+        let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
         let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'ICE', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
-        let completedPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_post_active_rest));
+        let completedPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_post_active_rest, MyPlanConstants.postExerciseListOrder), false, MyPlanConstants.postExerciseListOrder);
         let completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', PlanLogic.handleFindGoals([dailyPlanObj.cold_water_immersion]), true);
-        let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.cool_down), true);
+        let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.cool_down, MyPlanConstants.coolDownExerciseListOrder), true, MyPlanConstants.coolDownExerciseListOrder);
         let completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'ICE', PlanLogic.handleFindGoals([dailyPlanObj.ice]), true);
-        let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest), true);
+        let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest, MyPlanConstants.postExerciseListOrder), true, MyPlanConstants.postExerciseListOrder);
         let afterCompletedLockedModalities = _.concat(
             completedCWI,
             completedCoolDown,
@@ -1419,6 +1422,139 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             offDaySelected,
             triggerStep,
+        };
+    },
+
+    /**
+      * Handle Bar Chart Render Logic
+      * - Trends & TrendChild
+      */
+    // TODO: UNIT TEST ME
+    handleBarChartRenderLogic: (plan, startSliceValue) => {
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let trends = dailyPlanObj ? dailyPlanObj.trends : [];
+        let trainingVolumeData = _.slice(trends.dashboard.training_volume_data, startSliceValue, trends.dashboard.training_volume_data.length);
+        let data = [];
+        _.map(trainingVolumeData, (tv, key) => {
+            let obj = {};
+            obj.label = tv.day_of_week;
+            obj.svg = { fill: AppColors.zeplin.light, };
+            obj.value = tv.training_volume;
+            obj.sport_names = tv.sport_names;
+            let filteredSport = tv.sport_names.length === 1 && _.filter(MyPlanConstants.teamSports, s => s.index === tv.sport_names[0])[0] ? _.filter(MyPlanConstants.teamSports, s => s.index === tv.sport_names[0])[0] : false;
+            let hasMultipleSports = tv.sport_names.length > 1;
+            obj.filteredSport = filteredSport;
+            obj.hasMultipleSports = hasMultipleSports;
+            data.push(obj);
+        });
+        return data;
+    },
+
+    /**
+      * Handle Chart Title Render Logic
+      * - Trends & TrendChild
+      */
+    // TODO: UNIT TEST ME
+    handleChartTitleRenderLogic: (currentAlert, cardSubtitle) => {
+        let currentAlertText = false;
+        if(currentAlert && currentAlert.visualization_title) {
+            let visualizationTitle = currentAlert.visualization_title;
+            if(!visualizationTitle.body_part_text[0] || visualizationTitle.body_part_text.length === 0) {
+                return (<Text robotoRegular style={[cardSubtitle,]}>{_.toLower(visualizationTitle.text)}</Text>);
+            } else if(visualizationTitle.body_part_text[0] && visualizationTitle.body_part_text[0].length > 0 && visualizationTitle.text.length > 0) {
+                let textRegEx = new RegExp(visualizationTitle.body_part_text.join('|'), 'g');
+                let textMatchedArray = visualizationTitle.text.match(textRegEx);
+                let splitTextArray = _.split(visualizationTitle.text, textRegEx);
+                splitTextArray = _.remove(splitTextArray, o => o.length > 0);
+                let stressMatchedColor = visualizationTitle.color === 0 ? AppColors.zeplin.success : visualizationTitle.color === 1 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+                if(!textMatchedArray) {
+                    return (<Text robotoRegular style={[cardSubtitle,]}>{_.toLower(visualizationTitle.text)}</Text>);
+                }
+                return (
+                    <Text robotoRegular style={[cardSubtitle,]}>
+                        {_.toLower(splitTextArray[0])}
+                        <Text robotoBold style={[cardSubtitle, {color: stressMatchedColor,}]}>{textMatchedArray[0]}</Text>
+                    </Text>
+                );
+            }
+
+        }
+        return currentAlertText;
+    },
+
+    /**
+      * Handle Bar Chart Render Logic
+      * - Trends
+      */
+    // TODO: UNIT TEST ME
+    handleTrendsRenderLogic: (plan, os) => {
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let trends = dailyPlanObj ? dailyPlanObj.trends : {};
+        let currentStressAlert = trends.stress && trends.stress.alerts[0] ? trends.stress.alerts[0] : {};
+        let currentResponseAlert = trends.response && trends.response.alerts[0] ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts[0] ? trends.biomechanics.alerts[0] : {};
+        let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
+        return {
+            currentBiomechanicsAlert,
+            currentResponseAlert,
+            currentStressAlert,
+            extraBottomPadding,
+        };
+    },
+
+    /**
+      * Handle Bar Chart Render Logic
+      * - TrendChild
+      */
+    // TODO: UNIT TEST ME
+    handleTrendChildRenderLogic: (currentCardIndex, insightType, plan) => {
+        const insightTitle = insightType === 0 ? 'stress' : insightType === 1 ? 'response' : 'biomechanics';
+        let startSliceValue = insightType === 0 || insightType === 1 ? 7 : 0;
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let trends = dailyPlanObj ? dailyPlanObj.trends : {};
+        let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
+        let currentAlert = insightDetails.alerts[currentCardIndex];
+        return {
+            currentAlert,
+            insightDetails,
+            insightTitle,
+            startSliceValue,
+        };
+    },
+
+    /**
+      * Handle Bar Chart Render Logic
+      * - FathomCharts
+      */
+    // TODO: UNIT TEST ME
+    handleFathomChartsRenderLogic: (currentAlertData, barData, type, legends, startSliceValue, visualizationData) => {
+        // line data
+        let fillColor = legends[0] && legends[0].color === 0 ? AppColors.zeplin.success : legends[0] && legends[0].color === 1 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+        let newLineData = _.slice(currentAlertData, startSliceValue, currentAlertData.length);
+        // bar data
+        let newBarData = [];
+        _.map(barData, (data, key) => {
+            if(data.value) {
+                let newObj = _.cloneDeep(data);
+                newObj.svg = { fill: fillColor, };
+                newObj.fillColor = fillColor;
+                newBarData.push(newObj);
+            } else {
+                newBarData.push(data);
+            }
+        });
+
+        let hasLeftAxis = (visualizationData && visualizationData.y_axis_1.length > 0);
+        let hasRightAxis = (visualizationData && visualizationData.y_axis_2.length > 0);
+        let chartFlex = (hasLeftAxis && hasRightAxis) ? 9 : (hasLeftAxis || hasRightAxis) ? 9.5 : 1;
+        // return values
+        return {
+            chartFlex,
+            hasLeftAxis,
+            hasRightAxis,
+            lineChartData:  type === 3 ? newLineData : [],
+            lineChartColor: fillColor,
+            updatedBarData: type !== 2 ? barData : newBarData,
         };
     },
 

@@ -282,7 +282,7 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
         // loop through our specific exercise to update our variables
         _.map(recoveryObj[list.index], exercise => {
             equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
-            let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+            let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
             let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
             let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
             dosage = _.orderBy(dosage, ['ranking'], ['desc']);
@@ -307,7 +307,7 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             /*eslint no-loop-func: 0*/
             _.map(recoveryObj[list.index], exercise => {
                 let newExercise = _.cloneDeep(exercise);
-                let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+                let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
                 let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
                 let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
                 dosage = _.orderBy(dosage, ['ranking'], ['desc']);
@@ -322,8 +322,8 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
                                 dosage[0].default_sets_assigned
                     :
                     0;
-                let newExerciseSecondsDuration = priority === 0 ? exercise.duration_efficient : priority === 1 ? exercise.duration_complete : exercise.duration_comprehensive;
-                if(newExerciseSetsAssigned >= i) {
+                let newExerciseSecondsDuration = priority === 0 ? newExercise.duration_efficient : priority === 1 ? newExercise.duration_complete : newExercise.duration_comprehensive;
+                if(newExerciseSecondsDuration && newExerciseSecondsDuration > 0) {
                     totalSeconds += (newExerciseSecondsDuration / newExerciseSetsAssigned);
                     newExercise.set_number = i;
                     exerciseArray.push(newExercise);

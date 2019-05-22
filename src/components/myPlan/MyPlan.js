@@ -27,6 +27,7 @@ import {
     AppState,
     BackHandler,
     Image,
+    ImageBackground,
     Platform,
     RefreshControl,
     ScrollView,
@@ -149,45 +150,55 @@ const ActivityTab = ({
                 </View>
             </View>
             :
-            <TouchableOpacity activeOpacity={0.5} onPress={onPress} style={[AppStyles.scaleButtonShadowEffect,]}>
-                <MagicMove.Image
+            <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={onPress}
+                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 10,}]}
+            >
+                {/*<MagicMove.Image
                     disabled={true}
                     id={`${id}.image`}
-                    resizeMode={'cover'}
+                    resizeMode={'contain'}
                     source={backgroundImage}
-                    style={[{borderRadius: 10, height: 'auto', width: null,}, StyleSheet.absoluteFill,]}
+                    style={[StyleSheet.absoluteFill, {borderRadius: 10, height: 'auto', width: 'auto',}]}
                     useNativeDriver={false}
-                />
-                <LinearGradient
-                    colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
-                    end={{x: 1.0, y: 1.0}}
-                    onPress={onPress}
-                    start={{x: 0.1, y: 0.1}}
-                    style={[{alignItems: 'flex-start', borderRadius: 10, padding: AppSizes.paddingMed,}]}
+                />*/}
+                <ImageBackground
+                    resizeMode={'contain'}
+                    source={backgroundImage}
+                    style={{height: 'auto', width: 'auto',}}
                 >
-                    <TabIcon
-                        color={AppColors.white}
-                        icon={'check-circle-outline'}
-                        size={AppFonts.scaleFont(24)}
-                        type={'material-community'}
-                    />
-                    <View style={{marginTop: AppSizes.paddingLrg,}}>
-                        <MagicMove.Text
-                            allowFontScaling={false}
-                            disabled={true}
-                            id={`${id}.title`}
-                            style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(26),}]}
-                            useNativeDriver={false}
-                        >
-                            {title}
-                        </MagicMove.Text>
-                        <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
-                        <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>
-                            {timing[0]}
-                            <Text robotoRegular>{timing[1]}</Text>
-                        </Text>
-                    </View>
-                </LinearGradient>
+                    <LinearGradient
+                        colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
+                        end={{x: 1.0, y: 1.0}}
+                        onPress={onPress}
+                        start={{x: 0.1, y: 0.1}}
+                        style={[{alignItems: 'flex-start', borderRadius: 10, padding: AppSizes.paddingMed,}]}
+                    >
+                        <TabIcon
+                            color={AppColors.white}
+                            icon={'check-circle-outline'}
+                            size={AppFonts.scaleFont(24)}
+                            type={'material-community'}
+                        />
+                        <View style={{marginTop: AppSizes.paddingLrg,}}>
+                            <MagicMove.Text
+                                allowFontScaling={false}
+                                disabled={true}
+                                id={`${id}.title`}
+                                style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(26),}]}
+                                useNativeDriver={false}
+                            >
+                                {title}
+                            </MagicMove.Text>
+                            <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
+                            <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>
+                                {timing[0]}
+                                <Text robotoRegular>{timing[1]}</Text>
+                            </Text>
+                        </View>
+                    </LinearGradient>
+                </ImageBackground>
             </TouchableOpacity>
         }
     </View>
@@ -233,6 +244,7 @@ const MyPlanNavBar = ({
                     handleReadInsight={index => handleReadInsight(index)}
                     hideDeck={() => onRight()}
                     isVisible={expandNotifications}
+                    shrinkNumberOfLines={true}
                     unreadNotificationsCount={_.filter(cards, ['read', false]).length}
                 />
             </Collapsible>

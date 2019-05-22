@@ -216,7 +216,7 @@ class ExerciseModality extends Component {
                                     disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
-                                    resizeMode={'cover'}
+                                    resizeMode={'contain'}
                                     source={imageSource}
                                     style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}

@@ -344,7 +344,7 @@ class ReadinessSurvey extends Component {
 
                 <Pages
                     indicatorPosition={'none'}
-                    ref={(pages) => { this.pages = pages; }}
+                    ref={pages => { this.pages = pages; }}
                     scrollEnabled={false}
                     startPage={pageIndex}
                 >

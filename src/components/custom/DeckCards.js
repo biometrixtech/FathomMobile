@@ -3,9 +3,13 @@
  *
      <DeckCards
          cards={TEMP_CARDS}
-         handleReadInsight={handleReadInsight}
+         handleReadInsight={index => handleReadInsight(index)}
          hideDeck={() => onRight()}
-         unreadNotificationsCount={_.filter(TEMP_CARDS, ['read', false]).length}
+         infinite={true}
+         isVisible={expandNotifications}
+         shrinkNumberOfLines={true}
+         startIndex={currentCardIndex}
+         unreadNotificationsCount={_.filter(cards, ['read', false]).length}
      />
  *
  */
@@ -14,6 +18,7 @@ import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
+import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import Swiper from 'react-native-deck-swiper';
@@ -25,7 +30,7 @@ import { AppColors, AppFonts, AppSizes, } from '../../constants';
 // Components
 import { Button, TabIcon, Text, } from '../custom';
 
-const CONTAINER_HEIGHT = 225;
+const CONTAINER_HEIGHT = 150;
 const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(15) + (AppSizes.paddingXSml * 2));
 
 /* Styles ==================================================================== */
@@ -95,18 +100,30 @@ class DeckCards extends Component {
     static propTypes = {
         cards:                    PropTypes.array.isRequired,
         handleReadInsight:        PropTypes.func.isRequired,
-        hideDeck:                 PropTypes.func.isRequired,
-        unreadNotificationsCount: PropTypes.number.isRequired,
+        hideDeck:                 PropTypes.func,
+        infinite:                 PropTypes.bool,
+        isVisible:                PropTypes.bool.isRequired,
+        showDate:                 PropTypes.bool,
+        shrinkNumberOfLines:      PropTypes.bool,
+        startIndex:               PropTypes.number,
+        unreadNotificationsCount: PropTypes.number,
     };
 
-    static defaultProps = {};
+    static defaultProps = {
+        hideDeck:                 () => {},
+        infinite:                 false,
+        showDate:                 true,
+        shrinkNumberOfLines:      false,
+        startIndex:               0,
+        unreadNotificationsCount: 0,
+    };
 
     constructor(props) {
         super(props);
         this.state = {
             areAllSwiped:     false,
             containerStyle:   styles.container,
-            currentCardIndex: 0,
+            currentCardIndex: props.startIndex,
         };
         this._swiperRef = {};
     }
@@ -137,6 +154,8 @@ class DeckCards extends Component {
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
+        let insightType = card.insight_type;
+        let triggerType = card.trigger_type;
         let daysDiff = moment().diff(card.start_date_time, 'days');
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
         let textRegEx = new RegExp(card.goal_targeted.join('|'), 'g');
@@ -145,7 +164,7 @@ class DeckCards extends Component {
         let cardTextArray = [];
         if(textMatchedArray) {
             _.map(splitTextArray, (text, key) => {
-                if(text.length > 0) {
+                if(text && text.length > 0) {
                     cardTextArray.push(
                         <Text key={key} robotoLight>
                             {text}
@@ -164,7 +183,9 @@ class DeckCards extends Component {
         return {
             cardTextArray,
             dateText,
+            insightType,
             showUnreadNotificationsBadge,
+            triggerType,
         };
     }
 
@@ -176,13 +197,21 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
+        const { showDate, shrinkNumberOfLines, } = this.props;
         const {
             cardTextArray,
             dateText,
+            insightType,
             // showUnreadNotificationsBadge,
+            triggerType,
         } = this._handleRenderCardLogic(card, index);
         return (
-            <View onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)} style={[styles.card,]}>
+            <TouchableOpacity
+                activeOpacity={1}
+                onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
+                onPress={() => Actions.trendChild({ insightType: insightType, triggerType: triggerType, })}
+                style={[styles.card,]}
+            >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View style={{alignItems: 'center', flexDirection: 'row',}}>
                         { card.styling === 1 &&
@@ -198,9 +227,14 @@ class DeckCards extends Component {
                             {card.title}
                         </Text>
                     </View>
-                    <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
+                    { showDate &&
+                        <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
+                    }
                 </View>
-                <Text style={[styles.text,]}>
+                <Text
+                    numberOfLines={shrinkNumberOfLines ? 3 : 10}
+                    style={[styles.text,]}
+                >
                     {cardTextArray}
                 </Text>
                 {/* showUnreadNotificationsBadge &&
@@ -208,17 +242,17 @@ class DeckCards extends Component {
                         <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
                     </View>
                 */}
-            </View>
+            </TouchableOpacity>
         );
     }
 
     render = () => {
-        const { cards, hideDeck, } = this.props;
+        const { cards, hideDeck, infinite, } = this.props;
         const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
                 <View style={[containerStyle,]}>
-                    { areAllSwiped ?
+                    { areAllSwiped && !infinite ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'You\'re all caught up!'}</Text>
                             <View style={{flexDirection: 'row', marginTop: AppSizes.padding,}}>
@@ -244,32 +278,35 @@ class DeckCards extends Component {
                             cardIndex={currentCardIndex}
                             cardVerticalMargin={AppSizes.padding}
                             cards={cards}
+                            infinite={infinite}
                             onSwiped={index => this._handleOnSwiped(index)}
                             onSwipedAll={() => this.setState({ areAllSwiped: true, currentCardIndex: 0, })}
                             ref={ref => {this._swiperRef = ref;}}
                             renderCard={(card, index) => this._renderCard(card, index)}
                             stackScale={10}
                             stackSeparation={-10}
-                            stackSize={2}
+                            stackSize={cards.length === 1 && infinite ? 1 : 2}
                             useViewOverflow={Platform.OS === 'ios'}
                         />
                     }
                 </View>
-                <View style={[styles.hideTextContainerWrapper,]}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={hideDeck}
-                        style={[styles.hideTextWrapper,]}
-                    >
-                        <Text robotoRegular style={[styles.hideText,]}>{'hide'}</Text>
-                        <TabIcon
-                            icon={'chevron-up'}
-                            iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
-                            size={20}
-                            type={'material-community'}
-                        />
-                    </TouchableOpacity>
-                </View>
+                { !infinite &&
+                    <View style={[styles.hideTextContainerWrapper,]}>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={hideDeck}
+                            style={[styles.hideTextWrapper,]}
+                        >
+                            <Text robotoRegular style={[styles.hideText,]}>{'hide'}</Text>
+                            <TabIcon
+                                icon={'chevron-up'}
+                                iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
+                                size={20}
+                                type={'material-community'}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
         );
     }
