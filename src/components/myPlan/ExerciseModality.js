@@ -216,22 +216,22 @@ class ExerciseModality extends Component {
                                     disabled={true}
                                     easing={Easing.in(Easing.cubic)}
                                     id={`${imageId}.image`}
-                                    resizeMode={'contain'}
+                                    resizeMode={'cover'}
                                     source={imageSource}
                                     style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
-                                    end={{x: 1.0, y: 1.0}}
-                                    start={{x: 0.1, y: 0.1}}
+                                    colors={['rgba(130, 174, 185, 0.7)', 'rgba(130, 174, 185, 0.7)']}
+                                    end={{x: 1, y: 0}}
+                                    start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
                                 >
                                     <TouchableOpacity
                                         activeOpacity={1}
                                         onPress={() => Actions.pop()}
-                                        style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                        style={{position: 'absolute', top: 0, left: 0, marginTop: AppSizes.statusBarHeight, padding: AppSizes.padding,}}
                                     >
                                         <TabIcon
                                             color={AppColors.white}
@@ -274,9 +274,8 @@ class ExerciseModality extends Component {
                                             text={goal.text}
                                         />
                                     )}
-                                    <Spacer size={AppSizes.padding} />
                                     {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
-                                        <View>
+                                        <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
                                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
                                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
                                         </View>

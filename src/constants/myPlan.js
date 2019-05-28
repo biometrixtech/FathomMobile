@@ -323,7 +323,7 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
                     :
                     0;
                 let newExerciseSecondsDuration = priority === 0 ? newExercise.duration_efficient : priority === 1 ? newExercise.duration_complete : newExercise.duration_comprehensive;
-                if(newExerciseSecondsDuration && newExerciseSecondsDuration > 0) {
+                if(newExerciseSetsAssigned >= i && newExerciseSecondsDuration && newExerciseSecondsDuration > 0) {
                     totalSeconds += (newExerciseSecondsDuration / newExerciseSetsAssigned);
                     newExercise.set_number = i;
                     exerciseArray.push(newExercise);

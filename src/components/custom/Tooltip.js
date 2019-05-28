@@ -40,6 +40,7 @@ type Props = {
     backgroundColor: string,
     backgroundStyle: StyleSheet.Styles,
     children: Node,
+    childrenExtraStyles: StyleSheet.Styles,
     childrenViewStyle: StyleSheet.Styles,
     content: Node,
     contentStyle: StyleSheet.Styles,
@@ -445,20 +446,20 @@ class Tooltip extends Component<Props, State> {
 
   renderChildInTooltip = () => {
       const { height, width, x, y } = this.state.childRect;
-      const { children, onChildPress, onChildLongPress } = this.props;
+      const { children, childrenExtraStyles, onChildPress, onChildLongPress, } = this.props;
       const wrapInTouchable = typeof onChildPress === 'function' || typeof onChildLongPress === 'function';
       const childElement = (
           <View
               pointerEvents={wrapInTouchable ? 'box-only' : 'auto'}
-              style={{
-                  position:       'absolute',
-                  height,
-                  width,
-                  top:            y,
-                  left:           x,
+              style={[{
                   alignItems:     'center',
+                  height,
                   justifyContent: 'center',
-              }}
+                  left:           x,
+                  position:       'absolute',
+                  top:            y,
+                  width,
+              }, childrenExtraStyles]}
           >
               {children}
           </View>

@@ -5,7 +5,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
 import { Text, } from '../components/custom';
 
 const PlanLogic = {
@@ -1231,8 +1231,8 @@ const PlanLogic = {
         ];
         let exerciseList = MyPlanConstants.cleanExerciseList(recoveryObj, priority, goals, modality);
         let firstExerciseFound = false;
-        _.forEach(exerciseList.cleanedExerciseList, exerciseIndex => {
-            if(exerciseIndex && exerciseIndex.length > 0 & !firstExerciseFound) {
+        _.map(exerciseList.cleanedExerciseList, exerciseIndex => {
+            if(exerciseIndex && exerciseIndex.length > 0 && !firstExerciseFound) {
                 firstExerciseFound = exerciseIndex[0];
                 return exerciseIndex;
             }
@@ -1389,13 +1389,13 @@ const PlanLogic = {
             completedCurrentPostActiveRest,
         );
         afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['created_date'], ['asc']);
-        let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize.png'));
-        let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat.png'));
+        let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
+        let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
-        let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../assets/images/standard/active_recovery.png'));
-        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime after training', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize.png'));
-        let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'ICE', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice.png'));
-        let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi.png'));
+        let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../assets/images/standard/active_recovery_tab.png'));
+        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime after training', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize_tab.png'));
+        let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'ICE', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
+        let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi_tab.png'));
         let activeAfterModalities = _.concat(activeCoolDown, activePostActiveRest, activeIce, activeCWI);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let offDaySelected = !dailyPlanObj.sessions_planned;
@@ -1455,25 +1455,32 @@ const PlanLogic = {
       * - Trends & TrendChild
       */
     // TODO: UNIT TEST ME
-    handleChartTitleRenderLogic: (currentAlert, cardSubtitle) => {
+    handleChartTitleRenderLogic: (currentAlert, cardSubtitle, isToolTipOpen = false) => {
         let currentAlertText = false;
         if(currentAlert && currentAlert.visualization_title) {
             let visualizationTitle = currentAlert.visualization_title;
             if(!visualizationTitle.body_part_text[0] || visualizationTitle.body_part_text.length === 0) {
-                return (<Text robotoRegular style={[cardSubtitle,]}>{_.toLower(visualizationTitle.text)}</Text>);
+                return (<Text robotoRegular style={[cardSubtitle, isToolTipOpen && currentAlert.visualization_type === 5 ? {color: AppColors.white,} : {}]}>{visualizationTitle.text}</Text>);
             } else if(visualizationTitle.body_part_text[0] && visualizationTitle.body_part_text[0].length > 0 && visualizationTitle.text.length > 0) {
                 let textRegEx = new RegExp(visualizationTitle.body_part_text.join('|'), 'g');
                 let textMatchedArray = visualizationTitle.text.match(textRegEx);
                 let splitTextArray = _.split(visualizationTitle.text, textRegEx);
                 splitTextArray = _.remove(splitTextArray, o => o.length > 0);
-                let stressMatchedColor = visualizationTitle.color === 0 ? AppColors.zeplin.success : visualizationTitle.color === 1 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+                let stressMatchedColor = visualizationTitle.color === 0 ?
+                    AppColors.zeplin.success
+                    : visualizationTitle.color === 1 ?
+                        AppColors.zeplin.yellow
+                        : visualizationTitle.color === 2 ?
+                            AppColors.zeplin.error
+                            :
+                            AppColors.zeplin.error;
                 if(!textMatchedArray) {
-                    return (<Text robotoRegular style={[cardSubtitle,]}>{_.toLower(visualizationTitle.text)}</Text>);
+                    return (<Text robotoRegular style={[cardSubtitle, isToolTipOpen && currentAlert.visualization_type === 5 ? {color: AppColors.white,} : {}]}>{visualizationTitle.text}</Text>);
                 }
                 return (
-                    <Text robotoRegular style={[cardSubtitle,]}>
-                        {_.toLower(splitTextArray[0])}
-                        <Text robotoBold style={[cardSubtitle, {color: stressMatchedColor,}]}>{textMatchedArray[0]}</Text>
+                    <Text robotoRegular style={[cardSubtitle, isToolTipOpen && currentAlert.visualization_type === 5 ? {color: AppColors.white,} : {}]}>
+                        {splitTextArray[0]}
+                        <Text robotoBold style={[cardSubtitle, isToolTipOpen && currentAlert.visualization_type === 5 ? {color: AppColors.white,} : {color: stressMatchedColor,}]}>{textMatchedArray[0]}</Text>
                     </Text>
                 );
             }
@@ -1490,9 +1497,9 @@ const PlanLogic = {
     handleTrendsRenderLogic: (plan, os) => {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentStressAlert = trends.stress && trends.stress.alerts[0] ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends.response && trends.response.alerts[0] ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts[0] ? trends.biomechanics.alerts[0] : {};
+        let currentStressAlert = trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
+        let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         return {
             currentBiomechanicsAlert,
@@ -1522,39 +1529,88 @@ const PlanLogic = {
         };
     },
 
+    getDOMSBarChartData: (key, daysToAdd) => {
+        return {
+            fillColor:         AppColors.zeplin.light,
+            filteredSport:     false,
+            hasMultipleSports: false,
+            key:               key,
+            sport_names:       [],
+            svg:               { fill: AppColors.zeplin.light, },
+            value:             0,
+            x:                 moment().add(daysToAdd, 'd').format('ddd'),
+            y:                 0,
+        };
+    },
+
     /**
       * Handle Bar Chart Render Logic
       * - FathomCharts
       */
     // TODO: UNIT TEST ME
-    handleFathomChartsRenderLogic: (currentAlertData, barData, type, legends, startSliceValue, visualizationData) => {
+    handleFathomChartsRenderLogic: (currentAlertData, barData, type, legends, startSliceValue, visualizationData, containerWidth) => {
         // line data
-        let fillColor = legends[0] && legends[0].color === 0 ? AppColors.zeplin.success : legends[0] && legends[0].color === 1 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+        let fillColor = legends[0] && legends[0].color === 0 ?
+            AppColors.zeplin.success
+            : legends[0] && legends[0].color === 1 ?
+                AppColors.zeplin.yellow : legends[0] && legends[0].color === 2 ?
+                    AppColors.zeplin.error
+                    :
+                    AppColors.zeplin.slate;
         let newLineData = _.slice(currentAlertData, startSliceValue, currentAlertData.length);
+        let largestTVValue = _.maxBy(barData, 'value').value;
         // bar data
-        let newBarData = [];
-        _.map(barData, (data, key) => {
-            if(data.value) {
-                let newObj = _.cloneDeep(data);
-                newObj.svg = { fill: fillColor, };
-                newObj.fillColor = fillColor;
-                newBarData.push(newObj);
-            } else {
-                newBarData.push(data);
-            }
+        let newBarData = _.map(barData, (data, key) => {
+            let newObj = _.cloneDeep(data);
+            newObj.svg = { fill: fillColor, };
+            newObj.fillColor = fillColor;
+            newObj.key = type === 4 ? (key - 3) : key;
+            newObj.y = data.value;
+            newObj.x = data.label;
+            delete newObj.label;
+            return newObj;
         });
-
+        // custom cleanup
         let hasLeftAxis = (visualizationData && visualizationData.y_axis_1.length > 0);
         let hasRightAxis = (visualizationData && visualizationData.y_axis_2.length > 0);
-        let chartFlex = (hasLeftAxis && hasRightAxis) ? 9 : (hasLeftAxis || hasRightAxis) ? 9.5 : 1;
+        if(type === 4) {
+            newBarData.push(PlanLogic.getDOMSBarChartData(4, 1));
+            newBarData.push(PlanLogic.getDOMSBarChartData(5, 2));
+            newBarData.push(PlanLogic.getDOMSBarChartData(6, 3));
+            newBarData = _.slice(newBarData, 3, newBarData.length);
+        }
+        if(type === 5) {
+            newLineData = _.map(newLineData, (data, key) => {
+                let newObj = _.cloneDeep(data);
+                let value = _.round(newObj.value);
+                newObj.label = value;
+                newObj.fillColor = value >= 50 ? AppColors.zeplin.success : value >= 25 && value <= 49 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+                newObj.value = _.round(((largestTVValue * value) / 100));
+                return newObj;
+            });
+        }
+        newLineData = _.map(newLineData, (data, key) => {
+            let newObj = _.cloneDeep(data);
+            let newValue = data.value && data.value > 0 ?
+                type === 3 || type === 4 ?
+                    _.round(((largestTVValue * data.value) / 5))
+                    :
+                    data.value
+                :
+                null;
+            newObj.key = key;
+            newObj.y = newValue;
+            newObj.x = data.day_of_week;
+            delete newObj.label;
+            return newObj;
+        });
         // return values
         return {
-            chartFlex,
             hasLeftAxis,
             hasRightAxis,
-            lineChartData:  type === 3 ? newLineData : [],
+            lineChartData:  type === 3 || type === 4 || type === 5 ? newLineData : [],
             lineChartColor: fillColor,
-            updatedBarData: type !== 2 ? barData : newBarData,
+            updatedBarData: newBarData,
         };
     },
 

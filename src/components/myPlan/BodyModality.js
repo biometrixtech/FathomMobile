@@ -166,15 +166,15 @@ class BodyModality extends Component {
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
-                                    end={{x: 1.0, y: 1.0}}
-                                    start={{x: 0.1, y: 0.1}}
+                                    colors={['rgba(130, 174, 185, 0.7)', 'rgba(130, 174, 185, 0.7)']}
+                                    end={{x: 1, y: 0}}
+                                    start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
                                 >
                                     <TouchableOpacity
                                         activeOpacity={1}
                                         onPress={() => Actions.pop()}
-                                        style={{position: 'absolute', top: 0, left: 0, padding: AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.padding) / 2) : AppSizes.padding,}}
+                                        style={{position: 'absolute', top: 0, left: 0, marginTop: AppSizes.statusBarHeight, padding: AppSizes.padding,}}
                                     >
                                         <TabIcon
                                             color={AppColors.white}

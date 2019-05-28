@@ -20,6 +20,7 @@ Installed React-Native libraries that we're utilizing
 | [BLE Manager](https://github.com/innoveit/react-native-ble-manager) | React-Native BLE communication module. | Pair with sensor and sync data |
 | [Accordion](https://github.com/oblador/react-native-collapsible) | Animated collapsible component for React-Native, good for accordions, toggles etc | 1. Athlete Compliance Modal<br/>2. User Account (Account Information & About You sections) |
 | [Animatable](https://github.com/oblador/react-native-animatable) | Standard set of easy to use animations and declarative transitions for React-Native. | SoreBodyPart |
+| [Dash](https://github.com/obipawan/react-native-dash) | A super simple <Dash /> component for react-native to draw customizable dashed lines. | FathomCharts |
 | [Date Picker](https://github.com/xgfe/react-native-datepicker) | React-Native datePicker component for both Android and IOS, using DatePickerAndroid, TimePickerAndroid and DatePickerIOS | On-boarding User Account About (Date of Birth) |
 | [Deck Swiper](https://github.com/alexbrillant/react-native-deck-swiper) | Tinder like React-Native deck swiper | MyPlan.js for notifications |
 | [Dialog Input](https://github.com/joseestrella89/react-native-dialog-input/) | Modal with input for React-Native | BluetoothConnect3Sensor.js for wifi password |
@@ -34,6 +35,7 @@ Installed React-Native libraries that we're utilizing
 | [Lottie](https://github.com/react-native-community/lottie-react-native) | Lottie is a mobile library for Android and iOS that parses [Adobe After Effects](https://www.adobe.com/products/aftereffects.html) animations exported as JSON with [bodymovin](https://github.com/airbnb/lottie-web) and renders them natively on mobile! | 1. MyPlan - SessionsCompletionModal & ExerciseCompletionModal |
 | [Modal](https://github.com/react-native-community/react-native-modal) | An enhanced, animated and customizable React-Native modal | 1. Login<br/>2. Coaches Dashboard<br/>3. Bluetooth Connect<br/>4. MyPlan<br/>5. Exercises<br/>6. On-boarding<br/>7. Join A Team |
 | [Pages](https://github.com/n4kz/react-native-pages) | Easy to use page view component for React-Native. | 1. Bluetooth Connection<br/>2. Post Session Survey<br/>3. Readiness Survey |
+| [Placeholder](https://github.com/mfrachet/rn-placeholder) | Display some placeholder stuff before rendering your text or media content in React-Native. | MyPlan |
 | [Push Notification](https://github.com/zo0r/react-native-push-notification) | React-Native Local and Remote Notifications | Throughout app |
 | [React-Native](https://facebook.github.io/react-native/docs/components-and-apis) | Access to all React-Native's components and APIs. | Throughout App |
 | [Scrollable Tab View](https://github.com/ptomasroos/react-native-scrollable-tab-view) | Tabbed navigation that you can swipe between, each tab can have its own ScrollView and maintain its own scroll position between swipes. Pleasantly animated. Customizable tab bar. | Coaches Dashboard |
@@ -42,6 +44,7 @@ Installed React-Native libraries that we're utilizing
 | [Sound](https://github.com/zmxv/react-native-sound) | React-Native module for playing sound clips on iOS, Android, and Windows. | Single Exercise |
 | [Splash Screen](https://github.com/crazycodeboy/react-native-splash-screen) | A splash screen for React-Native, hide when application loaded ,it works on iOS and Android. | Start Page |
 | [Vector Icons](https://github.com/oblador/react-native-vector-icons) | Customizable Icons for React-Native with support for NavBar/TabBar/ToolbarAndroid, image source and full styling. | Installed so we can access ALL icons from [director](https://oblador.github.io/react-native-vector-icons/) |
+| [Victory Native - Charts](https://github.com/FormidableLabs/victory-native) | Victory components for React-Native. | Fathom Charts |
 | [Video](https://github.com/react-native-community/react-native-video) | A <Video> component for React-Native | 1. Single Exercises<br/>2. Tutorials |
 | [WebView](https://github.com/react-native-community/react-native-webview) | React-Native WebView - a Modern, Cross-Platform WebView for React-Native | WebViewPage |
 
@@ -91,6 +94,7 @@ Components installed once for usage but not currently being used
 | [Modal Dropdown](https://github.com/sohobloo/react-native-modal-dropdown) | A React-Native dropdown/picker/selector component for both Android & iOS. |
 | [Progress](https://github.com/oblador/react-native-progress) | Progress indicators and spinners for React-Native using ReactART. |
 | [Remote SVG](https://github.com/seekshiva/react-native-remote-svg) | Image component that supports SVG filetype in [React-Native](https://facebook.github.io/react-native/). |
+| [SVG Charts](https://github.com/JesperLekland/react-native-svg-charts) | One library to rule all charts for React-Native. Also installed [SVG](https://github.com/react-native-community/react-native-svg) to help with library. |
 | [Sectioned Multi Select](https://github.com/renrizzolo/react-native-sectioned-multi-select) | A multi (or single) select component with support for sub categories, search, chips. It's intended for long-ish lists, as it opens in a Modal (I might make this optional in the future).<br/><br/>This is based on [RN Multiple Select](https://github.com/toystars/react-native-multiple-select). The problems I had were that I needed it to be in a modal, because of nested ScrollViews not working on Android, and I needed to display categories with sub-categories. |
 | [WiFi](https://github.com/mazenchami/react-native-wifi.git) | Hacked from [RN WiFi](https://github.com/blackdeve/react-native-wifi) - A React-Native implementation for viewing and connecting to Wifi networks on Android and iOS devices. - Looked into using for some 3 Sensor work, but won't end up using |
 

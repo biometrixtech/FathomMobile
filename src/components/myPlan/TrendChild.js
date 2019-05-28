@@ -14,7 +14,7 @@ import { ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View, } from
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { Button, DeckCards, Spacer, TabIcon, Text, } from '../custom';
+import { Button, DeckCards, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { FathomCharts, } from './graphs';
 import { PlanLogic, } from '../../lib';
 
@@ -27,7 +27,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const styles = StyleSheet.create({
     cardSubtitle: {
         color:    AppColors.zeplin.slate,
-        fontSize: AppFonts.scaleFont(13),
+        fontSize: AppFonts.scaleFont(15),
     },
     ctaWrapper: {
         backgroundColor: AppColors.zeplin.splash,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         marginTop:      AppSizes.paddingMed,
     },
     tile: {
-        backgroundColor: '#82AEB9',
+        backgroundColor: AppColors.white,
         borderRadius:    6,
         marginBottom:    AppSizes.paddingSml,
         width:           '48%',
@@ -54,6 +54,38 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const TooltipContent = ({ handleTooltipClose, }) => (
+    <View style={{padding: AppSizes.paddingSml,}}>
+        <View>
+            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your Recovery Efficiency Score'}</Text>
+            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.padding,}}>{'Your RES measures your training sustainability by estimating if your tissues are accumulating micro-damage overtime in response to training.\n\nTo increase your score, increase your rate of recovery by engaging in more Fathom Recovery activities or decrease your training volume.'}</Text>
+            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.success, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'50-100'}</Text>
+                </View>
+                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Your recovery and training balance are sustainable'}</Text>
+            </View>
+            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'25-49'}</Text>
+                </View>
+                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a high priority to restore balance'}</Text>
+            </View>
+            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.error, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'0-24'}</Text>
+                </View>
+                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a higher priority than your training'}</Text>
+            </View>
+        </View>
+        <TouchableOpacity onPress={handleTooltipClose} style={{alignSelf: 'flex-end',}}>
+            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}}>
+                {'GOT IT'}
+            </Text>
+        </TouchableOpacity>
+    </View>
+);
+
 class TrendChild extends PureComponent {
     constructor(props) {
         super(props);
@@ -65,6 +97,7 @@ class TrendChild extends PureComponent {
         let adjustedIndex = props.triggerType ? _.findIndex(insightDetails.alerts, ['trigger_type', props.triggerType]) : 0;
         this.state  = {
             currentCardIndex: adjustedIndex,
+            isToolTipOpen:    false,
         };
     }
 
@@ -81,14 +114,14 @@ class TrendChild extends PureComponent {
 
     render = () => {
         const { insightType, plan, } = this.props;
-        const { currentCardIndex, } = this.state;
+        const { currentCardIndex, isToolTipOpen, } = this.state;
         let {
             currentAlert,
             insightDetails,
             insightTitle,
             startSliceValue,
         } = PlanLogic.handleTrendChildRenderLogic(currentCardIndex, insightType, plan);
-        let currentAlertText = PlanLogic.handleChartTitleRenderLogic(currentAlert, styles.cardSubtitle);
+        let currentAlertText = PlanLogic.handleChartTitleRenderLogic(currentAlert, styles.cardSubtitle, isToolTipOpen);
         return (
             <ScrollView
                 contentContainerStyle={{flexDirection: 'column', flexGrow: 1,}}
@@ -98,10 +131,7 @@ class TrendChild extends PureComponent {
             >
 
                 <LinearGradient
-                    colors={['rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)']}//['rgb(255, 255, 255)', 'rgba(242, 242, 244, 0.05)', 'rgba(8, 24, 50, 0.05)']}
-                    end={{x: 0.0, y: 1}}
-                    locations={[0, 0.85, 0.95]}
-                    start={{x: 0.0, y: 0.0}}
+                    colors={['rgb(255, 255, 255)', 'rgb(254, 254, 254)', 'rgb(240, 240, 240)']}
                     style={{flex: 1,}}
                 >
 
@@ -118,26 +148,61 @@ class TrendChild extends PureComponent {
                                 type={'material-community'}
                             />
                         </TouchableOpacity>
-                        <View style={{paddingLeft: AppSizes.paddingLrg,}}>
-                            <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(25),}}>
+                        <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
+                            <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(28),}}>
                                 {_.toUpper(insightTitle)}
                             </Text>
-                            { currentAlertText &&
-                                currentAlertText
+                            { currentAlertText && currentAlert.visualization_type === 5 ?
+                                <Tooltip
+                                    animated
+                                    childrenExtraStyles={{alignItems: 'flex-start',}}
+                                    childrenViewStyle={{flex: 1,}}
+                                    content={
+                                        <TooltipContent
+                                            handleTooltipClose={() => this.setState({ isToolTipOpen: false, })}
+                                        />
+                                    }
+                                    isVisible={isToolTipOpen}
+                                    onClose={() => {}}
+                                    parentViewStyle={{flex: 1,}}
+                                    tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
+                                >
+                                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                        {currentAlertText}
+                                        <TabIcon
+                                            color={isToolTipOpen ? AppColors.white : AppColors.zeplin.light}
+                                            containerStyle={[{marginLeft: AppSizes.paddingSml,}]}
+                                            icon={'help-circle'}
+                                            onPress={() => this.setState({ isToolTipOpen: true, },)}
+                                            size={20}
+                                            type={'material-community'}
+                                        />
+                                    </View>
+                                </Tooltip>
+                                : currentAlertText ?
+                                    currentAlertText
+                                    :
+                                    null
                             }
                         </View>
                     </View>
 
                     <View style={{marginBottom: AppSizes.padding,}}>
-                        <FathomCharts barData={PlanLogic.handleBarChartRenderLogic(plan, startSliceValue)} currentAlert={currentAlert} startSliceValue={startSliceValue} />
+                        <FathomCharts
+                            barData={PlanLogic.handleBarChartRenderLogic(plan, startSliceValue)}
+                            containerWidth={AppSizes.screen.width}
+                            currentAlert={currentAlert}
+                            startSliceValue={startSliceValue}
+                        />
                     </View>
 
-                    <View style={{backgroundColor: AppColors.white, borderRadius: 6, marginBottom: AppSizes.padding,}}>
+                    <View style={{borderRadius: 6, marginBottom: AppSizes.padding,}}>
                         <DeckCards
                             cards={insightDetails.alerts}
                             handleReadInsight={index => this._handleDeckCardsSwipe(index)}
                             infinite={true}
                             isVisible={true}
+                            shouldNavigate={false}
                             showDate={false}
                             startIndex={currentCardIndex}
                         />
@@ -145,44 +210,48 @@ class TrendChild extends PureComponent {
 
                     <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>
                         <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(18),}}>
-                            {'WHAT WE\'LL DO'}
+                            {'OPTIMAL ROUTINE'}
                         </Text>
-                        {/* NOTES: SO IF NO CTA, display next with 'Add an activity on My Plan' slate 13 robotoLight */}
-                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
-                            {'In order to '}
-                            <Text robotoBold>
-                                {insightDetails.goals.join(', ')}
+                        { insightDetails.cta.length === 0 ?
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginTop: AppSizes.paddingSml,}}>{'Add an activity on My Plan'}</Text>
+                            :
+                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
+                                {'In order to '}
+                                <Text robotoBold>
+                                    {insightDetails.goals.join(', ')}
+                                </Text>
+                                {' we’ll add the following activities to your plan at the optimal time:'}
                             </Text>
-                            {' we’ve added the following activities to your plan:'}
-                        </Text>
+                        }
                         <View style={[styles.tilesContainer,]}>
                             {_.map(insightDetails.cta, (cta, key) => {
-                                let imageSource = require('../../../assets/images/standard/mobilize.png');
+                                let imageSource = require('../../../assets/images/standard/mobilize_tab.png');
                                 switch (cta.name) {
                                 case 'active_recovery':
-                                    imageSource = require('../../../assets/images/standard/active_recovery.png');
+                                    imageSource = require('../../../assets/images/standard/active_recovery_tab.png');
                                     break;
                                 case 'heat':
-                                    imageSource = require('../../../assets/images/standard/heat.png');
+                                    imageSource = require('../../../assets/images/standard/heat_tab.png');
                                     break;
                                 case 'ice':
-                                    imageSource = require('../../../assets/images/standard/ice.png');
+                                    imageSource = require('../../../assets/images/standard/ice_tab.png');
                                     break;
                                 case 'cwi':
-                                    imageSource = require('../../../assets/images/standard/cwi.png');
+                                    imageSource = require('../../../assets/images/standard/cwi_tab.png');
                                     break;
                                 default:
-                                    imageSource = require('../../../assets/images/standard/mobilize.png');
+                                    imageSource = require('../../../assets/images/standard/mobilize_tab.png');
                                 }
                                 return (
                                     <ImageBackground
+                                        imageStyle={{borderRadius: 10,}}
                                         key={key}
-                                        resizeMode={'contain'}
+                                        resizeMode={'cover'}
                                         source={imageSource}
                                         style={[styles.tile,]}
                                     >
                                         <View style={[styles.ctaWrapper,]}>
-                                            <Text numberOfLines={1} oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{cta.header}</Text>
+                                            <Text numberOfLines={1} oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{_.toUpper(cta.header)}</Text>
                                             <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cta.benefit}</Text>
                                             <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(10),}}>{cta.proximity}</Text>
                                         </View>

@@ -8,6 +8,8 @@
          infinite={true}
          isVisible={expandNotifications}
          shrinkNumberOfLines={true}
+         shouldNavigate={false}
+         showDate={false}
          startIndex={currentCardIndex}
          unreadNotificationsCount={_.filter(cards, ['read', false]).length}
      />
@@ -103,6 +105,7 @@ class DeckCards extends Component {
         hideDeck:                 PropTypes.func,
         infinite:                 PropTypes.bool,
         isVisible:                PropTypes.bool.isRequired,
+        shouldNavigate:           PropTypes.bool,
         showDate:                 PropTypes.bool,
         shrinkNumberOfLines:      PropTypes.bool,
         startIndex:               PropTypes.number,
@@ -112,6 +115,7 @@ class DeckCards extends Component {
     static defaultProps = {
         hideDeck:                 () => {},
         infinite:                 false,
+        shouldNavigate:           true,
         showDate:                 true,
         shrinkNumberOfLines:      false,
         startIndex:               0,
@@ -158,8 +162,8 @@ class DeckCards extends Component {
         let triggerType = card.trigger_type;
         let daysDiff = moment().diff(card.start_date_time, 'days');
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
-        let textRegEx = new RegExp(card.goal_targeted.join('|'), 'g');
-        let textMatchedArray = card.text.match(textRegEx);
+        let textRegEx = card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
+        let textMatchedArray = card.text ? card.text.match(textRegEx) : [];
         let splitTextArray = _.split(card.text, textRegEx);
         let cardTextArray = [];
         if(textMatchedArray) {
@@ -197,7 +201,7 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { showDate, shrinkNumberOfLines, } = this.props;
+        const { shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const {
             cardTextArray,
             dateText,
@@ -209,7 +213,7 @@ class DeckCards extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={() => Actions.trendChild({ insightType: insightType, triggerType: triggerType, })}
+                onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
                 style={[styles.card,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -273,7 +277,7 @@ class DeckCards extends Component {
                         </View>
                         :
                         <Swiper
-                            backgroundColor={AppColors.white}
+                            backgroundColor={AppColors.transparent}
                             cardHorizontalMargin={AppSizes.padding}
                             cardIndex={currentCardIndex}
                             cardVerticalMargin={AppSizes.padding}

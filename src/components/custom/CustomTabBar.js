@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
@@ -35,7 +36,11 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const CustomTabBar = ({ navigation, }) => {
+const CustomTabBar = ({ navigation, plan }) => {
+    let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+    if(!dailyPlanObj.daily_readiness_survey_completed) {
+        return (null);
+    }
     let currentIndex = navigation.state.index;
     let currentRouteName = navigation.state.routes[currentIndex].routeName;
     let myPlanFocused = new RegExp('myPlan', 'g').test(currentRouteName);
@@ -90,5 +95,10 @@ CustomTabBar.propTypes = {};
 CustomTabBar.defaultProps = {};
 
 /* Export Component ==================================================================== */
-export default CustomTabBar;
+const mapStateToProps = state => ({
+    plan: state.plan,
+});
 
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomTabBar);

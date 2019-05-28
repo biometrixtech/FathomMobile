@@ -121,6 +121,7 @@ const ActivityTab = ({
                                 autoPlay={true}
                                 loop={false}
                                 source={require('../../../assets/animation/checkmark-circle.json')}
+                                // onAnimationFinish={() => console.log('hiiii')} // TODO: LOOK INTO THIS FOR ISSUE OF RERENDER
                             />
                         </View>
                         :
@@ -164,9 +165,10 @@ const ActivityTab = ({
                     useNativeDriver={false}
                 />*/}
                 <ImageBackground
-                    resizeMode={'contain'}
+                    imageStyle={{borderRadius: 10,}}
+                    resizeMode={'cover'}
                     source={backgroundImage}
-                    style={{height: 'auto', width: 'auto',}}
+                    style={{backgroundColor: AppColors.white, borderRadius: 10, height: 'auto', width: 'auto',}}
                 >
                     <LinearGradient
                         colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
@@ -415,7 +417,6 @@ class MyPlan extends Component {
             this.setState(
                 {
                     dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
-                    isPageCalculating:                    false,
                     isPrepareSessionsCompletionModalOpen: false,
                 },
                 () => this._scrollToFirstActiveActivityTab(),
@@ -680,7 +681,7 @@ class MyPlan extends Component {
                 goToScreen:                   landingScreen,
                 healthData:                   [],
                 train:                        newTrainObject,
-                isPageCalculating:            !areAllDeleted,
+                isPageCalculating:            true,
                 isPostSessionSurveyModalOpen: false,
                 postSession:                  {
                     description: '',

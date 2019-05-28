@@ -93,7 +93,12 @@ class Trends extends PureComponent {
                         { currentStressAlertText &&
                             currentStressAlertText
                         }
-                        <FathomCharts barData={PlanLogic.handleBarChartRenderLogic(plan, 7)} currentAlert={currentStressAlert} startSliceValue={7} />
+                        <FathomCharts
+                            barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
+                            containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                            currentAlert={currentStressAlert}
+                            startSliceValue={7}
+                        />
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => Actions.trendChild({ insightType: 1, })}
@@ -103,7 +108,12 @@ class Trends extends PureComponent {
                         { currentResponseAlertText &&
                             currentResponseAlertText
                         }
-                        <FathomCharts barData={PlanLogic.handleBarChartRenderLogic(plan, 7)} currentAlert={currentResponseAlert} startSliceValue={7} />
+                        <FathomCharts
+                            barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
+                            containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                            currentAlert={currentResponseAlert}
+                            startSliceValue={7}
+                        />
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => Actions.trendChild({ insightType: 2, })}
@@ -113,7 +123,12 @@ class Trends extends PureComponent {
                         { currentBiomechanicsAlertText &&
                             currentBiomechanicsAlertText
                         }
-                        <FathomCharts barData={PlanLogic.handleBarChartRenderLogic(plan, 0)} currentAlert={currentBiomechanicsAlert} startSliceValue={0} />
+                        <FathomCharts
+                            barData={PlanLogic.handleBarChartRenderLogic(plan, 0)}
+                            containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                            currentAlert={currentBiomechanicsAlert}
+                            startSliceValue={0}
+                        />
                     </TouchableOpacity>
                 </View>
 
