@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.padding,
     },
     cardTitle: {
-        color:             AppColors.zeplin.darkSlate,
+        color:             AppColors.zeplin.slate,
         fontSize:          AppFonts.scaleFont(25),
         paddingHorizontal: AppSizes.padding,
     },
@@ -73,7 +73,7 @@ class Trends extends PureComponent {
 
                 <View style={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.paddingMed,}}>
                     <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-                    <View style={{height: AppSizes.navbarHeight, marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
+                    <View style={{height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
                         <Image
                             source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                             style={[AppStyles.navbarImageTitle, {alignSelf: 'center', justifyContent: 'center',}]}

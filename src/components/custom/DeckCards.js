@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         height: CONTAINER_HEIGHT,
     },
     date: {
-        color:    AppColors.zeplin.lightSlate,
+        color:    AppColors.zeplin.slateXLightSlate,
         fontSize: AppFonts.scaleFont(11),
     },
     hideText: {
@@ -72,11 +72,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
-        color:    AppColors.zeplin.darkSlate,
+        color:    AppColors.zeplin.slate,
         fontSize: AppFonts.scaleFont(13),
     },
     title: {
-        color:        AppColors.zeplin.darkSlate,
+        color:        AppColors.zeplin.slate,
+        flex:         1,
         fontSize:     AppFonts.scaleFont(15),
         marginBottom: AppSizes.paddingXSml,
     },
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     },
     unreadNotificationsWrapper: {
         alignItems:      'center',
-        backgroundColor: AppColors.zeplin.coachesDashError,
+        backgroundColor: AppColors.zeplin.error,
         borderRadius:    (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 2),
         height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
         justifyContent:  'center',
@@ -158,8 +159,8 @@ class DeckCards extends Component {
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
-        let insightType = card.insight_type;
-        let triggerType = card.trigger_type;
+        let insightType = card && card.insight_type ? card.insight_type : 0;
+        let triggerType = card && card.trigger_type ? card.trigger_type : 0;
         let daysDiff = moment().diff(card.start_date_time, 'days');
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
         let textRegEx = card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
@@ -216,18 +217,18 @@ class DeckCards extends Component {
                 onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
                 style={[styles.card,]}
             >
-                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',}}>
                         { card.styling === 1 &&
                             <TabIcon
-                                color={AppColors.zeplin.coachesDashError}
+                                color={AppColors.zeplin.error}
                                 containerStyle={[{marginRight: AppSizes.paddingSml,}]}
                                 icon={'alert-circle-outline'}
                                 size={20}
                                 type={'material-community'}
                             />
                         }
-                        <Text robotoBold style={[styles.title, card.styling === 1 ? {color: AppColors.zeplin.coachesDashError,} : {}]}>
+                        <Text robotoBold style={[styles.title, card.styling === 1 ? {color: AppColors.zeplin.error,} : {}]}>
                             {card.title}
                         </Text>
                     </View>
@@ -257,18 +258,18 @@ class DeckCards extends Component {
             <View>
                 <View style={[containerStyle,]}>
                     { areAllSwiped && !infinite ?
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'You\'re all caught up!'}</Text>
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml,}}>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}</Text>
                             <View style={{flexDirection: 'row', marginTop: AppSizes.padding,}}>
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.lightSplash, paddingHorizontal: AppSizes.padding,}}
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.slateXLightSplash, paddingHorizontal: AppSizes.padding,}}
                                     containerStyle={{marginRight: AppSizes.paddingSml,}}
                                     onPress={() => this.setState({ areAllSwiped: false, currentCardIndex: 0, })}
                                     title={'Repeat?'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                                 />
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.lightSplash, paddingHorizontal: AppSizes.padding,}}
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.slateXLightSplash, paddingHorizontal: AppSizes.padding,}}
                                     onPress={hideDeck}
                                     title={'Hide'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
@@ -304,7 +305,7 @@ class DeckCards extends Component {
                             <Text robotoRegular style={[styles.hideText,]}>{'hide'}</Text>
                             <TabIcon
                                 icon={'chevron-up'}
-                                iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
+                                iconStyle={[{color: AppColors.zeplin.slate,}]}
                                 size={20}
                                 type={'material-community'}
                             />

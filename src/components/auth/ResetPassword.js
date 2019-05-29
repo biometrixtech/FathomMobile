@@ -276,13 +276,13 @@ class ResetPassword extends Component {
                             error={this.state.resultMsg.error}
                         />
                         <Spacer size={20} />
-                        <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>
+                        <Text robotoBold style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20),}]}>
                             {'Set New Password'}
                         </Text>
                         <Spacer size={20} />
                         <View style={[AppStyles.containerCentered,]}>
                             <View style={{width: AppSizes.screen.widthFourFifths}}>
-                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>
+                                <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}>
                                     {'You should receive a 6-digit PIN by email. Please retrieve that PIN and enter your new password.'}
                                 </Text>
                             </View>

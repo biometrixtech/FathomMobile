@@ -29,7 +29,7 @@ const tooltipText = 'Don’t have a foam roller? You can use a water bottle or t
 const customStyles = StyleSheet.create({
     recoverBlocksDisabledWrapper: {
         backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.lightGrey,
+        borderColor:     AppColors.zeplin.slateXLightGrey,
         borderRadius:    5,
         borderWidth:     1,
         padding:         10,
@@ -86,7 +86,7 @@ class ActiveRecoveryBlocks extends Component {
         if(equipmentRequired && equipmentRequired.length >= 3 && this.state.isEquipmentTooltipOpen) {
             _.map(equipmentRequired, (item, i) =>
                 equipmentText.push(
-                    <Text key={i} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>
+                    <Text key={i} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>
                         {item.toUpperCase()}
                     </Text>
                 )
@@ -94,28 +94,28 @@ class ActiveRecoveryBlocks extends Component {
         } else if(equipmentRequired && equipmentRequired.length > 0) {
             if(equipmentRequired[0]) {
                 equipmentText.push(
-                    <Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>
+                    <Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>
                         {equipmentRequired[0].toUpperCase()}
                     </Text>
                 );
             }
             if(equipmentRequired[1]) {
                 equipmentText.push(
-                    <Text key={1} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>
+                    <Text key={1} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>
                         {equipmentRequired[1].toUpperCase()}
                     </Text>
                 );
             }
             if(equipmentRequired[2]) {
                 equipmentText.push(
-                    <Text key={2} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>
+                    <Text key={2} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>
                         {`${equipmentRequired[2].toUpperCase()} ${equipmentRequired.length > 3 ? '...' : ''}`}
                     </Text>
                 );
             }
         } else {
-            equipmentText.push(<Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'FOAM ROLLER'}</Text>);
-            equipmentText.push(<Text key={1} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'BAND'}</Text>);
+            equipmentText.push(<Text key={0} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>{'FOAM ROLLER'}</Text>);
+            equipmentText.push(<Text key={1} oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>{'BAND'}</Text>);
         }
         return equipmentText;
     };
@@ -145,9 +145,9 @@ class ActiveRecoveryBlocks extends Component {
                             {marginRight: 9,}
                         ]}
                     >
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHAT'}</Text>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHAT'}</Text>
                         <View style={{backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent,}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.superLight : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{'DYNAMIC MOVEMENTS\nTO IMPROVE STRENGTH\n& POWER EFFICIENCY'}</Text>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.superLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>{'DYNAMIC MOVEMENTS\nTO IMPROVE STRENGTH\n& POWER EFFICIENCY'}</Text>
                         </View>
                     </View>
                     <View
@@ -158,15 +158,15 @@ class ActiveRecoveryBlocks extends Component {
                                 [customStyles.recoverBlocksActiveWrapper, customStyles.shadowEffect, Platform.OS === 'ios' ? {} : {elevation: 2,}, {flex: 1, paddingLeft: 13,}]
                         ]}
                     >
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>
                             {(recoveryObj && recoveryObj.minutes_duration) || !recoveryObj ? 'ACTIVE TIME' : 'WHEN'}
                         </Text>
                         <View style={{alignItems: 'flex-end', backgroundColor: isDisabled ? AppColors.zeplin.superLight : AppColors.transparent, flex: 1, flexDirection: 'row',}}>
                             { recoveryObj && recoveryObj.minutes_duration ?
                                 <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}}>{`${parseFloat(recoveryObj.minutes_duration).toFixed(1)}`}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}}>{`${parseFloat(recoveryObj.minutes_duration).toFixed(1)}`}</Text>
                                     <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
                                     </View>
                                 </View>
                                 : !recoveryObj ?
@@ -174,12 +174,12 @@ class ActiveRecoveryBlocks extends Component {
                                     :
                                     <View style={{flex: 1,}}>
                                         <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}}>{'10-15'}</Text>
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}}>{'10-15'}</Text>
                                             <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                                                <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
+                                                <Text oswaldMedium style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
                                             </View>
                                         </View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'TWICE PER WEEK'}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14),}}>{'TWICE PER WEEK'}</Text>
                                     </View>
                             }
                         </View>
@@ -201,9 +201,9 @@ class ActiveRecoveryBlocks extends Component {
                             {flex: 2.5,},
                         ]}
                     >
-                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
+                        <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: 5,}}>{'WHEN'}</Text>
                         <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
+                            <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}}>{`ANYTIME\n${after ? 'AFTER' : 'BEFORE'}\nTRAINING`}</Text>
                         </View>
                     </View>
 
@@ -222,7 +222,7 @@ class ActiveRecoveryBlocks extends Component {
                     >
                         <View style={{flex: 1,}}>
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
+                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14),}}>{'ACTIVE TIME'}</Text>
                                 { isDisabled && !toggleActiveTimeSlideUpPanel ?
                                     null
                                     : recoveryObj && recoveryObj.completed ?
@@ -237,11 +237,11 @@ class ActiveRecoveryBlocks extends Component {
                                 }
                             </View>
                             <View style={{alignItems: 'flex-end', flex: 1, flexDirection: 'row',}}>
-                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(32),}}>
+                                <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}}>
                                     {isDisabled ? '15' : totalSeconds > 0 ? _.round(totalSeconds / 60) : '0'}
                                 </Text>
                                 <View style={{alignItems: 'flex-start', flex: 1, paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingSml,}}>
-                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : totalSeconds > 0 ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
+                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : totalSeconds > 0 ? AppColors.zeplin.navy : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(15),}}>{'MINS'}</Text>
                                 </View>
                             </View>
                         </View>
@@ -278,7 +278,7 @@ class ActiveRecoveryBlocks extends Component {
                                 ]}
                             >
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(14),}}>{'EQUIPMENT'}</Text>
+                                    <Text oswaldMedium style={{color: isDisabled ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(14),}}>{'EQUIPMENT'}</Text>
                                     { isDisabled && !toggleActiveTimeSlideUpPanel ?
                                         null
                                         : recoveryObj && recoveryObj.completed ?
@@ -309,7 +309,7 @@ class ActiveRecoveryBlocks extends Component {
                             <TouchableHighlight
                                 key={i}
                                 onPress={() => toggleRecoveryGoal(i)}
-                                style={{alignItems: 'center', backgroundColor: goal.isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.lightSlate, padding: AppSizes.paddingXSml, borderRadius: 5, justifyContent: 'center',}}
+                                style={{alignItems: 'center', backgroundColor: goal.isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate, padding: AppSizes.paddingXSml, borderRadius: 5, justifyContent: 'center',}}
                                 underlayColor={AppColors.transparent}
                             >
                                 <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{goal.text}</Text>

@@ -75,7 +75,7 @@ class SingleExerciseItem extends Component {
                         </TouchableOpacity>
                         <Spacer size={10} />
                         { isDescriptionExpanded ?
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}]}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}]}>
                                 {exercise.description}
                             </Text>
                             :
@@ -85,7 +85,7 @@ class SingleExerciseItem extends Component {
                         <TabIcon
                             containerStyle={[{alignSelf: 'center'}]}
                             icon={completedExercises.includes(exercise.library_id) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                            iconStyle={[{color: completedExercises.includes(exercise.library_id) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,}]}
                             onPress={() => handleCompleteExercise(selectedExercise)}
                             reverse={false}
                             size={50}

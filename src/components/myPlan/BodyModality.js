@@ -166,7 +166,7 @@ class BodyModality extends Component {
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgba(130, 174, 185, 0.7)', 'rgba(130, 174, 185, 0.7)']}
+                                    colors={['rgba(130, 174, 185, 0.8)', 'rgba(130, 174, 185, 0.8)']}
                                     end={{x: 1, y: 0}}
                                     start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
@@ -198,7 +198,7 @@ class BodyModality extends Component {
                                     </MagicMove.Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.lightSplash, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateXLightSplash, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
                                     </View>
                                     <Spacer size={AppSizes.padding} />
                                     <View style={{flexDirection: 'row',}}>
@@ -240,12 +240,14 @@ class BodyModality extends Component {
                                 { recoveryObj && recoveryObj.body_parts &&
                                     <View>
                                         <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15),}}>{'Recommended Body Parts'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Recommended Body Parts'}</Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{`Tap on body parts you do not plan to ${modality}.`}</Text>
                                         </View>
                                         <View style={[AppStyles.row, {flexWrap: 'wrap', paddingHorizontal: (AppSizes.paddingLrg - AppSizes.paddingSml),}]}>
                                             {_.map(recoveryObj.body_parts, (body, index) => {
                                                 let bodyPart = PlanLogic.handleBodyModalityBodyPart(body);
+                                                let containerWidth = (AppSizes.screen.width - ((AppSizes.paddingLrg - AppSizes.paddingSml) * 2));
+                                                let iconHeightWidth = _.round( ((containerWidth - (AppSizes.paddingSml * 4)) / 3) );
                                                 return(
                                                     <TouchableOpacity
                                                         activeOpacity={0.5}
@@ -256,7 +258,15 @@ class BodyModality extends Component {
                                                                 () => handleBodyPartClick(dailyPlanObj, body.body_part_location, body.side, modality === 'cwi' ? 'cold_water_immersion' : modality),
                                                             );
                                                         }}
-                                                        style={[AppStyles.paddingSml]}
+                                                        style={[
+                                                            index % 3 === 2 ?
+                                                                {paddingLeft: AppSizes.paddingSml,}
+                                                                : index % 3 === 0 ?
+                                                                    {paddingRight: AppSizes.paddingSml,}
+                                                                    :
+                                                                    {paddingHorizontal: AppSizes.paddingSml,},
+                                                            {paddingVertical: AppSizes.paddingSml,}
+                                                        ]}
                                                     >
                                                         <SVGImage
                                                             firstTimeExperience={['all_good_body_part_tooltip']}
@@ -264,7 +274,7 @@ class BodyModality extends Component {
                                                             overlay={true}
                                                             overlayText={bodyPart.mainBodyPartName}
                                                             selected={bodyPart.isSelected}
-                                                            style={{width: 100, height: 100}}
+                                                            style={{height: iconHeightWidth, width: iconHeightWidth,}}
                                                         />
                                                     </TouchableOpacity>
                                                 )
@@ -274,7 +284,7 @@ class BodyModality extends Component {
                                 }
                                 <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(18),}}>{`HOW-TO ${modality === 'cwi' ? 'CWB' : _.upperCase(modality)} EFFECTIVELY`}</Text>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>{`HOW-TO ${modality === 'cwi' ? 'CWB' : _.upperCase(modality)} EFFECTIVELY`}</Text>
                                         <TouchableOpacity
                                             activeOpacity={1}
                                             onPress={() => this._toggleInstructions()}
@@ -293,13 +303,13 @@ class BodyModality extends Component {
                                     </View>
                                     <Collapsible collapsed={!showInstructions} style={{paddingTop: AppSizes.padding,}}>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingXSml,}}>
-                                            <View style={{backgroundColor: AppColors.zeplin.darkSlate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16),}}>{'PREP'}</Text>
+                                            <View style={{backgroundColor: AppColors.zeplin.slate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{'PREP'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row',}}>
-                                            <View style={{borderRightColor: AppColors.zeplin.lightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
+                                            <View style={{borderRightColor: AppColors.zeplin.slateXLightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' ?
                                                         'Prepare a heating pad, hot water bottle, or wet towel to be moderately hot.'
                                                         : modality === 'ice' ?
@@ -309,7 +319,7 @@ class BodyModality extends Component {
                                                     }
                                                 </Text>
                                                 <Spacer size={AppSizes.paddingXSml} />
-                                                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11),}}>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>
                                                     { modality === 'heat' ?
                                                         'TIP: Dampen a bath towel, wring out excess water, & heat in the microwave for 10-15 seconds.'
                                                         : modality === 'ice' ?
@@ -321,13 +331,13 @@ class BodyModality extends Component {
                                             </View>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingSml,}}>
-                                            <View style={{backgroundColor: AppColors.zeplin.darkSlate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16),}}>{modality === 'cwi' ? 'SUBMERGE' : 'PLACE'}</Text>
+                                            <View style={{backgroundColor: AppColors.zeplin.slate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{modality === 'cwi' ? 'SUBMERGE' : 'PLACE'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row',}}>
-                                            <View style={{borderRightColor: AppColors.zeplin.lightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
+                                            <View style={{borderRightColor: AppColors.zeplin.slateXLightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' ?
                                                         'Position the heat to cover the entire muscle or joint.'
                                                         : modality === 'ice' ?
@@ -345,7 +355,7 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
                                                             { modality === 'heat' ?
                                                                 'Do not place heat on swollen or bruised areas.'
                                                                 :
@@ -357,13 +367,13 @@ class BodyModality extends Component {
                                             </View>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingSml,}}>
-                                            <View style={{backgroundColor: AppColors.zeplin.darkSlate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16),}}>{'REST'}</Text>
+                                            <View style={{backgroundColor: AppColors.zeplin.slate, borderRadius: (AppSizes.paddingSml / 2), height: AppSizes.paddingSml, marginRight: AppSizes.padding, width: AppSizes.paddingSml,}} />
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{'REST'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row',}}>
                                             <View style={{marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
-                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13),}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' || modality === 'ice' ?
                                                         `Set a timer for ${time} minutes and wait.`
                                                         :
@@ -379,7 +389,7 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
                                                             { modality === 'heat' ?
                                                                 'When using heat, be very careful to use moderate heat for a limited time to avoid burns.'
                                                                 : modality === 'ice' ?
@@ -424,11 +434,11 @@ class BodyModality extends Component {
                         showBackdrop={false}
                     >
                         <View style={{flex: 1, flexDirection: 'column',}}>
-                            <View style={{backgroundColor: AppColors.zeplin.darkBlue, flex: 1, opacity: 0.8,}} />
+                            <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
                             <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{`${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{`${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
                                 <TabIcon
-                                    color={AppColors.zeplin.darkSlate}
+                                    color={AppColors.zeplin.slate}
                                     icon={'close'}
                                     onPress={() => this._hideSlideUpPanel()}
                                     size={30}
@@ -438,39 +448,39 @@ class BodyModality extends Component {
                             { modality === 'heat' ?
                                 <View style={{backgroundColor: AppColors.white, padding: AppSizes.paddingLrg,}}>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat treatments after activity.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat treatments after activity.'}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat after an acute injury.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Do not use heat after an acute injury.'}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never use heat where swelling is involved because swelling is caused by bleeding in the tissue, and heat just draws more blood to the area.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never use heat where swelling is involved because swelling is caused by bleeding in the tissue, and heat just draws more blood to the area.'}</Text>
                                     </View>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
-                                    </View>
-                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
                                     </View>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
                                         {'If you have questions regarding the proper treatment of an injury, call the '}
                                         <Text robotoBold>{'doctors'}</Text>
                                         {' or '}
@@ -481,43 +491,43 @@ class BodyModality extends Component {
                                 : modality === 'ice' ?
                                     <View style={{backgroundColor: AppColors.white, padding: AppSizes.paddingLrg,}}>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never place ice directly on an injury'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never place ice directly on an injury'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Keep the ice pack moving to avoid ice burns '}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Keep the ice pack moving to avoid ice burns '}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never treat with ice for more than 25 minutes, and remove the pack immediately if the injury appears bright pink or red'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never treat with ice for more than 25 minutes, and remove the pack immediately if the injury appears bright pink or red'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Don’t use ice packs on the left shoulder if you have a heart condition, and don’t use ice packs around the front or side of the neck.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Don’t use ice packs on the left shoulder if you have a heart condition, and don’t use ice packs around the front or side of the neck.'}</Text>
                                         </View>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
-                                        </View>
-                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin with poor sensation to heat or cold.'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of the body with known poor circulation.'}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'if you have diabetes.'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'in the presence of infection.'}</Text>
                                         </View>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>
                                             {'If you have questions regarding the proper treatment of an injury, call the '}
                                             <Text robotoBold>{'doctors'}</Text>
                                             {' or '}
@@ -528,19 +538,19 @@ class BodyModality extends Component {
                                     :
                                     <View style={{backgroundColor: AppColors.white, flex: 1, padding: AppSizes.paddingLrg,}}>
                                         <ScrollView>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
                                                 {'A meta-analysis (Dupuy, 2018) evaluated the impact of recovery techniques on delayed onset muscle soreness (DOMS), perceived fatigue, muscle damage, and inflammatory markers after physical exercise. The effect of cold water immersion (CWB) on DOMS and perceived fatigue was significant.'}
                                             </Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
                                                 {'An exposure of 11–15\u00B0C over 11–15 min was considered to be the optimal circumstance to obtain a positive impact of CWB after exercise to reduce DOMS (Machado et al., 2016).'}
                                             </Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
                                                 {'A common explanation of the impact of CWB on DOMS and fatigue is a reduction in exercise-induced inflammation and muscle damage. Hydrostatic pressure may facilitate the transport of fluids from the muscle to the blood and therefore eliminate metabolites (Wilcock et al., 2006a,b; Leeder et al., 2012).'}
                                             </Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingLrg,}}>
                                                 {'Vasoconstriction due to cold temperature may also reduce fluid diffusion into the interstitial space (Eston and Peters, 1999) and locally diminish the inflammatory reaction (Coté et al., 1988), which in turn may reduce the feeling of pain (Smith, 1991).'}
                                             </Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(14),}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                                                 {'Cold alone has also a direct analgesic impact (Leppäluoto et al., 2008). — relieve pain Citation: Dupuy O, Douzi W, Theurot D, Bosquet L and Dugué B (2018) An Evidence-Based Approach for Choosing Post-exercise Recovery Techniques to Reduce Markers of Muscle Damage, Soreness, Fatigue, and Inflammation: A Systematic Review With Meta-Analysis. Front. Physiol. 9:403. doi: 10.3389/fphys.2018.00403'}
                                             </Text>
                                         </ScrollView>

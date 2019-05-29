@@ -88,7 +88,7 @@ class AreasOfSoreness extends Component {
                     paddingBottom:  this.state.showWholeArea ? backNextHeight : 0,
                 }}>
                     <Spacer size={AppSizes.padding} />
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
                     <Spacer size={AppSizes.padding} />
                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                         <TouchableOpacity
@@ -114,7 +114,7 @@ class AreasOfSoreness extends Component {
                             <Text
                                 oswaldMedium
                                 style={{
-                                    color:     !this.state.isAllGood ? AppColors.zeplin.blueGrey : AppColors.white,
+                                    color:     !this.state.isAllGood ? AppColors.zeplin.slate : AppColors.white,
                                     fontSize:  AppFonts.scaleFont(27),
                                     textAlign: 'center',
                                 }}
@@ -149,7 +149,7 @@ class AreasOfSoreness extends Component {
                             <Text
                                 oswaldMedium
                                 style={{
-                                    color:     !this.state.showWholeArea ? AppColors.zeplin.blueGrey : AppColors.white,
+                                    color:     !this.state.showWholeArea ? AppColors.zeplin.slate : AppColors.white,
                                     fontSize:  AppFonts.scaleFont(27),
                                     textAlign: 'center',
                                 }}
@@ -173,7 +173,7 @@ class AreasOfSoreness extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    AppColors.zeplin.darkGrey,
+                                                color:    AppColors.zeplin.navy,
                                                 fontSize: AppFonts.scaleFont(18),
                                             }
                                         ]}

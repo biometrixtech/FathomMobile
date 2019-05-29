@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     },
     unreadNotificationsWrapper: {
         alignItems:      'center',
-        backgroundColor: AppColors.zeplin.coachesDashError,
+        backgroundColor: AppColors.zeplin.error,
         borderRadius:    (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 2),
         height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
         justifyContent:  'center',
@@ -127,7 +127,7 @@ const ActivityTab = ({
                         :
                         <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
                             <TabIcon
-                                color={AppColors.zeplin.darkSlate}
+                                color={AppColors.zeplin.slate}
                                 icon={'close-circle'}
                                 iconStyle={[{opacity: 0.4,}]}
                                 size={AppFonts.scaleFont(24)}
@@ -138,13 +138,13 @@ const ActivityTab = ({
                     <View style={{flex: 1, marginLeft: AppSizes.paddingSml,}}>
                         <Text
                             oswaldRegular
-                            style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.darkSlate,}]}
+                            style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
                         >{title}</Text>
                         { (subtitle && subtitle.length > 0) &&
                             <Text
                                 numberOfLines={1}
                                 robotoRegular
-                                style={[completed ? styles.completedSubtitle : styles.lockedSubtitle, {color: AppColors.zeplin.darkSlate,}]}
+                                style={[completed ? styles.completedSubtitle : styles.lockedSubtitle, {color: AppColors.zeplin.slate,}]}
                             >{subtitle}</Text>
                         }
                     </View>
@@ -154,7 +154,7 @@ const ActivityTab = ({
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onPress}
-                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 10,}]}
+                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
                 {/*<MagicMove.Image
                     disabled={true}
@@ -225,7 +225,7 @@ const MyPlanNavBar = ({
                 <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
                     <TabIcon
                         icon={'notifications'}
-                        iconStyle={[{color: AppColors.zeplin.darkSlate,}]}
+                        iconStyle={[{color: AppColors.zeplin.slate,}]}
                         onPress={() => onRight()}
                         size={26}
                     />
@@ -425,13 +425,15 @@ class MyPlan extends Component {
     }
 
     _closeTrainSessionsCompletionModal = () => {
-        this.setState(
-            {
-                isTrainSessionsCompletionModalOpen: false,
-                postSession:                        _.cloneDeep(defaultPlanState.postSession),
-            },
-            () => this._scrollToFirstActiveActivityTab(),
-        );
+        this.goToPageTimer = _.delay(() => {
+            this.setState(
+                {
+                    isTrainSessionsCompletionModalOpen: false,
+                    postSession:                        _.cloneDeep(defaultPlanState.postSession),
+                },
+                () => this._scrollToFirstActiveActivityTab(),
+            );
+        }, 500);
     }
 
     _handleAppStateChange = nextAppState => {
@@ -505,16 +507,20 @@ class MyPlan extends Component {
         );
         postReadinessSurvey(newDailyReadiness)
             .then(response => {
-                if(nonDeletedSessions.length === 0) {
-                    this.setState({ isPageCalculating: false, });
-                }
-                clearHealthKitWorkouts();
-                clearCompletedExercises();
-                clearCompletedCoolDownExercises();
+                this.setState(
+                    { isPageCalculating: false, },
+                    () => {
+                        clearHealthKitWorkouts();
+                        clearCompletedExercises();
+                        clearCompletedCoolDownExercises();
+                    }
+                );
             })
             .catch(error => {
-                this.setState({ isPageCalculating: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey);
+                this.setState(
+                    { isPageCalculating: false, },
+                    () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),
+                );
             });
     }
 
@@ -905,7 +911,7 @@ class MyPlan extends Component {
                                 >
 
                                     { !triggerStep &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
                                     }
 
                                     { offDaySelected &&
@@ -948,17 +954,17 @@ class MyPlan extends Component {
                                                 type={'material-community'}
                                             />
                                             <View style={{backgroundColor: AppColors.zeplin.superLight, borderBottomLeftRadius: 5, borderBottomRightRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}}>
-                                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{triggerStep}</Text>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{triggerStep}</Text>
                                             </View>
                                         </View>
                                     }
 
                                     { (dailyPlanObj.train_later && !triggerStep) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
 
                                     { (afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
                                     }
 
                                     {_.map(afterCompletedLockedModalities, (completedLockedModality, key) => (
@@ -1035,7 +1041,7 @@ class MyPlan extends Component {
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'OFF DAY'}
                                 useNativeFeedback={false}
                             >
@@ -1053,7 +1059,7 @@ class MyPlan extends Component {
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'LOG TRAINING'}
                             useNativeFeedback={false}
                         >
@@ -1071,7 +1077,7 @@ class MyPlan extends Component {
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}]}
+                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'ADD MOBILIZE'}
                                 useNativeFeedback={false}
                             >

@@ -363,9 +363,9 @@ class ReadinessSurvey extends Component {
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                                     <View />
                                     <View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${userFirstName}!`}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${userFirstName}!`}</Text>
                                         <Spacer size={5} />
-                                        <Text robotoLight style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
                                         <Spacer size={10} />
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
@@ -405,7 +405,7 @@ class ReadinessSurvey extends Component {
                             totalSteps={3}
                         />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>{'Have you already trained today?'}</Text>
                             <Spacer size={20} />
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: 220,}}>
                                 <TouchableHighlight
@@ -430,7 +430,7 @@ class ReadinessSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    dailyReadiness.already_trained_number === false ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}
@@ -461,7 +461,7 @@ class ReadinessSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    dailyReadiness.already_trained_number === 1 ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}
@@ -504,7 +504,7 @@ class ReadinessSurvey extends Component {
                             totalSteps={3}
                         />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
                             <Spacer size={20} />
                             <View
                                 style={{
@@ -535,7 +535,7 @@ class ReadinessSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    dailyReadiness.sessions_planned === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    dailyReadiness.sessions_planned === false ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}
@@ -566,7 +566,7 @@ class ReadinessSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    dailyReadiness.sessions_planned === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    dailyReadiness.sessions_planned === true ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}

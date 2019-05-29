@@ -27,13 +27,13 @@ import DatePicker from 'react-native-datepicker';
 const styles = StyleSheet.create({
     androidViewContainer: {
         borderBottomWidth: 1,
-        borderBottomColor: AppColors.zeplin.light,
+        borderBottomColor: AppColors.zeplin.slateXLight,
         height:            40,
         justifyContent:    'center',
     },
     inputLabel: {
         ...AppFonts.robotoRegular,
-        color:       AppColors.zeplin.lightSlate,
+        color:       AppColors.zeplin.slateXLightSlate,
         fontSize:    AppFonts.scaleFont(11),
         margin:      0,
         paddingLeft: AppSizes.paddingSml,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     reusableCustomSpacing: {
         alignItems:        'flex-start',
         borderBottomWidth: 1,
-        borderColor:       AppColors.zeplin.light,
+        borderColor:       AppColors.zeplin.slateXLight,
         borderLeftWidth:   0,
         borderRightWidth:  0,
         borderTopWidth:    0,
@@ -84,7 +84,7 @@ class UserAccountAbout extends Component {
         } = this.props;
         /*eslint no-return-assign: 0*/
         return(
-            <View style={[{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1,}]}>
+            <View style={[{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1,}]}>
                 <Text style={[styles.inputLabel]}>{user.personal_data.birth_date.length > 0 ?'Date of birth' : ' '}</Text>
                 <DatePicker
                     allowFontScaling={false}
@@ -93,7 +93,7 @@ class UserAccountAbout extends Component {
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
                         dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
-                        placeholderText: {color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
+                        placeholderText: {color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
                         btnTextConfirm:  {color: AppColors.zeplin.yellow},
                     }}
                     date={user.personal_data.birth_date || ''}
@@ -116,7 +116,7 @@ class UserAccountAbout extends Component {
                     onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
                     onFocus={event => scrollToInput(findNodeHandle(event.target))}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.zeplin.lightSlate}
+                    placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                     ref={input => {this.inputs.mass = input;}}
                     returnKeyType={'done'}
                     value={user.biometric_data.mass.lb}
@@ -127,14 +127,14 @@ class UserAccountAbout extends Component {
                     items={UserAccountConstants.possibleGenders}
                     onValueChange={value => value ? clearCoachContent('', () => handleFormChange('biometric_data.sex', value)) : null}
                     placeholder={{
-                        color: AppColors.zeplin.darkSlate,
+                        color: AppColors.zeplin.slate,
                         label: 'Sex',
                         value: null,
                     }}
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.lightSlate,
+                        placeholderColor: AppColors.zeplin.slateXLightSlate,
                         viewContainer:    [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {}],
                     }}
                     value={user.biometric_data.sex}

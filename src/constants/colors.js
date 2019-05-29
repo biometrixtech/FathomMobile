@@ -92,46 +92,32 @@ const tabbar = {
 };
 
 const zeplin = {
-    blueBackground:         '#183C4D', // 24, 60, 77
-    blueGrey:               '#757D8A',
-    coachesDashError:       '#E6583D',
-    darkBlue:               '#081832', // 8, 24, 50
-    darkGrey:               '#2B2B2B', // 43, 43, 43
-    darkGreyText:           '#868686', // 134, 134, 134
-    darkNavy:               '#0F1320',
-    darkSlate:              '#757D8A',
-    darkWhite:              '#F8F8F8', // 248, 248, 248
-    error:                  '#C8432A', // 200, 67, 42
-    green:                  '#0B7B88',
-    greyText:               '#B2B2B2', // 178, 178, 178
-    iconCircle:             '#AFAFAF',
-    light:                  '#E2E4E6',
-    lightGrey:              '#D5D5D5', // 213, 213, 213
-    lightNavy:              '#2A374A',
-    lightSlate:             '#D6D8DB',
-    lightSplash:            '#9FCFDB',
-    mediumGrey:             '#707070', // 112, 112, 112
-    navyBlue:               '#0E0822', // 14, 8, 34
-    progressPillBackground: '#FAFAFA',
-    seaBlue:                '#0B7B88', // 11, 123, 136
-    shadow:                 '#e4e4e4',
-    slate:                  '#ADB1B7',
-    splash:                 '#82AEB9',
-    success:                '#2EA985',
-    superLight:             '#F5F5F5',
-    warning:                '#EBBA2D',
-    xLightSlate:            '#E2E4E6',
-    yellow:                 '#EBBA2D', // 235, 186, 45
+    darkNavy:     '#0F1320',
+    error:        '#EA6F4A',
+    errorLight:   '#EE8B6E',
+    navy:         '#081832',
+    slate:        '#757D8A',
+    slateLight:   '#ADB1B7',
+    slateXLight:  '#E2E4E6',
+    splash:       '#40A8B4',
+    splashLight:  '#70BEC7',
+    success:      '#4EC1A6',
+    successLight: '#71CDB7',
+    superLight:   '#F5F5F5',
+    warning:      '#EDA14A',
+    warningLight: '#F1B877',
+    yellow:       '#EBBA2D',
+    yellowLight:  '#EEC756',
 }
 
 const alerts = {
-    errorBackground:   '#972C2F',
-    statusBackground:  '#1E6789',
-    successBackground: '#59DC9A',
+    errorBackground:   zeplin.error,
+    statusBackground:  zeplin.splash,
+    successBackground: zeplin.success,
 }
 
 const sensor = {
-    charging:               brand.primary.yellow.hundredPercent,
+    charging:               zeplin.yellow,
     chargingBackground:     '#1E6789',
     good:                   '#2E7D32',
     notConnected:           '#BABABA',

@@ -412,7 +412,7 @@ class TimedExercise extends PureComponent {
                         </View>
                         <View style={{flex: 1,}}>
                             <TabIcon
-                                color={AppColors.zeplin.lightSlate}
+                                color={AppColors.zeplin.slateXLightSlate}
                                 icon={'help'}
                                 onPress={() => {
                                     if(preExerciseTime !== 0 || areAllTimersCompleted || !exerciseTimer) {
@@ -431,7 +431,7 @@ class TimedExercise extends PureComponent {
                             <View>
                                 { areAllTimersCompleted && !isPaused && !(startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                     <TabIcon
-                                        color={AppColors.zeplin.lightSlate}
+                                        color={AppColors.zeplin.slateXLightSlate}
                                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                         icon={'restore'}
                                         onPress={() => this._resetTimer(true)}
@@ -441,7 +441,7 @@ class TimedExercise extends PureComponent {
                                     />
                                     : isPaused ?
                                         <TabIcon
-                                            color={AppColors.zeplin.lightSlate}
+                                            color={AppColors.zeplin.slateXLightSlate}
                                             containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                             icon={'play-arrow'}
                                             onPress={() => this._pauseTimer(false)}
@@ -451,7 +451,7 @@ class TimedExercise extends PureComponent {
                                         />
                                         : !isPaused && (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                             <TabIcon
-                                                color={AppColors.zeplin.lightSlate}
+                                                color={AppColors.zeplin.slateXLightSlate}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'pause'}
                                                 onPress={() => { if(preExerciseTime !== 0) { this._pauseTimer(true); } }}
@@ -461,7 +461,7 @@ class TimedExercise extends PureComponent {
                                             />
                                             :
                                             <TabIcon
-                                                color={AppColors.zeplin.lightSlate}
+                                                color={AppColors.zeplin.slateXLightSlate}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'play-arrow'}
                                                 reverse={false}
@@ -476,55 +476,55 @@ class TimedExercise extends PureComponent {
                         { exerciseTimer ?
                             <View>
                                 { isPaused && !startPreExerciseCountdown && !startSwitchSidesInterval ?
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                     : startPreExerciseCountdown ?
                                         <ProgressCircle
                                             animated={true}
                                             borderWidth={0}
-                                            color={AppColors.zeplin.seaBlue}
+                                            color={AppColors.zeplin.splash}
                                             formatText={`${timerSeconds === 0 ? 'GO' : timerSeconds}`}
                                             indeterminate={false}
                                             progress={preExerciseTime}
                                             showsText={true}
                                             size={timerWrapperHeight}
                                             strokeCap={'round'}
-                                            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(56),}}
+                                            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(56),}}
                                             thickness={5}
                                             unfilledColor={AppColors.zeplin.superLight}
                                         />
                                         : startFirstSet ?
-                                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                             : startSwitchSidesInterval ?
                                                 <ProgressCircle
                                                     animated={true}
                                                     borderWidth={0}
-                                                    color={AppColors.zeplin.seaBlue}
+                                                    color={AppColors.zeplin.splash}
                                                     formatText={'SWITCH\nSIDES'}
                                                     indeterminate={false}
                                                     progress={switchSideTime}
                                                     showsText={true}
                                                     size={timerWrapperHeight}
                                                     strokeCap={'round'}
-                                                    textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}
+                                                    textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}
                                                     thickness={5}
                                                     unfilledColor={AppColors.zeplin.superLight}
                                                 />
                                                 : startSecondSet ?
-                                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
+                                                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(56),}}>{this._cleanTime(timerSeconds)}</Text>
                                                     : areAllTimersCompleted ?
-                                                        <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
+                                                        <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
                                                         :
                                                         <ProgressCircle
                                                             animated={true}
                                                             borderWidth={0}
-                                                            color={AppColors.zeplin.seaBlue}
+                                                            color={AppColors.zeplin.splash}
                                                             formatText={'5'}
                                                             indeterminate={false}
                                                             progress={0}
                                                             showsText={true}
                                                             size={timerWrapperHeight}
                                                             strokeCap={'round'}
-                                                            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(56),}}
+                                                            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(56),}}
                                                             thickness={5}
                                                             unfilledColor={AppColors.zeplin.superLight}
                                                         />
@@ -546,7 +546,7 @@ class TimedExercise extends PureComponent {
                                 null
                             }
                             <TabIcon
-                                color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.lightSlate}
+                                color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
                                 onPress={() => {
@@ -563,7 +563,7 @@ class TimedExercise extends PureComponent {
                     <Spacer size={10} />
                     {/* nextExercise ?
                         <View style={{alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'flex-end', marginBottom: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(12), paddingRight: AppSizes.paddingSml,}}>{`UP NEXT: ${nextExercise.displayName}`}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(12), paddingRight: AppSizes.paddingSml,}}>{`UP NEXT: ${nextExercise.displayName}`}</Text>
                             <Image
                                 resizeMode={'contain'}
                                 source={{uri: nextExercise.thumbnailUrl}}

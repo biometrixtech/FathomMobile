@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
         paddingTop:      AppSizes.paddingMed,
     },
     text: {
-        color:     AppColors.zeplin.yellow,
         fontSize:  AppFonts.scaleFont(11),
         marginTop: AppSizes.paddingXSml,
         textAlign: 'center',
@@ -57,9 +56,11 @@ const CustomTabBar = ({ navigation, plan }) => {
                         size={20}
                         type={'material-community'}
                     />
-                    <Text robotoRegular style={[styles.text,]}>
-                        {myPlanFocused ? 'Plan' : ' '}
-                    </Text>
+                    { myPlanFocused ?
+                        <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Plan'}</Text>
+                        :
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Plan'}</Text>
+                    }
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => Actions.trends()} style={{flex: 1,}}>
                     <TabIcon
@@ -69,9 +70,11 @@ const CustomTabBar = ({ navigation, plan }) => {
                         size={20}
                         type={'simple-line-icon'}
                     />
-                    <Text robotoRegular style={[styles.text,]}>
-                        {trendsFocused ? 'Trends' : ' '}
-                    </Text>
+                    { trendsFocused ?
+                        <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Trends'}</Text>
+                        :
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Trends'}</Text>
+                    }
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => Actions.settings()} style={{flex: 1,}}>
                     <TabIcon
@@ -80,9 +83,11 @@ const CustomTabBar = ({ navigation, plan }) => {
                         iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
                         size={20}
                     />
-                    <Text robotoRegular style={[styles.text,]}>
-                        {settingsFocused ? 'Settings' : ' '}
-                    </Text>
+                    { settingsFocused ?
+                        <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Settings'}</Text>
+                        :
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Settings'}</Text>
+                    }
                 </TouchableOpacity>
             </View>
             <View style={[styles.bottomSpacing,]} />

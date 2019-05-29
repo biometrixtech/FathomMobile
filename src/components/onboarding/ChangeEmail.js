@@ -74,7 +74,7 @@ class ChangeEmail extends Component {
         if(!this.state.isFormSuccessful) {
             return(
                 <View style={[styles.background,]}>
-                    <View style={{backgroundColor: AppColors.zeplin.shadow, height: 2, width: AppSizes.screen.width,}} />
+                    <View style={{backgroundColor: AppColors.zeplin.slateXLight, height: 2, width: AppSizes.screen.width,}} />
                     <View style={{flex: 9,}}>
                         <Spacer size={25} />
                         <Text
@@ -94,7 +94,7 @@ class ChangeEmail extends Component {
                         <Spacer size={25} />
                         <Text
                             robotoRegular
-                            style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}
+                            style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}
                         >
                             {'Your email will be used for login and account management.'}
                         </Text>
@@ -147,7 +147,7 @@ class ChangeEmail extends Component {
         }
         return(
             <View style={[styles.background,]}>
-                <View style={{backgroundColor: AppColors.zeplin.shadow, height: 2, width: AppSizes.screen.width,}} />
+                <View style={{backgroundColor: AppColors.zeplin.slateXLight, height: 2, width: AppSizes.screen.width,}} />
                 <View style={{width: AppSizes.screen.widthTwoThirds,}}>
                     <Spacer size={25} />
                     <Text
@@ -159,7 +159,7 @@ class ChangeEmail extends Component {
                     <Spacer size={25} />
                     <Text
                         robotoRegular
-                        style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}
+                        style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}
                     >
                         {'Check you inbox and spam folders for an email from Fathom. This may take a few minutes.'}
                     </Text>

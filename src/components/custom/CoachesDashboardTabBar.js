@@ -9,11 +9,11 @@ import { TabIcon, } from './';
 
 const styles = StyleSheet.create({
     pickerSelectAndroid: {
-        color: AppColors.zeplin.darkGrey,
+        color: AppColors.zeplin.navy,
     },
     pickerSelectIOS: {
         ...AppFonts.oswaldRegular,
-        color:    AppColors.zeplin.darkGrey,
+        color:    AppColors.zeplin.navy,
         fontSize: AppFonts.scaleFont(20),
     },
     tab: {
@@ -121,9 +121,9 @@ const CoachesDashboardTabBar = createReactClass({
                         <View style={{flex: 1,}} />
                         <View style={{flex: 8,}}>
                             { this.props.headerItems.coachesTeams.length === 0 ?
-                                <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, height: 38, width: AppSizes.screen.widthHalf,}} />
+                                <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, height: 38, width: AppSizes.screen.widthHalf,}} />
                                 : this.props.headerItems.coachesTeams.length === 1 ?
-                                    <FathomText oswaldRegular style={{alignSelf: 'center', color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(30),}}>
+                                    <FathomText oswaldRegular style={{alignSelf: 'center', color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(30),}}>
                                         {this.props.headerItems.selectedTeam.label.toUpperCase()}
                                     </FathomText>
                                     :
@@ -141,7 +141,7 @@ const CoachesDashboardTabBar = createReactClass({
                                             headlessAndroidContainer: [{alignItems: 'center', justifyContent: 'center',}],
                                             inputAndroid:             [styles.pickerSelectIOS, {textAlignVertical: 'center',}],
                                             inputIOS:                 [styles.pickerSelectIOS],
-                                            placeholderColor:         AppColors.zeplin.darkGrey,
+                                            placeholderColor:         AppColors.zeplin.navy,
                                             underline:                {borderTopColor: AppColors.white, borderTopWidth: 0,},
                                             viewContainer:            [{alignSelf: 'center',}],
                                         }}

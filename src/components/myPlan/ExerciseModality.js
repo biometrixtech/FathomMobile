@@ -223,7 +223,7 @@ class ExerciseModality extends Component {
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgba(130, 174, 185, 0.7)', 'rgba(130, 174, 185, 0.7)']}
+                                    colors={['rgba(130, 174, 185, 0.8)', 'rgba(130, 174, 185, 0.8)']}
                                     end={{x: 1, y: 0}}
                                     start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
@@ -300,7 +300,7 @@ class ExerciseModality extends Component {
                             {_.map(exerciseList.cleanedExerciseList, (exerciseIndex, key) =>
                                 exerciseIndex && exerciseIndex.length > 0 ?
                                     <View key={key}>
-                                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{key}</Text>
+                                        <Text robotoRegular style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginLeft: AppSizes.paddingMed,}]}>{key}</Text>
                                         {_.map(exerciseIndex, (exercise, i) =>
                                             <ExerciseListItem
                                                 completedExercises={completedExercises}
@@ -335,7 +335,7 @@ class ExerciseModality extends Component {
                                 />
                                 :
                                 <View style={{backgroundColorflex: 1, paddingHorizontal: AppSizes.paddingXLrg, paddingVertical: AppSizes.padding,}}>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Add at least one goal to receive your Mobilize.'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Add at least one goal to receive your Mobilize.'}</Text>
                                 </View>
                             }
                         </View>

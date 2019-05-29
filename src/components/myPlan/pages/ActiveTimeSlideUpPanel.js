@@ -50,18 +50,18 @@ class ActiveTimeSlideUpPanel extends Component {
                     <View style={{flex: 1, flexDirection: 'column',}}>
                         <View style={{flex: 1,}} />
                         <View style={{backgroundColor: AppColors.zeplin.superLight, paddingVertical: AppSizes.paddingSml,}}>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{'SELECT ACTIVE TIME'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{'SELECT ACTIVE TIME'}</Text>
                         </View>
                         <View style={{backgroundColor: AppColors.white, flex: 1, paddingVertical: AppSizes.padding,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>{`Please select how long you want your ${isRecover ? 'Active Recovery': 'Mobilize'} session to last.`}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>{`Please select how long you want your ${isRecover ? 'Active Recovery': 'Mobilize'} session to last.`}</Text>
                             <View style={{flex: 1, flexDirection: 'row', marginVertical: 0,}}>
                                 <WheelScrollPicker
-                                    activeItemColor={AppColors.zeplin.light}
-                                    activeItemHighlight={AppColors.zeplin.seaBlue}
+                                    activeItemColor={AppColors.zeplin.slateXLight}
+                                    activeItemHighlight={AppColors.zeplin.splash}
                                     dataSource={[' ', ' ', ' ', ' ', ' ', ' ']}
                                     highlightBorderWidth={2}
-                                    highlightColor={AppColors.zeplin.seaBlue}
-                                    itemColor={AppColors.zeplin.light}
+                                    highlightColor={AppColors.zeplin.splash}
+                                    itemColor={AppColors.zeplin.slateXLight}
                                     itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                                     scrollEnabled={false}
                                     selectedIndex={1}
@@ -71,13 +71,13 @@ class ActiveTimeSlideUpPanel extends Component {
                                     wrapperHeight={180}
                                 />
                                 <WheelScrollPicker
-                                    activeItemColor={AppColors.zeplin.light}
-                                    activeItemHighlight={AppColors.zeplin.seaBlue}
+                                    activeItemColor={AppColors.zeplin.slateXLight}
+                                    activeItemHighlight={AppColors.zeplin.splash}
                                     addRecommendedTextAtIndex={2}
                                     dataSource={MyPlanConstants.selectedActiveTimes().timeLabels}
                                     highlightBorderWidth={2}
-                                    highlightColor={AppColors.zeplin.seaBlue}
-                                    itemColor={AppColors.zeplin.light}
+                                    highlightColor={AppColors.zeplin.splash}
+                                    itemColor={AppColors.zeplin.slateXLight}
                                     itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                                     scrollEnabled={true}
                                     selectedIndex={selectedActiveTime}
@@ -87,12 +87,12 @@ class ActiveTimeSlideUpPanel extends Component {
                                     wrapperHeight={180}
                                 />
                                 <WheelScrollPicker
-                                    activeItemColor={AppColors.zeplin.light}
-                                    activeItemHighlight={AppColors.zeplin.seaBlue}
+                                    activeItemColor={AppColors.zeplin.slateXLight}
+                                    activeItemHighlight={AppColors.zeplin.splash}
                                     dataSource={[' ', ' ', ' ', ' ', ' ', ' ']}
                                     highlightBorderWidth={2}
-                                    highlightColor={AppColors.zeplin.seaBlue}
-                                    itemColor={AppColors.zeplin.light}
+                                    highlightColor={AppColors.zeplin.splash}
+                                    itemColor={AppColors.zeplin.slateXLight}
                                     itemHeight={AppFonts.scaleFont(18) + AppSizes.padding}
                                     scrollEnabled={false}
                                     selectedIndex={1}

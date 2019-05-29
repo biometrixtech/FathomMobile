@@ -150,7 +150,7 @@ class Exercises extends PureComponent {
                     <Spacer size={5} />
                     <TabIcon
                         containerStyle={[{right: 10, position: 'absolute', top: 10, width: 26, zIndex: 100,}]}
-                        color={AppColors.zeplin.lightSlate}
+                        color={AppColors.zeplin.slateXLightSlate}
                         icon={'close'}
                         onPress={() => {clearInterval(this.state.timer); closeModal();}}
                         raised={false}

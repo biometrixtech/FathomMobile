@@ -61,14 +61,14 @@ class AccountDetails extends Component {
                         <Spacer size={15} />
                         <Text
                             robotoRegular
-                            style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}
+                            style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}]}
                         >
                             {`You\'re linked to a basic subscription\npayed by ${buyerName}.`}
                         </Text>
                     </View>
                     <View style={{flex: 4, justifyContent: 'center',}}>
                         <TabIcon
-                            color={isEmailVerified ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                            color={isEmailVerified ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightGrey}
                             icon={'arrow-right-circle'}
                             onPress={() => isEmailVerified ? AppUtil.routeOnLogin(this.props.user) : null}
                             size={44}
@@ -80,7 +80,7 @@ class AccountDetails extends Component {
                             :
                             <Text
                                 robotoMedium
-                                style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15),}]}
+                                style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}
                             >
                                 {'Verify your email before\ncontinuing to onboarding.'}
                             </Text>

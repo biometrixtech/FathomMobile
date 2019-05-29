@@ -39,12 +39,12 @@ class ExerciseListItem extends Component {
             :
             `${exercise.library_id}-${exercise.set_number}`;
         return(
-            <View style={[{borderTopColor: AppColors.zeplin.lightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
+            <View style={[{borderTopColor: AppColors.zeplin.slateXLightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
                     <TabIcon
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}
                         icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                        iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.xLightSlate,}]}
+                        iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,}]}
                         onPress={() => handleCompleteExercise(exercise.library_id, exercise.set_number)}
                         reverse={false}
                         size={26}
@@ -68,7 +68,7 @@ class ExerciseListItem extends Component {
                         <Text
                             oswaldMedium
                             style={{
-                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.darkSlate,
+                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slate,
                                 flexWrap: 'wrap',
                                 fontSize: AppFonts.scaleFont(16),
                             }}

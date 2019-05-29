@@ -189,9 +189,9 @@ class Root extends Component {
                                 />
                             </View>
                             <View style={{padding: AppSizes.padding,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(35), textAlign: 'center',}}>{'UH OH!'}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(35), textAlign: 'center',}}>{'UH OH!'}</Text>
                                 <Spacer size={AppSizes.padding} />
-                                <Text robotoLight style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
                                     {
                                         this.state.hasError ?
                                             'We\'ve encountered an error. Please restart the app and try again.'

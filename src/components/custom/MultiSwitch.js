@@ -217,7 +217,7 @@ export default class MultiSwitch extends Component {
                             onPress={() => this._onStatusChanged(index)}
                             style={styles.buttonStyle}
                         >
-                            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
                         </TouchableOpacity>
                     )}
                 </View>

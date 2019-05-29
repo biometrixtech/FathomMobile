@@ -65,7 +65,7 @@ const ScaleButton = ({
                     style={[
                         AppStyles.textCenterAligned,
                         {
-                            color:    isSelected ? AppColors.white : AppColors.zeplin.darkSlate,
+                            color:    isSelected ? AppColors.white : AppColors.zeplin.slate,
                             fontSize: AppFonts.scaleFont(18),
                         }
                     ]}
@@ -75,8 +75,8 @@ const ScaleButton = ({
             </TouchableHighlight>
         </View>
         <View style={[customStyles.textWrapper,]}>
-            <Text oswaldMedium style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15),}}>{scale.label}</Text>
-            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(11),}}>{scale.subtitle}</Text>
+            <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{scale.label}</Text>
+            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{scale.subtitle}</Text>
         </View>
     </View>
 );

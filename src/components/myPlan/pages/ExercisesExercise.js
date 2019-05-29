@@ -42,7 +42,7 @@ const ExercisesExercise = ({
                 </View>
                 <View style={{flex: 1,}}>
                     <TabIcon
-                        color={AppColors.zeplin.lightSlate}
+                        color={AppColors.zeplin.slateXLightSlate}
                         icon={'help'}
                         reverse={false}
                         type={'material'}
@@ -55,7 +55,7 @@ const ExercisesExercise = ({
                     <View>
                         { areAllTimersCompleted ?
                             <TabIcon
-                                color={AppColors.zeplin.lightSlate}
+                                color={AppColors.zeplin.slateXLightSlate}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={'restore'}
                                 reverse={false}
@@ -64,7 +64,7 @@ const ExercisesExercise = ({
                             />
                             :
                             <TabIcon
-                                color={AppColors.zeplin.lightSlate}
+                                color={AppColors.zeplin.slateXLightSlate}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={'play-arrow'}
                                 reverse={false}
@@ -79,19 +79,19 @@ const ExercisesExercise = ({
                 { exerciseTimer ?
                     <View>
                         { areAllTimersCompleted ?
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(56),}}>{'00:00'}</Text>
                             :
                             <ProgressCircle
                                 animated={true}
                                 borderWidth={0}
-                                color={AppColors.zeplin.seaBlue}
+                                color={AppColors.zeplin.splash}
                                 formatText={'5'}
                                 indeterminate={false}
                                 progress={0}
                                 showsText={true}
                                 size={timerWrapperHeight}
                                 strokeCap={'round'}
-                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(56),}}
+                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(56),}}
                                 thickness={5}
                                 unfilledColor={AppColors.zeplin.superLight}
                             />
@@ -102,7 +102,7 @@ const ExercisesExercise = ({
                 }
                 <View>
                     <TabIcon
-                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.lightSlate}
+                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate}
                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                         icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
                         reverse={false}

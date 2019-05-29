@@ -34,7 +34,7 @@ import { JoinATeamModal, } from './pages';
 const SettingsNavBar = () => (
     <View>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.xLightSlate, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
+        <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
             <View style={{flex: 1, justifyContent: 'center',}} />
             <View style={{flex: 8, justifyContent: 'center',}}>
                 <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>

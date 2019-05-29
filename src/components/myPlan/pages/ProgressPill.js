@@ -23,7 +23,7 @@ const progressPillHeight = AppSizes.progressPillsHeight;
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     mainWrapper: {
-        backgroundColor: AppColors.zeplin.progressPillBackground,
+        backgroundColor: AppColors.zeplin.superLight,
         height:          (progressPillHeight + AppSizes.statusBarHeight),
     },
     progressPill: {
@@ -77,7 +77,7 @@ const ProgressPill = ({
                     { onBack ?
                         <TabIcon
                             containerStyle={[{paddingLeft: AppSizes.paddingMed,}]}
-                            color={AppColors.zeplin.blueGrey}
+                            color={AppColors.zeplin.slate}
                             icon={'arrow-left'}
                             onPress={() => onBack()}
                             raised={false}
@@ -94,7 +94,7 @@ const ProgressPill = ({
                     { onClose ?
                         <TabIcon
                             containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                            color={AppColors.zeplin.blueGrey}
+                            color={AppColors.zeplin.slate}
                             icon={'close'}
                             onPress={() => onClose()}
                             raised={false}
@@ -103,7 +103,7 @@ const ProgressPill = ({
                         : onNext ?
                             <TabIcon
                                 containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
-                                color={AppColors.zeplin.blueGrey}
+                                color={AppColors.zeplin.slate}
                                 icon={'arrow-right'}
                                 onPress={() => onNext()}
                                 raised={false}

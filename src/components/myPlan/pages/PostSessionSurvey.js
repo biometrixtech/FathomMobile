@@ -295,7 +295,7 @@ class PostSessionSurvey extends Component {
                             totalSteps={3}
                         />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>{'Will you train later today?'}</Text>
                             <Spacer size={20} />
                             <View
                                 style={{
@@ -326,7 +326,7 @@ class PostSessionSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    postSession.sessions_planned === false ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    postSession.sessions_planned === false ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}
@@ -357,7 +357,7 @@ class PostSessionSurvey extends Component {
                                         style={[
                                             AppStyles.textCenterAligned,
                                             {
-                                                color:    postSession.sessions_planned === true ? AppColors.white : AppColors.zeplin.blueGrey,
+                                                color:    postSession.sessions_planned === true ? AppColors.white : AppColors.zeplin.slate,
                                                 fontSize: AppFonts.scaleFont(27),
                                             }
                                         ]}

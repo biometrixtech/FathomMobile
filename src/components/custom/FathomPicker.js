@@ -411,7 +411,7 @@ export default class RNPickerSelect extends PureComponent {
         return <TabIcon
             containerStyle={[AppStyles.containerCentered,]}
             icon={'chevron-down'}
-            iconStyle={[{color: AppColors.zeplin.darkGrey}]}
+            iconStyle={[{color: AppColors.zeplin.navy}]}
             reverse={false}
             type={'material-community'}
         />;

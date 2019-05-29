@@ -28,7 +28,7 @@ import { onboardingUtils, } from '../../../constants/utils';
 const styles = StyleSheet.create({
     inputLabel: {
         ...AppFonts.robotoRegular,
-        color:       AppColors.zeplin.lightSlate,
+        color:       AppColors.zeplin.slateXLightSlate,
         fontSize:    AppFonts.scaleFont(11),
         paddingLeft: AppSizes.paddingSml,
         paddingTop:  AppSizes.paddingSml,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     },
     rightItem: {
         borderLeftWidth: 1,
-        borderLeftColor: AppColors.zeplin.light,
+        borderLeftColor: AppColors.zeplin.slateXLight,
         flex:            1,
     },
 });
@@ -77,7 +77,7 @@ class UserAccountInfo extends Component {
         /*eslint no-return-assign: 0*/
         return(
             <View>
-                <View style={{borderTopColor: AppColors.zeplin.light, borderTopWidth: 1, flexDirection: 'row',}}>
+                <View style={{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1, flexDirection: 'row',}}>
                     <View style={[styles.leftItem,]}>
                         <FormInput
                             blurOnSubmit={false}
@@ -89,7 +89,7 @@ class UserAccountInfo extends Component {
                             onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => this.focusNextField('last_name')}
                             placeholder={'First name'}
-                            placeholderTextColor={AppColors.zeplin.lightSlate}
+                            placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                             returnKeyType={'next'}
                             value={user.personal_data.first_name}
                         />
@@ -105,7 +105,7 @@ class UserAccountInfo extends Component {
                             onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => isUpdatingUser ? setAccordionSection(0, 1) : this.focusNextField('email')}
                             placeholder={'Last name'}
-                            placeholderTextColor={AppColors.zeplin.lightSlate}
+                            placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                             returnKeyType={'next'}
                             value={user.personal_data.last_name}
                         />
@@ -126,7 +126,7 @@ class UserAccountInfo extends Component {
                             onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => this.focusNextField('password')}
                             placeholder={'E-mail address'}
-                            placeholderTextColor={AppColors.zeplin.lightSlate}
+                            placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                             returnKeyType={'next'}
                             value={user.personal_data.email}
                         />
@@ -134,7 +134,7 @@ class UserAccountInfo extends Component {
                             blurOnSubmit={true}
                             containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
                             errorMessage={showPasswordErrorText ? '8+ characters, 1 number' : ''}
-                            errorStyle={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(13), paddingLeft: AppSizes.paddingXSml,}}
+                            errorStyle={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(13), paddingLeft: AppSizes.paddingXSml,}}
                             inputRef={ref => this.inputs.password = ref}
                             label={user.password.length > 0 ? 'Password' : ' '}
                             labelStyle={[styles.inputLabel]}
@@ -146,12 +146,12 @@ class UserAccountInfo extends Component {
                             }}
                             onSubmitEditing={() => this.focusNextField('confirm_password')}
                             placeholder={'Password'}
-                            placeholderTextColor={AppColors.zeplin.lightSlate}
+                            placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                             returnKeyType={'next'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
-                                        color={AppColors.zeplin.lightSlate}
+                                        color={AppColors.zeplin.slateXLightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
                                         icon={isPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword()}
@@ -163,7 +163,7 @@ class UserAccountInfo extends Component {
                                                 onboardingUtils.isPasswordValid(user.password).isValid ?
                                                     AppColors.zeplin.success
                                                     :
-                                                    AppColors.zeplin.coachesDashError
+                                                    AppColors.zeplin.error
                                                 :
                                                 AppColors.white
                                         }
@@ -186,12 +186,12 @@ class UserAccountInfo extends Component {
                             onFocus={event => scrollToInput(findNodeHandle(event.target))}
                             onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
                             placeholder={'Confirm password'}
-                            placeholderTextColor={AppColors.zeplin.lightSlate}
+                            placeholderTextColor={AppColors.zeplin.slateXLightSlate}
                             returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
-                                        color={AppColors.zeplin.lightSlate}
+                                        color={AppColors.zeplin.slateXLightSlate}
                                         containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
                                         icon={isConfirmPasswordSecure ? 'visibility-off' : 'visibility'}
                                         onPress={() => toggleShowPassword(true)}
@@ -205,7 +205,7 @@ class UserAccountInfo extends Component {
                                                 user.password === user.confirm_password ?
                                                     AppColors.zeplin.success
                                                     :
-                                                    AppColors.zeplin.coachesDashError
+                                                    AppColors.zeplin.error
                                                 :
                                                 AppColors.white
                                         }

@@ -50,7 +50,7 @@ const TopNav = ({ currentStep, title, totalSteps, }) => (
             <View style={{flex: 1,}}>
                 {/*<TabIcon
                     containerStyle={[{flex: 1,}]}
-                    color={AppColors.zeplin.lightSlate}
+                    color={AppColors.zeplin.slateXLightSlate}
                     icon={workout.deleted ? 'add' : 'close'}
                     onPress={() => handleHealthDataFormChange(!workout.deleted)}
                     reverse={false}
@@ -295,7 +295,7 @@ class BluetoothConnect3Sensor extends Component {
                     startPage={pageIndex}
                 >
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.seaBlue, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now Let\'s Pair Your Power Case!'}</Text>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
@@ -312,8 +312,8 @@ class BluetoothConnect3Sensor extends Component {
                             title={'PAIR YOU SENSORS'}
                             totalSteps={5}
                         />
-                        <Text robotoRegular style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Hold The Button Until The LED Turns Blue'}</Text>
-                        <Text robotoRegular style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Hold The Button Until The LED Turns Blue'}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
                             {'Note: Once connected, your sensors will only sync with '}
                             <Text robotoRegular style={{fontStyle: 'italic',}}>{'this user account.'}</Text>
                         </Text>
@@ -332,7 +332,7 @@ class BluetoothConnect3Sensor extends Component {
                             title={'PAIR YOU SENSORS'}
                             totalSteps={5}
                         />
-                        <Text robotoRegular style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Touch Your Phone To The Base to Pair'}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Touch Your Phone To The Base to Pair'}</Text>
                         { bluetooth.devicesFound && bluetooth.devicesFound.length > 0 &&
                             _.map(bluetooth.devicesFound, (data, i) =>
                                 <Text key={i} onPress={() => this._connect(data)}>{`${data.name} ${data.id} ${data.rssi}`}</Text>
@@ -340,7 +340,7 @@ class BluetoothConnect3Sensor extends Component {
                         }
                     </View>
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.seaBlue, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Pairing successful!'}</Text>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
@@ -351,7 +351,7 @@ class BluetoothConnect3Sensor extends Component {
                         />
                     </View>
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.seaBlue, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now let\'s connect wifi.'}</Text>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Your sensors will need wifi to upload data after training. On the next screen add your home network and any wifi networks you typically use right after training.'}</Text>
                         <Button
@@ -371,7 +371,7 @@ class BluetoothConnect3Sensor extends Component {
                         />
                         {/* currentWifiConnection && currentWifiConnection.ssid &&
                             <View style={{flex: 1,}}>
-                                <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, paddingBottom: 0, textAlign: 'center',}}>
+                                <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, paddingBottom: 0, textAlign: 'center',}}>
                                     {`Current Wifi Connection: ${currentWifiConnection.ssid} ${currentWifiConnection.frequency ? currentWifiConnection.frequency : ''}`}
                                 </Text>
                                 <FormInput
@@ -398,11 +398,11 @@ class BluetoothConnect3Sensor extends Component {
                                 />
                             </View>
                         }*/}
-                        <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select a network you commonly use after training.'}</Text>
+                        <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select a network you commonly use after training.'}</Text>
                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
                             <Text
                                 robotoBold
-                                style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
+                                style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                             >
                                 {'Networks In Range'}
                             </Text>
@@ -418,7 +418,7 @@ class BluetoothConnect3Sensor extends Component {
                                             key={i}
                                             onPress={() => this.setState({ currentWifiConnection: network, isDialogVisible: true, })}
                                             title={network.ssid}
-                                            titleStyle={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                                            titleStyle={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                                         />
                                     )}
                                 </ScrollView>
@@ -432,7 +432,7 @@ class BluetoothConnect3Sensor extends Component {
                                     </View>
                                     :
                                     <View style={{flex: 1, padding: AppSizes.padding,}}>
-                                        <Text robotoBold style={{color: AppColors.zeplin.darkGrey, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>{'No available broadcasting networks are compatible with our sensor.'}</Text>
+                                        <Text robotoBold style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>{'No available broadcasting networks are compatible with our sensor.'}</Text>
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
                                             containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
@@ -454,7 +454,7 @@ class BluetoothConnect3Sensor extends Component {
                         </View>
                     </View>
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.seaBlue, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'You\'re now ready to use the system!'}</Text>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}

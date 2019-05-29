@@ -67,7 +67,7 @@ class GoalPill extends Component {
                     <Text
                         robotoBold
                         style={{
-                            color:        isSelected ? AppColors.zeplin.darkSlate : AppColors.white,
+                            color:        isSelected ? AppColors.zeplin.slate : AppColors.white,
                             fontSize:     AppFonts.scaleFont(14),
                             paddingRight: AppSizes.paddingSml,
                         }}
@@ -76,7 +76,7 @@ class GoalPill extends Component {
                     </Text>
                     <Animated.View style={[animatedStyle,]}>
                         <TabIcon
-                            color={isSelected ? AppColors.zeplin.darkSlate : AppColors.white}
+                            color={isSelected ? AppColors.zeplin.slate : AppColors.white}
                             icon={'add'}
                             size={AppFonts.scaleFont(20)}
                         />

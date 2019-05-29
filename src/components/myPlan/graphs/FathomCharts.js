@@ -34,27 +34,22 @@ const styles = StyleSheet.create({
         width:        10,
     },
     label: {
-        color:        AppColors.zeplin.darkSlate,
+        color:        AppColors.zeplin.slate,
         fontSize:     AppFonts.scaleFont(11),
         marginBottom: AppSizes.paddingXSml,
     },
     xyAxisWrapper: {
-        // bottom:         0,
-        // height:         300,
-        // justifyContent: 'center',
-        // position:       'absolute',
-        // top:            0,
-        // width:          AppFonts.scaleFont(12),
+        alignItems:     'center',
+        bottom:         0,
+        justifyContent: 'center',
+        position:       'absolute',
+        top:            0,
+        width:          AppFonts.scaleFont(20),
     },
     yAxis: {
-        bottom:    0,
         color:     AppColors.zeplin.slate,
         fontSize:  AppFonts.scaleFont(10),
-        height:    AppFonts.scaleFont(12),
-        left:      0,
-        position:  'absolute',
         textAlign: 'center',
-        top:       0,
         width:     300,
     },
 });
@@ -64,14 +59,17 @@ class XAxisLabels extends PureComponent {
     render = () => {
         const { data, datum, x, y, } = this.props;
         const currentData = data[(datum - 1)];
+        if(!currentData) {
+            return (null);
+        }
         return (
-            <View style={{position: 'absolute', top: y, left: (x - this.props.style.padding),}}>
+            <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
                     {currentData.x}
                 </Text>
                 { currentData.hasMultipleSports ?
                     <TabIcon
-                        color={AppColors.zeplin.light}
+                        color={AppColors.zeplin.slateXLight}
                         icon={'checkbox-multiple-marked-circle'}
                         size={15}
                         type={'material-community'}
@@ -79,7 +77,7 @@ class XAxisLabels extends PureComponent {
                     : currentData.filteredSport ?
                         <Image
                             source={currentData.filteredSport.imagePath}
-                            style={{height: 15, tintColor: AppColors.zeplin.light, width: 15,}}
+                            style={{height: 15, tintColor: AppColors.zeplin.slateXLight, width: 15,}}
                         />
                         :
                         <View />
@@ -110,34 +108,29 @@ class FathomCharts extends PureComponent {
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
-        console.log('updatedBarData',updatedBarData);
-        console.log('lineChartData',lineChartData);
-        console.log('currentAlert',currentAlert,currentAlert.visualization_type);
+        // console.log('updatedBarData',updatedBarData);
+        // console.log('lineChartData',lineChartData);
+        // console.log('currentAlert',currentAlert,currentAlert.visualization_type);
         return (
-            <View
-                pointerEvents={'none'}
-                // style={{backgroundColor: 'red',}}
-            >
+            <View pointerEvents={'none'}>
 
-                {/* hasLeftAxis &&
-                    <View style={[styles.xyAxisWrapper, {backgroundColor: 'blue', left: 0,}]}>
-                        <Text robotoRegular style={[styles.yAxis, {backgroundColor: 'red', transform: [{ rotate: '-90deg'}],}]}>
+                { hasLeftAxis &&
+                    <View style={[styles.xyAxisWrapper, {left: 0,}]}>
+                        <Text robotoRegular style={[styles.yAxis, {transform: [{ rotate: '-90deg'}],}]}>
                             {_.toLower(currentAlert.visualization_data.y_axis_1)}
                         </Text>
                     </View>
-                */}
+                }
+
 
                 <V.VictoryChart
-                    animate={{
-                        duration: 150,
-                        onLoad:   { duration: 150, },
-                    }}
+                    animate={{ duration: 300, }}
                     // containerComponent={
                     //     <V.VictoryBrushContainer
                     //         allowDrag={false}
                     //         allowResize={false}
                     //         brushDimension={'x'}
-                    //         brushDomain={{ x: currentAlert.visualization_type === 4 ? [3.5, 4.5] : [5.5, 6.5], }}
+                    //         brushDomain={{ x: currentAlert.visualization_type === 4 ? [3.5, 4.5] : [6.5, 7.5], }}
                     //         brushStyle={{ fill: AppColors.zeplin.superLight, fillOpacity: 0.75, }}
                     //     />
                     // }
@@ -151,50 +144,6 @@ class FathomCharts extends PureComponent {
                     //     },
                     // }}
                 >
-
-                    {/* visualization_type 1 - always show the bar graph. will autofill for visualization_type 2. */}
-                    <V.VictoryBar
-                        cornerRadius={{ bottom: (AppSizes.padding / 2), top: (AppSizes.padding / 2), }}
-                        data={updatedBarData}
-                        style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.light : d.fillColor, width: AppSizes.padding, }, }}
-                    />
-
-                    { (currentAlert.visualization_type === 3 || currentAlert.visualization_type === 4) &&
-                        <V.VictoryGroup>
-                            <V.VictoryLine
-                                // animate={{ easing: '', }}
-                                data={lineChartData}
-                                interpolation={'monotoneX'}
-                                style={currentAlert.visualization_type === 3 ?
-                                    { data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 5, }, }
-                                    :
-                                    { data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, } }
-                                }
-                            />
-                            <V.VictoryScatter
-                                // animate={{ easing: '', }}
-                                data={lineChartData}
-                                size={5}
-                                style={{ data: { fill: lineChartColor, }, }}
-                            />
-                        </V.VictoryGroup>
-                    }
-
-                    { currentAlert.visualization_type === 5 &&
-                        <V.VictoryScatter
-                            data={lineChartData}
-                            labelComponent={
-                                <V.VictoryLabel
-                                    dy={AppFonts.scaleFont(14)}
-                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(11), fontWeight: 'regular', }}
-                                    text={datum => datum.y}
-                                />
-                            }
-                            labels={datum => datum.y}
-                            size={14}
-                            style={{ data: { fill: d => d.fillColor, }, }}
-                        />
-                    }
 
                     {/* Y-Axis */}
                     <V.VictoryAxis
@@ -230,34 +179,58 @@ class FathomCharts extends PureComponent {
                         tickLabelComponent={<XAxisLabels data={updatedBarData} />}
                     />
 
-                    {/* hasLeftAxis &&
-                        <V.VictoryLabel
-                            style={{fill: AppColors.zeplin.slate, fontFamily: 'roboto', fontSize: AppFonts.scaleFont(10),}}
-                            text={_.toLower(currentAlert.visualization_data.y_axis_1)}
-                            x={AppSizes.padding}
-                            y={AppSizes.padding}
+                    {/* visualization_type 1 - always show the bar graph. will autofill for visualization_type 2. */}
+                    <V.VictoryBar
+                        animate={false}
+                        cornerRadius={{ bottom: (AppSizes.padding / 2), top: (AppSizes.padding / 2), }}
+                        data={updatedBarData}
+                        style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.slateXLight : d.fillColor, width: AppSizes.padding, }, }}
+                    />
+
+                    { (currentAlert.visualization_type === 3 || currentAlert.visualization_type === 4) &&
+                        <V.VictoryGroup>
+                            <V.VictoryLine
+                                data={lineChartData}
+                                interpolation={'monotoneX'}
+                                style={currentAlert.visualization_type === 3 ?
+                                    { data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 5, }, }
+                                    :
+                                    { data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, } }
+                                }
+                            />
+                            <V.VictoryScatter
+                                data={lineChartData}
+                                size={5}
+                                style={{ data: { fill: lineChartColor, }, }}
+                            />
+                        </V.VictoryGroup>
+                    }
+
+                    { currentAlert.visualization_type === 5 &&
+                        <V.VictoryScatter
+                            data={lineChartData}
+                            labelComponent={
+                                <V.VictoryLabel
+                                    dy={AppFonts.scaleFont(14)}
+                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(11), fontWeight: 'regular', }}
+                                    text={datum => datum.displayValue}
+                                />
+                            }
+                            labels={datum => datum.y}
+                            size={14}
+                            style={{ data: { fill: d => d.fillColor, }, }}
                         />
                     }
 
-                    { hasRightAxis &&
-                        <V.VictoryLabel
-                            style={{fill: AppColors.zeplin.slate, fontFamily: 'roboto', fontSize: AppFonts.scaleFont(10),}}
-                            text={_.toLower(currentAlert.visualization_data.y_axis_2)}
-                            textAnchor={'end'}
-                            x={(AppSizes.screen.width - (AppSizes.padding * 2))}
-                            y={AppSizes.padding}
-                        />
-                    */}
-
                 </V.VictoryChart>
 
-                {/* hasRightAxis &&
-                    <View style={[styles.xyAxisWrapper, {backgroundColor: 'blue', right: 0,}]}>
-                        <Text robotoRegular style={[styles.yAxis, {backgroundColor: 'red', transform: [{ rotate: '90deg'}],}]}>
+                { hasRightAxis &&
+                    <View style={[styles.xyAxisWrapper, {right: 0,}]}>
+                        <Text robotoRegular style={[styles.yAxis, {transform: [{ rotate: '90deg'}],}]}>
                             {_.toLower(currentAlert.visualization_data.y_axis_2)}
                         </Text>
                     </View>
-                */}
+                }
 
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
                     { currentAlert.visualization_data &&
@@ -272,15 +245,15 @@ class FathomCharts extends PureComponent {
                                     ]}
                                 >
                                     { legend.type === 0 ?
-                                        <View style={[styles.keyCircle, { backgroundColor: legend.color === 0 ? AppColors.zeplin.success : legend.color === 1 ? AppColors.zeplin.yellow : legend.color === 2 ? AppColors.zeplin.error : AppColors.zeplin.slate, }]} />
+                                        <View style={[styles.keyCircle, { backgroundColor: legend.color === 0 ? AppColors.zeplin.successLight : legend.color === 1 ? AppColors.zeplin.warningLight : legend.color === 2 ? AppColors.zeplin.errorLight : AppColors.zeplin.slateXLight, }]} />
                                         : legend.type === 1 ?
                                             null
                                             : legend.type === 2 ?
-                                                <Dash dashColor={legend.color === 0 ? AppColors.zeplin.success : legend.color === 1 ? AppColors.zeplin.yellow : legend.color === 2 ? AppColors.zeplin.error : AppColors.zeplin.slate} style={{marginRight: AppSizes.paddingSml, width: '10%',}} />
+                                                <Dash dashColor={legend.color === 0 ? AppColors.zeplin.successLight : legend.color === 1 ? AppColors.zeplin.warningLight : legend.color === 2 ? AppColors.zeplin.errorLight : AppColors.zeplin.slateXLight} style={{marginRight: AppSizes.paddingSml, width: '10%',}} />
                                                 :
                                                 null
                                     }
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{_.toLower(legend.text)}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{_.toLower(legend.text)}</Text>
                                 </View>
                             );
                         })

@@ -35,7 +35,7 @@ class FormInput extends Component {
             ...this.props,
             selectionColor: AppColors.zeplin.yellow,
             containerStyle: [{
-                borderBottomColor: AppColors.zeplin.light,
+                borderBottomColor: AppColors.zeplin.slateXLight,
                 borderBottomWidth: 1,
                 backgroundColor:   AppColors.transparent,
                 marginLeft:        20,

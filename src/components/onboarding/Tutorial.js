@@ -33,9 +33,9 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeDotStyle:  {backgroundColor: AppColors.zeplin.darkGrey,},
-            buttonTextStyle: {color: AppColors.zeplin.darkGrey,},
-            dotStyle:        {backgroundColor: AppColors.zeplin.lightGrey,},
+            activeDotStyle:  {backgroundColor: AppColors.zeplin.navy,},
+            buttonTextStyle: {color: AppColors.zeplin.navy,},
+            dotStyle:        {backgroundColor: AppColors.zeplin.slateXLightGrey,},
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
             uniqueValue:     0,
@@ -96,7 +96,7 @@ class Tutorial extends Component {
     _onSlideChange = (index, lastIndex, slides) => {
         this._handleVideoPlayback(index, lastIndex, slides);
         let newButtonTextStyle = slides[index].buttonTextStyle;
-        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.darkGrey,}, });
+        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.navy,}, });
     }
 
     _handleVideoPlayback = (index, lastIndex, slides) => {
@@ -186,7 +186,7 @@ class Tutorial extends Component {
                             <Spacer size={props.title && props.title.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
-                                style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
+                                style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
                             >
                                 {props.text}
                             </Text>
@@ -199,7 +199,7 @@ class Tutorial extends Component {
                             <Spacer size={props.text && props.text.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
-                                style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
+                                style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
                             >
                                 {props.subtext}
                             </Text>

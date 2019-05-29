@@ -58,28 +58,28 @@ const TooltipContent = ({ handleTooltipClose, }) => (
     <View style={{padding: AppSizes.paddingSml,}}>
         <View>
             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your Recovery Efficiency Score'}</Text>
-            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.padding,}}>{'Your RES measures your training sustainability by estimating if your tissues are accumulating micro-damage overtime in response to training.\n\nTo increase your score, increase your rate of recovery by engaging in more Fathom Recovery activities or decrease your training volume.'}</Text>
+            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.padding,}}>{'Your RES measures your training sustainability by estimating if your tissues are accumulating micro-damage overtime in response to training.\n\nTo increase your score, increase your rate of recovery by engaging in more Fathom Recovery activities or decrease your training volume.'}</Text>
             <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
-                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.success, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.successLight, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
                     <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'50-100'}</Text>
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Your recovery and training balance are sustainable'}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Your recovery and training balance are sustainable'}</Text>
             </View>
             <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
-                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.warningLight, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
                     <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'25-49'}</Text>
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a high priority to restore balance'}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a high priority to restore balance'}</Text>
             </View>
             <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: AppSizes.padding,}}>
-                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.error, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.errorLight, borderRadius: 6, height: '100%', justifyContent: 'center', marginRight: AppSizes.paddingSml, width: '20%',}}>
                     <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(14),}}>{'0-24'}</Text>
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.darkSlate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a higher priority than your training'}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{'Recovery should be a higher priority than your training'}</Text>
             </View>
         </View>
         <TouchableOpacity onPress={handleTooltipClose} style={{alignSelf: 'flex-end',}}>
-            <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(22),}}>
+            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}}>
                 {'GOT IT'}
             </Text>
         </TouchableOpacity>
@@ -149,7 +149,7 @@ class TrendChild extends PureComponent {
                             />
                         </TouchableOpacity>
                         <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
-                            <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(28),}}>
+                            <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28),}}>
                                 {_.toUpper(insightTitle)}
                             </Text>
                             { currentAlertText && currentAlert.visualization_type === 5 ?
@@ -170,7 +170,7 @@ class TrendChild extends PureComponent {
                                     <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                         {currentAlertText}
                                         <TabIcon
-                                            color={isToolTipOpen ? AppColors.white : AppColors.zeplin.light}
+                                            color={isToolTipOpen ? AppColors.white : AppColors.zeplin.slateXLight}
                                             containerStyle={[{marginLeft: AppSizes.paddingSml,}]}
                                             icon={'help-circle'}
                                             onPress={() => this.setState({ isToolTipOpen: true, },)}
@@ -205,17 +205,18 @@ class TrendChild extends PureComponent {
                             shouldNavigate={false}
                             showDate={false}
                             startIndex={currentCardIndex}
+                            verticalSwipe={false}
                         />
                     </View>
 
                     <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>
-                        <Text oswaldRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(18),}}>
+                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
                             {'OPTIMAL ROUTINE'}
                         </Text>
                         { insightDetails.cta.length === 0 ?
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginTop: AppSizes.paddingSml,}}>{'Add an activity on My Plan'}</Text>
                             :
-                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
                                 {'In order to '}
                                 <Text robotoBold>
                                     {insightDetails.goals.join(', ')}

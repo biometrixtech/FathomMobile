@@ -147,7 +147,7 @@ class ExerciseCompletionModal extends Component {
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
-                        colors={[AppColors.zeplin.lightNavy, AppColors.zeplin.darkBlue, AppColors.zeplin.darkNavy, AppColors.black]}
+                        colors={[AppColors.zeplin.slateXLightNavy, AppColors.zeplin.navy, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}
@@ -182,18 +182,18 @@ class ExerciseCompletionModal extends Component {
                                                     right:          0,
                                                     top:            0,
                                                 }}
-                                                color={isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success}
+                                                color={isFS ? AppColors.zeplin.splash : AppColors.zeplin.success}
                                                 indeterminate={false}
                                                 progress={progressCounters[group]}
                                                 showsText={false}
                                                 size={(sessionIconWidth - AppSizes.paddingLrg)}
                                                 strokeCap={'round'}
-                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
+                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
                                             />
                                             <Spacer size={AppSizes.paddingSml} />
-                                            <Text oswaldMedium style={{color: isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success, fontSize: AppFonts.scaleFont(13),}}>
+                                            <Text oswaldMedium style={{color: isFS ? AppColors.zeplin.splash : AppColors.zeplin.success, fontSize: AppFonts.scaleFont(13),}}>
                                                 {group}
                                             </Text>
                                         </View>

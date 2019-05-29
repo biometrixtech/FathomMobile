@@ -231,7 +231,7 @@ class SportScheduleBuilder extends Component {
                     <View>
                         <View style={[typicalSessions.length > 0 ? {height: (AppSizes.screen.height - pillsHeight), justifyContent: 'center', paddingBottom: pillsHeight,} : {}]}>
                             <Spacer size={typicalSessions.length > 0 ? 20 : 50} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                 {'What activity did you do?'}
                             </Text>
                             <Spacer size={20} />
@@ -298,13 +298,13 @@ class SportScheduleBuilder extends Component {
                                                 });
                                             }}
                                             style={[
-                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
+                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1,},
                                                 {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
                                             ]}
                                         >
                                             <Image
                                                 source={item.imagePath}
-                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
+                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.splash, width: 25,}}
                                             />
                                             <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
                                         </TouchableOpacity>
@@ -312,7 +312,7 @@ class SportScheduleBuilder extends Component {
                                     renderSectionHeader={({section: {title}}) =>
                                         <Text
                                             oswaldMedium
-                                            style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
+                                            style={{backgroundColor: AppColors.zeplin.slateXLightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
                                         >
                                             {title.toUpperCase()}
                                         </Text>
@@ -332,7 +332,7 @@ class SportScheduleBuilder extends Component {
                                 { sportImage ?
                                     <Image
                                         source={sportImage}
-                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.splash, width: AppSizes.screen.widthThird,}]}
                                     />
                                     :
                                     null
@@ -351,7 +351,7 @@ class SportScheduleBuilder extends Component {
                                     <Spacer size={10} />
                                     <View style={{flex: 1, flexDirection: 'row',}}>
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
@@ -365,7 +365,7 @@ class SportScheduleBuilder extends Component {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hours}
                                             highlightBorderWidth={2}
@@ -379,7 +379,7 @@ class SportScheduleBuilder extends Component {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hourLabel}
                                             highlightBorderWidth={2}
@@ -393,7 +393,7 @@ class SportScheduleBuilder extends Component {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minutes}
                                             highlightBorderWidth={2}
@@ -407,7 +407,7 @@ class SportScheduleBuilder extends Component {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minLabel}
                                             highlightBorderWidth={2}
@@ -421,7 +421,7 @@ class SportScheduleBuilder extends Component {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
@@ -441,20 +441,20 @@ class SportScheduleBuilder extends Component {
                             <Button
                                 buttonStyle={{
                                     backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
-                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.slateXLightGrey,
                                     borderWidth:     1,
                                     width:           AppSizes.screen.widthThird,
                                 }}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center',}}
                                 onPress={() => isFormValid ? this._scrollTo(this._activityRPERef) : null}
                                 title={'Next'}
-                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(14),}}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.slateXLightGrey, fontSize: AppFonts.scaleFont(14),}}
                             />
                             <Spacer size={30} />
                             { isFormValid ?
                                 <View onLayout={event => {this._activityRPERef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
                                     <Spacer size={20} />
-                                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                         {'How was '}
                                         <Text robotoMedium>{sportText}</Text>
                                         {' today?'}

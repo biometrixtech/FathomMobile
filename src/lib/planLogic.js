@@ -100,6 +100,10 @@ const PlanLogic = {
         return newFormFields;
     },
 
+    /**
+      * Helper function to return an empty session
+      * - PlanLogic
+      */
     returnEmptySession: () => {
         let postSessionSurvey = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
@@ -517,7 +521,7 @@ const PlanLogic = {
       */
     handleAthleteCardModalRenderLogic: selectedAthlete => {
         let athleteName = `${selectedAthlete.didUserCompleteReadinessSurvey ? '' : '*'}${selectedAthlete.first_name.toUpperCase()} ${selectedAthlete.last_name.toUpperCase()}`;
-        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.success : selectedAthlete.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
+        let mainColor = selectedAthlete.color === 0 ? AppColors.zeplin.successLight : selectedAthlete.color === 1 ? AppColors.zeplin.warningLight : AppColors.zeplin.errorLight;
         let subHeader = selectedAthlete.color === 0 ? 'Train as normal' : selectedAthlete.color === 1 ? 'Consider altering training plan' : 'Consider not training today';
         return {
             athleteName,
@@ -549,12 +553,12 @@ const PlanLogic = {
         let completedAthletes = complianceObj && complianceObj.complete ? complianceObj.complete : [];
         let completedPercent = (numOfCompletedAthletes / numOfTotalAthletes) * 100;
         let complianceColor = completedPercent <= 49 ?
-            AppColors.zeplin.coachesDashError
+            AppColors.zeplin.errorLight
             : completedPercent >= 50 && completedPercent <= 74 ?
-                AppColors.zeplin.warning
+                AppColors.zeplin.warningLight
                 :
-                AppColors.zeplin.success;
-        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.coachesDashError : complianceColor;
+                AppColors.zeplin.successLight;
+        complianceColor = numOfTotalAthletes === 0 ? AppColors.zeplin.errorLight : complianceColor;
         let trainingCompliance = complianceObj ? complianceObj.training_compliance : [];
         return {
             coachesTeams,
@@ -579,7 +583,7 @@ const PlanLogic = {
             :
             false;
         let athleteName = `${didUserCompleteReadinessSurvey ? '' : '*'}${item.first_name.toUpperCase()}\n${item.last_name.charAt(0).toUpperCase()}.`;
-        let backgroundColor = item.color === 0 ? AppColors.zeplin.success : item.color === 1 ? AppColors.zeplin.warning : AppColors.zeplin.coachesDashError;
+        let backgroundColor = item.color === 0 ? AppColors.zeplin.successLight : item.color === 1 ? AppColors.zeplin.warningLight : AppColors.zeplin.errorLight;
         let filteredAthlete = _.filter(athletes, ['user_id', item.user_id])[0];
         filteredAthlete.didUserCompleteReadinessSurvey = didUserCompleteReadinessSurvey;
         return {
@@ -1438,7 +1442,7 @@ const PlanLogic = {
         _.map(trainingVolumeData, (tv, key) => {
             let obj = {};
             obj.label = tv.day_of_week;
-            obj.svg = { fill: AppColors.zeplin.light, };
+            obj.svg = { fill: AppColors.zeplin.slateXLight, };
             obj.value = tv.training_volume;
             obj.sport_names = tv.sport_names;
             let filteredSport = tv.sport_names.length === 1 && _.filter(MyPlanConstants.teamSports, s => s.index === tv.sport_names[0])[0] ? _.filter(MyPlanConstants.teamSports, s => s.index === tv.sport_names[0])[0] : false;
@@ -1467,13 +1471,13 @@ const PlanLogic = {
                 let splitTextArray = _.split(visualizationTitle.text, textRegEx);
                 splitTextArray = _.remove(splitTextArray, o => o.length > 0);
                 let stressMatchedColor = visualizationTitle.color === 0 ?
-                    AppColors.zeplin.success
+                    AppColors.zeplin.successLight
                     : visualizationTitle.color === 1 ?
-                        AppColors.zeplin.yellow
+                        AppColors.zeplin.warningLight
                         : visualizationTitle.color === 2 ?
-                            AppColors.zeplin.error
+                            AppColors.zeplin.errorLight
                             :
-                            AppColors.zeplin.error;
+                            AppColors.zeplin.errorLight;
                 if(!textMatchedArray) {
                     return (<Text robotoRegular style={[cardSubtitle, isToolTipOpen && currentAlert.visualization_type === 5 ? {color: AppColors.white,} : {}]}>{visualizationTitle.text}</Text>);
                 }
@@ -1497,7 +1501,7 @@ const PlanLogic = {
     handleTrendsRenderLogic: (plan, os) => {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentStressAlert = trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
+        let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
         let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
         let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
@@ -1529,14 +1533,18 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Helper function to return chart data object when looking at DOMS
+      * - PlanLogic
+      */
     getDOMSBarChartData: (key, daysToAdd) => {
         return {
-            fillColor:         AppColors.zeplin.light,
+            fillColor:         AppColors.zeplin.slateXLight,
             filteredSport:     false,
             hasMultipleSports: false,
             key:               key,
             sport_names:       [],
-            svg:               { fill: AppColors.zeplin.light, },
+            svg:               { fill: AppColors.zeplin.slateXLight, },
             value:             0,
             x:                 moment().add(daysToAdd, 'd').format('ddd'),
             y:                 0,
@@ -1551,14 +1559,16 @@ const PlanLogic = {
     handleFathomChartsRenderLogic: (currentAlertData, barData, type, legends, startSliceValue, visualizationData, containerWidth) => {
         // line data
         let fillColor = legends[0] && legends[0].color === 0 ?
-            AppColors.zeplin.success
+            AppColors.zeplin.successLight
             : legends[0] && legends[0].color === 1 ?
-                AppColors.zeplin.yellow : legends[0] && legends[0].color === 2 ?
-                    AppColors.zeplin.error
+                AppColors.zeplin.warningLight
+                : legends[0] && legends[0].color === 2 ?
+                    AppColors.zeplin.errorLight
                     :
-                    AppColors.zeplin.slate;
+                    AppColors.zeplin.slateXLight;
         let newLineData = _.slice(currentAlertData, startSliceValue, currentAlertData.length);
-        let largestTVValue = _.maxBy(barData, 'value').value;
+        let largestTVValue = _.maxBy(barData, 'value');
+        largestTVValue = largestTVValue && largestTVValue === 0 ? 1 : largestTVValue ? largestTVValue.value : 1;
         // bar data
         let newBarData = _.map(barData, (data, key) => {
             let newObj = _.cloneDeep(data);
@@ -1584,7 +1594,8 @@ const PlanLogic = {
                 let newObj = _.cloneDeep(data);
                 let value = _.round(newObj.value);
                 newObj.label = value;
-                newObj.fillColor = value >= 50 ? AppColors.zeplin.success : value >= 25 && value <= 49 ? AppColors.zeplin.yellow : AppColors.zeplin.error;
+                newObj.fillColor = value >= 50 ? AppColors.zeplin.successLight : value >= 25 && value <= 49 ? AppColors.zeplin.warningLight : AppColors.zeplin.errorLight;
+                newObj.displayValue = value;
                 newObj.value = _.round(((largestTVValue * value) / 100));
                 return newObj;
             });

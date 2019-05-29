@@ -29,7 +29,7 @@ const TabIcon = ({
     underlayColor,
 }) => (
     <Icon
-        color={color ? color : selected ? AppColors.tabbar.iconSelected : AppColors.tabbar.iconDefault}
+        color={color ? color : selected ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate}
         containerStyle={containerStyle ? containerStyle : {}}
         iconStyle={iconStyle ? iconStyle : {}}
         name={icon}
