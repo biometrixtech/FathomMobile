@@ -96,7 +96,7 @@ class TrendChild extends PureComponent {
         let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
         let adjustedIndex = props.triggerType ? _.findIndex(insightDetails.alerts, ['trigger_type', props.triggerType]) : 0;
         this.state  = {
-            currentCardIndex: adjustedIndex,
+            currentCardIndex: adjustedIndex === -1 ? 0 : adjustedIndex,
             isCardSwiping:    false,
             isToolTipOpen:    false,
         };
@@ -218,7 +218,7 @@ class TrendChild extends PureComponent {
                             {'OPTIMAL ROUTINE'}
                         </Text>
                         { insightDetails.cta.length === 0 ?
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginTop: AppSizes.paddingSml,}}>{'Add an activity on My Plan'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
                             :
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
                                 {'In order to '}

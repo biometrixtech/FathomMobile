@@ -42,7 +42,7 @@ const ExercisesExercise = ({
                 </View>
                 <View style={{flex: 1,}}>
                     <TabIcon
-                        color={AppColors.zeplin.slateXLightSlate}
+                        color={AppColors.zeplin.slateLight}
                         icon={'help'}
                         reverse={false}
                         type={'material'}
@@ -55,7 +55,7 @@ const ExercisesExercise = ({
                     <View>
                         { areAllTimersCompleted ?
                             <TabIcon
-                                color={AppColors.zeplin.slateXLightSlate}
+                                color={AppColors.zeplin.slateLight}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={'restore'}
                                 reverse={false}
@@ -64,7 +64,7 @@ const ExercisesExercise = ({
                             />
                             :
                             <TabIcon
-                                color={AppColors.zeplin.slateXLightSlate}
+                                color={AppColors.zeplin.slateLight}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={'play-arrow'}
                                 reverse={false}
@@ -102,7 +102,7 @@ const ExercisesExercise = ({
                 }
                 <View>
                     <TabIcon
-                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate}
+                        color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                         icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
                         reverse={false}

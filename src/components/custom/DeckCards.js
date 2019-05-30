@@ -161,11 +161,11 @@ class DeckCards extends Component {
         const { currentCardIndex, } = this.state;
         let insightType = card && card.insight_type ? card.insight_type : 0;
         let triggerType = card && card.trigger_type ? card.trigger_type : 0;
-        let daysDiff = moment().diff(card.start_date_time, 'days');
+        let daysDiff = card && card.start_date_time ? moment().diff(card.start_date_time, 'days') : 0;
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
-        let textRegEx = card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
-        let textMatchedArray = card.text ? card.text.match(textRegEx) : [];
-        let splitTextArray = _.split(card.text, textRegEx);
+        let textRegEx = card && card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
+        let textMatchedArray = card && card.text ? card.text.match(textRegEx) : [];
+        let splitTextArray = card && card.text ? _.split(card.text, textRegEx) : [];
         let cardTextArray = [];
         if(textMatchedArray) {
             _.map(splitTextArray, (text, key) => {
@@ -181,7 +181,7 @@ class DeckCards extends Component {
         } else {
             cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
-        if(card.goal_targeted && card.goal_targeted.length === 0) {
+        if(card && card.goal_targeted && card.goal_targeted.length === 0) {
             cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
         let showUnreadNotificationsBadge = currentCardIndex === index && unreadNotificationsCount > 0;
@@ -219,7 +219,7 @@ class DeckCards extends Component {
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',}}>
-                        { card.styling === 1 &&
+                        { card && card.styling === 1 &&
                             <TabIcon
                                 color={AppColors.zeplin.error}
                                 containerStyle={[{marginRight: AppSizes.paddingSml,}]}
@@ -228,8 +228,8 @@ class DeckCards extends Component {
                                 type={'material-community'}
                             />
                         }
-                        <Text robotoBold style={[styles.title, card.styling === 1 ? {color: AppColors.zeplin.error,} : {}]}>
-                            {card.title}
+                        <Text robotoBold style={[styles.title, card && card.styling === 1 ? {color: AppColors.zeplin.error,} : {}]}>
+                            {card && card.title ? card.title : ''}
                         </Text>
                     </View>
                     { showDate &&

@@ -8,7 +8,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
@@ -72,11 +72,10 @@ class Trends extends PureComponent {
             >
 
                 <View style={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.paddingMed,}}>
-                    <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
                     <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
                         <View style={{flex: 1, justifyContent: 'center',}} />
                         <Image
-                            source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
+                            source={require('../../../assets/images/standard/fathom-gold-and-white.png')}
                             style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
                         />
                         <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />

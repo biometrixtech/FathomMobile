@@ -68,7 +68,7 @@ class AccountDetails extends Component {
                     </View>
                     <View style={{flex: 4, justifyContent: 'center',}}>
                         <TabIcon
-                            color={isEmailVerified ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightGrey}
+                            color={isEmailVerified ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight}
                             icon={'arrow-right-circle'}
                             onPress={() => isEmailVerified ? AppUtil.routeOnLogin(this.props.user) : null}
                             size={44}

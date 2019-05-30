@@ -312,7 +312,7 @@ class SportScheduleBuilder extends Component {
                                     renderSectionHeader={({section: {title}}) =>
                                         <Text
                                             oswaldMedium
-                                            style={{backgroundColor: AppColors.zeplin.slateXLightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
+                                            style={{backgroundColor: AppColors.zeplin.slateXLight, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
                                         >
                                             {title.toUpperCase()}
                                         </Text>

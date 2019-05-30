@@ -947,7 +947,7 @@ class MyPlan extends Component {
                                         <View>
                                             <TabIcon
                                                 color={AppColors.white}
-                                                containerStyle={[{backgroundColor: 'rgb(130, 174, 185)', borderTopLeftRadius: 5, borderTopRightRadius: 5, paddingVertical: AppSizes.paddingSml,}]}
+                                                containerStyle={[{backgroundColor: AppColors.zeplin.splash, borderTopLeftRadius: 5, borderTopRightRadius: 5, paddingVertical: AppSizes.paddingSml,}]}
                                                 icon={'check-circle'}
                                                 size={28}
                                                 type={'material-community'}

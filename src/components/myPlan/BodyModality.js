@@ -161,7 +161,7 @@ class BodyModality extends Component {
                                     id={`${imageId}.image`}
                                     resizeMode={'cover'}
                                     source={imageSource}
-                                    style={[{height: (AppSizes.screen.heightTwoThirds - AppSizes.paddingXLrg),}, StyleSheet.absoluteFill,]}
+                                    style={[{height: (AppSizes.screen.heightTwoThirds - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
                                     transition={MagicMove.Transition.morph}
                                     useNativeDriver={false}
                                 />
@@ -198,7 +198,7 @@ class BodyModality extends Component {
                                     </MagicMove.Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slateXLightSplash, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
                                     </View>
                                     <Spacer size={AppSizes.padding} />
                                     <View style={{flexDirection: 'row',}}>
@@ -288,14 +288,14 @@ class BodyModality extends Component {
                                         <TouchableOpacity
                                             activeOpacity={1}
                                             onPress={() => this._toggleInstructions()}
-                                            style={{alignSelf: 'center', flexDirection: 'row',}}
+                                            style={{alignItems: 'center', flexDirection: 'row',}}
                                         >
                                             <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11), paddingRight: AppSizes.paddingXSml,}}>{showInstructions ? 'Hide' : 'Show'}</Text>
                                             <Animated.View style={[animatedStyle,]}>
                                                 <TabIcon
                                                     color={AppColors.zeplin.yellow}
                                                     icon={'chevron-up'}
-                                                    size={AppFonts.scaleFont(12)}
+                                                    size={20}
                                                     type={'material-community'}
                                                 />
                                             </Animated.View>
@@ -307,7 +307,7 @@ class BodyModality extends Component {
                                             <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{'PREP'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row',}}>
-                                            <View style={{borderRightColor: AppColors.zeplin.slateXLightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
+                                            <View style={{borderRightColor: AppColors.zeplin.slateXLight, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' ?
@@ -335,7 +335,7 @@ class BodyModality extends Component {
                                             <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{modality === 'cwi' ? 'SUBMERGE' : 'PLACE'}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row',}}>
-                                            <View style={{borderRightColor: AppColors.zeplin.slateXLightGrey, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
+                                            <View style={{borderRightColor: AppColors.zeplin.slateXLight, borderRightWidth: 1, marginRight: (AppSizes.paddingSml / 2), width: (AppSizes.paddingSml / 2),}} />
                                             <View style={{flex: 1, marginLeft: AppSizes.padding, paddingVertical: AppSizes.paddingXSml,}}>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>
                                                     { modality === 'heat' ?

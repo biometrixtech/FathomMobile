@@ -29,7 +29,7 @@ const tooltipText = 'Don’t have a foam roller? You can use a water bottle or t
 const customStyles = StyleSheet.create({
     recoverBlocksDisabledWrapper: {
         backgroundColor: AppColors.white,
-        borderColor:     AppColors.zeplin.slateXLightGrey,
+        borderColor:     AppColors.zeplin.slateXLight,
         borderRadius:    5,
         borderWidth:     1,
         padding:         10,

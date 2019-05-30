@@ -147,7 +147,7 @@ class ExerciseCompletionModal extends Component {
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
-                        colors={[AppColors.zeplin.slateXLightNavy, AppColors.zeplin.navy, AppColors.zeplin.darkNavy, AppColors.black]}
+                        colors={[AppColors.zeplin.navy, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}

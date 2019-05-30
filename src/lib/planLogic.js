@@ -1603,7 +1603,7 @@ const PlanLogic = {
                 let value = _.round(newObj.value);
                 newObj.label = value;
                 newObj.fillColor = value >= 50 ? AppColors.zeplin.successLight : value >= 25 && value <= 49 ? AppColors.zeplin.warningLight : AppColors.zeplin.errorLight;
-                newObj.displayValue = value;
+                newObj.displayValue = value || null;
                 newObj.value = _.round(((largestTVValue * value) / 100));
                 return newObj;
             });
@@ -1617,14 +1617,20 @@ const PlanLogic = {
                     data.value
                 :
                 null;
+            newValue = type === 4 && key === (newLineData.length - 1) ?
+                newValue > 0 ? newValue : 0
+                :
+                newValue;
             newObj.key = key;
             newObj.y = newValue;
             newObj.x = data.day_of_week;
             delete newObj.label;
             return newObj;
         });
+        let barWidth = newBarData.length === 14 ? AppSizes.paddingMed : AppSizes.padding;
         // return values
         return {
+            barWidth,
             hasLeftAxis,
             hasRightAxis,
             lineChartData:  type === 3 || type === 4 || type === 5 ? newLineData : [],

@@ -101,16 +101,22 @@ class FathomCharts extends PureComponent {
 
     render = () => {
         const { barData, containerWidth, currentAlert, } = this.props;
+        if(!currentAlert || !currentAlert.visualization_type || !currentAlert.visualization_data) {
+            return (null);
+        }
         let {
+            barWidth,
             hasLeftAxis,
             hasRightAxis,
             lineChartData,
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
-        // console.log('lineChartData',lineChartData);
-        // console.log('updatedBarData',updatedBarData);
-        // console.log('currentAlert',currentAlert,currentAlert.visualization_type);
+        // if(currentAlert.visualization_type === 5) {
+        //     console.log('lineChartData',lineChartData);
+        //     console.log('updatedBarData',updatedBarData);
+        //     console.log('currentAlert',currentAlert,currentAlert.visualization_type);
+        // }
         return (
             <View pointerEvents={'none'}>
 
@@ -168,9 +174,9 @@ class FathomCharts extends PureComponent {
                     {/* visualization_type 1 - always show the bar graph. will autofill for visualization_type 2. */}
                     <V.VictoryBar
                         animate={false}
-                        cornerRadius={{ bottom: (AppSizes.padding / 2), top: (AppSizes.padding / 2), }}
+                        cornerRadius={{ bottom: (barWidth / 2), top: (barWidth / 2), }}
                         data={updatedBarData}
-                        style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.slateXLight : d.fillColor, width: AppSizes.padding, }, }}
+                        style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.slateXLight : d.fillColor, width: barWidth, }, }}
                         x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />
 

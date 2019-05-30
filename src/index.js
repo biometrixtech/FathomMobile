@@ -2,7 +2,7 @@ import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Image, Platform, PushNotificationIOS, StyleSheet, View, } from 'react-native';
+import { Image, Platform, PushNotificationIOS, StatusBar, StyleSheet, View, } from 'react-native';
 
 // import components
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
@@ -209,6 +209,7 @@ class Root extends Component {
         return(
             <MagicMove.Provider disabled={true}>
                 <View style={{flex: 1,}}>
+                    <StatusBar backgroundColor={AppColors.transparent} barStyle={'dark-content'} />
                     <Provider store={this.props.store}>
                         <PersistGate
                             loading={null}
