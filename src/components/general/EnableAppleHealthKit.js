@@ -69,7 +69,7 @@ const EnableAppleHealthKit = ({
                                 onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
                                 underlayColor={AppColors.transparent}
                             >
-                                <Text robotoBold style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
+                                <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
                             </TouchableHighlight>
                         </View>
                         <View style={{flex: 9, justifyContent: 'space-between', paddingVertical: AppSizes.padding,}}>

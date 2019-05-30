@@ -409,8 +409,8 @@ class Onboarding extends Component {
                             .then(res => {
                                 this.props.setAppLogs();
                                 if(user.health_enabled) {
-                                    return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
-                                        .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                    return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitData(user, user.health_sync_date, user.historic_health_sync_date));
                                 }
                                 return res;
                             })

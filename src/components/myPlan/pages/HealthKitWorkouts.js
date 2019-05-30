@@ -72,14 +72,14 @@ const WorkoutListDetail = ({
                 />
             </View>
             <View style={{flex: 4, paddingLeft: AppSizes.paddingSml,}}>
-                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(18),}}>{sportName}</Text>
+                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>{sportName}</Text>
             </View>
             <View style={{flex: 2, paddingLeft: AppSizes.paddingXSml,}}>
-                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(15),}}>{sportStartTime}</Text>
+                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{sportStartTime}</Text>
             </View>
             <TabIcon
                 containerStyle={[{flex: 1,}]}
-                color={AppColors.zeplin.slateXLightSlate}
+                color={AppColors.zeplin.slateLight}
                 icon={workout.deleted ? 'add' : 'close'}
                 onPress={() => handleHealthDataFormChange(!workout.deleted)}
                 reverse={false}
@@ -331,17 +331,17 @@ class HealthKitWorkouts extends Component {
                                         <Spacer size={AppSizes.padding} />
                                         <TouchableOpacity
                                             onPress={() => this._editDuration(index)}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateXLightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                                color={AppColors.zeplin.slateXLightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 icon={'clock-outline'}
                                                 reverse={false}
                                                 size={20}
                                                 type={'material-community'}
                                             />
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={() => {
@@ -349,17 +349,17 @@ class HealthKitWorkouts extends Component {
                                                     this._renderNextPage(pageIndex);
                                                 });
                                             }}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateXLightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                                color={AppColors.zeplin.slateXLightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 icon={'close'}
                                                 reverse={false}
                                                 size={20}
                                                 type={'material'}
                                             />
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
                                         </TouchableOpacity>
                                         <Spacer size={AppSizes.padding} />
                                         <TouchableOpacity

@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         position:       'absolute',
         top:            0,
-        width:          AppFonts.scaleFont(20),
+        width:          AppFonts.scaleFont(30),
     },
     yAxis: {
         color:     AppColors.zeplin.slate,
@@ -57,15 +57,15 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 class XAxisLabels extends PureComponent {
     render = () => {
-        const { data, datum, x, y, } = this.props;
-        const currentData = data[(datum - 1)];
+        const { data, index, x, y, } = this.props;
+        const currentData = data[index];
         if(!currentData) {
             return (null);
         }
         return (
             <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                    {currentData.x}
+                    {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
                 </Text>
                 { currentData.hasMultipleSports ?
                     <TabIcon
@@ -108,8 +108,8 @@ class FathomCharts extends PureComponent {
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
-        // console.log('updatedBarData',updatedBarData);
         // console.log('lineChartData',lineChartData);
+        // console.log('updatedBarData',updatedBarData);
         // console.log('currentAlert',currentAlert,currentAlert.visualization_type);
         return (
             <View pointerEvents={'none'}>
@@ -125,24 +125,7 @@ class FathomCharts extends PureComponent {
 
                 <V.VictoryChart
                     animate={{ duration: 300, }}
-                    // containerComponent={
-                    //     <V.VictoryBrushContainer
-                    //         allowDrag={false}
-                    //         allowResize={false}
-                    //         brushDimension={'x'}
-                    //         brushDomain={{ x: currentAlert.visualization_type === 4 ? [3.5, 4.5] : [6.5, 7.5], }}
-                    //         brushStyle={{ fill: AppColors.zeplin.superLight, fillOpacity: 0.75, }}
-                    //     />
-                    // }
                     domainPadding={{ x: AppSizes.padding, }}
-                    // style={{
-                    //     data: {
-                    //         backgroundColor: 'green',
-                    //     },
-                    //     parent: {
-                    //         backgroundColor: 'blue',
-                    //     },
-                    // }}
                 >
 
                     {/* Y-Axis */}
@@ -165,6 +148,7 @@ class FathomCharts extends PureComponent {
                                 fontSize: 0,
                             },
                         }}
+                        x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />
 
                     {/* X-Axis */}
@@ -177,6 +161,8 @@ class FathomCharts extends PureComponent {
                             },
                         }}
                         tickLabelComponent={<XAxisLabels data={updatedBarData} />}
+                        tickValues={_.map(updatedBarData, o => updatedBarData.length === 14 ? o.key : o.x)}
+                        x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />
 
                     {/* visualization_type 1 - always show the bar graph. will autofill for visualization_type 2. */}
@@ -185,6 +171,7 @@ class FathomCharts extends PureComponent {
                         cornerRadius={{ bottom: (AppSizes.padding / 2), top: (AppSizes.padding / 2), }}
                         data={updatedBarData}
                         style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.slateXLight : d.fillColor, width: AppSizes.padding, }, }}
+                        x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />
 
                     { (currentAlert.visualization_type === 3 || currentAlert.visualization_type === 4) &&
@@ -197,11 +184,13 @@ class FathomCharts extends PureComponent {
                                     :
                                     { data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, } }
                                 }
+                                x={updatedBarData.length === 14 ? 'key' : 'x'}
                             />
                             <V.VictoryScatter
                                 data={lineChartData}
                                 size={5}
                                 style={{ data: { fill: lineChartColor, }, }}
+                                x={updatedBarData.length === 14 ? 'key' : 'x'}
                             />
                         </V.VictoryGroup>
                     }
@@ -219,6 +208,7 @@ class FathomCharts extends PureComponent {
                             labels={datum => datum.y}
                             size={14}
                             style={{ data: { fill: d => d.fillColor, }, }}
+                            x={updatedBarData.length === 14 ? 'key' : 'x'}
                         />
                     }
 

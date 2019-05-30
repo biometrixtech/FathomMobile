@@ -73,15 +73,14 @@ class Trends extends PureComponent {
 
                 <View style={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.paddingMed,}}>
                     <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-                    <View style={{height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
+                    <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
+                        <View style={{flex: 1, justifyContent: 'center',}} />
                         <Image
                             source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                            style={[AppStyles.navbarImageTitle, {alignSelf: 'center', justifyContent: 'center',}]}
+                            style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
                         />
+                        <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />
                     </View>
-                    <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(34), marginBottom: AppSizes.paddingLrg, textAlign: 'center',}}>
-                        {'TRENDS'}
-                    </Text>
                 </View>
 
                 <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>

@@ -50,7 +50,7 @@ const CustomTabBar = ({ navigation, plan }) => {
             <View style={[styles.container,]}>
                 <TouchableOpacity onPress={() => Actions.myPlan()} style={{flex: 1,}}>
                     <TabIcon
-                        color={myPlanFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
+                        color={myPlanFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'run'}
                         iconStyle={[{opacity: myPlanFocused ? 1 : 0.8,}]}
                         size={20}
@@ -59,12 +59,12 @@ const CustomTabBar = ({ navigation, plan }) => {
                     { myPlanFocused ?
                         <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Plan'}</Text>
                         :
-                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Plan'}</Text>
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slateLight,}]}>{'Plan'}</Text>
                     }
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => Actions.trends()} style={{flex: 1,}}>
                     <TabIcon
-                        color={trendsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
+                        color={trendsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'graph'}
                         iconStyle={[{opacity: trendsFocused ? 1 : 0.8,}]}
                         size={20}
@@ -73,12 +73,12 @@ const CustomTabBar = ({ navigation, plan }) => {
                     { trendsFocused ?
                         <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Trends'}</Text>
                         :
-                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Trends'}</Text>
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slateLight,}]}>{'Trends'}</Text>
                     }
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => Actions.settings()} style={{flex: 1,}}>
                     <TabIcon
-                        color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slate}
+                        color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'dehaze'}
                         iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
                         size={20}
@@ -86,7 +86,7 @@ const CustomTabBar = ({ navigation, plan }) => {
                     { settingsFocused ?
                         <Text robotoBold style={[styles.text, {color: AppColors.zeplin.yellow,}]}>{'Settings'}</Text>
                         :
-                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slate,}]}>{'Settings'}</Text>
+                        <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slateLight,}]}>{'Settings'}</Text>
                     }
                 </TouchableOpacity>
             </View>

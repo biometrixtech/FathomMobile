@@ -285,18 +285,15 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
             let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
             let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-            dosage = _.orderBy(dosage, ['ranking'], ['desc']);
-            let exerciseSetsAssigned = dosage.length > 0 ?
-                priority === 0 && dosage[0].efficient_sets_assigned && dosage[0].efficient_sets_assigned > 0 ?
-                    dosage[0].efficient_sets_assigned
-                    : priority === 1 && dosage[0].complete_sets_assigned && dosage[0].complete_sets_assigned > 0 ?
-                        dosage[0].complete_sets_assigned
-                        : priority === 2 && dosage[0].comprehensive_sets_assigned && dosage[0].comprehensive_sets_assigned > 0 ?
-                            dosage[0].comprehensive_sets_assigned
-                            :
-                            dosage[0].default_sets_assigned
-                :
-                0;
+            dosage = _.orderBy(dosage, ['ranking'], ['asc']);
+            let exerciseSetsAssigned = 0;
+            if(dosage.length > 0 && priority === 0) {
+                exerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
+            } else if(dosage.length > 0 && priority === 1) {
+                exerciseSetsAssigned = dosage[0].complete_sets_assigned > 0 ? dosage[0].complete_sets_assigned : dosage[0].default_complete_sets_assigned;
+            } else if(dosage.length > 0 && priority === 2) {
+                exerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
+            }
             if(exerciseSetsAssigned > largestSetCount[list.index]) {
                 largestSetCount[list.index] = exerciseSetsAssigned;
             }
@@ -310,18 +307,15 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
                 let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
                 let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
                 let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-                dosage = _.orderBy(dosage, ['ranking'], ['desc']);
-                let newExerciseSetsAssigned = dosage.length > 0 ?
-                    priority === 0 && dosage[0].efficient_sets_assigned && dosage[0].efficient_sets_assigned > 0 ?
-                        dosage[0].efficient_sets_assigned
-                        : priority === 1 && dosage[0].complete_sets_assigned && dosage[0].complete_sets_assigned > 0 ?
-                            dosage[0].complete_sets_assigned
-                            : priority === 2 && dosage[0].comprehensive_sets_assigned && dosage[0].comprehensive_sets_assigned > 0 ?
-                                dosage[0].comprehensive_sets_assigned
-                                :
-                                dosage[0].default_sets_assigned
-                    :
-                    0;
+                dosage = _.orderBy(dosage, ['ranking'], ['asc']);
+                let newExerciseSetsAssigned = 0;
+                if(dosage.length > 0 && priority === 0) {
+                    newExerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
+                } else if(dosage.length > 0 && priority === 1) {
+                    newExerciseSetsAssigned = dosage[0].complete_sets_assigned > 0 ? dosage[0].complete_sets_assigned : dosage[0].default_complete_sets_assigned;
+                } else if(dosage.length > 0 && priority === 2) {
+                    newExerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
+                }
                 let newExerciseSecondsDuration = priority === 0 ? newExercise.duration_efficient : priority === 1 ? newExercise.duration_complete : newExercise.duration_comprehensive;
                 if(newExerciseSetsAssigned >= i && newExerciseSecondsDuration && newExerciseSecondsDuration > 0) {
                     totalSeconds += (newExerciseSecondsDuration / newExerciseSetsAssigned);
@@ -397,22 +391,20 @@ function cleanExercise(exercise, priority, goals) {
     let filteredReducerGoals = _.filter(goals, {isSelected: true,});
     let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
     let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-    dosage = _.sortBy(dosage, ['ranking']);
+    dosage = _.orderBy(dosage, ['ranking'], ['asc']);
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
-    cleanedExercise.repsAssigned = cleanedExercise && dosage.length > 0 ?
-        priority === 0 && dosage[0].efficient_reps_assigned && dosage[0].efficient_reps_assigned > 0 ?
-            dosage[0].efficient_reps_assigned
-            : priority === 1 && dosage[0].complete_reps_assigned && dosage[0].complete_reps_assigned > 0 ?
-                dosage[0].complete_reps_assigned
-                : priority === 2 && dosage[0].comprehensive_reps_assigned && dosage[0].comprehensive_reps_assigned > 0 ?
-                    dosage[0].comprehensive_reps_assigned
-                    :
-                    dosage[0].default_reps_assigned
-        :
-        0;
+    if(cleanedExercise && dosage.length > 0 && priority === 0) {
+        cleanedExercise.repsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
+    } else if(cleanedExercise && dosage.length > 0 && priority === 1) {
+        cleanedExercise.repsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
+    } else if(cleanedExercise && dosage.length > 0 && priority === 2) {
+        cleanedExercise.repsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
+    } else {
+        cleanedExercise.repsAssigned = 0;
+    }
     let cleanedDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
     let cleanedLongDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
     cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;

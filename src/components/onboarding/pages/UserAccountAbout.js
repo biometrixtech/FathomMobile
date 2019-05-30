@@ -33,18 +33,18 @@ const styles = StyleSheet.create({
     },
     inputLabel: {
         ...AppFonts.robotoRegular,
-        color:       AppColors.zeplin.slateXLightSlate,
+        color:       AppColors.zeplin.slateLight,
         fontSize:    AppFonts.scaleFont(11),
         margin:      0,
         paddingLeft: AppSizes.paddingSml,
         paddingTop:  AppSizes.paddingSml,
     },
     pickerSelectAndroid: {
-        color: AppColors.black,
+        color: AppColors.zeplin.slate,
     },
     pickerSelectIOS: {
         ...AppFonts.robotoRegular,
-        color:          AppColors.black,
+        color:          AppColors.zeplin.slate,
         fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
@@ -92,8 +92,8 @@ class UserAccountAbout extends Component {
                     confirmBtnText={'Confirm'}
                     customStyles={{
                         dateInput:       styles.reusableCustomSpacing,
-                        dateText:        {...AppFonts.robotoRegular, color: AppColors.black, fontSize: AppFonts.scaleFont(16),},
-                        placeholderText: {color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
+                        dateText:        {...AppFonts.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),},
+                        placeholderText: {color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(16), ...AppFonts.robotoRegular, },
                         btnTextConfirm:  {color: AppColors.zeplin.yellow},
                     }}
                     date={user.personal_data.birth_date || ''}
@@ -103,20 +103,20 @@ class UserAccountAbout extends Component {
                     placeholder={'Date of birth'}
                     ref={input => {this.inputs.birth_date = input;}}
                     showIcon={false}
-                    style={{width: '100%'}}
+                    style={{width: '100%',}}
                 />
                 <FormInput
                     blurOnSubmit={true}
                     containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                    inputStyle={{paddingLeft: 0,}}
                     inputRef={ref => this.inputs.confirm_password = ref}
+                    inputStyle={{color: AppColors.zeplin.slate, paddingLeft: 0,}}
                     keyboardType={'number-pad'}
                     label={user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : ' '}
                     labelStyle={[styles.inputLabel, {paddingLeft: 0,}]}
                     onChangeText={text => clearCoachContent('', () => handleFormChange('biometric_data.mass.lb', text))}
                     onFocus={event => scrollToInput(findNodeHandle(event.target))}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.zeplin.slateXLightSlate}
+                    placeholderTextColor={AppColors.zeplin.slateXLight}
                     ref={input => {this.inputs.mass = input;}}
                     returnKeyType={'done'}
                     value={user.biometric_data.mass.lb}
@@ -134,7 +134,7 @@ class UserAccountAbout extends Component {
                     style={{
                         inputAndroid:     [styles.pickerSelectAndroid],
                         inputIOS:         [styles.pickerSelectIOS],
-                        placeholderColor: AppColors.zeplin.slateXLightSlate,
+                        placeholderColor: AppColors.zeplin.slateXLight,
                         viewContainer:    [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {}],
                     }}
                     value={user.biometric_data.sex}

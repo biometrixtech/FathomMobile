@@ -35,7 +35,7 @@ class Tutorial extends Component {
         this.state = {
             activeDotStyle:  {backgroundColor: AppColors.zeplin.navy,},
             buttonTextStyle: {color: AppColors.zeplin.navy,},
-            dotStyle:        {backgroundColor: AppColors.zeplin.slateXLightGrey,},
+            dotStyle:        {backgroundColor: AppColors.zeplin.slateXLight,},
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
             uniqueValue:     0,

@@ -241,7 +241,7 @@ class CoachesDashboard extends Component {
                                 style={[
                                     textStyle,
                                     {
-                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.zeplin.navy : AppColors.zeplin.slateXLightSlate,
+                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.zeplin.navy : AppColors.zeplin.slate,
                                         fontSize,
                                     }
                                 ]}

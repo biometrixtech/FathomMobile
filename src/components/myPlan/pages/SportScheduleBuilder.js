@@ -441,14 +441,14 @@ class SportScheduleBuilder extends Component {
                             <Button
                                 buttonStyle={{
                                     backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
-                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.slateXLightGrey,
+                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.slateXLight,
                                     borderWidth:     1,
                                     width:           AppSizes.screen.widthThird,
                                 }}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center',}}
                                 onPress={() => isFormValid ? this._scrollTo(this._activityRPERef) : null}
                                 title={'Next'}
-                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.slateXLightGrey, fontSize: AppFonts.scaleFont(14),}}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(14),}}
                             />
                             <Spacer size={30} />
                             { isFormValid ?

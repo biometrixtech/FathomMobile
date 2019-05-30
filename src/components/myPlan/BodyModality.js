@@ -166,7 +166,7 @@ class BodyModality extends Component {
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgba(130, 174, 185, 0.8)', 'rgba(130, 174, 185, 0.8)']}
+                                    colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.8)']}
                                     end={{x: 1, y: 0}}
                                     start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}

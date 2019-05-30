@@ -227,7 +227,7 @@ export default class MultiSwitch extends Component {
                         styles.switcher,
                         {transform: [{ translateX: this.state.position, }]},
                         isPanning ? {backgroundColor: 'rgba(235, 186, 45, 0.75)',} : {},
-                        isDisabled ? {backgroundColor: AppColors.zeplin.slate,} : {},
+                        isDisabled ? {backgroundColor: AppColors.zeplin.slateLight,} : {},
                     ]}
                 >
                     <TouchableOpacity

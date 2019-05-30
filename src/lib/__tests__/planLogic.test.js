@@ -2084,21 +2084,21 @@ it('Coaches Dashboard Search Area Render Logic - With Insights', () => {
 it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#2EA985', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#71CDB7', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
 it('Coaches Dashboard Section Render Loop Logic - Paul LaForge', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Paul', 'LaForge', 2, '3', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#E6583D', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#EE8B6E', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
 it('Coaches Dashboard Section Render Loop Logic - Mazen Chami', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Mazen', 'Chami', 1, '2', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Mazen', 'Chami', '#EBBA2D', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Mazen', 'Chami', '#F1B877', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
@@ -2108,7 +2108,7 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -2125,7 +2125,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -2142,7 +2142,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -2155,19 +2155,19 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
 
 it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#2EA985', 'Train as normal');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#71CDB7', 'Train as normal');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Mazen', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(1, 'Mazen', 'Chami');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*MAZEN CHAMI', '#EBBA2D', 'Consider altering training plan');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*MAZEN CHAMI', '#F1B877', 'Consider altering training plan');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(2, 'Gabby', 'Lavac');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#E6583D', 'Consider not training today');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#EE8B6E', 'Consider not training today');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 

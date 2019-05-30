@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         height: CONTAINER_HEIGHT,
     },
     date: {
-        color:    AppColors.zeplin.slateXLightSlate,
+        color:    AppColors.zeplin.slateXLight,
         fontSize: AppFonts.scaleFont(11),
     },
     hideText: {
@@ -262,14 +262,14 @@ class DeckCards extends Component {
                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}</Text>
                             <View style={{flexDirection: 'row', marginTop: AppSizes.padding,}}>
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.slateXLightSplash, paddingHorizontal: AppSizes.padding,}}
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.padding,}}
                                     containerStyle={{marginRight: AppSizes.paddingSml,}}
                                     onPress={() => this.setState({ areAllSwiped: false, currentCardIndex: 0, })}
                                     title={'Repeat?'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                                 />
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.slateXLightSplash, paddingHorizontal: AppSizes.padding,}}
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.padding,}}
                                     onPress={hideDeck}
                                     title={'Hide'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
@@ -278,6 +278,7 @@ class DeckCards extends Component {
                         </View>
                         :
                         <Swiper
+                            {...this.props}
                             backgroundColor={AppColors.transparent}
                             cardHorizontalMargin={AppSizes.padding}
                             cardIndex={currentCardIndex}

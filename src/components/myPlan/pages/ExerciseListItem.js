@@ -39,7 +39,7 @@ class ExerciseListItem extends Component {
             :
             `${exercise.library_id}-${exercise.set_number}`;
         return(
-            <View style={[{borderTopColor: AppColors.zeplin.slateXLightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
+            <View style={[{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
                     <TabIcon
                         containerStyle={[{flex: 1, justifyContent: 'center',}]}

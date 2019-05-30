@@ -121,7 +121,6 @@ const ActivityTab = ({
                                 autoPlay={true}
                                 loop={false}
                                 source={require('../../../assets/animation/checkmark-circle.json')}
-                                // onAnimationFinish={() => console.log('hiiii')} // TODO: LOOK INTO THIS FOR ISSUE OF RERENDER
                             />
                         </View>
                         :
@@ -171,7 +170,7 @@ const ActivityTab = ({
                     style={{backgroundColor: AppColors.white, borderRadius: 10, height: 'auto', width: 'auto',}}
                 >
                     <LinearGradient
-                        colors={['rgb(130, 174, 185)', 'rgba(130, 174, 185, 0.5)']}
+                        colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.3)']}
                         end={{x: 1.0, y: 1.0}}
                         onPress={onPress}
                         start={{x: 0.1, y: 0.1}}
@@ -480,7 +479,7 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, user, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
             newDailyReadiness,
@@ -488,7 +487,7 @@ class MyPlan extends Component {
             newPrepareObject,
             newRecoverObject,
             nonDeletedSessions,
-        } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData);
+        } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData, user);
         this.setState(
             {
                 expandNotifications:        false,
@@ -672,7 +671,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, user, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
             landingScreen,
@@ -680,7 +679,7 @@ class MyPlan extends Component {
             newPostSessionSessions,
             newRecoverObject,
             newTrainObject,
-        } = PlanLogic.handlePostSessionSurveySubmitLogic(postSession, train, recover, healthData);
+        } = PlanLogic.handlePostSessionSurveySubmitLogic(postSession, train, recover, healthData, user);
         this.setState(
             {
                 expandNotifications:          false,

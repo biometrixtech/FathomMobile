@@ -223,7 +223,7 @@ class ExerciseModality extends Component {
                                     useNativeDriver={false}
                                 />
                                 <LinearGradient
-                                    colors={['rgba(130, 174, 185, 0.8)', 'rgba(130, 174, 185, 0.8)']}
+                                    colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.8)']}
                                     end={{x: 1, y: 0}}
                                     start={{x: 0, y: 0}}
                                     style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
@@ -286,7 +286,7 @@ class ExerciseModality extends Component {
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                                 containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
                                 disabled={!firstExerciseFound}
-                                disabledStyle={{backgroundColor: AppColors.zeplin.slate,}}
+                                disabledStyle={{backgroundColor: AppColors.zeplin.slateLight,}}
                                 disabledTitleStyle={{color: AppColors.white,}}
                                 onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
                                 title={'Start'}

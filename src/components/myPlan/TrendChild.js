@@ -97,6 +97,7 @@ class TrendChild extends PureComponent {
         let adjustedIndex = props.triggerType ? _.findIndex(insightDetails.alerts, ['trigger_type', props.triggerType]) : 0;
         this.state  = {
             currentCardIndex: adjustedIndex,
+            isCardSwiping:    false,
             isToolTipOpen:    false,
         };
     }
@@ -114,7 +115,7 @@ class TrendChild extends PureComponent {
 
     render = () => {
         const { insightType, plan, } = this.props;
-        const { currentCardIndex, isToolTipOpen, } = this.state;
+        const { currentCardIndex, isCardSwiping, isToolTipOpen, } = this.state;
         let {
             currentAlert,
             insightDetails,
@@ -128,6 +129,7 @@ class TrendChild extends PureComponent {
                 automaticallyAdjustContentInsets={false}
                 bounces={false}
                 nestedScrollEnabled={true}
+                scrollEnabled={!isCardSwiping}
             >
 
                 <LinearGradient
@@ -199,13 +201,15 @@ class TrendChild extends PureComponent {
                     <View style={{borderRadius: 6, marginBottom: AppSizes.padding,}}>
                         <DeckCards
                             cards={insightDetails.alerts}
+                            dragEnd={() => this.setState({ isCardSwiping: false, })}
+                            dragStart={() => this.setState({ isCardSwiping: true, })}
                             handleReadInsight={index => this._handleDeckCardsSwipe(index)}
                             infinite={true}
                             isVisible={true}
                             shouldNavigate={false}
                             showDate={false}
                             startIndex={currentCardIndex}
-                            verticalSwipe={false}
+
                         />
                     </View>
 

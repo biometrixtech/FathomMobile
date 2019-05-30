@@ -917,7 +917,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleReadinessSurveySubmitLogic: (dailyReadiness, prepare, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handleReadinessSurveySubmitLogic: (dailyReadiness, prepare, recover, healthData, user, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPrepareObject = Object.assign({}, prepare, {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? false : true,
         });
@@ -925,13 +925,14 @@ const PlanLogic = {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
         let newDailyReadiness = {
-            date_time:                 eventDate,
-            soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
             clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
-            sleep_quality:             dailyReadiness.sleep_quality,
+            date_time:                 eventDate,
             readiness:                 dailyReadiness.readiness,
-            wants_functional_strength: dailyReadiness.wants_functional_strength,
             sessions_planned:          dailyReadiness.sessions_planned,
+            sleep_quality:             dailyReadiness.sleep_quality,
+            soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+            wants_functional_strength: dailyReadiness.wants_functional_strength,
         };
         if(dailyReadiness.current_sport_name === 0 || dailyReadiness.current_sport_name > 0) {
             newDailyReadiness.current_sport_name = dailyReadiness.current_sport_name;
@@ -986,11 +987,12 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handlePostSessionSurveySubmitLogic: (postSession, train, recover, healthData, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
+    handlePostSessionSurveySubmitLogic: (postSession, train, recover, healthData, user, eventDate = `${moment().toISOString(true).split('.')[0]}Z`) => {
         let newPostSession = {
             event_date:       eventDate,
             sessions:         [],
             sessions_planned: postSession.sessions_planned,
+            user_age:         moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
         };
         let landingScreen = postSession.sessions_planned ? 0 : 2;
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
@@ -1416,6 +1418,12 @@ const PlanLogic = {
                     'You\'re well recovered so a Mobilize before you train isn\'t high priority, but you can tap the "+" below to add a recovery-focused Mobilize on demand!\n\nOtherwise tap the "+" to log your workout & we\'ll update your recovery recommendations accordingly!'
                     :
                     false;
+        // logic to 'hide' before mobilize if after is active
+        let indexOfLockedBeforeModality = _.findIndex(beforeCompletedLockedModalities, { isLocked: true, title: 'MOBILIZE', });
+        let indexOfActiveAfterModality = _.findIndex(activeAfterModalities, { active: true, title: 'MOBILIZE', });
+        if(indexOfLockedBeforeModality !== -1 && indexOfActiveAfterModality !== -1) {
+            beforeCompletedLockedModalities = _.filter(beforeCompletedLockedModalities, (o, key) => key !== indexOfLockedBeforeModality);
+        }
         return {
             activeAfterModalities,
             activeBeforeModalities,

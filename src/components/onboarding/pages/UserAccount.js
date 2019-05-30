@@ -93,7 +93,7 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.slateXLightGrey}
+                                    {color: AppColors.zeplin.slateLight}
                         ]}
                         size={10}
                         type={'material-community'}
@@ -107,7 +107,7 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.slateXLightGrey},
+                                    {color: AppColors.zeplin.slate},
                         ]}
                     >
                         {section.header}
@@ -308,7 +308,7 @@ class UserAccount extends Component {
                                 style={[{marginTop: AppSizes.padding,}]}
                                 underlayColor={AppColors.transparent}
                             >
-                                <Text robotoRegular style={{color: AppColors.zeplin.slateXLightSlate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
                                     {'By signing up you agree to our '}
                                     <Text robotoBold>{'Terms of Use.'}</Text>
                                 </Text>

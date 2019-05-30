@@ -412,7 +412,7 @@ class TimedExercise extends PureComponent {
                         </View>
                         <View style={{flex: 1,}}>
                             <TabIcon
-                                color={AppColors.zeplin.slateXLightSlate}
+                                color={AppColors.zeplin.slateLight}
                                 icon={'help'}
                                 onPress={() => {
                                     if(preExerciseTime !== 0 || areAllTimersCompleted || !exerciseTimer) {
@@ -431,7 +431,7 @@ class TimedExercise extends PureComponent {
                             <View>
                                 { areAllTimersCompleted && !isPaused && !(startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                     <TabIcon
-                                        color={AppColors.zeplin.slateXLightSlate}
+                                        color={AppColors.zeplin.slateLight}
                                         containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                         icon={'restore'}
                                         onPress={() => this._resetTimer(true)}
@@ -441,7 +441,7 @@ class TimedExercise extends PureComponent {
                                     />
                                     : isPaused ?
                                         <TabIcon
-                                            color={AppColors.zeplin.slateXLightSlate}
+                                            color={AppColors.zeplin.slateLight}
                                             containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                             icon={'play-arrow'}
                                             onPress={() => this._pauseTimer(false)}
@@ -451,7 +451,7 @@ class TimedExercise extends PureComponent {
                                         />
                                         : !isPaused && (startPreExerciseCountdown || startFirstSet || startSwitchSidesInterval || startSecondSet) ?
                                             <TabIcon
-                                                color={AppColors.zeplin.slateXLightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'pause'}
                                                 onPress={() => { if(preExerciseTime !== 0) { this._pauseTimer(true); } }}
@@ -461,7 +461,7 @@ class TimedExercise extends PureComponent {
                                             />
                                             :
                                             <TabIcon
-                                                color={AppColors.zeplin.slateXLightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                                 icon={'play-arrow'}
                                                 reverse={false}
@@ -546,7 +546,7 @@ class TimedExercise extends PureComponent {
                                 null
                             }
                             <TabIcon
-                                color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLightSlate}
+                                color={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                                 containerStyle={[{alignSelf: 'center', margin: AppSizes.padding,}]}
                                 icon={completedExercises.includes(`${exercise.library_id}-${exercise.set_number}`) ? 'ios-checkbox' : 'ios-checkbox-outline'}
                                 onPress={() => {
