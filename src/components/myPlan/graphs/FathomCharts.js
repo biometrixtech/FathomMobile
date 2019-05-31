@@ -120,11 +120,6 @@ class FathomCharts extends PureComponent {
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
-        // if(currentAlert.visualization_type === 5) {
-        //     console.log('lineChartData',lineChartData);
-        //     console.log('updatedBarData',updatedBarData);
-        //     console.log('currentAlert',currentAlert,currentAlert.visualization_type);
-        // }
         return (
             <View pointerEvents={'none'}>
 
@@ -188,16 +183,51 @@ class FathomCharts extends PureComponent {
                         x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />
 
-                    { (currentAlert.visualization_type === 3 || currentAlert.visualization_type === 4) &&
+                    { currentAlert.visualization_type === 3 &&
                         <V.VictoryGroup>
                             <V.VictoryLine
                                 data={lineChartData}
                                 interpolation={'monotoneX'}
-                                style={currentAlert.visualization_type === 3 ?
-                                    { data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 5, }, }
-                                    :
-                                    { data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, } }
-                                }
+                                style={{ data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                                x={updatedBarData.length === 14 ? 'key' : 'x'}
+                            />
+                            <V.VictoryScatter
+                                data={lineChartData}
+                                size={5}
+                                style={{ data: { fill: lineChartColor, }, }}
+                                x={updatedBarData.length === 14 ? 'key' : 'x'}
+                            />
+                        </V.VictoryGroup>
+                    }
+
+                    { currentAlert.visualization_type === 4 &&
+                        <V.VictoryGroup>
+                            <V.VictoryLine
+                                data={_.map(lineChartData, (data, key) => {
+                                    if(key >= 0 && key <= 2) {
+                                        let newData = _.cloneDeep(data);
+                                        newData.value = null;
+                                        newData.y = null;
+                                        return newData;
+                                    }
+                                    return data;
+                                })}
+                                interpolation={'monotoneX'}
+                                style={{ data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, }, }}
+                                x={updatedBarData.length === 14 ? 'key' : 'x'}
+                            />
+                            <V.VictoryLine
+                                data={_.map(lineChartData, (data, key) => {
+                                    if(key >= 4 && key <= 6) {
+                                        let newData = _.cloneDeep(data);
+                                        newData.value = null;
+                                        newData.y = null;
+                                        return newData;
+                                    }
+                                    return data;
+                                })}
+                                interpolation={'monotoneX'}
+                                style={{ data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 4, }, }}
                                 x={updatedBarData.length === 14 ? 'key' : 'x'}
                             />
                             <V.VictoryScatter
