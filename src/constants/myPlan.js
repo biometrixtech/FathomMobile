@@ -262,10 +262,8 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
     // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
-    let largestSetCount = {};
     let equipmentRequired = [];
     let totalSeconds = 0;
-    // let unFilteredExerciseArray = [];
     let exerciseListOrder = modality === 'prepare' ?
         preExerciseListOrder
         : modality === 'recover' ?
@@ -278,14 +276,18 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
                     preExerciseListOrder;
     // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
-        largestSetCount[list.index] = 0;
+        // setup our variable
+        cleanedExerciseList[list.title] = [];
         // loop through our specific exercise to update our variables
-        _.map(recoveryObj[list.index], exercise => {
-            equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
+        _.map(recoveryObj[list.index], (exercise, key) => {
+            // setup variables
+            let newExercise = _.cloneDeep(exercise);
+            equipmentRequired = _.concat(equipmentRequired, newExercise.equipment_required);
             let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
             let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
-            let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+            let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
             dosage = _.orderBy(dosage, ['ranking'], ['asc']);
+            // calculate exercise sets
             let exerciseSetsAssigned = 0;
             if(dosage.length > 0 && priority === 0) {
                 exerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
@@ -294,39 +296,29 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             } else if(dosage.length > 0 && priority === 2) {
                 exerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
             }
-            if(exerciseSetsAssigned > largestSetCount[list.index]) {
-                largestSetCount[list.index] = exerciseSetsAssigned;
+            // calculate exercise reps
+            let exerciseRepsAssigned = 0;
+            if(dosage.length > 0 && priority === 0) {
+                exerciseRepsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
+            } else if(dosage.length > 0 && priority === 1) {
+                exerciseRepsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
+            } else if(dosage.length > 0 && priority === 2) {
+                exerciseRepsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
+            }
+            // calculate exercise duration
+            let exerciseDuratrion = 0;
+            if(newExercise.unit_of_measure === 'count')  {
+                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned * exerciseSetsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned * exerciseSetsAssigned);
+            } else if(newExercise.unit_of_measure === 'seconds' || newExercise.unit_of_measure === 'yards') {
+                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_set * exerciseSetsAssigned) * 2) : (newExercise.seconds_per_set * exerciseSetsAssigned);
+            }
+            // if we have sets, reps, and duration - update our main variables
+            if(exerciseSetsAssigned > 0 && exerciseRepsAssigned > 0 && exerciseDuratrion > 0) {
+                totalSeconds += exerciseDuratrion;
+                cleanedExerciseList[list.title].push(newExercise);
+                totalLength += cleanedExerciseList[list.title].length;
             }
         });
-        // setup our specific exercise array
-        let exerciseArray = [];
-        for(let i = 1; i <= largestSetCount[list.index]; i += 1) {
-            /*eslint no-loop-func: 0*/
-            _.map(recoveryObj[list.index], exercise => {
-                let newExercise = _.cloneDeep(exercise);
-                let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
-                let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
-                let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
-                dosage = _.orderBy(dosage, ['ranking'], ['asc']);
-                let newExerciseSetsAssigned = 0;
-                if(dosage.length > 0 && priority === 0) {
-                    newExerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
-                } else if(dosage.length > 0 && priority === 1) {
-                    newExerciseSetsAssigned = dosage[0].complete_sets_assigned > 0 ? dosage[0].complete_sets_assigned : dosage[0].default_complete_sets_assigned;
-                } else if(dosage.length > 0 && priority === 2) {
-                    newExerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
-                }
-                let newExerciseSecondsDuration = priority === 0 ? newExercise.duration_efficient : priority === 1 ? newExercise.duration_complete : newExercise.duration_comprehensive;
-                if(newExerciseSetsAssigned >= i && newExerciseSecondsDuration && newExerciseSecondsDuration > 0) {
-                    totalSeconds += (newExerciseSecondsDuration / newExerciseSetsAssigned);
-                    newExercise.set_number = i;
-                    exerciseArray.push(newExercise);
-                }
-                // unFilteredExerciseArray.push(newExercise);
-            });
-        }
-        totalLength += exerciseArray.length;
-        cleanedExerciseList[list.title] = exerciseArray;
     });
     // clean variables as needed
     equipmentRequired = _.uniq(equipmentRequired);
@@ -337,7 +329,6 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
         equipmentRequired,
         totalLength,
         totalSeconds,
-        // unFilteredExerciseArray,
     };
 }
 

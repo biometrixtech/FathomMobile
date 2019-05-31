@@ -6,23 +6,27 @@ import { user as UserActions, } from '../../actions';
 
 const Tutorial = ({
     Layout,
+    step,
     updateUser,
     user,
 }) => (
     <Layout
+        step={step}
         updateUser={updateUser}
         user={user}
     />
 );
 
 Tutorial.propTypes = {
+    step:       PropTypes.string.isRequired,
     updateUser: PropTypes.func.isRequired,
     user:       PropTypes.object.isRequired,
 };
 
 Tutorial.defaultProps = {};
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
+    step: props.step,
     user: state.user,
 });
 

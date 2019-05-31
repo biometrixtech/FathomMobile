@@ -24,6 +24,7 @@ class Tutorial extends Component {
     static componentName = 'Tutorial';
 
     static propTypes = {
+        step:       PropTypes.string.isRequired,
         updateUser: PropTypes.func.isRequired,
         user:       PropTypes.object.isRequired,
     }
@@ -38,38 +39,29 @@ class Tutorial extends Component {
             dotStyle:        {backgroundColor: AppColors.zeplin.slateXLight,},
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
-            uniqueValue:     0,
         }
         this._players = {};
         this._appIntroSlider = {};
     }
 
     componentDidMount = () => {
-        // NOTE: this seems to be needed to 'refresh' the page to get new router information :(
-        this.setState(
-            {
-                uniqueValue: this.state.uniqueValue + 1,
-            },
-            () => {
-                // setup constants
-                const step = Actions.currentParams.step;
-                const slides = onboardingUtils.getTutorialSlides(step).slides;
-                const showSkipButton = onboardingUtils.getTutorialSlides(step).showSkipButton;
-                let videoPlaybackOptions = {};
-                _.map(slides, slide => {
-                    if(slide.videoLink) {
-                        videoPlaybackOptions[slide.key] = {};
-                        videoPlaybackOptions[slide.key].paused = true;
-                    }
-                });
-                this.setState({
-                    ...this.state,
-                    showSkipButton,
-                    slides,
-                    videoPlaybackOptions,
-                });
-            },
-        );
+        // setup constants
+        const step = this.props.step;
+        const slides = onboardingUtils.getTutorialSlides(step).slides;
+        const showSkipButton = onboardingUtils.getTutorialSlides(step).showSkipButton;
+        let videoPlaybackOptions = {};
+        _.map(slides, slide => {
+            if(slide.videoLink) {
+                videoPlaybackOptions[slide.key] = {};
+                videoPlaybackOptions[slide.key].paused = true;
+            }
+        });
+        this.setState({
+            ...this.state,
+            showSkipButton,
+            slides,
+            videoPlaybackOptions,
+        });
     }
 
     _handleIconClick = goToPage => {

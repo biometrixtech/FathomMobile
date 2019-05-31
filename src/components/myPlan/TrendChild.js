@@ -218,7 +218,7 @@ class TrendChild extends PureComponent {
                             {'OPTIMAL ROUTINE'}
                         </Text>
                         { insightDetails.cta.length === 0 ?
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
                             :
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
                                 {'In order to '}

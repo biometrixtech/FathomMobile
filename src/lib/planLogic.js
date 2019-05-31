@@ -1141,7 +1141,7 @@ const PlanLogic = {
                 _.map(object[list.index], exercise => {
                     _.map(exercise.dosages, dosage => {
                         tmpGoals = _.concat(tmpGoals, dosage.goal);
-                    })
+                    });
                 });
             });
         } else if(object.triggers) {
@@ -1155,9 +1155,21 @@ const PlanLogic = {
         }
         // filter unique goal object(s)
         tmpGoals = _.uniqBy(tmpGoals, 'goal_type');
+        // run through all goals to make sure if its selected or not
         _.map(tmpGoals, goal => {
             let newGoal = _.cloneDeep(goal);
-            newGoal.isSelected = true;
+            let goalsIndex = object.default_plan === 'Efficient' ?
+                'efficient_active'
+                : object.default_plan === 'Complete' ?
+                    'complete_active'
+                    :
+                    'comprehensive_active';
+            if(object.goals) {
+                let goalStatus = object.goals[newGoal.goal_type][goalsIndex];
+                newGoal.isSelected = goalStatus;
+            } else {
+                newGoal.isSelected = true;
+            }
             goals.push(newGoal);
         });
         // return array of object(s)

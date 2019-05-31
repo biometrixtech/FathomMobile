@@ -57,19 +57,27 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 class XAxisLabels extends PureComponent {
     render = () => {
-        const { data, index, x, y, } = this.props;
+        const { data, index, type, x, y, } = this.props;
         const currentData = data[index];
+        let dataArrayLengthTrim = type === 4 ? 4 : 1;
+        let highlightedIndex = index === (data.length - dataArrayLengthTrim);
         if(!currentData) {
             return (null);
         }
         return (
             <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
-                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                    {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
-                </Text>
+                { highlightedIndex ?
+                    <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
+                        {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
+                    </Text>
+                    :
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
+                        {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
+                    </Text>
+                }
                 { currentData.hasMultipleSports ?
                     <TabIcon
-                        color={AppColors.zeplin.slateXLight}
+                        color={highlightedIndex ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight}
                         icon={'checkbox-multiple-marked-circle'}
                         size={15}
                         type={'material-community'}
@@ -77,7 +85,7 @@ class XAxisLabels extends PureComponent {
                     : currentData.filteredSport ?
                         <Image
                             source={currentData.filteredSport.imagePath}
-                            style={{height: 15, tintColor: AppColors.zeplin.slateXLight, width: 15,}}
+                            style={{height: 15, tintColor: highlightedIndex ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight, width: 15,}}
                         />
                         :
                         <View />
@@ -166,7 +174,7 @@ class FathomCharts extends PureComponent {
                                 size:          1,
                             },
                         }}
-                        tickLabelComponent={<XAxisLabels data={updatedBarData} />}
+                        tickLabelComponent={<XAxisLabels data={updatedBarData} type={currentAlert.visualization_type} />}
                         tickValues={_.map(updatedBarData, o => updatedBarData.length === 14 ? o.key : o.x)}
                         x={updatedBarData.length === 14 ? 'key' : 'x'}
                     />

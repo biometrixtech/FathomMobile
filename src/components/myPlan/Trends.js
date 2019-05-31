@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     cardContainer: {
         backgroundColor: AppColors.white,
         borderRadius:    6,
+        elevation:       2,
         marginBottom:    AppSizes.padding,
         paddingVertical: AppSizes.padding,
     },
