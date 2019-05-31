@@ -215,7 +215,7 @@ class FathomCharts extends PureComponent {
                             labelComponent={
                                 <V.VictoryLabel
                                     dy={AppFonts.scaleFont(14)}
-                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(11), fontWeight: 'regular', }}
+                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(11), }}
                                     text={datum => datum.displayValue}
                                 />
                             }
