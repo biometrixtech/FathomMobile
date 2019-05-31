@@ -120,6 +120,11 @@ class FathomCharts extends PureComponent {
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
+        if(currentAlert.visualization_type === 4) {
+            console.log('lineChartData',lineChartData);
+            console.log('updatedBarData',updatedBarData);
+            console.log('currentAlert',currentAlert,currentAlert.visualization_type);
+        }
         return (
             <View pointerEvents={'none'}>
 

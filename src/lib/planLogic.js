@@ -1629,10 +1629,13 @@ const PlanLogic = {
                     data.value
                 :
                 null;
-            newValue = type === 4 && key === (newLineData.length - 1) ?
-                newValue > 0 ? newValue : 0
-                :
-                newValue;
+            if(type === 4) {
+                let lastNonNullValue = _.findLastIndex(newLineData, o => o.value !== null);
+                newValue = key === lastNonNullValue ?
+                    0
+                    :
+                    newValue;
+            }
             newObj.key = key;
             newObj.y = newValue;
             newObj.x = data.day_of_week;
