@@ -522,6 +522,7 @@ const UTIL = {
             _.map(filteredWorkouts, (workout, index) => {
                 let newWorkout = {};
                 filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
+                // TODO: filteredHeartRateValues DOESN'T SEEM TO WORK
                 let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
                 let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
                 newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;
