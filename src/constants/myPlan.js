@@ -278,7 +278,9 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
     _.map(exerciseListOrder, list => {
         // setup our variable
         cleanedExerciseList[list.title] = [];
-        // loop through our specific exercise to update our variables
+        let updatedCurrentExerciseArray = [];
+        let currentExercisesBySet = {};
+        // loop through exercises to setup specific important values
         _.map(recoveryObj[list.index], (exercise, key) => {
             // setup variables
             let newExercise = _.cloneDeep(exercise);
@@ -312,10 +314,26 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             } else if(newExercise.unit_of_measure === 'seconds' || newExercise.unit_of_measure === 'yards') {
                 exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_set * exerciseSetsAssigned) * 2) : (newExercise.seconds_per_set * exerciseSetsAssigned);
             }
-            // if we have sets, reps, and duration - update our main variables
-            if(exerciseSetsAssigned > 0 && exerciseRepsAssigned > 0 && exerciseDuratrion > 0) {
-                totalSeconds += exerciseDuratrion;
-                cleanedExerciseList[list.title].push(newExercise);
+            newExercise.calculated_duration = exerciseDuratrion;
+            for (let i = 1; i <= exerciseSetsAssigned; i += 1) {
+                currentExercisesBySet[i] = currentExercisesBySet[i] && currentExercisesBySet[i].length > 0 ? currentExercisesBySet[i] : [];
+                currentExercisesBySet[i].push(newExercise);
+            }
+        });
+        // loop through our exercises organzied my set
+        _.map(currentExercisesBySet, (exerciseList, index) => {
+            _.map(exerciseList, (exercise, key) => {
+                let newExercise = _.cloneDeep(exercise);
+                newExercise.set_number = index;
+                updatedCurrentExerciseArray.push(newExercise);
+            });
+        });
+        // loop through our specific exercise to update our variables
+        _.map(updatedCurrentExerciseArray, (exercise, key) => {
+            // if a duration - update our main variables
+            if(exercise.calculated_duration > 0) {
+                totalSeconds += exercise.calculated_duration;
+                cleanedExerciseList[list.title].push(exercise);
                 totalLength += cleanedExerciseList[list.title].length;
             }
         });
