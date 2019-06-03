@@ -310,9 +310,9 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             // calculate exercise duration
             let exerciseDuratrion = 0;
             if(newExercise.unit_of_measure === 'count')  {
-                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned * exerciseSetsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned * exerciseSetsAssigned);
+                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned);
             } else if(newExercise.unit_of_measure === 'seconds' || newExercise.unit_of_measure === 'yards') {
-                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_set * exerciseSetsAssigned) * 2) : (newExercise.seconds_per_set * exerciseSetsAssigned);
+                exerciseDuratrion = newExercise.bilateral ? (newExercise.seconds_per_set * 2) : (newExercise.seconds_per_set);
             }
             newExercise.calculated_duration = exerciseDuratrion;
             for (let i = 1; i <= exerciseSetsAssigned; i += 1) {
