@@ -224,21 +224,21 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
                 >
                     <LinearGradient
-                        colors={['rgba(51, 64, 85, 0.89)', 'rgba(11, 26, 52, 0.97)', 'black']}
+                        colors={['rgb(248, 224, 118)', 'rgb(235, 186, 45)']}
                         style={[styles.linearGradientStyle]}
                     >
                         <Image
                             resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/stacked_icon.png')}
+                            source={require('../../../assets/images/standard/stacked_icon_white.png')}
                             style={{ height: 100, width: 100, }}
                         />
                         <Spacer size={80} />
                         <ActivityIndicator
-                            color={AppColors.zeplin.yellow}
+                            color={AppColors.white}
                             size={'large'}
                         />
                         <Spacer size={30} />
-                        <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
                     </LinearGradient>
                 </ImageBackground>
             </View>

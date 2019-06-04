@@ -1587,7 +1587,7 @@ it('Exercise Modality Render Logic - MOBILIZE (POST)', () => {
         goalsHeader:        'Efficient Routine to:',
         imageId:            'recoverCareActivate',
         imageSource:        require('../../../assets/images/standard/mobilize.png'),
-        pageSubtitle:       'Anytime after training',
+        pageSubtitle:       'Anytime',
         pageTitle:          'MOBILIZE',
         recoveryObj:        {active: true,},
         recoveryType:       'post_active_rest',

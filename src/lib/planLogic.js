@@ -1215,7 +1215,7 @@ const PlanLogic = {
         if(dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest[index] && dailyPlanObj.post_active_rest[index].active && modality === 'recover') {
             goals = plan.activeRestGoals;
             imageId = 'recoverCareActivate';
-            pageSubtitle = 'Anytime after training';
+            pageSubtitle = 'Anytime';
             pageTitle = 'MOBILIZE';
             recoveryObj = dailyPlanObj.post_active_rest[index];
             recoveryType = 'post_active_rest';
@@ -1411,7 +1411,7 @@ const PlanLogic = {
         let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
         let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../assets/images/standard/active_recovery_tab.png'));
-        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime after training', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize_tab.png'));
+        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize_tab.png'));
         let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'ICE', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
         let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi_tab.png'));
         let activeAfterModalities = _.concat(activeCoolDown, activePostActiveRest, activeIce, activeCWI);
@@ -1588,7 +1588,15 @@ const PlanLogic = {
                     AppColors.zeplin.slateXLight;
         let newLineData = _.slice(currentAlertData, startSliceValue, currentAlertData.length);
         let largestTVValue = _.maxBy(barData, 'value');
-        largestTVValue = largestTVValue && largestTVValue.value === 0 ? null : largestTVValue ? largestTVValue.value : 1;
+        largestTVValue = type === 4 ?
+            largestTVValue && largestTVValue.value === 0 ?
+                null
+                : largestTVValue ?
+                    largestTVValue.value
+                    :
+                    1
+            :
+            largestTVValue.value;
         // bar data
         let newBarData = _.map(barData, (data, key) => {
             let newObj = _.cloneDeep(data);
@@ -1632,13 +1640,6 @@ const PlanLogic = {
                     data.value
                 :
                 null;
-            if(type === 4) {
-                let lastNonNullValue = _.findLastIndex(newLineData, o => o.value !== null);
-                newValue = key === lastNonNullValue ?
-                    0
-                    :
-                    newValue;
-            }
             newObj.key = key;
             newObj.y = newValue;
             newObj.x = data.day_of_week;

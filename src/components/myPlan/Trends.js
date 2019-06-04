@@ -72,7 +72,7 @@ class Trends extends PureComponent {
                 style={{backgroundColor: AppColors.white, flex: 1, paddingBottom: (AppSizes.paddingLrg + AppSizes.paddingMed + 20 + AppFonts.scaleFont(11) + extraBottomPadding),}}
             >
 
-                <View style={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.paddingMed,}}>
+                <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
                     <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
                         <View style={{flex: 1, justifyContent: 'center',}} />
                         <Image
