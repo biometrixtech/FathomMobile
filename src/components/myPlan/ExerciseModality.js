@@ -253,7 +253,7 @@ class ExerciseModality extends Component {
                                     >
                                         {pageTitle}
                                     </MagicMove.Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <MultiSwitch
                                         buttons={buttons}
                                         isDisabled={!firstExerciseFound}
@@ -261,9 +261,9 @@ class ExerciseModality extends Component {
                                         selectedIndex={priority}
                                     />
                                     <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingXSml, width: (AppSizes.screen.width - AppSizes.paddingLrg),}}>
-                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
-                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
-                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Efficient' ? 'Recommended' : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                     </View>
                                     <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
                                     {_.map(goals, (goal, key) =>

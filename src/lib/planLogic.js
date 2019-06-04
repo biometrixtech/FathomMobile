@@ -1588,7 +1588,7 @@ const PlanLogic = {
                     AppColors.zeplin.slateXLight;
         let newLineData = _.slice(currentAlertData, startSliceValue, currentAlertData.length);
         let largestTVValue = _.maxBy(barData, 'value');
-        largestTVValue = largestTVValue && largestTVValue === 0 ? 1 : largestTVValue ? largestTVValue.value : 1;
+        largestTVValue = largestTVValue && largestTVValue.value === 0 ? null : largestTVValue ? largestTVValue.value : 1;
         // bar data
         let newBarData = _.map(barData, (data, key) => {
             let newObj = _.cloneDeep(data);
@@ -1624,7 +1624,10 @@ const PlanLogic = {
             let newObj = _.cloneDeep(data);
             let newValue = data.value && data.value > 0 ?
                 type === 3 || type === 4 ?
-                    _.round(((largestTVValue * data.value) / 5))
+                    largestTVValue ?
+                        _.round(((largestTVValue * data.value) / 5))
+                        :
+                        data.value
                     :
                     data.value
                 :

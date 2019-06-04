@@ -334,7 +334,7 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             if(exercise.calculated_duration > 0) {
                 totalSeconds += exercise.calculated_duration;
                 cleanedExerciseList[list.title].push(exercise);
-                totalLength += cleanedExerciseList[list.title].length;
+                totalLength += 1;
             }
         });
     });

@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         fontSize: AppFonts.scaleFont(18),
     },
     lockedSubtitle: {
-        fontSize: AppFonts.scaleFont(11),
+        fontSize: AppFonts.scaleFont(12),
         opacity:  0.4,
     },
     lockedTitle: {
@@ -118,8 +118,9 @@ const ActivityTab = ({
                     { completed ?
                         <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
                             <LottieView
-                                autoPlay={true}
+                                autoPlay={false}
                                 loop={false}
+                                progress={1}
                                 source={require('../../../assets/animation/checkmark-circle.json')}
                             />
                         </View>
@@ -193,7 +194,7 @@ const ActivityTab = ({
                                 {title}
                             </MagicMove.Text>
                             <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
-                            <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>
+                            <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>
                                 {timing[0]}
                                 <Text robotoRegular>{timing[1]}</Text>
                             </Text>

@@ -11,7 +11,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Easing, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Animated, Easing, Platform, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
@@ -41,6 +41,7 @@ class BodyModality extends Component {
         };
         this._animatedValue = new Animated.Value(0);
         this._panel = {};
+        this._scrollToBottomTimer = null;
         this._scrollViewRef = {};
         this._timer = null;
     }
@@ -48,6 +49,7 @@ class BodyModality extends Component {
     componentWillUnmount = () => {
         // clear timers
         clearInterval(this._timer);
+        clearInterval(this._scrollToBottomTimer);
     }
 
     _completeBodyPartModality = () => {
@@ -72,9 +74,7 @@ class BodyModality extends Component {
         );
     }
 
-    _scrollToBottom = () => {
-        this._scrollViewRef.scrollToEnd({ animated: true, });
-    }
+    _scrollToBottom = () => this._scrollViewRef.scrollToEnd({ animated: true, })
 
     _showSlideUpPanel = () => this._panel.show()
 
@@ -91,12 +91,21 @@ class BodyModality extends Component {
     }
 
     _toggleTimer = time => {
-        this._scrollToBottom();
-        let newTime = this.state.isCompleted ? (time * 60) : this.state.countdownTime;
         this.setState(
-            { countdownTime: newTime, isCompleted: false, isPaused: false, isStarted: true, },
+            { showInstructions: false, },
             () => {
-                this._timer = setInterval(this._updateTimer, 1000);
+                Animated.timing(this._animatedValue, {
+                    duration: 300,
+                    toValue:  1,
+                }).start();
+                let newTime = this.state.isCompleted ? (time * 60) : this.state.countdownTime;
+                this.setState(
+                    { countdownTime: newTime, isCompleted: false, isPaused: false, isStarted: true, },
+                    () => {
+                        this._timer = setInterval(this._updateTimer, 1000);
+                        this._scrollToBottomTimer = _.delay(() => this._scrollToBottom(), 500);
+                    }
+                );
             }
         );
     }
@@ -149,9 +158,9 @@ class BodyModality extends Component {
                     <ScrollView
                         automaticallyAdjustContentInsets={false}
                         bounces={false}
+                        contentContainerStyle={{flexGrow: 1,}}
                         nestedScrollEnabled={true}
                         ref={ref => {this._scrollViewRef = ref;}}
-                        style={{backgroundColor: AppColors.white, flex: 1,}}
                     >
                         <View style={{height: AppSizes.screen.heightTwoThirds,}}>
                             <View style={{flex: 1,}}>
@@ -196,7 +205,7 @@ class BodyModality extends Component {
                                     >
                                         {pageTitle}
                                     </MagicMove.Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
                                     </View>
@@ -222,6 +231,7 @@ class BodyModality extends Component {
                                 </LinearGradient>
                             </View>
                             <Button
+                                background={Platform.OS === 'android' && Platform.Version >= 21 ? TouchableNativeFeedback.Ripple('transparent', false) : null}
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), flexDirection: isCompleted ? 'column' : 'row', height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                                 containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
                                 icon={isCompleted ? {
@@ -241,7 +251,7 @@ class BodyModality extends Component {
                                     <View>
                                         <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Recommended Body Parts'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{`Tap on body parts you do not plan to ${modality}.`}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`Tap on body parts you do not plan to ${modality}.`}</Text>
                                         </View>
                                         <View style={[AppStyles.row, {flexWrap: 'wrap', paddingHorizontal: (AppSizes.paddingLrg - AppSizes.paddingSml),}]}>
                                             {_.map(recoveryObj.body_parts, (body, index) => {
@@ -290,7 +300,7 @@ class BodyModality extends Component {
                                             onPress={() => this._toggleInstructions()}
                                             style={{alignItems: 'center', flexDirection: 'row',}}
                                         >
-                                            <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11), paddingRight: AppSizes.paddingXSml,}}>{showInstructions ? 'Hide' : 'Show'}</Text>
+                                            <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), paddingRight: AppSizes.paddingXSml,}}>{showInstructions ? 'Hide' : 'Show'}</Text>
                                             <Animated.View style={[animatedStyle,]}>
                                                 <TabIcon
                                                     color={AppColors.zeplin.yellow}
@@ -319,7 +329,7 @@ class BodyModality extends Component {
                                                     }
                                                 </Text>
                                                 <Spacer size={AppSizes.paddingXSml} />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
                                                     { modality === 'heat' ?
                                                         'TIP: Dampen a bath towel, wring out excess water, & heat in the microwave for 10-15 seconds.'
                                                         : modality === 'ice' ?
@@ -355,7 +365,7 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginLeft: AppSizes.paddingXSml,}}>
                                                             { modality === 'heat' ?
                                                                 'Do not place heat on swollen or bruised areas.'
                                                                 :
@@ -389,7 +399,7 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginLeft: AppSizes.paddingXSml,}}>
+                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginLeft: AppSizes.paddingXSml,}}>
                                                             { modality === 'heat' ?
                                                                 'When using heat, be very careful to use moderate heat for a limited time to avoid burns.'
                                                                 : modality === 'ice' ?
@@ -415,18 +425,19 @@ class BodyModality extends Component {
                                     {'See the science'}
                                 </Text>
                             }
-                            <Button
-                                buttonStyle={{
-                                    backgroundColor: AppColors.zeplin.yellow,
-                                    borderRadius:    0,
-                                    paddingBottom:   AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
-                                    paddingTop:      AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
-                                }}
-                                onPress={() => this._completeBodyPartModality()}
-                                title={`Complete ${_.chain(pageTitle).toLower().upperFirst()}`}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
-                            />
                         </View>
+                        <Button
+                            buttonStyle={{
+                                backgroundColor: AppColors.zeplin.yellow,
+                                borderRadius:    0,
+                                paddingBottom:   AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                                paddingTop:      AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
+                            }}
+                            containerStyle={{flex: 1, justifyContent: 'flex-end',}}
+                            onPress={() => this._completeBodyPartModality()}
+                            title={`Complete ${_.chain(pageTitle).toLower().startCase()}`}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
+                        />
                     </ScrollView>
                     <SlidingUpPanel
                         allowDragging={false}

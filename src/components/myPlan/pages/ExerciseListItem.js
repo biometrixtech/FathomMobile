@@ -41,15 +41,18 @@ class ExerciseListItem extends Component {
         return(
             <View style={[{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-                    <TabIcon
-                        containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                        icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                        iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,}]}
+                    <TouchableOpacity
                         onPress={() => handleCompleteExercise(exercise.library_id, exercise.set_number)}
-                        reverse={false}
-                        size={26}
-                        type={'ionicon'}
-                    />
+                        style={{flex: 1, justifyContent: 'center',}}
+                    >
+                        <TabIcon
+                            icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                            iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,}]}
+                            reverse={false}
+                            size={26}
+                            type={'ionicon'}
+                        />
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => toggleSelectedExercise(exercise, true)}
                         style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}

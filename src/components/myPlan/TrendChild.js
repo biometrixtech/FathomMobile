@@ -124,164 +124,170 @@ class TrendChild extends PureComponent {
         } = PlanLogic.handleTrendChildRenderLogic(currentCardIndex, insightType, plan);
         let currentAlertText = PlanLogic.handleChartTitleRenderLogic(currentAlert, styles.cardSubtitle, isToolTipOpen);
         return (
-            <ScrollView
-                contentContainerStyle={{flexDirection: 'column', flexGrow: 1,}}
-                automaticallyAdjustContentInsets={false}
-                bounces={false}
-                nestedScrollEnabled={true}
-                scrollEnabled={!isCardSwiping}
-            >
+            <View>
 
-                <LinearGradient
-                    colors={['rgb(255, 255, 255)', 'rgb(254, 254, 254)', 'rgb(240, 240, 240)']}
-                    style={{flex: 1,}}
+                <View style={{backgroundColor: AppColors.white, height: AppSizes.statusBarHeight,}} />
+
+                <ScrollView
+                    contentContainerStyle={{flexDirection: 'column', flexGrow: 1,}}
+                    automaticallyAdjustContentInsets={false}
+                    bounces={false}
+                    nestedScrollEnabled={true}
+                    scrollEnabled={!isCardSwiping}
                 >
 
-                    <View style={{justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
-                        <TouchableOpacity
-                            activeOpacity={1}
-                            onPress={() => Actions.trends()}
-                            style={{alignSelf: 'flex-start', padding: AppSizes.padding,}}
-                        >
-                            <TabIcon
-                                color={AppColors.zeplin.slate}
-                                icon={'chevron-left'}
-                                size={40}
-                                type={'material-community'}
-                            />
-                        </TouchableOpacity>
-                        <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
-                            <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28),}}>
-                                {_.toUpper(insightTitle)}
-                            </Text>
-                            { currentAlertText && currentAlert.visualization_type === 5 ?
-                                <Tooltip
-                                    animated
-                                    childrenExtraStyles={{alignItems: 'flex-start',}}
-                                    childrenViewStyle={{flex: 1,}}
-                                    content={
-                                        <TooltipContent
-                                            handleTooltipClose={() => this.setState({ isToolTipOpen: false, })}
-                                        />
-                                    }
-                                    isVisible={isToolTipOpen}
-                                    onClose={() => {}}
-                                    parentViewStyle={{flex: 1,}}
-                                    tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
-                                >
-                                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                        {currentAlertText}
-                                        <TabIcon
-                                            color={isToolTipOpen ? AppColors.white : AppColors.zeplin.slateXLight}
-                                            containerStyle={[{marginLeft: AppSizes.paddingSml,}]}
-                                            icon={'help-circle'}
-                                            onPress={() => this.setState({ isToolTipOpen: true, },)}
-                                            size={20}
-                                            type={'material-community'}
-                                        />
-                                    </View>
-                                </Tooltip>
-                                : currentAlertText ?
-                                    currentAlertText
-                                    :
-                                    null
-                            }
-                        </View>
-                    </View>
+                    <LinearGradient
+                        colors={['rgb(255, 255, 255)', 'rgb(254, 254, 254)', 'rgb(240, 240, 240)']}
+                        style={{flex: 1,}}
+                    >
 
-                    <View style={{marginBottom: AppSizes.padding,}}>
-                        <FathomCharts
-                            barData={PlanLogic.handleBarChartRenderLogic(plan, startSliceValue)}
-                            containerWidth={AppSizes.screen.width}
-                            currentAlert={currentAlert}
-                            startSliceValue={startSliceValue}
-                        />
-                    </View>
-
-                    <View style={{borderRadius: 6, marginBottom: AppSizes.padding,}}>
-                        <DeckCards
-                            cards={insightDetails.alerts}
-                            dragEnd={() => this.setState({ isCardSwiping: false, })}
-                            dragStart={() => this.setState({ isCardSwiping: true, })}
-                            handleReadInsight={index => this._handleDeckCardsSwipe(index)}
-                            infinite={true}
-                            isVisible={true}
-                            shouldNavigate={false}
-                            showDate={false}
-                            startIndex={currentCardIndex}
-
-                        />
-                    </View>
-
-                    <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>
-                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
-                            {'OPTIMAL ROUTINE'}
-                        </Text>
-                        { insightDetails.cta.length === 0 ?
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
-                            :
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
-                                {'In order to '}
-                                <Text robotoBold>
-                                    {insightDetails.goals.join(', ')}
+                        <View style={{justifyContent: 'center', marginBottom: AppSizes.padding,}}>
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => Actions.pop()}
+                                style={{alignSelf: 'flex-start', padding: AppSizes.padding,}}
+                            >
+                                <TabIcon
+                                    color={AppColors.zeplin.slate}
+                                    icon={'chevron-left'}
+                                    size={40}
+                                    type={'material-community'}
+                                />
+                            </TouchableOpacity>
+                            <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
+                                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28),}}>
+                                    {_.toUpper(insightTitle)}
                                 </Text>
-                                {' we’ll add the following activities to your plan at the optimal time:'}
-                            </Text>
-                        }
-                        <View style={[styles.tilesContainer,]}>
-                            {_.map(insightDetails.cta, (cta, key) => {
-                                let imageSource = require('../../../assets/images/standard/mobilize_tab.png');
-                                switch (cta.name) {
-                                case 'active_recovery':
-                                    imageSource = require('../../../assets/images/standard/active_recovery_tab.png');
-                                    break;
-                                case 'heat':
-                                    imageSource = require('../../../assets/images/standard/heat_tab.png');
-                                    break;
-                                case 'ice':
-                                    imageSource = require('../../../assets/images/standard/ice_tab.png');
-                                    break;
-                                case 'cwi':
-                                    imageSource = require('../../../assets/images/standard/cwi_tab.png');
-                                    break;
-                                default:
-                                    imageSource = require('../../../assets/images/standard/mobilize_tab.png');
-                                }
-                                return (
-                                    <ImageBackground
-                                        imageStyle={{borderRadius: 10,}}
-                                        key={key}
-                                        resizeMode={'cover'}
-                                        source={imageSource}
-                                        style={[styles.tile,]}
+                                { currentAlertText && currentAlert.visualization_type === 5 ?
+                                    <Tooltip
+                                        animated
+                                        childrenExtraStyles={{alignItems: 'flex-start',}}
+                                        childrenViewStyle={{flex: 1,}}
+                                        content={
+                                            <TooltipContent
+                                                handleTooltipClose={() => this.setState({ isToolTipOpen: false, })}
+                                            />
+                                        }
+                                        isVisible={isToolTipOpen}
+                                        onClose={() => {}}
+                                        parentViewStyle={{flex: 1,}}
+                                        tooltipStyle={{left: 30, width: (AppSizes.screen.width - 60),}}
                                     >
-                                        <View style={[styles.ctaWrapper,]}>
-                                            <Text numberOfLines={1} oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{_.toUpper(cta.header)}</Text>
-                                            <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cta.benefit}</Text>
-                                            <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(10),}}>{cta.proximity}</Text>
+                                        <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                            {currentAlertText}
+                                            <TabIcon
+                                                color={isToolTipOpen ? AppColors.white : AppColors.zeplin.slateXLight}
+                                                containerStyle={[{marginLeft: AppSizes.paddingSml,}]}
+                                                icon={'help-circle'}
+                                                onPress={() => this.setState({ isToolTipOpen: true, },)}
+                                                size={20}
+                                                type={'material-community'}
+                                            />
                                         </View>
-                                    </ImageBackground>
-                                );
-                            })}
+                                    </Tooltip>
+                                    : currentAlertText ?
+                                        currentAlertText
+                                        :
+                                        null
+                                }
+                            </View>
                         </View>
-                    </View>
 
-                    <View style={[AppStyles.containerCentered]}>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, width: AppSizes.screen.widthThird,}}
-                            containerStyle={[{width: AppSizes.screen.widthThird,}]}
-                            onPress={() => Actions.myPlan()}
-                            raised={true}
-                            title={'My Plan'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
-                        />
-                    </View>
+                        <View style={{marginBottom: AppSizes.padding,}}>
+                            <FathomCharts
+                                barData={PlanLogic.handleBarChartRenderLogic(plan, startSliceValue)}
+                                containerWidth={AppSizes.screen.width}
+                                currentAlert={currentAlert}
+                                startSliceValue={startSliceValue}
+                            />
+                        </View>
 
-                    <Spacer size={AppSizes.paddingLrg} />
+                        <View style={{borderRadius: 6, marginBottom: AppSizes.padding,}}>
+                            <DeckCards
+                                cards={insightDetails.alerts}
+                                dragEnd={() => this.setState({ isCardSwiping: false, })}
+                                dragStart={() => this.setState({ isCardSwiping: true, })}
+                                handleReadInsight={index => this._handleDeckCardsSwipe(index)}
+                                infinite={true}
+                                isVisible={true}
+                                shouldNavigate={false}
+                                showDate={false}
+                                startIndex={currentCardIndex}
 
-                </LinearGradient>
+                            />
+                        </View>
 
-            </ScrollView>
+                        <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>
+                            <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
+                                {'OPTIMAL ROUTINE'}
+                            </Text>
+                            { insightDetails.cta.length === 0 ?
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
+                                :
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
+                                    {'In order to '}
+                                    <Text robotoBold>
+                                        {insightDetails.goals.join(', ')}
+                                    </Text>
+                                    {' we’ll add the following activities to your plan at the optimal time:'}
+                                </Text>
+                            }
+                            <View style={[styles.tilesContainer,]}>
+                                {_.map(insightDetails.cta, (cta, key) => {
+                                    let imageSource = require('../../../assets/images/standard/mobilize_tab.png');
+                                    switch (cta.name) {
+                                    case 'active_recovery':
+                                        imageSource = require('../../../assets/images/standard/active_recovery_tab.png');
+                                        break;
+                                    case 'heat':
+                                        imageSource = require('../../../assets/images/standard/heat_tab.png');
+                                        break;
+                                    case 'ice':
+                                        imageSource = require('../../../assets/images/standard/ice_tab.png');
+                                        break;
+                                    case 'cwi':
+                                        imageSource = require('../../../assets/images/standard/cwi_tab.png');
+                                        break;
+                                    default:
+                                        imageSource = require('../../../assets/images/standard/mobilize_tab.png');
+                                    }
+                                    return (
+                                        <ImageBackground
+                                            imageStyle={{borderRadius: 10,}}
+                                            key={key}
+                                            resizeMode={'cover'}
+                                            source={imageSource}
+                                            style={[styles.tile,]}
+                                        >
+                                            <View style={[styles.ctaWrapper,]}>
+                                                <Text numberOfLines={1} oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{_.toUpper(cta.header)}</Text>
+                                                <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cta.benefit}</Text>
+                                                <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(10),}}>{cta.proximity}</Text>
+                                            </View>
+                                        </ImageBackground>
+                                    );
+                                })}
+                            </View>
+                        </View>
+
+                        <View style={[AppStyles.containerCentered]}>
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, width: AppSizes.screen.widthThird,}}
+                                containerStyle={[{width: AppSizes.screen.widthThird,}]}
+                                onPress={() => Actions.myPlan()}
+                                raised={true}
+                                title={'My Plan'}
+                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
+                            />
+                        </View>
+
+                        <Spacer size={AppSizes.paddingLrg} />
+
+                    </LinearGradient>
+
+                </ScrollView>
+
+            </View>
         );
     }
 }

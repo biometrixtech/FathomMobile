@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     },
     label: {
         color:        AppColors.zeplin.slate,
-        fontSize:     AppFonts.scaleFont(11),
+        fontSize:     AppFonts.scaleFont(12),
         marginBottom: AppSizes.paddingXSml,
     },
     xyAxisWrapper: {
@@ -67,11 +67,11 @@ class XAxisLabels extends PureComponent {
         return (
             <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
                 { highlightedIndex ?
-                    <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
+                    <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
                         {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
                     </Text>
                     :
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
                         {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
                     </Text>
                 }
@@ -120,11 +120,6 @@ class FathomCharts extends PureComponent {
             lineChartColor,
             updatedBarData,
         } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
-        if(currentAlert.visualization_type === 4) {
-            console.log('lineChartData',lineChartData);
-            console.log('updatedBarData',updatedBarData);
-            console.log('currentAlert',currentAlert,currentAlert.visualization_type);
-        }
         return (
             <View pointerEvents={'none'}>
 
@@ -250,7 +245,7 @@ class FathomCharts extends PureComponent {
                             labelComponent={
                                 <V.VictoryLabel
                                     dy={AppFonts.scaleFont(14)}
-                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(11), }}
+                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(12), }}
                                     text={datum => datum.displayValue}
                                 />
                             }
@@ -292,7 +287,7 @@ class FathomCharts extends PureComponent {
                                                 :
                                                 null
                                     }
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{_.toLower(legend.text)}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{_.toLower(legend.text)}</Text>
                                 </View>
                             );
                         })
