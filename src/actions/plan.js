@@ -589,10 +589,24 @@ const getMobilize = () => {
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     return dispatch => AppAPI.get_mobilize.post(false, bodyObj)
         .then(data => {
+            // update My Plan reducer
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: data.daily_plans,
             });
+            // setup variables to be used
+            let isPreActiveRest = data.daily_plans[0].pre_active_rest[0] && data.daily_plans[0].pre_active_rest[0].active;
+            let activeRestObj = isPreActiveRest ? data.daily_plans[0].pre_active_rest[0] : data.daily_plans[0].post_active_rest[0];
+            let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+            let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+            let currentActiveRestGoals = store.getState().plan.activeRestGoals;
+            let areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoals, currentActiveRestGoals, 'goal_type').length;
+            // update goals if readiness survey is completed
+            dispatch({
+                type: Actions.SET_ACTIVE_REST_GOALS,
+                data: areActiveRestGoalsAlreadySet > 0 ? activeRestGoals : currentActiveRestGoals,
+            });
+            // resolve promise
             return Promise.resolve(data);
         })
         .catch(err => Promise.reject(AppAPI.handleError(err)));
