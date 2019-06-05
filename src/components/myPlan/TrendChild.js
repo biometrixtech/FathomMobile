@@ -124,7 +124,7 @@ class TrendChild extends PureComponent {
         } = PlanLogic.handleTrendChildRenderLogic(currentCardIndex, insightType, plan);
         let currentAlertText = PlanLogic.handleChartTitleRenderLogic(currentAlert, styles.cardSubtitle, isToolTipOpen);
         return (
-            <View>
+            <View style={{paddingBottom: AppSizes.iphoneXBottomBarPadding,}}>
 
                 <View style={{backgroundColor: AppColors.white, height: AppSizes.statusBarHeight,}} />
 

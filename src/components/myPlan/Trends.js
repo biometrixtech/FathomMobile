@@ -76,7 +76,7 @@ class Trends extends PureComponent {
                     <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
                         <View style={{flex: 1, justifyContent: 'center',}} />
                         <Image
-                            source={require('../../../assets/images/standard/fathom-gold-and-white.png')}
+                            source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                             style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
                         />
                         <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />

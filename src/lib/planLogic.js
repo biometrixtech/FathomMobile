@@ -1646,6 +1646,14 @@ const PlanLogic = {
             delete newObj.label;
             return newObj;
         });
+        // custom DOMs logic
+        if(type === 4 &&newLineData[4].value === 0 && newLineData[4].y === null && newLineData[3].value === 1) {
+            newLineData[4].y = 0;
+        } else if(type === 4 &&newLineData[5].value === 0 && newLineData[5].y === null && newLineData[4].value === 1.6) {
+            newLineData[5].y = 0;
+        } else if(type === 4 &&newLineData[6].value === 0 && newLineData[6].y === null && newLineData[5].value === 1.75) {
+            newLineData[6].y = 0;
+        }
         let barWidth = newBarData.length === 14 ? AppSizes.paddingMed : AppSizes.padding;
         // return values
         return {
