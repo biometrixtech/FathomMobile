@@ -213,7 +213,6 @@ class TrendChild extends PureComponent {
                                 shouldNavigate={false}
                                 showDate={false}
                                 startIndex={currentCardIndex}
-
                             />
                         </View>
 

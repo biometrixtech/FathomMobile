@@ -6,7 +6,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, } from 'react-redux';
 import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs

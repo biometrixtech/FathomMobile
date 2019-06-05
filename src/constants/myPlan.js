@@ -258,7 +258,7 @@ const postSessionFeel = [
     { index: 5, label: 'MAXIMAL', subtitle: 'unable to talk', value: 10, },
 ];
 
-function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
+function cleanExerciseList(recoveryObj, planSelection = 1, goals, modality) {
     // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
@@ -291,30 +291,30 @@ function cleanExerciseList(recoveryObj, priority = 1, goals, modality) {
             dosage = _.orderBy(dosage, ['ranking'], ['asc']);
             // calculate exercise sets
             let exerciseSetsAssigned = 0;
-            if(dosage.length > 0 && priority === 0) {
+            if(dosage.length > 0 && planSelection === 0) {
                 exerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
-            } else if(dosage.length > 0 && priority === 1) {
+            } else if(dosage.length > 0 && planSelection === 1) {
                 exerciseSetsAssigned = dosage[0].complete_sets_assigned > 0 ? dosage[0].complete_sets_assigned : dosage[0].default_complete_sets_assigned;
-            } else if(dosage.length > 0 && priority === 2) {
+            } else if(dosage.length > 0 && planSelection === 2) {
                 exerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
             }
             // calculate exercise reps
             let exerciseRepsAssigned = 0;
-            if(dosage.length > 0 && priority === 0) {
+            if(dosage.length > 0 && planSelection === 0) {
                 exerciseRepsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
-            } else if(dosage.length > 0 && priority === 1) {
+            } else if(dosage.length > 0 && planSelection === 1) {
                 exerciseRepsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
-            } else if(dosage.length > 0 && priority === 2) {
+            } else if(dosage.length > 0 && planSelection === 2) {
                 exerciseRepsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
             }
             // calculate exercise duration
-            let exerciseDuratrion = 0;
+            let exerciseDuration = 0;
             if(newExercise.unit_of_measure === 'count')  {
-                exerciseDuratrion = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned);
+                exerciseDuration = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned);
             } else if(newExercise.unit_of_measure === 'seconds' || newExercise.unit_of_measure === 'yards') {
-                exerciseDuratrion = newExercise.bilateral ? (newExercise.seconds_per_set * 2) : (newExercise.seconds_per_set);
+                exerciseDuration = newExercise.bilateral ? (newExercise.seconds_per_set * 2) : (newExercise.seconds_per_set);
             }
-            newExercise.calculated_duration = exerciseDuratrion;
+            newExercise.calculated_duration = exerciseDuration;
             for (let i = 1; i <= exerciseSetsAssigned; i += 1) {
                 currentExercisesBySet[i] = currentExercisesBySet[i] && currentExercisesBySet[i].length > 0 ? currentExercisesBySet[i] : [];
                 currentExercisesBySet[i].push(newExercise);
@@ -396,7 +396,7 @@ function isFSCompletedValid(functionalStrength, exerciseList) {
     return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
 }
 
-function cleanExercise(exercise, priority, goals) {
+function cleanExercise(exercise, planSelection, goals) {
     let filteredReducerGoals = _.filter(goals, {isSelected: true,});
     let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
     let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
@@ -405,11 +405,11 @@ function cleanExercise(exercise, priority, goals) {
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
-    if(cleanedExercise && dosage.length > 0 && priority === 0) {
+    if(cleanedExercise && dosage.length > 0 && planSelection === 0) {
         cleanedExercise.repsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
-    } else if(cleanedExercise && dosage.length > 0 && priority === 1) {
+    } else if(cleanedExercise && dosage.length > 0 && planSelection === 1) {
         cleanedExercise.repsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
-    } else if(cleanedExercise && dosage.length > 0 && priority === 2) {
+    } else if(cleanedExercise && dosage.length > 0 && planSelection === 2) {
         cleanedExercise.repsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
     } else {
         cleanedExercise.repsAssigned = 0;

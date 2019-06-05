@@ -386,7 +386,7 @@ class Settings extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <SettingsNavBar />
-                { userHas3SensorSensorSystem &&
+                {/* userHas3SensorSensorSystem &&
                     <View>
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -440,7 +440,7 @@ class Settings extends Component {
                         />
                         <Spacer isDivider />
                     </View>
-                }
+                */}
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
