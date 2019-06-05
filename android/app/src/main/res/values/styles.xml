@@ -15,7 +15,7 @@
     </style>
 
     <style name="GoldAccent" parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorAccent">@color/fathomYellow</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 
 </resources>

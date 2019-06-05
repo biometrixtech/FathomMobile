@@ -40,7 +40,7 @@ const SoreBodyPartScaleButton = ({
             style={[
                 AppStyles.textCenterAligned,
                 {
-                    color:    isSelected ? AppColors.white : AppColors.zeplin.darkSlate,
+                    color:    isSelected ? AppColors.white : AppColors.zeplin.slate,
                     fontSize: AppFonts.scaleFont(13),
                 }
             ]}

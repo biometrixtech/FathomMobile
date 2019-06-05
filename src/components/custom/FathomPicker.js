@@ -1,5 +1,5 @@
 // https://github.com/lawnstarter/react-native-picker-select
-import React, { PureComponent } from 'react';
+import React, { PureComponent, } from 'react';
 import {
     ColorPropType,
     Modal,
@@ -393,7 +393,7 @@ export default class RNPickerSelect extends PureComponent {
                     testID="done_button"
                 >
                     <View testID="needed_for_touchable">
-                        <Text style={[defaultStyles.done, style.done]}>{doneText}</Text>
+                        <Text allowFontScaling={false} style={[defaultStyles.done, style.done]}>{doneText}</Text>
                     </View>
                 </TouchableWithoutFeedback>
             </View>
@@ -411,7 +411,7 @@ export default class RNPickerSelect extends PureComponent {
         return <TabIcon
             containerStyle={[AppStyles.containerCentered,]}
             icon={'chevron-down'}
-            iconStyle={[{color: AppColors.zeplin.darkGrey}]}
+            iconStyle={[{color: AppColors.zeplin.navy}]}
             reverse={false}
             type={'material-community'}
         />;
@@ -432,6 +432,7 @@ export default class RNPickerSelect extends PureComponent {
         return (
             <View pointerEvents="box-only" style={[containerStyle, !hideIcon ? {flexDirection: 'row',} : {}]}>
                 <TextInput
+                    allowFontScaling={false}
                     style={[
                         !hideIcon ? { paddingRight: 5 } : {},
                         Platform.OS === 'ios' ? style.inputIOS : style.inputAndroid,

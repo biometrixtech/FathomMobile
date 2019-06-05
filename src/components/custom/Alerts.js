@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 
     // Error
     msgError: {
-        backgroundColor: AppColors.zeplin.coachesDashError,
+        backgroundColor: AppColors.zeplin.error,
     },
     msgError_text: {
         color: AppColors.white,

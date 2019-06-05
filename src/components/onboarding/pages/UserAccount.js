@@ -14,7 +14,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
@@ -93,7 +93,7 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.lightGrey}
+                                    {color: AppColors.zeplin.slateLight}
                         ]}
                         size={10}
                         type={'material-community'}
@@ -107,7 +107,7 @@ class UserAccount extends Component {
                                 : (this.state.accordionSection + 1) === section.index ?
                                     {color: AppColors.black}
                                     :
-                                    {color: AppColors.zeplin.lightGrey},
+                                    {color: AppColors.zeplin.slate},
                         ]}
                     >
                         {section.header}
@@ -116,7 +116,7 @@ class UserAccount extends Component {
                 { (section.index === 1 && this.state.accordionSection.includes(0)) || (section.index === 2 && this.state.accordionSection.includes(1)) ?
                     <View
                         style={{
-                            borderColor:     AppColors.zeplin.light,
+                            borderColor:     AppColors.zeplin.slateXLight,
                             borderLeftWidth: 1,
                             height:          20,
                             marginLeft:      10,
@@ -125,7 +125,7 @@ class UserAccount extends Component {
                     : (section.index === 1 && (this.state.accordionSection.includes(1) || this.state.accordionSection.length === 0)) ?
                         <View
                             style={{
-                                borderColor:     AppColors.zeplin.light,
+                                borderColor:     AppColors.zeplin.slateXLight,
                                 borderLeftWidth: 1,
                                 height:          20,
                                 marginLeft:      10,
@@ -142,7 +142,7 @@ class UserAccount extends Component {
         let errorMsg = this.props.error && this.props.error.length > 0 ? this.props.error : this.state.coachContent && this.state.coachContent.length > 0 ? this.state.coachContent : '';
         return(
             <View>
-                <View style={{borderColor: AppColors.zeplin.light, borderLeftWidth: 1, marginLeft: 10,}}>
+                <View style={{borderColor: AppColors.zeplin.slateXLight, borderLeftWidth: 1, marginLeft: 10,}}>
                     <Alerts
                         leftAlignText
                         error={errorMsg}
@@ -289,7 +289,7 @@ class UserAccount extends Component {
                         />
                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'column', justifyContent: 'flex-end', paddingVertical: AppSizes.padding,}}>
                             <Button
-                                buttonStyle={{backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white, borderColor: isFormValid ? AppColors.zeplin.yellow : AppColors.zeplin.light, borderWidth: 1, width: '75%',}}
+                                buttonStyle={{backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white, borderColor: isFormValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight, borderWidth: 1, width: '75%',}}
                                 containerStyle={{alignItems: 'center',}}
                                 icon={isFormValid ? {
                                     color: AppColors.white,
@@ -300,7 +300,7 @@ class UserAccount extends Component {
                                 iconRight={true}
                                 onPress={() => isFormValid ? handleFormSubmit() : {}}
                                 title={`${this.props.user.id ? 'Update' : 'Create'} Account`}
-                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.light, fontSize: AppFonts.scaleFont(16), width: isFormValid ? '75%' : '100%',}}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(16), width: isFormValid ? '75%' : '100%',}}
                                 type={'outline'}
                             />
                             <TouchableHighlight
@@ -308,7 +308,7 @@ class UserAccount extends Component {
                                 style={[{marginTop: AppSizes.padding,}]}
                                 underlayColor={AppColors.transparent}
                             >
-                                <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
                                     {'By signing up you agree to our '}
                                     <Text robotoBold>{'Terms of Use.'}</Text>
                                 </Text>

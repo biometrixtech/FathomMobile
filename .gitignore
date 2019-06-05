@@ -29,6 +29,12 @@ build/
 .gradle
 local.properties
 *.iml
+# crash reporting
+crashlytics-build.properties
+com_crashlytics_export_strings.xml
+android/.settings/
+*.bundle
+*.hprof
 
 # node.js
 #

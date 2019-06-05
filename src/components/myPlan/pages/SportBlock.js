@@ -44,14 +44,14 @@ const SportBlock = ({ displayName, filteredSession, isSelected, onPress, }) => (
             Platform.OS === 'ios' ? {} : {elevation: 2,},
             styles.shadowEffect,
             styles.sportBlockWrapper,
-            isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {backgroundColor: AppColors.zeplin.darkWhite,},
+            isSelected ? {backgroundColor: AppColors.zeplin.yellow,} : {backgroundColor: AppColors.zeplin.superLight,},
             filteredSession ? {padding: AppSizes.paddingSml,} : {padding: AppSizes.padding,},
         ]}
     >
         { filteredSession && filteredSession.icon && filteredSession.iconType ?
             <TabIcon
                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                color={isSelected ? AppColors.white : AppColors.zeplin.seaBlue}
+                color={isSelected ? AppColors.white : AppColors.zeplin.splash}
                 icon={filteredSession.icon}
                 reverse={false}
                 size={32}
@@ -60,12 +60,12 @@ const SportBlock = ({ displayName, filteredSession, isSelected, onPress, }) => (
             : filteredSession && filteredSession.imagePath ?
                 <Image
                     source={filteredSession.imagePath}
-                    style={{height: 32, marginRight: AppSizes.paddingSml, tintColor: isSelected ? AppColors.white : AppColors.zeplin.seaBlue, width: 32,}}
+                    style={{height: 32, marginRight: AppSizes.paddingSml, tintColor: isSelected ? AppColors.white : AppColors.zeplin.splash, width: 32,}}
                 />
                 :
                 null
         }
-        <Text robotoMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(15),}}>{displayName}</Text>
+        <Text robotoMedium style={{color: isSelected ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{displayName}</Text>
     </TouchableOpacity>
 );
 

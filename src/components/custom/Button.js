@@ -4,7 +4,7 @@
      <Button text={'Server is down'} />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Button, } from 'react-native-elements';
 
@@ -30,6 +30,8 @@ class CustomButton extends Component {
         if(props.type === 'outline') {
             props.buttonStyle.borderWidth = 1;
         }
+
+        props.titleProps = { allowFontScaling: false, };
 
         return props;
     }

@@ -17,10 +17,7 @@ import { FathomModal, Spacer, Text, } from '../custom';
 /* Component ==================================================================== */
 const Loading = ({ text, }) => (
     <FathomModal
-        backdropColor={AppColors.zeplin.superLight}
-        backdropOpacity={0.8}
         isVisible={true}
-        style={{margin: 0,}}
     >
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
             <ActivityIndicator

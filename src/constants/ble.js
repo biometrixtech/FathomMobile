@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:31:04
- * @Last Modified by: Mazen Chami
- * @Last Modified time: 2018-07-23 11:56:00
- */
-
 /**
  * BLE Config
  */
@@ -55,6 +48,9 @@ export default {
     characteristicUUID: 'a268ae6f-3433-d999-4e44-42e82070d3de',
     dataUUID:           '4A8C2B82-5BB8-D4B8-D244-57280862C228',
 
+    serviceUUID3Sensor:        'e7a53559-80e2-48a2-a750-7d18c8cf7875',
+    characteristicUUID3Sensor: '713bf14f-aed2-4c9d-9d71-1e801b912b89',
+
     errors: {
         encryption: 'Encryption is insufficient.'
     },
@@ -68,7 +64,6 @@ export default {
         SET_WIFI_PSW_HEAD:              parseInt('0x06', 16),
         SET_WIFI_PSW_CONT:              parseInt('0x07', 16),
         CONNECT_WIFI:                   parseInt('0x08', 16),
-        GET_MAC_ADDRESS:                parseInt('0x09', 16),
         SET_SERIAL_ID:                  parseInt('0x0A', 16),
         GET_SERIAL_ID:                  parseInt('0x0B', 16),
         GET_BLE_BD:                     parseInt('0x0C', 16),
@@ -130,12 +125,22 @@ export default {
         // SINGLE SENSOR COMMANDS
         DELETE_ALL_PRACTICES:           parseInt('0x7C', 16),
         DELETE_SINGLE_PRACTICE:         parseInt('0x79', 16),
-        IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         GET_ENTIRE_SYSTEM_STATUS:       parseInt('0x7D', 16),
         GET_PRACTICE_ACCELERATIONS:     parseInt('0x77', 16),
         GET_PRACTICE_DURATION:          parseInt('0x78', 16),
         GET_PRACTICE_TIMESTAMPS:        parseInt('0x76', 16),
         GET_SINGLE_SENSOR_LIST:         parseInt('0x75', 16),
+        IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
+        // THREE SENSOR COMMANDS
+        GET_MAC_ADDRESS:                parseInt('0xD4', 16),
+        READ_WIFI_SCAN_LONG:            parseInt('0xDD', 16),
+        READ_WIFI_SCAN_SHORT:           parseInt('0xDC', 16),
+        WRITE_WIFI_CONNECT:             parseInt('0x5A', 16),
+        WRITE_WIFI_PSW_LONG:            parseInt('0x53', 16),
+        WRITE_WIFI_PSW_SHORT:           parseInt('0x52', 16),
+        WRITE_WIFI_SCAN:                parseInt('0x5C', 16),
+        WRITE_WIFI_SSID_LONG:           parseInt('0x51', 16),
+        WRITE_WIFI_SSID_SHORT:          parseInt('0x50', 16),
     },
 
     roles: {
@@ -175,9 +180,13 @@ export default {
     },
 
     networkTypes: {
-        Open:           parseInt('0x02', 16),
-        WPA_PSK:        parseInt('0x00', 16),
-        WPA_Enterprise: parseInt('0x01', 16)
+        OPEN:            parseInt('0x06', 16),
+        WEP_OPEN:        parseInt('0x00', 16),
+        WEP_SHARED:      parseInt('0x01', 16),
+        WPA2_ENTERPRISE: parseInt('0x05', 16),
+        WPA2_PSK:        parseInt('0x03', 16),
+        WPA_ENTERPRISE:  parseInt('0x04', 16),
+        WPA_PSK:         parseInt('0x02', 16),
     },
 
     eapTypes: {

@@ -1,7 +1,7 @@
 /**
  * CoachesDashboard View
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import {
     Animated,
     BackHandler,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         paddingVertical: AppSizes.paddingXSml,
     },
     iconCircle: {
-        backgroundColor: AppColors.zeplin.iconCircle,
+        backgroundColor: AppColors.zeplin.slateLight,
         borderRadius:    (iconCircleSize / 2),
         height:          iconCircleSize,
         width:           iconCircleSize,
@@ -96,16 +96,16 @@ const styles = StyleSheet.create({
         shadowRadius:  5,
     },
     sortByPickerSelectAndroid: {
-        color: AppColors.zeplin.darkGrey,
+        color: AppColors.zeplin.navy,
     },
     sortByPickerSelectIOS: {
         ...AppFonts.oswaldMedium,
-        color:    AppColors.zeplin.darkGrey,
+        color:    AppColors.zeplin.navy,
         fontSize: AppFonts.scaleFont(15),
     },
     ul: {
         alignSelf:  'flex-start',
-        color:      AppColors.zeplin.darkGrey,
+        color:      AppColors.zeplin.navy,
         fontSize:   AppFonts.scaleFont(30),
         lineHeight: AppFonts.scaleFont(28),
     },
@@ -213,8 +213,8 @@ class CoachesDashboard extends Component {
         let currentPage = this.tabView ? this.tabView.state.currentPage : 0;
         let page0Width = AppSizes.screen.widthHalf;
         let page1Width = AppSizes.screen.widthHalf;
-        let page0ExtraStyles = {borderBottomColor: currentPage === 0 ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
-        let page1ExtraStyles = {borderBottomColor: currentPage === 1 ? AppColors.zeplin.darkBlue : AppColors.zeplin.light, borderBottomWidth: 3,};
+        let page0ExtraStyles = {borderBottomColor: currentPage === 0 ? AppColors.zeplin.navy : AppColors.zeplin.slateXLight, borderBottomWidth: 3,};
+        let page1ExtraStyles = {borderBottomColor: currentPage === 1 ? AppColors.zeplin.navy : AppColors.zeplin.slateXLight, borderBottomWidth: 3,};
         let page0Styles = [AppStyles.leftTabBar, page0ExtraStyles, {width: page0Width,}];
         let page1Styles = [AppStyles.rightTabBar, page1ExtraStyles, {width: page1Width,}];
         // making sure we can only drag horizontally if our modals are closed and nothing is loading
@@ -241,7 +241,7 @@ class CoachesDashboard extends Component {
                                 style={[
                                     textStyle,
                                     {
-                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.zeplin.darkBlue : AppColors.zeplin.lightSlate,
+                                        color: !selectedTeam ? AppColors.primary.grey.twentyPercent : isTabActive ? AppColors.zeplin.navy : AppColors.zeplin.slate,
                                         fontSize,
                                     }
                                 ]}
@@ -292,7 +292,7 @@ class CoachesDashboard extends Component {
                             {athleteName}
                         </Text>
                         <Spacer size={5} />
-                        <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(13), paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(13), paddingHorizontal: AppSizes.paddingLrg,}}>
                             {subHeader}
                         </Text>
                         <Spacer size={15} />
@@ -306,12 +306,12 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'WE RECOMMEND...'}</Text>
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>
                                     { selectedAthlete.daily_recommendation.length > 0 ?
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
                                         :
                                         null
                                     }
@@ -322,7 +322,7 @@ class CoachesDashboard extends Component {
                                         </View>
                                     ))}
                                     { selectedAthlete.weekly_recommendation.length > 0 ?
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
                                         :
                                         null
                                     }
@@ -344,12 +344,12 @@ class CoachesDashboard extends Component {
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE NOTICED...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingSml,}}>{'BECAUSE WE NOTICED...'}</Text>
                                 </View>
                                 <Spacer size={10} />
                                 <ScrollView>
                                     { selectedAthlete.daily_insights.length > 0 ?
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'TODAY'}</Text>
                                         :
                                         null
                                     }
@@ -360,7 +360,7 @@ class CoachesDashboard extends Component {
                                         </View>
                                     ))}
                                     { selectedAthlete.weekly_insights.length > 0 ?
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}>{'THIS WEEK'}</Text>
                                         :
                                         null
                                     }
@@ -388,12 +388,12 @@ class CoachesDashboard extends Component {
                                 underlayColor={AppColors.transparent}
                             >
                                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}>
                                         {'VIEW INSIGHTS'}
                                     </Text>
                                     <TabIcon
                                         icon={'chevron-right'}
-                                        iconStyle={[{color: AppColors.zeplin.darkGrey}]}
+                                        iconStyle={[{color: AppColors.zeplin.navy}]}
                                         reverse={false}
                                         type={'material-community'}
                                     />
@@ -410,11 +410,11 @@ class CoachesDashboard extends Component {
                                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                     <TabIcon
                                         icon={'chevron-left'}
-                                        iconStyle={[{color: AppColors.zeplin.darkGrey}]}
+                                        iconStyle={[{color: AppColors.zeplin.navy}]}
                                         reverse={false}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>
+                                    <Text oswaldMedium style={[AppStyles.containerCentered, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}>
                                         {'VIEW RECOMMENDATIONS'}
                                     </Text>
                                 </View>
@@ -477,7 +477,7 @@ class CoachesDashboard extends Component {
                                     headlessAndroidContainer: [{alignItems: 'flex-end', justifyContent: 'center',}],
                                     inputAndroid:             [styles.sortByPickerSelectIOS, {textAlignVertical: 'center',}],
                                     inputIOS:                 [styles.sortByPickerSelectIOS],
-                                    placeholderColor:         AppColors.zeplin.darkGrey,
+                                    placeholderColor:         AppColors.zeplin.navy,
                                     underline:                {borderTopColor: AppColors.white, borderTopWidth: 0,},
                                     viewContainer:            [{}],
                                 }}
@@ -498,12 +498,12 @@ class CoachesDashboard extends Component {
                             {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
                         ]}
                     >
-                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{'INSUFFICIENT TREND DATA'}</Text>
+                        <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warningLight, fontSize: AppFonts.scaleFont(18),}]}>{'INSUFFICIENT TREND DATA'}</Text>
                         <Spacer size={20} />
-                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekInsufficientDataText}</Text>
+                        <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}>{thisWeekInsufficientDataText}</Text>
                         <Spacer size={20} />
                     </View>
-                    : !isThisWeek && complianceColor === AppColors.zeplin.coachesDashError ?
+                    : !isThisWeek && complianceColor === AppColors.zeplin.errorLight ?
                         <View
                             style={[
                                 AppStyles.containerCentered,
@@ -512,12 +512,12 @@ class CoachesDashboard extends Component {
                                 {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
                             ]}
                         >
-                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.complete.length} ${compliance.complete.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
+                            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warningLight, fontSize: AppFonts.scaleFont(18),}]}>{`${compliance.complete.length} ${compliance.complete.length === 1 ? 'SURVEY' : 'SURVEYS'} COMPLETED`}</Text>
                             <Spacer size={20} />
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}]}>{todayInsufficientDataText}</Text>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}]}>{todayInsufficientDataText}</Text>
                             <Spacer size={20} />
                         </View>
-                        : !isThisWeek && numberOfAthletes === insights.all_good.length && complianceColor === AppColors.zeplin.success ?
+                        : !isThisWeek && numberOfAthletes === insights.all_good.length && complianceColor === AppColors.zeplin.successLight ?
                             <ImageBackground
                                 resizeMode={'contain'}
                                 source={require('../../../assets/images/standard/soccer_player.png')}
@@ -552,7 +552,7 @@ class CoachesDashboard extends Component {
                         {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}
                     ]}
                 >
-                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{descriptionObj.label}</Text>
+                    <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{descriptionObj.label}</Text>
                     <Spacer size={5} />
                     <Text robotoRegular style={{color: AppColors.primary.grey.fiftyPercent, fontSize: AppFonts.scaleFont(12),}}>{descriptionObj.description}</Text>
                 </View>
@@ -618,7 +618,7 @@ class CoachesDashboard extends Component {
                                     {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
                                 ]}
                             >
-                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
+                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warningLight, fontSize: AppFonts.scaleFont(25),}]}>{'LET\'S GET STARTED!'}</Text>
                                 <Spacer size={20} />
                                 <TabIcon
                                     containerStyle={[styles.iconCircle,]}
@@ -691,7 +691,7 @@ class CoachesDashboard extends Component {
                                     {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, marginTop: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}
                                 ]}
                             >
-                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warning, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
+                                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.warningLight, fontSize: AppFonts.scaleFont(25),}]}>{'TRENDING INSIGHTS\nLIVE HERE!'}</Text>
                                 <Spacer size={10} />
                                 <TabIcon
                                     containerStyle={[styles.iconCircle,]}
@@ -741,24 +741,24 @@ class CoachesDashboard extends Component {
                     style={[
                         AppStyles.containerCentered,
                         styles.athleteComplianceBtn,
-                        {backgroundColor: AppColors.zeplin.darkWhite, height: 30, width: AppSizes.screen.widthHalf,}
+                        {backgroundColor: AppColors.zeplin.superLight, height: 30, width: AppSizes.screen.widthHalf,}
                     ]}
                 />
                 <Spacer size={25} />
-                <View style={{backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
+                <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
                 <Spacer size={25} />
                 <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
                 </View>
                 <Spacer size={40} />
-                <View style={{backgroundColor: AppColors.zeplin.darkWhite, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
+                <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingXLrg,}} />
                 <Spacer size={25} />
                 <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
-                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.darkWhite,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
+                    <View style={[styles.athleteCircle, {backgroundColor: AppColors.zeplin.superLight,}]} />
                 </View>
             </View>
         )
@@ -801,7 +801,7 @@ class CoachesDashboard extends Component {
                             {backgroundColor: AppColors.primary.grey.twentyPercent, borderRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}
                         ]}
                     >
-                        <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{section.label}</Text>
+                        <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{section.label}</Text>
                     </View>
                     <Spacer size={25} />
                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
@@ -881,7 +881,7 @@ class CoachesDashboard extends Component {
                 </ScrollableTabView>
                 <FathomModal
                     isVisible={isComplianceModalOpen}
-                    style={{alignItems: 'center', margin: 0,}}
+                    style={{alignItems: 'center',}}
                 >
                     <View
                         style={[
@@ -909,7 +909,7 @@ class CoachesDashboard extends Component {
                 </FathomModal>
                 <FathomModal
                     isVisible={isAthleteCardModalOpen}
-                    style={{alignItems: 'center', margin: 0,}}
+                    style={{alignItems: 'center',}}
                 >
                     <View
                         style={[

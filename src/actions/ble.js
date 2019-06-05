@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:21:33
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:11:31
- */
-
 /**
  * Bluetooth Actions
  */
@@ -24,6 +17,7 @@ const Answers = Fabric.Answers;
 
 // constants
 const commands = BLEConfig.commands;
+const networkTypes = BLEConfig.networkTypes;
 const state = BLEConfig.state;
 const timeoutValue = 30500;
 
@@ -34,8 +28,10 @@ const validateReadData = (response, dataArray) => {
     return response[0] === 0 && response[2] === dataArray[0] && response[3] === 0;
 };
 
-const read = (id, dataArray) => {
-    return BleManager.read(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID)
+const read = (id, dataArray, is3Sensor) => {
+    let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
+    let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
+    return BleManager.read(id, serviceUUID, characteristicUUID)
         .then(data => {
             // Answers.logCustom('BLE read', {
             //     data,
@@ -47,18 +43,20 @@ const read = (id, dataArray) => {
             } else if(!dataArray) {
                 return data;
             }
-            return read(id, dataArray);
+            return read(id, dataArray, is3Sensor);
         });
 };
 
-const write = (id, data) => {
+const write = (id, data, is3Sensor) => {
     // Answers.logCustom('BLE write', {
     //     data,
     //     deviceInfo: AppConfig.deviceInfo,
     //     id,
     // });
-    return BleManager.write(id, BLEConfig.serviceUUID, BLEConfig.characteristicUUID, data)
-        .then(() => read(id, data));
+    let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
+    let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
+    return BleManager.write(id, serviceUUID, characteristicUUID, data)
+        .then(() => read(id, data, is3Sensor));
 };
 
 /**
@@ -171,8 +169,8 @@ const startBluetooth = () => {
         .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
-const startScan = () => {
-    return dispatch => BleManager.scan([], 30, false, { scanMode: 2 })
+const startScan = (seconds = 30) => {
+    return dispatch => BleManager.scan([], seconds, false, { scanMode: 2 })
         .then(() => dispatch({
             type: Actions.START_SCAN
         }))
@@ -188,10 +186,12 @@ const stopScan = () => {
 };
 
 const deviceFound = data => {
-    return dispatch => dispatch({
-        type: Actions.DEVICE_FOUND,
-        data
-    });
+    return dispatch => Promise.resolve(
+        dispatch({
+            type: Actions.DEVICE_FOUND,
+            data
+        })
+    );
 };
 
 const startConnect = () => {
@@ -224,7 +224,13 @@ const setKitTime = id => {
         });
 };
 
-const startDisconnection = sensorId => {
+const startDisconnection = (sensorId, is3Sensor) => {
+    if(is3Sensor) {
+        return dispatch => BleManager.disconnect(sensorId)
+            .catch(err => BleManager.disconnect(sensorId))
+            .then(() => Promise.resolve('successfully disconnected'))
+            .catch(err => Promise.reject(err)); // ble err will always return the same string 'Device not connected'
+    }
     return BleManager.disconnect(sensorId)
         .catch(err => BleManager.disconnect(sensorId))
         .then(() => Promise.resolve('successfully disconnected'))
@@ -556,6 +562,197 @@ const deleteSinglePractice = (sensorId, practiceIndex = 0) => {
 };
 
 /**
+  * NEW FUNCTIONS
+  * - 3 Sensor System
+  */
+const returnCleaned3SensorDataArray = (byteString, command) => {
+    let dataArray = [];
+    dataArray.push(command);
+    dataArray.push(byteString.length);
+    for (let i = 2; i < 20 && i-2 < byteString.length; i+=1) {
+        dataArray.push(byteString[i-2]);
+    }
+    for (let i = byteString.length + 2; i < 20; i+=1) {
+        dataArray.push(convertHex('0x00'));
+    }
+    return dataArray;
+};
+
+const returnNetworkMapping = value => {
+    let networkType = '';
+    let toByte = '';
+    switch (value) {
+    case 0:
+        networkType = 'WEP_OPEN';
+        toByte = networkTypes[networkType];
+        break;
+    case 1:
+        networkType = 'WEP_SHARED';
+        toByte = networkTypes[networkType];
+        break;
+    case 2:
+        networkType = 'WPA_PSK';
+        toByte = networkTypes[networkType];
+        break;
+    case 3:
+        networkType = 'WPA2_PSK';
+        toByte = networkTypes[networkType];
+        break;
+    case 4:
+        networkType = 'WPA_ENTERPRISE';
+        toByte = networkTypes[networkType];
+        break;
+    case 5:
+        networkType = 'WPA2_ENTERPRISE';
+        toByte = networkTypes[networkType];
+        break;
+    case 6:
+        networkType = 'OPEN';
+        toByte = networkTypes[networkType];
+        break;
+    default:
+        networkType = 'WEP_OPEN';
+        toByte = networkTypes[networkType];
+    }
+    return {
+        networkType,
+        toByte,
+    };
+};
+
+const cleanSingleWifiArray = wifiArray => {
+    return {
+        rssi:     wifiArray[5],
+        security: returnNetworkMapping(wifiArray[4]),
+        ssid:     convertByteArrayToString(_.slice(wifiArray, 6, wifiArray.length)),
+    }
+};
+
+const getBLEMacAddress = sensorId => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
+    const dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, dataArray, true))
+        .then(response => response[3] === 1 ? write(sensorId, dataArray) : Promise.resolve(response))
+        .then(response => convertDecimal(response.slice(4, 10)))
+        .then(macAddress => macAddress === '00:00:00:00:00:00' ? write(sensorId, dataArray) : macAddress)
+        .then(macAddress => Promise.resolve(
+            dispatch({
+                type: Actions.GET_WIFI_MAC_ADDRESS,
+                data: {
+                    macAddress:  macAddress,
+                    mobile_udid: AppUtil.getDeviceUUID(),
+                    sensor_pid:  sensorId,
+                },
+            })
+        ))
+        .catch(err => Promise.reject(err));
+};
+
+const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
+    // setup consts needed
+    const ssidDataArray = convertStringToByteArray(ssid);
+    const passwordDataArray = convertStringToByteArray(password);
+    let shortSlicedPswDataArray = _.slice(passwordDataArray, 0, 18);
+    // let longSlicedPswDataArray = _.slice(passwordDataArray, 18, 32);
+    let shortPswDataArray = returnCleaned3SensorDataArray(shortSlicedPswDataArray, commands.WRITE_WIFI_PSW_SHORT);
+    // let longPswDataArray = returnCleaned3SensorDataArray(longSlicedPswDataArray, commands.WRITE_WIFI_PSW_LONG);
+    let shortSlicedSsidDataArray = _.slice(ssidDataArray, 0, 18);
+    // let longSlicedSsidDataArray = _.slice(ssidDataArray, 18, 32);
+    let shortSsidDataArray = returnCleaned3SensorDataArray(shortSlicedSsidDataArray, commands.WRITE_WIFI_SSID_SHORT);
+    // let longSsidDataArray = returnCleaned3SensorDataArray(longSlicedSsidDataArray, commands.WRITE_WIFI_SSID_LONG);
+    let connectDataArray = [commands.WRITE_WIFI_CONNECT, convertHex('0x01'), securityByte];
+    // check if ssid & password are out of scope of ble
+    if(ssidDataArray && (ssidDataArray.length === 0 || ssidDataArray.length > 32)) {
+        return dispatch => Promise.reject('Wifi SSID is too long!');
+    } else if(passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
+        return dispatch => Promise.reject('Wifi Password is too long!');
+    }
+    // checks done, now update sensor
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, shortSsidDataArray, true)) // 1. write short wifi
+        // TODO: fix below?!?!
+        // .then(res => BleManager.retrieveServices(sensorId))
+        // .then(peripheralInfo => longSlicedSsidDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longSsidDataArray, true)) // 2. check if long wifi -> write if needed
+        .then(res => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, shortPswDataArray, true)) // 3. write short psw
+        // TODO: fix below?!?!
+        // .then(res => BleManager.retrieveServices(sensorId))
+        // .then(peripheralInfo => longSlicedPswDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longPswDataArray, true)) // 4. check if long psw -> write if needed
+        .then(res => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, connectDataArray, true)) // 4. write connect
+        .then(res => Promise.resolve(
+            dispatch({
+                type: Actions.WIFI
+            })
+        ))
+        .catch(err => Promise.resolve(err));
+};
+
+const getScannedWifiConnections = sensorId => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
+    const writeDataArray = [commands.WRITE_WIFI_SCAN, convertHex('0x00')];
+    return dispatch => BleManager.disconnect(sensorId)
+        .catch(err => BleManager.disconnect(sensorId))
+        .then(() => BleManager.connect(sensorId))
+        .catch(err => BleManager.connect(sensorId))
+        .then(() => BleManager.retrieveServices(sensorId))
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, writeDataArray, true))
+        .then(response => Promise.resolve(response[4]))
+        .catch(err => Promise.reject('Error fetching WIFI connections'));
+};
+
+const getSingleWifiConnection = (sensorId, index) => { // NOTE: DO WE NEEDED TO ADD TIMER RACE FOR IOS???
+    const readDataArray = [commands.READ_WIFI_SCAN_SHORT, convertHex('0x01'), convertHex(`0x${index}`)];
+    const readLongDataArray = [commands.READ_WIFI_SCAN_LONG];
+    let singleWifiConnectionArray = [];
+    return dispatch => BleManager.retrieveServices(sensorId)
+        .catch(err => BleManager.retrieveServices(sensorId))
+        .then(peripheralInfo => write(peripheralInfo.id, readDataArray, true))
+        .then(response => {
+            if(response[1] > 18) {
+                singleWifiConnectionArray = response;
+                return BleManager.retrieveServices(sensorId)
+                    .then(peripheralInfo => write(peripheralInfo.id, readLongDataArray, true))
+                    .then(res => Promise.resolve(cleanSingleWifiArray(_.concat(singleWifiConnectionArray, res))));
+            }
+            return Promise.resolve(cleanSingleWifiArray(response));
+        })
+        .catch(err => Promise.reject('Error fetching WIFI Details'));
+};
+
+const assignKitIndividual = (accessory, user) => {
+    return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
+        .then(response => {
+            let data = accessory;
+            data.individual = user;
+            data.last_user_id = user.id;
+            return dispatch({
+                type: Actions.CONNECT_TO_ACCESSORY,
+                data
+            });
+        })
+        .catch(err => Promise.reject(err));
+};
+
+const getSensorFiles = (days = 30) => {
+    return dispatch =>  new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.status.get()
+            .then(response => resolve(response))
+            .catch(error => reject(error));
+    });
+}
+
+/**
   * OLD FUNCTIONS
   * - 3 Sensor System
   */
@@ -774,20 +971,6 @@ const setOwnerFlag = (id, value) => {
         });
 };
 
-const assignKitIndividual = (accessory, user) => {
-    return dispatch => AppAPI.hardware.accessory.patch({ wifiMacAddress: accessory.wifiMacAddress }, { owner_id: user.id })
-        .then(response => {
-            let data = accessory;
-            data.individual = user;
-            data.last_user_id = user.id;
-            return dispatch({
-                type: Actions.CONNECT_TO_ACCESSORY,
-                data
-            });
-        })
-        .catch(err => Promise.reject(err));
-};
-
 const assignKitTeam = (accessory, team) => {
     let data = accessory;
     data.team = team;
@@ -840,27 +1023,6 @@ const handleDisconnect = id => {
         .then(services => dispatch({
             type: Actions.HANDLE_DISCONNECT
         }));
-};
-
-const getWifiMacAddress = id => {
-    let dataArray = [commands.GET_MAC_ADDRESS, convertHex('0x00')];
-    return dispatch => write(id, dataArray)
-        .then(response => {
-            return response[3] === 1 ? write(id, dataArray) : Promise.resolve(response);
-        })
-        .then(response => {
-            return convertDecimal(response.slice(4,10));
-        })
-        .then(macAddress => {
-            return macAddress === '00:00:00:00:00:00' ? write(id, dataArray) : Promise.resolve(macAddress);
-        })
-        .then(macAddress => {
-            return dispatch({
-                type: Actions.GET_WIFI_MAC_ADDRESS,
-                data: macAddress
-            });
-        })
-        .catch(err => { console.log(err); return Promise.reject(err); });
 };
 
 const setIdentity = (id, identity) => {
@@ -991,11 +1153,14 @@ export default {
     enableBluetooth,
     getAccessoryKey,
     getAllPracticeDetails,
+    getBLEMacAddress,
     getKitName,
     getOwnerFlag,
+    getScannedWifiConnections,
+    getSensorFiles,
     getSingleSensorStatus,
+    getSingleWifiConnection,
     getUserSensorData,
-    getWifiMacAddress,
     handleDisconnect,
     loginToAccessory,
     postUserSensorData,
@@ -1020,4 +1185,5 @@ export default {
     stopScan,
     storeParams,
     systemReset,
+    writeWifiDetailsToSensor,
 };

@@ -380,7 +380,7 @@ const UTIL = {
         };
     },
 
-    getAppleHealthKitDataPrevious: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
+    getAppleHealthKitDataPrevious: (userObj, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
             if(Platform.OS === 'ios') {
                 // grab permissions
@@ -404,7 +404,7 @@ const UTIL = {
                     apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now, AppleHealthKit));
                 }
                 // return function
-                return UTIL._handleReturnedPromises(userId, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
+                return UTIL._handleReturnedPromises(userObj, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
                     .then(res => {
                         return resolve();
                     });
@@ -413,7 +413,7 @@ const UTIL = {
         });
     },
 
-    getAppleHealthKitData: (userId, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
+    getAppleHealthKitData: (userObj, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
         return new Promise((resolve, reject) => {
             if(Platform.OS === 'ios') {
                 // grab permissions
@@ -428,7 +428,7 @@ const UTIL = {
                 apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now, AppleHealthKit));
                 apiPromisesArray.push(UTIL._getSleepSamples(false, false, false, true, AppleHealthKit)); // resolving empty
                 // return function
-                return UTIL._handleReturnedPromises(userId, null, apiPromisesArray, false)
+                return UTIL._handleReturnedPromises(userObj, null, apiPromisesArray, false)
                     .then(res => {
                         return resolve();
                     });
@@ -437,7 +437,7 @@ const UTIL = {
         });
     },
 
-    _handleReturnedPromises: (userId, startDate, promisesArray, sendAPI) => {
+    _handleReturnedPromises: (userObj, startDate, promisesArray, sendAPI) => {
         return Promise
             .all(promisesArray)
             .then(values => {
@@ -448,12 +448,13 @@ const UTIL = {
                 if(sendAPI) {
                     // send api
                     let payload = {
-                        user_id:    userId,
-                        event_date: `${moment().toISOString(true).split('.')[0]}Z`,
-                        start_date: moment(startDate).format('YYYY-MM-DD'),
                         end_date:   moment().subtract(1, 'd').format('YYYY-MM-DD'),
+                        event_date: `${moment().toISOString(true).split('.')[0]}Z`,
                         sessions:   cleanedWorkoutValues,
                         sleep_data: filteredSleepValues,
+                        start_date: moment(startDate).format('YYYY-MM-DD'),
+                        user_age:   moment().diff(moment(userObj.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+                        user_id:    userObj.id,
                     };
                     PlanActions.postHealthData(payload)
                         .then(() => {
@@ -501,7 +502,7 @@ const UTIL = {
                         sleepData:          filteredSleepValues,
                         workoutData:        updatedCleanedWorkoutValues,
                     });
-                    UTIL._patchWorkoutSession(workoutsToPatch, userId);
+                    UTIL._patchWorkoutSession(workoutsToPatch, userObj.id);
                     return;
                 }
             })
@@ -521,6 +522,7 @@ const UTIL = {
             _.map(filteredWorkouts, (workout, index) => {
                 let newWorkout = {};
                 filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
+                // TODO: filteredHeartRateValues DOESN'T SEEM TO WORK
                 let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
                 let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
                 newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;

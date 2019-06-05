@@ -1,7 +1,7 @@
 /**
  * Sensor Onboarding Educational Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ImageBackground, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
@@ -81,9 +81,28 @@ class Survey extends Component {
                 typical_weekly_sessions: null,
                 wearable_devices:        [],
             },
-            otherField:    '',
-            showTextInput: false,
+            isKeyboardOpen: false,
+            otherField:     '',
+            showTextInput:  false,
         }
+    }
+
+    componentWillMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    componentWillUnmount() {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+    _keyboardDidShow = () => {
+        this.setState({ isKeyboardOpen: true, });
+    }
+
+    _keyboardDidHide = () => {
+        this.setState({ isKeyboardOpen: false, });
     }
 
     _handleFormChange = (name, value) => {
@@ -127,7 +146,7 @@ class Survey extends Component {
     }
 
     render = () => {
-        const { form_values, otherField, showTextInput, } = this.state;
+        const { form_values, isKeyboardOpen, otherField, showTextInput, } = this.state;
         let isValid = form_values.typical_weekly_sessions && (form_values.wearable_devices.length > 0 || otherField.length > 0);
         // render page
         return(
@@ -140,16 +159,16 @@ class Survey extends Component {
                 >
                     { !form_values.typical_weekly_sessions ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'HOW ACTIVE ARE YOU NOW?'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'HOW ACTIVE ARE YOU NOW?'}</Text>
                             <Spacer size={AppSizes.padding} />
-                            <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We\'ll use this info to determine how often you should Mobilize and Recover!'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We\'ll use this info to determine how often you should Mobilize and Recover!'}</Text>
                             <Spacer size={AppSizes.padding} />
                             <TouchableHighlight
                                 onPress={() => this._handleFormChange('form_values.typical_weekly_sessions', '0-1')}
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '0-1' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
                                 underlayColor={AppColors.zeplin.yellow}
                             >
-                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '0-1' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'0-1 workouts/week'}</Text>
+                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '0-1' ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'0-1 workouts/week'}</Text>
                             </TouchableHighlight>
                             <Spacer size={AppSizes.paddingSml} />
                             <TouchableHighlight
@@ -157,7 +176,7 @@ class Survey extends Component {
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '2-4' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
                                 underlayColor={AppColors.zeplin.yellow}
                             >
-                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '2-4' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'2-4 workouts/week'}</Text>
+                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '2-4' ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'2-4 workouts/week'}</Text>
                             </TouchableHighlight>
                             <Spacer size={AppSizes.paddingSml} />
                             <TouchableHighlight
@@ -165,17 +184,17 @@ class Survey extends Component {
                                 style={{backgroundColor: form_values.typical_weekly_sessions === '5+' ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: AppSizes.screen.widthThreeQuarters,}}
                                 underlayColor={AppColors.zeplin.yellow}
                             >
-                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '5+' ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'5+ workouts/week'}</Text>
+                                <Text robotoRegular style={{color: form_values.typical_weekly_sessions === '5+' ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'5+ workouts/week'}</Text>
                             </TouchableHighlight>
                         </View>
                         :
                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'column', justifyContent: 'center',}}>
                             <View style={{alignItems: 'center', flex: 8, justifyContent: 'center',}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'DO YOU USE A WEARABLE DEVICE WHILE TRAINING?'}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'DO YOU USE A WEARABLE DEVICE WHILE TRAINING?'}</Text>
                                 <Spacer size={AppSizes.padding} />
-                                <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We will soon sync with your device to log activity & monitor training volume!'}</Text>
+                                <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'We will soon sync with your device to log activity & monitor training volume!'}</Text>
                                 <Spacer size={AppSizes.padding} />
-                                <Text robotoMedium style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Select all that apply'}</Text>
+                                <Text robotoMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'Select all that apply'}</Text>
                                 <Spacer size={AppSizes.padding} />
                                 <View style={{flexDirection: 'row', justifyContent: 'space-evenly',}}>
                                     <TouchableHighlight
@@ -183,7 +202,7 @@ class Survey extends Component {
                                         style={{backgroundColor: form_values.wearable_devices.includes('No') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
                                         underlayColor={AppColors.transparent}
                                     >
-                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('No') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'No'}</Text>
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('No') ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'No'}</Text>
                                     </TouchableHighlight>
                                     <View style={{flex: 0.5,}} />
                                     <TouchableHighlight
@@ -191,7 +210,7 @@ class Survey extends Component {
                                         style={{backgroundColor: form_values.wearable_devices.includes('Apple Watch') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
                                         underlayColor={AppColors.transparent}
                                     >
-                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Apple Watch') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Apple Watch'}</Text>
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Apple Watch') ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Apple Watch'}</Text>
                                     </TouchableHighlight>
                                 </View>
                                 <Spacer size={AppSizes.paddingSml} />
@@ -201,7 +220,7 @@ class Survey extends Component {
                                         style={{backgroundColor: form_values.wearable_devices.includes('Garmin') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
                                         underlayColor={AppColors.transparent}
                                     >
-                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Garmin') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Garmin'}</Text>
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Garmin') ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Garmin'}</Text>
                                     </TouchableHighlight>
                                     <View style={{flex: 0.5,}} />
                                     <TouchableHighlight
@@ -209,7 +228,7 @@ class Survey extends Component {
                                         style={{backgroundColor: form_values.wearable_devices.includes('Fitbit') ? AppColors.zeplin.yellow : AppColors.zeplin.superLight, borderRadius: 5, flex: 4, paddingVertical: AppSizes.padding,}}
                                         underlayColor={AppColors.transparent}
                                     >
-                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Fitbit') ? AppColors.white : AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Fitbit'}</Text>
+                                        <Text robotoRegular style={{color: form_values.wearable_devices.includes('Fitbit') ? AppColors.white : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Fitbit'}</Text>
                                     </TouchableHighlight>
                                 </View>
                                 <Spacer size={AppSizes.paddingSml} />
@@ -219,12 +238,12 @@ class Survey extends Component {
                                         autoCorrect={false}
                                         blurOnSubmit={true}
                                         clearButtonMode={'never'}
-                                        containerStyle={[{borderBottomColor: AppColors.zeplin.darkSlate, paddingBottom: AppSizes.paddingXSml, width: AppSizes.screen.widthTwoThirds,}]}
-                                        inputStyle={[{...AppStyles.robotoRegular, color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
+                                        containerStyle={[{borderBottomColor: AppColors.zeplin.slate, paddingBottom: AppSizes.paddingXSml, width: AppSizes.screen.widthTwoThirds,}]}
+                                        inputStyle={[{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center', width: AppSizes.screen.widthTwoThirds,}]}
                                         keyboardType={'default'}
                                         onChangeText={(text) => this._handleFormChange('otherField', text)}
                                         placeholder={''}
-                                        placeholderTextColor={AppColors.zeplin.darkSlate}
+                                        placeholderTextColor={AppColors.zeplin.slate}
                                         returnKeyType={'done'}
                                         underlineColorAndroid={'transparent'}
                                         value={otherField}
@@ -235,22 +254,24 @@ class Survey extends Component {
                                         style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 5, paddingVertical: AppSizes.padding, width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
                                         underlayColor={AppColors.transparent}
                                     >
-                                        <Text robotoRegular style={{color: AppColors.zeplin.blueGrey, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Other'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Other'}</Text>
                                     </TouchableHighlight>
                                 }
                                 <Spacer size={AppSizes.paddingSml} />
                             </View>
                             <View style={{alignItems: 'center', flex: 2, flexDirection: 'column', justifyContent: 'flex-end', width: AppSizes.screen.widthHalf,}}>
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
-                                    containerStyle={{width: '100%',}}
-                                    disabled={!isValid}
-                                    disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.shadow, borderWidth: 1,}}
-                                    disabledTitleStyle={{color: AppColors.zeplin.shadow,}}
-                                    onPress={() => this._onDone()}
-                                    title={'Submit'}
-                                    titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(18), }}
-                                />
+                                { !isKeyboardOpen &&
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                                        containerStyle={{width: '100%',}}
+                                        disabled={!isValid}
+                                        disabledStyle={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.slateXLight, borderWidth: 1,}}
+                                        disabledTitleStyle={{color: AppColors.zeplin.slateXLight,}}
+                                        onPress={() => this._onDone()}
+                                        title={'Submit'}
+                                        titleStyle={{ color: AppColors.white, fontSize: AppFonts.scaleFont(18), }}
+                                    />
+                                }
                             </View>
                         </View>
                     }

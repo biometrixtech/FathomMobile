@@ -10,7 +10,7 @@ import moment from 'moment';
 import { PlanLogic, } from '../';
 
 // Consts and Libs
-import { MyPlan as MyPlanConstants, } from '../../constants';
+import { AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
 
 // mock async-storage
 beforeAll(() => {
@@ -26,9 +26,9 @@ const helperFunctions = {
         pushNotificationHelperProps.plan = {};
         pushNotificationHelperProps.plan.dailyPlan = [];
         pushNotificationHelperProps.plan.dailyPlan[0] = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].pre_recovery_completed = preRecoveryCompleted;
-        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery = {};
-        pushNotificationHelperProps.plan.dailyPlan[0].post_recovery.completed = postRecoveryCompleted;
+        pushNotificationHelperProps.plan.dailyPlan[0].pre_active_rest_completed = preRecoveryCompleted;
+        pushNotificationHelperProps.plan.dailyPlan[0].post_active_rest = {};
+        pushNotificationHelperProps.plan.dailyPlan[0].post_active_rest.completed = postRecoveryCompleted;
         pushNotificationHelperProps.plan.dailyPlan[0].daily_readiness_survey_completed = isReadinessSurveyCompleted;
         return pushNotificationHelperProps;
     },
@@ -36,7 +36,7 @@ const helperFunctions = {
     getPushNotificationHelperState: (notificationString, helperProps) => {
         let pushNotificationHelperState = {};
         pushNotificationHelperState.prepare = {
-            finishedRecovery:           helperProps.plan && helperProps.plan.dailyPlan[0] && helperProps.plan.dailyPlan[0].pre_recovery_completed ? true : false,
+            finishedRecovery:           helperProps.plan && helperProps.plan.dailyPlan[0] && helperProps.plan.dailyPlan[0].pre_active_rest_completed ? true : false,
             isActiveRecoveryCollapsed:  true,
             isReadinessSurveyCollapsed: true,
             isReadinessSurveyCompleted: false,
@@ -974,12 +974,13 @@ const helperFunctions = {
         };
     },
 
-    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid, selectAreasOfSorenessValid, areQuestionsValid) => {
+    postSessionRenderLogicFormValidItems: (areAreasOfSorenessValid, isPrevSorenessValid, selectAreasOfSorenessValid, areQuestionsValid, willTrainLaterValid) => {
         return {
             areAreasOfSorenessValid,
             areQuestionsValid,
             isPrevSorenessValid,
             selectAreasOfSorenessValid,
+            willTrainLaterValid,
         };
     },
 
@@ -1073,18 +1074,20 @@ const helperFunctions = {
         }
     },
 
-    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex) => {
+    getExercisesRenderLogicExpectedResult: (availableSectionsCount, cleanedExerciseList, flatListExercises, firstItemIndex, isStaticExercise, totalLength) => {
         return {
             availableSectionsCount,
             cleanedExerciseList,
             flatListExercises,
             firstItemIndex,
+            isStaticExercise,
+            totalLength,
         }
     },
 
     getSingleSectionSampleExerciseList: () => {
         return {
-            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
+            cleanedExerciseList: {'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}], 'STATIC STRETCH': [], 'ACTIVE STRETCH': [], 'ACTIVATE': [], 'INTEGRATE': [],},
             flatListExercises:   [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
         }
     },
@@ -1092,10 +1095,11 @@ const helperFunctions = {
     getTwoSectionsSampleExerciseList: () => {
         return {
             cleanedExerciseList: {
-                'FOAM ROLL': [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
-                'STRETCH':   [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
-                'ACTIVATE':  [],
-                'INTEGRATE': [],
+                'FOAM ROLL':      [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}],
+                'STATIC STRETCH': [{library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
+                'ACTIVE STRETCH': [],
+                'ACTIVATE':       [],
+                'INTEGRATE':      [],
             },
             flatListExercises: [{library_id: 0, set_number: 1,}, {library_id: 1, set_number: 1,}, {library_id: 2, set_number: 1,}, {library_id: 3, set_number: 1,}, {library_id: 4, set_number: 1,}, {library_id: 5, set_number: 1,}, {library_id: 6, set_number: 1,}, {library_id: 7, set_number: 1,}, {library_id: 8, set_number: 1,}, {library_id: 9, set_number: 1,}],
         }
@@ -1112,9 +1116,545 @@ const helperFunctions = {
         }
     },
 
+    getSingleExerciseModalityExpectedResult: (cooldownTitle, isActive, isCompleted, isLastIndex, isLocked) => {
+        return {
+            cooldownTitle,
+            isActive,
+            isCompleted,
+            isLastIndex,
+            isLocked,
+        }
+    },
+
 };
 
 // setup tests
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+// it('', () => {
+//     let expectedResult = {};
+//     expect(PlanLogic.()).toEqual(expectedResult);
+// });
+
+
+
+it('Add Title To Active Modality - NO OBJ', () => {
+    expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+});
+
+it('Add Title To Active Modality - MOBILIZE', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/mobilize.png'),
+        completed:       false,
+        isBodyModality:  false,
+        modality:        'prepare',
+        timing:          ['0 min, ', 'within 4 hrs of training'],
+        title:           'MOBILIZE',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+});
+
+it('Add Title To Active Modality - ACTIVE RECOVERY', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
+        completed:       false,
+        isBodyModality:  false,
+        modality:        'coolDown',
+        timing:          ['0 min, ', 'within 6 hrs of training'],
+        title:           'ACTIVE RECOVERY',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+});
+
+it('Add Title To Active Modality - CWI', () => {
+    let dailyPlanObj = [{active: true, completed: false,}];
+    let expectedResult = [{
+        active:          true,
+        backgroundImage: require('../../../assets/images/standard/cwi.png'),
+        completed:       false,
+        isBodyModality:  true,
+        modality:        'cwi',
+        timing:          ['0 min, ', 'after all training is completed'],
+        title:           'COLD WATER BATH',
+    }];
+    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - PREPARE', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'FOAM ROLL':      [{}, {}, {}, {}, {}, {},],
+        'STATIC STRETCH': [{library_id: 1,}],
+        'ACTIVE STRETCH': [{}],
+        'ACTIVATE':       [],
+        'INTEGRATE':      [{}, {}, {}, {},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 4,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {}, {}, {}, {library_id: 1,}, {}, {}, {}, {}, {},],
+        firstItemIndex:         6,
+        isStaticExercise:       { library_id: 1, },
+        totalLength:            12,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'prepare')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - RECOVER', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'FOAM ROLL':      [{}, {}, {}, {library_id: 1,}, {}, {},],
+        'STATIC STRETCH': [],
+        'ACTIVATE':       [],
+        'INTEGRATE':      [{}, {},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 2,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {library_id: 1,}, {}, {}, {}, {},],
+        firstItemIndex:         3,
+        isStaticExercise:       undefined,
+        totalLength:            8,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'recover')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - COOL DOWN', () => {
+    let exerciseList = {cleanedExerciseList: {
+        'DYNAMIC STRETCH': [{}, {}, {}],
+        'INTEGRATE':       [{}, {library_id: 1,},],
+    }};
+    let selectedExercise = { library_id: 1, };
+    let expectedResult = {
+        availableSectionsCount: 2,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [{}, {}, {}, {}, {library_id: 1,},],
+        firstItemIndex:         4,
+        isStaticExercise:       undefined,
+        totalLength:            5,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'coolDown')).toEqual(expectedResult);
+});
+
+it('Exercises Render Logic - WARM UP', () => {
+    let exerciseList = {cleanedExerciseList: {}};
+    let selectedExercise = {};
+    let expectedResult = {
+        availableSectionsCount: 0,
+        cleanedExerciseList:    exerciseList.cleanedExerciseList,
+        flatListExercises:      [],
+        firstItemIndex:         -1,
+        isStaticExercise:       undefined,
+        totalLength:            0,
+    };
+    expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise, 'warmUp')).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 1 Pill', () => {
+    let cleanedExerciseList = { A: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(1, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 2 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(2, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 3 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(3, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 4 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], D: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(4, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Exercise Progress Pills Logic - 5 Pills', () => {
+    let cleanedExerciseList = { A: [], B: [], C: [], D: [], E: [], };
+    let exerciseList = [{library_id: 1,}, {library_id: 2,}, {library_id: 3,}, {library_id: 4,},];
+    let selectedExercise = {library_id: 3,};
+    let totalLength = 4;
+    let expectedResult = {
+        currentIndex:                     0,
+        isSelectedExerciseInCurrentIndex: { library_id: 3, },
+        progressWidth:                    0,
+        scaledItemWidth:                  ((exerciseList.length / totalLength) * (AppSizes.screen.width - (AppSizes.padding * 2))),
+    };
+    expect(PlanLogic.handleExercisesProgressPillsLogic(5, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
+});
+
+it('Find Goals - WITHOUT OBJECT', () => {
+    let object = null;
+    let exerciseListOrder = MyPlanConstants.preExerciseListOrder;
+    let expectedResult = [];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
+    let object = {
+        dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 5, text: 'Personalized Prepare for Training',}}]}],
+        dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
+    };
+    let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
+    let expectedResult = [
+        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
+        {goal_type: 5, text: 'Personalized Prepare for Training', isSelected: true,},
+    ];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Find Goals - WITH OBJECT (GOALS 0 & 2)', () => {
+    let object = {
+        dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 0, text: 'Care for Pain',}}]}],
+        dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
+    };
+    let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
+    let expectedResult = [
+        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
+        {goal_type: 0, text: 'Care for Pain', isSelected: true,},
+    ];
+    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - LOWER BACK, SELECTED', () => {
+    let body = {active: true, body_part_location: 12, side: 0,};
+    let expectedResult = {
+        bodyImage:        'LowBack.svg',
+        isSelected:       true,
+        mainBodyPartName: 'LOWER BACK',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - LEFT ANKLE, SELECTED', () => {
+    let body = {active: true, body_part_location: 9, side: 1,};
+    let expectedResult = {
+        bodyImage:        'L_Ankle.svg',
+        isSelected:       true,
+        mainBodyPartName: 'LEFT\nANKLE',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Body Modality, Body Part Details - RIGHT HIP, NOT SELECTED', () => {
+    let body = {active: false, body_part_location: 4, side: 2,};
+    let expectedResult = {
+        bodyImage:        'R_Hip.svg',
+        isSelected:       false,
+        mainBodyPartName: 'RIGHT\nHIP',
+    };
+    expect(PlanLogic.handleBodyModalityBodyPart(body)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - EMPTY LIST', () => {
+    let completedExercises = [];
+    let expectedResult = {newCompletedExercises: [],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - ONE EXERCISE', () => {
+    let completedExercises = ['1-2'];
+    let expectedResult = {newCompletedExercises: ['1'],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+it('Completed Exercises - MULITPLE EXERCISE', () => {
+    let completedExercises = ['1-2', '2-3', '14-1'];
+    let expectedResult = {newCompletedExercises: ['1', '2', '14'],};
+    expect(PlanLogic.handleCompletedExercises(completedExercises)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - EMPTY OBJ', () => {
+    let obj = [];
+    let title = 'HEAT';
+    let expectedResult = [];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITH OBJ', () => {
+    let date = moment();
+    let obj = [{active: true, completed: false, created_date: date,}];
+    let title = 'ICE';
+    let subtitle = '';
+    let expectedResult = [{title: 'ICE', active: true, completed: false, created_date: date, isCompleted: false, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITH OBJ - LOCKED', () => {
+    let date = moment();
+    let obj = [{active: false, completed: false, created_date: date,}];
+    let title = 'ICE';
+    let subtitle = '';
+    let expectedResult = [{title: 'ICE', active: false, completed: false, created_date: date, isCompleted: false, isLocked: true, subtitle: 'Sorry, you missed the optimal window for Ice today.',}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITHOUT TITLE', () => {
+    let date = moment();
+    let obj = [{active: true, completed: true, created_date: date,}];
+    let title = false;
+    let subtitle = ' ';
+    let expectedResult = [{title: false, active: true, completed: true, created_date: date, isCompleted: true, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Add Title To Completed Activity Helper - WITHOUT TITLE & WITH SPORT', () => {
+    let date = moment();
+    let obj = [{sport_name: 17, active: true, completed: true, created_date: date,}];
+    let title = false;
+    let subtitle = ' ';
+    let expectedResult = [{sport_name: 17, title: 'RUNNING', active: true, completed: true, created_date: date, isCompleted: 17, isLocked: false,}];
+    expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - HEAT', () => {
+    let dailyPlanObj = {heat: {active: true, minutes: 10,},};
+    let modality = 'heat';
+    let expectedResult = {
+        equipmentRequired: 'Heating Pad, Wet Towel',
+        extraTimeText:     'per body part',
+        imageId:           'heat',
+        imageSource:       require('../../../assets/images/standard/heat.png'),
+        pageSubtitle:      '30 minutes before training',
+        pageText:          'Heat increases circulation & loosens up soft tissues to improve the benefits of foam rolling, stretching, & dynamic warmup.',
+        pageTitle:         'HEAT',
+        recoveryObj:       dailyPlanObj.heat,
+        sceneId:           'heatScene',
+        textId:            'heat',
+        time:              dailyPlanObj.heat ? dailyPlanObj.heat.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - ICE', () => {
+    let dailyPlanObj = {ice: {active: true, minutes: 12,},};
+    let modality = 'ice';
+    let expectedResult = {
+        equipmentRequired: 'Ice, Towel',
+        extraTimeText:     'per body part',
+        imageId:           'ice',
+        imageSource:       require('../../../assets/images/standard/ice.png'),
+        pageSubtitle:      'After all training is complete',
+        pageText:          'Ice can help minimize swelling due to a minor injury & reduce inflammation in your tissues, muscle spasms, & pain.',
+        pageTitle:         'ICE',
+        recoveryObj:       dailyPlanObj.ice,
+        sceneId:           'iceScene',
+        textId:            'ice',
+        time:              dailyPlanObj.ice ? dailyPlanObj.ice.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Body Part Modality Render Logic - CWI', () => {
+    let dailyPlanObj = {cold_water_immersion: {active: true, minutes: 12,},};
+    let modality = 'cwi';
+    let expectedResult = {
+        equipmentRequired: 'Tub, Cold Water',
+        extraTimeText:     false,
+        imageId:           'cwi',
+        imageSource:       require('../../../assets/images/standard/cwi.png'),
+        pageSubtitle:      'After all training is complete',
+        pageText:          'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.',
+        pageTitle:         'COLD WATER BATH',
+        recoveryObj:       dailyPlanObj.cold_water_immersion,
+        sceneId:           'cwiScene',
+        textId:            'cwi',
+        time:              dailyPlanObj.cold_water_immersion ? dailyPlanObj.cold_water_immersion.minutes : 0,
+    };
+    expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - MOBILIZE (PRE)', () => {
+    let dailyPlanObj = {pre_active_rest: [{}]};
+    let plan = {activeRestGoals: [{}, {}]};
+    let priority = 0;
+    let modality = 'prepare';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'ACTIVE STRETCH': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'prepareCareActivate',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime before training',
+        pageTitle:          'MOBILIZE',
+        recoveryObj:        {},
+        recoveryType:       'pre_active_rest',
+        sceneId:            'prepareScene',
+        textId:             'prepareCareActivate',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - MOBILIZE (POST)', () => {
+    let dailyPlanObj = {post_active_rest: [{active: true,}]};
+    let plan = {activeRestGoals: [{},]};
+    let priority = 0;
+    let modality = 'recover';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'recoverCareActivate',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime',
+        pageTitle:          'MOBILIZE',
+        recoveryObj:        {active: true,},
+        recoveryType:       'post_active_rest',
+        sceneId:            'recoverScene',
+        textId:             'recoverCareActivate',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - ACTIVE RECOVERY', () => {
+    let dailyPlanObj = {cool_down: [{active: true,}]};
+    let plan = {coolDownGoals: [{}, {}, {}]};
+    let priority = 0;
+    let modality = 'coolDown';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'DYNAMIC STRETCH': [], 'INTEGRATE': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'coolDown',
+        imageSource:        require('../../../assets/images/standard/active_recovery.png'),
+        pageSubtitle:       'Immediately after training',
+        pageTitle:          'ACTIVE RECOVERY',
+        recoveryObj:        {active: true,},
+        recoveryType:       'cool_down',
+        sceneId:            'coolDownScene',
+        textId:             'coolDown',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
+it('Exercise Modality Render Logic - WARM UP', () => {
+    let dailyPlanObj = {warm_up: [{active: true,}]};
+    let plan = {warmUpGoals: [{}, {}, {}]};
+    let priority = 0;
+    let modality = 'warmUp';
+    let index = 0
+    let expectedResult = {
+        buttons:      ['0 minutes', '0 minutes', '0 minutes',],
+        exerciseList: {
+            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            equipmentRequired:   [],
+            totalLength:         0,
+            totalSeconds:        0,
+        },
+        firstExerciseFound: false,
+        goals:              [{}, {}, {},],
+        goalsHeader:        'Efficient Routine to:',
+        imageId:            'warmUp',
+        imageSource:        require('../../../assets/images/standard/mobilize.png'),
+        pageSubtitle:       'Anytime before training',
+        pageTitle:          'WARM UP',
+        recoveryObj:        {active: true,},
+        recoveryType:       'warm_up',
+        sceneId:            'warmUpScene',
+        textId:             'warmUp',
+    };
+    expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
+});
+
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {
         sport_name: 79,
@@ -1173,31 +1713,39 @@ it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () =>
         2,
         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-        8
+        8,
+        {library_id: 8, set_number: 1,},
+        10
     );
     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
 });
 
 it('Exercises Render Logic - Two Sections - Selected First Item', () => {
+    /*eslint no-undefined: 0*/
     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
     let selectedExercise = {library_id: 0, set_number: 1,};
     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
         2,
         helperFunctions.getTwoSectionsSampleExerciseList().cleanedExerciseList,
         helperFunctions.getTwoSectionsSampleExerciseList().flatListExercises,
-        0
+        0,
+        undefined,
+        10
     );
     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
 });
 
 it('Exercises Render Logic - Single Section', () => {
+    /*eslint no-undefined: 0*/
     let exerciseList = helperFunctions.getSingleSectionSampleExerciseList();
     let selectedExercise = {library_id: 2, set_number: 1,};
     let expectedResult = helperFunctions.getExercisesRenderLogicExpectedResult(
         1,
         helperFunctions.getSingleSectionSampleExerciseList().cleanedExerciseList,
         helperFunctions.getSingleSectionSampleExerciseList().flatListExercises,
-        2
+        2,
+        undefined,
+        5
     );
     expect(PlanLogic.handleExercisesRenderLogic(exerciseList, selectedExercise)).toEqual(expectedResult);
 });
@@ -1226,43 +1774,43 @@ it('FS Modal Render Logic - Empty State', () => {
     expect(PlanLogic.fsModalRenderLogic(functionalStrength)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Previous Page & Validation Logic - Page 4 (Selected Areas of Soreness)', () => {
-    let currentPage = 4;
-    let pageState = {pageIndex: 6,};
+it('Post Session Survey Previous Page & Validation Logic - Page 5 (Selected Areas of Soreness)', () => {
+    let currentPage = 5;
+    let pageState = {pageIndex: 7,};
     let newSoreBodyParts = [];
-    let expectedResult = {pageNum: 5,};
+    let expectedResult = {pageNum: 6,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO HK SESSIONS', () => {
     let currentPage = 3;
-    let pageState = {pageIndex: 4,};
+    let pageState = {pageIndex: 5,};
     let newSoreBodyParts = [];
-    let expectedResult = {pageNum: 1,};
+    let expectedResult = {pageNum: 4,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, null, [{}, {}])).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - TWO SESSIONS', () => {
     let currentPage = 3;
-    let pageState = {pageIndex: 4,};
+    let pageState = {pageIndex: 5,};
     let newSoreBodyParts = [];
-    let expectedResult = {pageNum: 2,};
+    let expectedResult = {pageNum: 4,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts, [{}, {}])).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITHOUT Sore Body Parts - NO Sessions', () => {
     let currentPage = 3;
-    let pageState = {pageIndex: 4,};
+    let pageState = {pageIndex: 5,};
     let newSoreBodyParts = [];
-    let expectedResult = {pageNum: 1,};
+    let expectedResult = {pageNum: 4,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
 it('Post Session Survey Previous Page & Validation Logic - Page 3 (Areas of Soreness) - WITH Sore Body Parts', () => {
     let currentPage = 3;
-    let pageState = {pageIndex: 4,};
+    let pageState = {pageIndex: 5,};
     let newSoreBodyParts = [{}];
-    let expectedResult = {pageNum: 3,};
+    let expectedResult = {pageNum: 4,};
     expect(PlanLogic.handlePostSessionSurveyPreviousPage(pageState, currentPage, newSoreBodyParts)).toEqual(expectedResult);
 });
 
@@ -1351,52 +1899,52 @@ it('New Sore Body Part Logic - All 3', () => {
     expect(PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts)).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 5 (Selected Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: false};
     let pageState = { pageIndex: 5, };
     let expectedResult = {isValid: false, pageNum: 5,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 5, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 4 (Selected Areas of Soreness) - Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 5 (Selected Areas of Soreness) - Valid', () => {
     let isFormValidItems = {areAreasOfSorenessValid: true};
     let pageState = { pageIndex: 5, };
     let expectedResult = {isValid: true, pageNum: 5,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 5, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Areas of Soreness) - NOT Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: false};
     let pageState = { pageIndex: 4, };
     let expectedResult = {isValid: false, pageNum: 5,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 3 (Areas of Soreness) - Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 4 (Areas of Soreness) - Valid', () => {
     let isFormValidItems = {selectAreasOfSorenessValid: true};
     let pageState = { pageIndex: 4, };
     let expectedResult = {isValid: true, pageNum: 5,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 4, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - NOT Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (F/U P/S) - NOT Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: false};
     let pageState = { pageIndex: 3, };
     let expectedResult = {isValid: false, pageNum: 4,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
-it('Post Session Survey Next Page & Validation Logic - Page 2 (F/U P/S) - Valid', () => {
+it('Post Session Survey Next Page & Validation Logic - Page 3 (F/U P/S) - Valid', () => {
     let isFormValidItems = {isPrevSorenessValid: true};
     let pageState = { pageIndex: 3, };
     let expectedResult = {isValid: true, pageNum: 4,};
-    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 2, isFormValidItems, [])).toEqual(expectedResult);
+    expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 3, isFormValidItems, [])).toEqual(expectedResult);
 });
 
 it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - NOT Valid', () => {
     let isFormValidItems = {};
     let pageState = { pageIndex: 2, };
-    let expectedResult = {isValid: true, pageNum: 4,};
+    let expectedResult = {isValid: true, pageNum: 3,};
     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
@@ -1410,7 +1958,7 @@ it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - 
 it('Post Session Survey Next Page & Validation Logic - Page 1 (Sport Builder) - Valid', () => {
     let isFormValidItems = {};
     let pageState = { pageIndex: 2, };
-    let expectedResult = {isValid: true, pageNum: 4,};
+    let expectedResult = {isValid: true, pageNum: 3,};
     expect(PlanLogic.handlePostSessionSurveyNextPage(pageState, 1, isFormValidItems, [])).toEqual(expectedResult);
 });
 
@@ -1536,21 +2084,21 @@ it('Coaches Dashboard Search Area Render Logic - With Insights', () => {
 it('Coaches Dashboard Section Render Loop Logic - Dipesh Gautam', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Dipesh', 'Gautam', 0, '1', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#2EA985', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Dipesh', 'Gautam', '#71CDB7', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
 it('Coaches Dashboard Section Render Loop Logic - Paul LaForge', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Paul', 'LaForge', 2, '3', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#E6583D', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Paul', 'LaForge', '#EE8B6E', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
 it('Coaches Dashboard Section Render Loop Logic - Mazen Chami', () => {
     let athletes = helperFunctions.getCoachesDashboardSectionRenderLoopLogicAthlets();
     let item = helperFunctions.getCoachesDashboardSectionRenderLoopLogicItem('Mazen', 'Chami', 1, '2', false);
-    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Mazen', 'Chami', '#EBBA2D', item);
+    let expectedResult = helperFunctions.getRenderCoachesDashboardSectionExpectedResult('*Mazen', 'Chami', '#F1B877', item);
     expect(PlanLogic.handleRenderCoachesDashboardSection(athletes, item)).toEqual(expectedResult);
 });
 
@@ -1560,7 +2108,7 @@ it('Coaches Dashboard Render Logic - 1 Team', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1577,7 +2125,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, First Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1594,7 +2142,7 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
     let expectedResult = helperFunctions.getCoachesDashboardRenderLogicExpectedResult(
         coachesDashboardData,
         coachesDashboardData[selectedTeamIndex].compliance.complete,
-        '#E6583D',
+        '#EE8B6E',
         coachesDashboardData[selectedTeamIndex].compliance.incomplete,
         coachesDashboardData[selectedTeamIndex].compliance.complete.length,
         coachesDashboardData[selectedTeamIndex].compliance.incomplete.length,
@@ -1607,19 +2155,19 @@ it('Coaches Dashboard Render Logic - 2 Teams, Second Team Selected', () => {
 
 it('Athlete Card Modal Render Logic - No Information - Dipesh', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(0, 'Dipesh', 'Gautam');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#2EA985', 'Train as normal');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*DIPESH GAUTAM', '#71CDB7', 'Train as normal');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Mazen', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(1, 'Mazen', 'Chami');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*MAZEN CHAMI', '#EBBA2D', 'Consider altering training plan');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*MAZEN CHAMI', '#F1B877', 'Consider altering training plan');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
 it('Athlete Card Modal Render Logic - With Information - Gabby', () => {
     let selectedAthlete = helperFunctions.getAthleteCardSelectedAthlete(2, 'Gabby', 'Lavac');
-    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#E6583D', 'Consider not training today');
+    let expectedResult = helperFunctions.athleteCardModalRenderLogicExpectedResult('*GABBY LAVAC', '#EE8B6E', 'Consider not training today');
     expect(PlanLogic.handleAthleteCardModalRenderLogic(selectedAthlete)).toEqual(expectedResult);
 });
 
@@ -1715,7 +2263,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, RPE Selected & All Go
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: true}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true, true), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, true, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1723,7 +2271,7 @@ it('Post Session Survey Render Logic - Sport Builder Done & RPE Selected, NO Pre
     let postSession = helperFunctions.getPostSessionSurveyPostSession(4, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1731,7 +2279,7 @@ it('Post Session Survey Render Logic - Sport Builder Done, NO Previous Soreness'
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '2018-11-14T15:30:00Z');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, true, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 
@@ -1739,7 +2287,7 @@ it('Post Session Survey Render Logic - On Enter, NO Previous Soreness', () => {
     let postSession = helperFunctions.getPostSessionSurveyPostSession(0, [], '');
     let soreBodyParts = {body_parts: [], hist_sore_status: [], clear_candidates: []};
     let areasOfSorenessRef = {state: {isAllGood: false}};
-    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, false), newSoreBodyParts: []};
+    let expectedResult = {isFormValid: false, isFormValidItems: helperFunctions.postSessionRenderLogicFormValidItems(false, true, false, false, true), newSoreBodyParts: []};
     expect(PlanLogic.handlePostSessionSurveyRenderLogic(postSession, soreBodyParts, areasOfSorenessRef)).toEqual(expectedResult);
 });
 

@@ -2,7 +2,7 @@
   * Custom Wheel Scroll Picker
   *
       <WheelScrollPicker
-          activeItemColor={AppColors.zeplin.darkGrey}
+          activeItemColor={AppColors.zeplin.navy}
           activeItemHighlight={'#EBBA2D4D'}
           dataSource={MyPlanConstants.timeOptionGroups.hours}
           highlightBorderWidth={0}
@@ -19,7 +19,7 @@
       />
   *
   */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import {
     Dimensions,
@@ -91,7 +91,7 @@ class WheelScrollPicker extends Component {
         </Text>
         if(addRecommendedTextAtIndex) {
             const recommendedColor = addRecommendedTextAtIndex && addRecommendedTextAtIndex === index ?
-                AppColors.zeplin.lightSlate
+                AppColors.zeplin.slateXLightSlate
                 :
                 AppColors.transparent;
             return(

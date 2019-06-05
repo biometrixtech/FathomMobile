@@ -23,8 +23,8 @@ const DefaultListGap = ({
             style={{
                 borderRightColor: AppColors.primary.grey.thirtyPercent,
                 borderRightWidth: 1,
-                marginLeft:       10,
-                width:            AppFonts.scaleFont(24) / 2}}
+                width:            (AppFonts.scaleFont(24) / 2),
+            }}
         />
         <Spacer size={size} />
     </View>

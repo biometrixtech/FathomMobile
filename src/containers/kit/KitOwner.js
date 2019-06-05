@@ -10,7 +10,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, } from 'react-redux';
 
 // Actions
 import BluetoothActions from '../../actions/ble';

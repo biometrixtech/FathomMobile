@@ -6,7 +6,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, } from 'react';
 import { View, Animated, ViewPropTypes, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({

@@ -11,7 +11,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Platform, StyleSheet, View, } from 'react-native';
 
@@ -71,7 +71,7 @@ class ExerciseCompletionModal extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen) {
+        if(prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) {
             this.mainTimer = _.delay(() => {
                 const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);
@@ -108,10 +108,14 @@ class ExerciseCompletionModal extends Component {
             newProgressCounters[group] = 0;
             this.setState(
                 { progressCounters: newProgressCounters, },
-                () => { if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); } }
+                () => {
+                    if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); }
+                    if((_.indexOf(Object.keys(completionModalExerciseList), group) + 1) === Object.keys(completionModalExerciseList).length) {
+                        callback();
+                    }
+                }
             );
         });
-        callback();
     }
 
     render = () => {
@@ -139,11 +143,11 @@ class ExerciseCompletionModal extends Component {
         return(
             <FathomModal
                 isVisible={isModalOpen}
-                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
-                        colors={[AppColors.zeplin.lightNavy, AppColors.zeplin.darkBlue, AppColors.zeplin.darkNavy, AppColors.black]}
+                        colors={[AppColors.zeplin.navy, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}
@@ -178,18 +182,18 @@ class ExerciseCompletionModal extends Component {
                                                     right:          0,
                                                     top:            0,
                                                 }}
-                                                color={isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success}
+                                                color={isFS ? AppColors.zeplin.splash : AppColors.zeplin.success}
                                                 indeterminate={false}
                                                 progress={progressCounters[group]}
                                                 showsText={false}
                                                 size={(sessionIconWidth - AppSizes.paddingLrg)}
                                                 strokeCap={'round'}
-                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
+                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
                                             />
                                             <Spacer size={AppSizes.paddingSml} />
-                                            <Text oswaldMedium style={{color: isFS ? AppColors.zeplin.seaBlue : AppColors.zeplin.success, fontSize: AppFonts.scaleFont(13),}}>
+                                            <Text oswaldMedium style={{color: isFS ? AppColors.zeplin.splash : AppColors.zeplin.success, fontSize: AppFonts.scaleFont(13),}}>
                                                 {group}
                                             </Text>
                                         </View>

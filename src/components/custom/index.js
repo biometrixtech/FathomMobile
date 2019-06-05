@@ -11,12 +11,15 @@ import Coach from './Coach';
 import CoachesDashboardTabBar from './CoachesDashboardTabBar';
 import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
+import CustomTabBar from './CustomTabBar';
+import DeckCards from './DeckCards';
 import FathomModal from './FathomModal';
 import FathomPicker from './FathomPicker';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
 import Indicator from './Indicator';
 import ListItem from './ListItem';
+import MultiSwitch from './MultiSwitch';
 import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
@@ -39,12 +42,15 @@ export {
     CoachesDashboardTabBar,
     CustomMyPlanNavBar,
     CustomNavBar,
+    CustomTabBar,
+    DeckCards,
     FathomModal,
     FathomPicker,
     FathomSlider,
     FormInput,
     Indicator,
     ListItem,
+    MultiSwitch,
     ProgressBar,
     ProgressCircle,
     RadioButton,

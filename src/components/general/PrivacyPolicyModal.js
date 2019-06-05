@@ -26,7 +26,6 @@ const PrivacyPolicyModal = ({
         backdropColor={AppColors.white}
         backdropOpacity={1}
         isVisible={isPrivacyPolicyOpen}
-        style={{margin: 0,}}
     >
         <WebViewPage
             source={'https://www.fathomai.com/privacy/'}

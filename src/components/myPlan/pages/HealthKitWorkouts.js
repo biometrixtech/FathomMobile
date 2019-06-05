@@ -11,9 +11,9 @@
     />
  *
  */
-import React, { PureComponent } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, Keyboard, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     },
     deletedWorkoutListDetailWrapper: {
         backgroundColor: AppColors.transparent,
-        borderColor:     AppColors.zeplin.light,
+        borderColor:     AppColors.zeplin.slateXLight,
         borderStyle:     'dashed',
         borderWidth:     2,
     },
@@ -68,18 +68,18 @@ const WorkoutListDetail = ({
             <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
                 <Image
                     source={sportImage}
-                    style={{height: 50, tintColor: workout.deleted ? AppColors.zeplin.light : AppColors.zeplin.seaBlue, width: 50,}}
+                    style={{height: 50, tintColor: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.splash, width: 50,}}
                 />
             </View>
             <View style={{flex: 4, paddingLeft: AppSizes.paddingSml,}}>
-                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(18),}}>{sportName}</Text>
+                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>{sportName}</Text>
             </View>
             <View style={{flex: 2, paddingLeft: AppSizes.paddingXSml,}}>
-                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.light : AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{sportStartTime}</Text>
+                <Text robotoMedium style={{color: workout.deleted ? AppColors.zeplin.slateXLight : AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{sportStartTime}</Text>
             </View>
             <TabIcon
                 containerStyle={[{flex: 1,}]}
-                color={AppColors.zeplin.lightSlate}
+                color={AppColors.zeplin.slateLight}
                 icon={workout.deleted ? 'add' : 'close'}
                 onPress={() => handleHealthDataFormChange(!workout.deleted)}
                 reverse={false}
@@ -90,7 +90,7 @@ const WorkoutListDetail = ({
     )
 };
 
-class HealthKitWorkouts extends PureComponent {
+class HealthKitWorkouts extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -222,7 +222,7 @@ class HealthKitWorkouts extends PureComponent {
                     currentStep={1}
                     onBack={pageIndex > 0 ? () => this._updateBackPageIndex(pageIndex - 1) : null}
                     onClose={handleTogglePostSessionSurvey}
-                    totalSteps={isPostSession ? 2 : 3}
+                    totalSteps={3}
                 />
 
                 <Pages
@@ -243,11 +243,11 @@ class HealthKitWorkouts extends PureComponent {
                                 <View style={[workouts && workouts.length >= 6 ? {marginVertical: AppSizes.paddingLrg,} : {marginBottom: AppSizes.paddingLrg,}, {alignItems: 'center', flexDirection: 'row',}]}>
                                     <View style={{flex: 1,}} />
                                     <View style={{flex: 8,}}>
-                                        <Text robotoLight style={{color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'We detected the following workouts from Apple Health:'}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'We detected the following workouts from Apple Health:'}</Text>
                                     </View>
                                     <View style={{flex: 1,}}>
                                         <TabIcon
-                                            color={AppColors.zeplin.light}
+                                            color={AppColors.zeplin.slateXLight}
                                             icon={'help'}
                                             onPress={() => this._hkPanel.show()}
                                             reverse={false}
@@ -300,7 +300,7 @@ class HealthKitWorkouts extends PureComponent {
                                         <View style={{alignItems: 'center',}}>
                                             <Image
                                                 source={sportImage}
-                                                style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                                style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, tintColor: AppColors.zeplin.splash, width: AppSizes.screen.widthThird,}]}
                                             />
                                         </View>
                                         <FormInput
@@ -324,24 +324,24 @@ class HealthKitWorkouts extends PureComponent {
                                             {'Was your '}
                                             <Text robotoBold>{sportText}</Text>
                                         </Text>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>
-                                            <Text oswaldMedium style={[isEditingDuration ? {color: AppColors.zeplin.light,} : {}, {textDecorationLine: 'underline',}]}>{sportDuration}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>
+                                            <Text oswaldMedium style={[isEditingDuration ? {color: AppColors.zeplin.slateXLight,} : {}, {textDecorationLine: 'underline',}]}>{sportDuration}</Text>
                                             {' MINUTES?'}
                                         </Text>
                                         <Spacer size={AppSizes.padding} />
                                         <TouchableOpacity
                                             onPress={() => this._editDuration(index)}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                                color={AppColors.zeplin.lightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 icon={'clock-outline'}
                                                 reverse={false}
                                                 size={20}
                                                 type={'material-community'}
                                             />
-                                            <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(17),}}>{'Edit time'}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={() => {
@@ -349,17 +349,17 @@ class HealthKitWorkouts extends PureComponent {
                                                     this._renderNextPage(pageIndex);
                                                 });
                                             }}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.lightSlate, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
-                                                color={AppColors.zeplin.lightSlate}
+                                                color={AppColors.zeplin.slateLight}
                                                 icon={'close'}
                                                 reverse={false}
                                                 size={20}
                                                 type={'material'}
                                             />
-                                            <Text robotoRegular style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(17),}}>{'No, delete session'}</Text>
                                         </TouchableOpacity>
                                         <Spacer size={AppSizes.padding} />
                                         <TouchableOpacity
@@ -386,52 +386,28 @@ class HealthKitWorkouts extends PureComponent {
                                     { showRPEPicker ?
                                         <View>
                                             <Spacer size={20} />
-                                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                                 {'How was your '}
                                                 <Text robotoMedium>{`${sportName.toLowerCase()} workout?`}</Text>
                                             </Text>
-                                            <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
-                                                { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
-                                                    let isSelected = workout.post_session_survey.RPE === key;
-                                                    let opacity = isSelected ? 1 : (key * 0.1);
+                                            <View style={{paddingVertical: AppSizes.paddingSml,}}>
+                                                { _.map(MyPlanConstants.postSessionFeel, (scale, key) => {
+                                                    let RPEValue = workout.post_session_survey.RPE;
+                                                    let isSelected = RPEValue === scale.value;
                                                     return(
-                                                        <TouchableHighlight
-                                                            key={value+key}
-                                                            onPress={() => {
-                                                                handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
-                                                                this._renderNextPage(pageIndex);
+                                                        <ScaleButton
+                                                            isSelected={isSelected}
+                                                            key={key}
+                                                            scale={scale}
+                                                            updateStateAndForm={() => {
+                                                                handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', scale.value);
+                                                                if(showAddContinueBtns) {
+                                                                    this._scrollToBottom(this.scrollViewHealthKitRef[index]);
+                                                                } else {
+                                                                    this._renderNextPage(pageIndex);
+                                                                }
                                                             }}
-                                                            underlayColor={AppColors.transparent}
-                                                        >
-                                                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
-                                                                <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
-                                                                    <ScaleButton
-                                                                        isSelected={isSelected}
-                                                                        keyLabel={key}
-                                                                        opacity={opacity}
-                                                                        updateStateAndForm={() => {
-                                                                            handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', key);
-                                                                            if(showAddContinueBtns) {
-                                                                                this._scrollToBottom(this.scrollViewHealthKitRef[index]);
-                                                                            } else {
-                                                                                this._renderNextPage(pageIndex);
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </View>
-                                                                <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
-                                                                    <Text
-                                                                        oswaldMedium
-                                                                        style={{
-                                                                            color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
-                                                                            fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
-                                                                        }}
-                                                                    >
-                                                                        {value.toUpperCase()}
-                                                                    </Text>
-                                                                </View>
-                                                            </View>
-                                                        </TouchableHighlight>
+                                                        />
                                                     )
                                                 })}
                                             </View>
@@ -442,7 +418,7 @@ class HealthKitWorkouts extends PureComponent {
                                     }
                                 </View>
 
-                                { showAddContinueBtns && showRPEPicker ?
+                                { showAddContinueBtns && showRPEPicker && workouts[(pageIndex - 1)] && workouts[(pageIndex - 1)].post_session_survey && workouts[(pageIndex - 1)].post_session_survey.RPE ?
                                     <View>
                                         <BackNextButtons
                                             addBtnText={'Add another session'}
@@ -474,7 +450,7 @@ class HealthKitWorkouts extends PureComponent {
                         <View style={{flex: 1,}} />
                         <View style={{backgroundColor: AppColors.white,}}>
                             <View style={{backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', padding: AppSizes.padding,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{'AUTO-DETECTED WORKOUTS'}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.splash, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{'AUTO-DETECTED WORKOUTS'}</Text>
                                 <TabIcon
                                     containerStyle={[{flex: 1,}]}
                                     icon={'close'}
@@ -486,17 +462,17 @@ class HealthKitWorkouts extends PureComponent {
                                 />
                             </View>
                             <View style={{padding: AppSizes.paddingLrg,}}>
-                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
                                     {'Fathom syncs with Apple Health to automatically log your workouts.\n'}
                                 </Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
                                     {'Today we found the following activities! '}
                                     <Text robotoBold>{'Tap "Accept"'}</Text>
                                     {' to add them to your Fathom training history or '}
                                     <Text robotoBold>{'tap "X"'}</Text>
                                     {' to delete.\n'}
                                 </Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), lineHeight: AppFonts.scaleFont(22),}}>
                                     {'If you\'d like to manually add another activity, you can do so later.'}
                                 </Text>
                             </View>

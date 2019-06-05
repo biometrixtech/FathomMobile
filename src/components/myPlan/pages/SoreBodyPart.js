@@ -16,7 +16,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, View, } from 'react-native';
 
@@ -201,11 +201,11 @@ class SoreBodyPart extends Component {
                 }}
             >
                 { bodyPart.isClearCandidate && isPrevSoreness &&
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}]}>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}]}>
                         {'You have\'t mentioned '}
-                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPart.pain ? 'pain' : 'soreness'}</Text>
+                        <Text robotoMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{bodyPart.pain ? 'pain' : 'soreness'}</Text>
                         {' in your '}
-                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{bodyPartName}</Text>
+                        <Text robotoMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{bodyPartName}</Text>
                         {' recently.'}
                     </Text>
                 }
@@ -222,24 +222,24 @@ class SoreBodyPart extends Component {
                     }
                 </View>
                 { bodyPart.isClearCandidate && isPrevSoreness ?
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                         {'How has it felt the last '}
-                        <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
+                        <Text robotoMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25),}}>
                             {`${bodyPart.status.includes('acute') ? 'few days' : 'week'}?`}
                         </Text>
                     </Text>
                     : isPrevSoreness ?
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {`How ${helpingVerb} your `}
-                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}]}>
+                            <Text robotoRegular style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalMed, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25),}]}>
                                 {bodyPartName}
                             </Text>
                             {' felt?'}
                         </Text>
                         :
-                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25), paddingTop: AppSizes.paddingMed,}]}>
                             {'My '}
-                            <Text robotoMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(25),}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25),}}>
                                 {bodyPartName}
                             </Text>
                             {` ${bodyPartName === 'Abdominals' ? 'feel...' : 'feels..'}`}
@@ -292,7 +292,7 @@ class SoreBodyPart extends Component {
                         duration={500}
                         style={{paddingBottom: AppSizes.paddingMed, paddingTop: AppSizes.paddingXSml,}}
                     >
-                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(22),}]}>
                             {'My '}
                             <Text robotoMedium>{this.state.type}</Text>
                             {' is...'}
@@ -322,7 +322,7 @@ class SoreBodyPart extends Component {
                         duration={500}
                         style={{paddingVertical: AppSizes.paddingMed,}}
                     >
-                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(22),}]}>
+                        <Text robotoLight style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(22),}]}>
                             {'My '}
                             <Text robotoMedium>{'range of motion'}</Text>
                             {' is...'}

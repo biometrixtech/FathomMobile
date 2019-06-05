@@ -39,16 +39,16 @@ const ModalData = ({
             indeterminate={true}
             showsText={true}
             size={AppSizes.screen.widthTwoThirds}
-            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
+            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
         />
         <Spacer size={50} />
     </View>
 )
     : isSuccessful ? (
         <View style={[AppStyles.containerCentered]}>
-            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
+            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
             <Spacer size={40} />
-            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),}]}>{'Return to App'}</Text>
+            <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}]}>{'Return to App'}</Text>
             <Spacer size={10} />
             <TabIcon
                 icon={'arrow-right-circle'}
@@ -64,9 +64,9 @@ const ModalData = ({
         :
         (
             <View style={[AppStyles.containerCentered]}>
-                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),}]}>{'ENTER INVITE CODE'}</Text>
+                <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20),}]}>{'ENTER INVITE CODE'}</Text>
                 <Spacer size={10} />
-                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}>{'to join Fathom as a part of\na team'}</Text>
+                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}>{'to join Fathom as a part of\na team'}</Text>
                 <Spacer size={resultMsg.error.length > 0 ? 20 : 0} />
                 <Alerts
                     status={resultMsg.status}
@@ -89,7 +89,7 @@ const ModalData = ({
                     value={code}
                 />
                 <Spacer size={10} />
-                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12), opacity: 0.5,}]}>{'case sensitive'}</Text>
+                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(12), opacity: 0.5,}]}>{'case sensitive'}</Text>
                 <Spacer size={30} />
                 <Button
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, justifyContent: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}
@@ -114,7 +114,7 @@ const JoinATeamModal = ({
 }) => (
     <FathomModal
         isVisible={isOpen}
-        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
     >
         <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
             <TabIcon

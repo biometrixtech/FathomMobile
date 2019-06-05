@@ -4,7 +4,7 @@
      <FormInput></FormInput>
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Input, } from 'react-native-elements';
 
@@ -35,7 +35,7 @@ class FormInput extends Component {
             ...this.props,
             selectionColor: AppColors.zeplin.yellow,
             containerStyle: [{
-                borderBottomColor: AppColors.zeplin.light,
+                borderBottomColor: AppColors.zeplin.slateXLight,
                 borderBottomWidth: 1,
                 backgroundColor:   AppColors.transparent,
                 marginLeft:        20,
@@ -61,6 +61,10 @@ class FormInput extends Component {
         if (this.props.inputStyle) {
             props.inputStyle.push(this.props.inputStyle);
         }
+
+        props.allowFontScaling = false;
+        props.errorProps = { allowFontScaling: false, };
+        props.labelProps = { allowFontScaling: false, };
 
         return props;
     }

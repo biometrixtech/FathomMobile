@@ -4,6 +4,7 @@
     <ExerciseListItem
         completedExercises={completedExercises}
         exercise={exercise}
+        goals={plan.goals}
         handleCompleteExercise={handleCompleteExercise}
         isFunctionalStrength={isFunctionalStrength}
         isLastItem={i + 1 === exerciseList.length}
@@ -11,7 +12,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, View, } from 'react-native';
 
@@ -23,7 +24,7 @@ import { TabIcon, Text } from '../../custom';
 class ExerciseListItem extends Component {
     constructor(props) {
         super(props);
-        let cleanedExercise = MyPlan.cleanExercise(this.props.exercise);
+        let cleanedExercise = MyPlan.cleanExercise(this.props.exercise, this.props.priority, this.props.goals);
         this.state = {
             displayName:    cleanedExercise.displayName,
             dosage:         cleanedExercise.dosage,
@@ -38,17 +39,20 @@ class ExerciseListItem extends Component {
             :
             `${exercise.library_id}-${exercise.set_number}`;
         return(
-            <View style={[{borderTopColor: AppColors.zeplin.lightGrey, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
+            <View style={[{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1, marginHorizontal: AppSizes.paddingSml,}]}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-                    <TabIcon
-                        containerStyle={[{flex: 1, justifyContent: 'center',}]}
-                        icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
-                        iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.light,}]}
+                    <TouchableOpacity
                         onPress={() => handleCompleteExercise(exercise.library_id, exercise.set_number)}
-                        reverse={false}
-                        size={30}
-                        type={'ionicon'}
-                    />
+                        style={{flex: 1, justifyContent: 'center',}}
+                    >
+                        <TabIcon
+                            icon={completedExercises.includes(exerciseId) ? 'ios-checkbox' : 'ios-checkbox-outline'}
+                            iconStyle={[{color: completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,}]}
+                            reverse={false}
+                            size={26}
+                            type={'ionicon'}
+                        />
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => toggleSelectedExercise(exercise, true)}
                         style={[AppStyles.paddingHorizontalMed, {flex: 2, justifyContent: 'center',}]}
@@ -67,7 +71,7 @@ class ExerciseListItem extends Component {
                         <Text
                             oswaldMedium
                             style={{
-                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.black,
+                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slate,
                                 flexWrap: 'wrap',
                                 fontSize: AppFonts.scaleFont(16),
                             }}
@@ -77,7 +81,7 @@ class ExerciseListItem extends Component {
                         <Text
                             robotoMedium
                             style={{
-                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.blueGrey,
+                                color:    completedExercises.includes(exerciseId) ? AppColors.zeplin.yellow : AppColors.zeplin.slate,
                                 fontSize: AppFonts.scaleFont(15),
                             }}
                         >
@@ -96,11 +100,13 @@ ExerciseListItem.propTypes = {
     handleCompleteExercise: PropTypes.func.isRequired,
     isFunctionalStrength:   PropTypes.bool,
     isLastItem:             PropTypes.bool.isRequired,
+    priority:               PropTypes.number,
     toggleSelectedExercise: PropTypes.func.isRequired,
 };
 
 ExerciseListItem.defaultProps = {
     isFunctionalStrength: false,
+    priority:             1,
 };
 
 ExerciseListItem.componentName = 'ExerciseListItem';

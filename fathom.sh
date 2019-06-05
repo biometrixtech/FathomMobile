@@ -113,17 +113,22 @@ initialize() {
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
+            sed -i '' 's/Math.floor(/Math.round(/g' ./node_modules/react-native-pages/src/components/pages/index.js
 
             # should find the installed location of nvm and replace the android app build.gradle nodeExecutableAndArgs path with current machine's
-            android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
-            nvm_string='/.nvm'
-            android_nvm_location=${android_nvm_location%$nvm_string}
-            android_nvm_location=${android_nvm_location////\\/}
-            old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
-            sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
+            # android_nvm_location=`find ~/ -name '.nvm' -type d -print -quit`
+            # nvm_string='/.nvm'
+            # android_nvm_location=${android_nvm_location%$nvm_string}
+            # android_nvm_location=${android_nvm_location////\\/}
+            # old_user=`awk -v FS="(Users\/|\/.nvm)" '{if ($2) print $2;}' ./android/app/build.gradle`
+            # sed -i "" "s/\/Users\/$old_user\//$android_nvm_location/" ./android/app/build.gradle
 
             # iOS patches
             # none for now...
+
+            # libraray patches
+            yes | cp ./custom/javascript/ActionButtonItem.js ./node_modules/react-native-action-button/ActionButtonItem.js
+            yes | cp ./custom/javascript/AppIntroSlider.js ./node_modules/react-native-app-intro-slider/AppIntroSlider.js
 
             # replacing xcode IP with your current computer IP
             currentip=`grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' ./ios/Fathom/AppDelegate.m`
@@ -224,7 +229,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleRelease
                 cd ..
@@ -239,7 +245,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
@@ -254,7 +261,8 @@ androidBuild() {
                 echo "${red}Unit testing failed, not proceeding.${normal}"
             else
                 echo "Unit testing passed, proceeding.."
-                # yarn bundle-android
+                yarn bundle-android
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
                 cd android
                 ./gradlew clean assembleDebug
                 cd ..

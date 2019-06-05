@@ -12,8 +12,9 @@ import { Actions, Router, Scene, Stack, } from 'react-native-router-flux';
 import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackView/StackViewStyleInterpolator';
 
 // Consts, Libs, and Utils
-import { CustomMyPlanNavBar, CustomNavBar, } from '../components/custom';
-import { store } from '../store';
+import { CustomNavBar, CustomTabBar, TabIcon, } from '../components/custom';
+import { AppColors, } from '../constants';
+import { View, } from 'react-native';
 
 // import components
 import LoginContainer from '../containers/auth/Login';
@@ -40,8 +41,23 @@ import SettingsComponent from '../components/settings/Settings';
 import BluetoothConnectContainer from '../containers/kit/BluetoothConnect';
 import BluetoothConnectComponent from '../components/kit/BluetoothConnect';
 
+import BluetoothConnect3SensorContainer from '../containers/kit/BluetoothConnect3Sensor';
+import BluetoothConnect3SensorComponent from '../components/kit/BluetoothConnect3Sensor';
+
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
+
+import ExerciseModalityContainer from '../containers/myPlan/ExerciseModality';
+import ExerciseModalityComponent from '../components/myPlan/ExerciseModality';
+
+import BodyModalityContainer from '../containers/myPlan/BodyModality';
+import BodyModalityComponent from '../components/myPlan/BodyModality';
+
+import TrendsContainer from '../containers/myPlan/Trends';
+import TrendsComponent from '../components/myPlan/Trends';
+
+import TrendChildContainer from '../containers/myPlan/TrendChild';
+import TrendChildComponent from '../components/myPlan/TrendChild';
 
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
@@ -70,7 +86,7 @@ const Index = (
             hideNavBar={true}
             key={'root'}
             titleStyle={{ alignSelf: 'center' }}
-            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal })}
+            transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal, })}
         >
             <Scene
                 Layout={StartComponent}
@@ -89,6 +105,7 @@ const Index = (
             <Scene
                 Layout={ResendEmailComponent}
                 component={ResendEmailContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'resendEmail'}
                 navBar={CustomNavBar}
@@ -100,6 +117,7 @@ const Index = (
             <Scene
                 Layout={ChangeEmailComponent}
                 component={ChangeEmailContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'changeEmail'}
                 navBar={CustomNavBar}
@@ -125,6 +143,7 @@ const Index = (
             <Scene
                 Layout={OnboardingComponent}
                 component={OnboardingContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'onboarding'}
                 navBar={CustomNavBar}
@@ -157,6 +176,7 @@ const Index = (
             <Scene
                 Layout={ForgotPasswordComponent}
                 component={ForgotPasswordContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
@@ -167,6 +187,7 @@ const Index = (
             <Scene
                 Layout={ResetPasswordComponent}
                 component={ResetPasswordContainer}
+                headerTitleAllowFontScaling={false}
                 hideNavBar={false}
                 key={'resetPassword'}
                 navBar={CustomNavBar}
@@ -175,14 +196,61 @@ const Index = (
                 title={'FORGOT PASSWORD'}
             />
             <Scene
-                Layout={MyPlanComponent}
-                component={MyPlanContainer}
-                hideNavBar={false}
-                key={'myPlan'}
-                navBar={CustomMyPlanNavBar}
-                onLeft={() => Actions.settings()}
+                drawerLockMode={'locked-closed'}
+                gesturesEnabled={false}
+                hideNavBar={true}
+                key={'main'}
+                tabBarComponent={CustomTabBar}
+                tabBarPosition={'bottom'}
+                tabs={true}
+            >
+                <Scene
+                    Layout={MyPlanComponent}
+                    component={MyPlanContainer}
+                    hideNavBar={true}
+                    key={'myPlan'}
+                    panHandlers={null}
+                    tabBarLabel={'Plan'}
+                />
+                <Scene
+                    Layout={TrendsComponent}
+                    component={TrendsContainer}
+                    hideNavBar={true}
+                    key={'trends'}
+                    tabBarLabel={'Trends'}
+                    panHandlers={null}
+                />
+                <Scene
+                    Layout={SettingsComponent}
+                    component={SettingsContainer}
+                    headerTitleAllowFontScaling={false}
+                    hideNavBar={true}
+                    key={'settings'}
+                    panHandlers={null}
+                    tabBarLabel={'Settings'}
+                    title={'SETTINGS'}
+                />
+            </Scene>
+            <Scene
+                Layout={TrendChildComponent}
+                component={TrendChildContainer}
+                hideNavBar={true}
+                key={'trendChild'}
                 panHandlers={null}
-                type={'replace'}
+            />
+            <Scene
+                Layout={ExerciseModalityComponent}
+                component={ExerciseModalityContainer}
+                hideNavBar={true}
+                key={'exerciseModality'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={BodyModalityComponent}
+                component={BodyModalityContainer}
+                hideNavBar={true}
+                key={'bodyModality'}
+                panHandlers={null}
             />
             <Scene
                 Layout={CoachesDashboardComponent}
@@ -192,18 +260,6 @@ const Index = (
                 navBar={CustomNavBar}
                 onLeft={() => Actions.settings()}
                 panHandlers={null}
-                type={'replace'}
-            />
-            <Scene
-                Layout={SettingsComponent}
-                component={SettingsContainer}
-                hideNavBar={false}
-                key={'settings'}
-                navBar={CustomNavBar}
-                onLeft={() => store.getState().user.role === 'athlete' ? Actions.myPlan() : Actions.coachesDashboard()}
-                panHandlers={null}
-                title={'SETTINGS'}
-                type={'replace'}
             />
             <Scene
                 Layout={BluetoothConnectComponent}
@@ -211,8 +267,13 @@ const Index = (
                 hideNavBar={true}
                 key={'bluetoothConnect'}
                 panHandlers={null}
-                // title={'Bluetooth Connect'}
-                // {...DefaultProps.navbarProps}
+            />
+            <Scene
+                Layout={BluetoothConnect3SensorComponent}
+                component={BluetoothConnect3SensorContainer}
+                hideNavBar={true}
+                key={'bluetoothConnect3Sensor'}
+                panHandlers={null}
             />
         </Stack>
     </Router>

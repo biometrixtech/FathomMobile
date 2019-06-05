@@ -8,7 +8,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, StyleSheet, View, } from 'react-native';
 
@@ -71,7 +71,7 @@ class SessionsCompletionModal extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen) {
+        if(prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) {
             let filteredIconSessions = _.filter(this.props.sessions, session => {
                 return (session.sport_name || session.sport_name === 0) ||
                     (session.strength_and_conditioning_type || session.strength_and_conditioning_type === 0);
@@ -128,10 +128,12 @@ class SessionsCompletionModal extends Component {
                     if(this.animation && this.animation.reset) { this.animation.reset(); }
                     if(this.animation2 && this.animation2.reset) { this.animation2.reset(); }
                     if(this.animation3 && this.animation3.reset) { this.animation3.reset(); }
+                    if((i + 1) === filteredIconSessions.length) {
+                        onClose();
+                    }
                 }
             );
         });
-        onClose();
     }
 
     render = () => {
@@ -153,11 +155,11 @@ class SessionsCompletionModal extends Component {
         return(
             <FathomModal
                 isVisible={isModalOpen}
-                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
             >
                 <View style={{backgroundColor: AppColors.transparent, flex: 1, justifyContent: 'center', width: modalWidth,}}>
                     <LinearGradient
-                        colors={[AppColors.zeplin.lightNavy, AppColors.zeplin.darkBlue, AppColors.zeplin.darkNavy, AppColors.black]}
+                        colors={[AppColors.zeplin.navy, AppColors.zeplin.darkNavy, AppColors.black]}
                         start={{x: 0.0, y: 0.0}}
                         end={{x: 1, y: 1}}
                         style={[styles.linearGradientStyle]}
@@ -207,13 +209,13 @@ class SessionsCompletionModal extends Component {
                                                     right:          0,
                                                     top:            0,
                                                 }}
-                                                color={AppColors.zeplin.seaBlue}
+                                                color={AppColors.zeplin.splash}
                                                 indeterminate={false}
                                                 progress={progressCounters[i]}
                                                 showsText={false}
                                                 size={(sessionIconWidth - AppSizes.paddingLrg)}
                                                 strokeCap={'round'}
-                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(40),}}
+                                                textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
                                                 thickness={thickness}
                                                 unfilledColor={AppColors.zeplin.slate}
                                             />

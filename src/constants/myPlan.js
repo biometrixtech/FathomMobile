@@ -169,71 +169,184 @@ function sorenessPainScaleMapping(type, value, isJoint) {
     return newValue;
 }
 
-const exerciseListOrder = [
+const preExerciseListOrder = [
     {
         index: 'inhibit_exercises',
         title: 'FOAM ROLL',
     },
     {
-        index: 'lengthen_exercises',
-        title: 'STRETCH',
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
     },
     {
-        index: 'activate_exercises',
+        index: 'active_stretch_exercises',
+        title: 'ACTIVE STRETCH',
+    },
+    {
+        index: 'isolated_activate_exercises',
         title: 'ACTIVATE',
     },
     {
-        index: 'integrate_exercises',
+        index: 'static_integrate_exercises',
+        title: 'INTEGRATE',
+    },
+];
+
+const postExerciseListOrder = [
+    {
+        index: 'inhibit_exercises',
+        title: 'FOAM ROLL',
+    },
+    {
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'isolated_activate_exercises',
+        title: 'ACTIVATE',
+    },
+    {
+        index: 'static_integrate_exercises',
+        title: 'INTEGRATE',
+    },
+];
+
+const coolDownExerciseListOrder = [
+    {
+        index: 'dynamic_stretch_exercises',
+        title: 'DYNAMIC STRETCH',
+    },
+    {
+        index: 'dynamic_integrate_exercises',
+        title: 'INTEGRATE',
+    },
+];
+
+// TODO: UPDATE TITLES
+const warmUpExerciseListOrder = [
+    {
+        index: 'inhibit_exercises',
+        title: 'FOAM ROLL',
+    },
+    {
+        index: 'static_stretch_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'active_or_dynamic_stretch_exercises',
+        title: 'INTEGRATE',
+    },
+    {
+        index: 'isolated_activate_exercises',
+        title: 'STATIC STRETCH',
+    },
+    {
+        index: 'dynamic_integrate_exercises',
+        title: 'ACTIVATE',
+    },
+    {
+        index: 'dynamic_integrate_with_speed_exercises',
         title: 'INTEGRATE',
     },
 ];
 
 const postSessionFeel = [
-    'Rest',
-    'Very, Very Easy',
-    'Easy',
-    'Moderate',
-    'Somewhat Hard',
-    'Hard',
-    ' ',
-    'Very Hard',
-    ' ',
-    ' ',
-    'Max effort',
+    { index: 1, label: 'REST', subtitle: 'effortless, helps recovery', value: 1, },
+    { index: 2, label: 'EASY', subtitle: 'can hold a conversation', value: 3, },
+    { index: 3, label: 'MODERATE', subtitle: 'can speak a sentence at a time', value: 5, },
+    { index: 4, label: 'HIGH INTENSITY', subtitle: 'can only speak a few words', value: 7, },
+    { index: 5, label: 'MAXIMAL', subtitle: 'unable to talk', value: 10, },
 ];
 
-function cleanExerciseList(recoveryObj) {
+function cleanExerciseList(recoveryObj, planSelection = 1, goals, modality) {
+    // setup variables
     let totalLength = 0;
     let cleanedExerciseList = {};
-    let largestSetCount = {};
     let equipmentRequired = [];
+    let totalSeconds = 0;
+    let exerciseListOrder = modality === 'prepare' ?
+        preExerciseListOrder
+        : modality === 'recover' ?
+            postExerciseListOrder
+            : modality === 'warmUp' ?
+                warmUpExerciseListOrder
+                : modality === 'coolDown' ?
+                    coolDownExerciseListOrder
+                    :
+                    preExerciseListOrder;
+    // loop through our exercise order and sections
     _.map(exerciseListOrder, list => {
-        largestSetCount[list.index] = 0;
-        _.map(recoveryObj[list.index], exercise => {
-            equipmentRequired = _.concat(equipmentRequired, exercise.equipment_required);
-            if(exercise.sets_assigned > largestSetCount[list.index]) {
-                largestSetCount[list.index] = exercise.sets_assigned;
+        // setup our variable
+        cleanedExerciseList[list.title] = [];
+        let updatedCurrentExerciseArray = [];
+        let currentExercisesBySet = {};
+        // loop through exercises to setup specific important values
+        _.map(recoveryObj[list.index], (exercise, key) => {
+            // setup variables
+            let newExercise = _.cloneDeep(exercise);
+            equipmentRequired = _.concat(equipmentRequired, newExercise.equipment_required);
+            let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
+            let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
+            let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+            dosage = _.orderBy(dosage, ['ranking'], ['asc']);
+            // calculate exercise sets
+            let exerciseSetsAssigned = 0;
+            if(dosage.length > 0 && planSelection === 0) {
+                exerciseSetsAssigned = dosage[0].efficient_sets_assigned > 0 ? dosage[0].efficient_sets_assigned : dosage[0].default_efficient_sets_assigned;
+            } else if(dosage.length > 0 && planSelection === 1) {
+                exerciseSetsAssigned = dosage[0].complete_sets_assigned > 0 ? dosage[0].complete_sets_assigned : dosage[0].default_complete_sets_assigned;
+            } else if(dosage.length > 0 && planSelection === 2) {
+                exerciseSetsAssigned = dosage[0].comprehensive_sets_assigned > 0 ? dosage[0].comprehensive_sets_assigned : dosage[0].default_comprehensive_sets_assigned;
+            }
+            // calculate exercise reps
+            let exerciseRepsAssigned = 0;
+            if(dosage.length > 0 && planSelection === 0) {
+                exerciseRepsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
+            } else if(dosage.length > 0 && planSelection === 1) {
+                exerciseRepsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
+            } else if(dosage.length > 0 && planSelection === 2) {
+                exerciseRepsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
+            }
+            // calculate exercise duration
+            let exerciseDuration = 0;
+            if(newExercise.unit_of_measure === 'count')  {
+                exerciseDuration = newExercise.bilateral ? ((newExercise.seconds_per_rep * exerciseRepsAssigned) * 2) : (newExercise.seconds_per_rep * exerciseRepsAssigned);
+            } else if(newExercise.unit_of_measure === 'seconds' || newExercise.unit_of_measure === 'yards') {
+                exerciseDuration = newExercise.bilateral ? (newExercise.seconds_per_set * 2) : (newExercise.seconds_per_set);
+            }
+            newExercise.calculated_duration = exerciseDuration;
+            for (let i = 1; i <= exerciseSetsAssigned; i += 1) {
+                currentExercisesBySet[i] = currentExercisesBySet[i] && currentExercisesBySet[i].length > 0 ? currentExercisesBySet[i] : [];
+                currentExercisesBySet[i].push(newExercise);
             }
         });
-        let exerciseArray = [];
-        for(let i = 1; i <= largestSetCount[list.index]; i += 1) {
-            _.map(recoveryObj[list.index], exercise => {
+        // loop through our exercises organzied my set
+        _.map(currentExercisesBySet, (exerciseList, index) => {
+            _.map(exerciseList, (exercise, key) => {
                 let newExercise = _.cloneDeep(exercise);
-                if(newExercise.sets_assigned >= i) {
-                    newExercise.set_number = i;
-                    exerciseArray.push(newExercise);
-                }
+                newExercise.set_number = index;
+                updatedCurrentExerciseArray.push(newExercise);
             });
-        }
-        totalLength += exerciseArray.length;
-        cleanedExerciseList[list.title] = exerciseArray;
+        });
+        // loop through our specific exercise to update our variables
+        _.map(updatedCurrentExerciseArray, (exercise, key) => {
+            // if a duration - update our main variables
+            if(exercise.calculated_duration > 0) {
+                totalSeconds += exercise.calculated_duration;
+                cleanedExerciseList[list.title].push(exercise);
+                totalLength += 1;
+            }
+        });
     });
+    // clean variables as needed
     equipmentRequired = _.uniq(equipmentRequired);
     equipmentRequired = _.filter(equipmentRequired, o => o !== 'None');
+    // return variables
     return {
         cleanedExerciseList,
         equipmentRequired,
         totalLength,
+        totalSeconds,
     };
 }
 
@@ -283,13 +396,26 @@ function isFSCompletedValid(functionalStrength, exerciseList) {
     return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
 }
 
-function cleanExercise(exercise) {
+function cleanExercise(exercise, planSelection, goals) {
+    let filteredReducerGoals = _.filter(goals, {isSelected: true,});
+    let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
+    let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+    dosage = _.orderBy(dosage, ['ranking'], ['asc']);
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
     cleanedExercise.description = exercise.description;
     cleanedExercise.displayName = `${exercise && exercise.display_name && exercise.display_name.length ? exercise.display_name.toUpperCase() : exercise && exercise.name ? exercise.name.toUpperCase() : ''}`;
-    let cleanedDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
-    let cleanedLongDosage = `${cleanedExercise.reps_assigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    if(cleanedExercise && dosage.length > 0 && planSelection === 0) {
+        cleanedExercise.repsAssigned = dosage[0].efficient_reps_assigned > 0 ? dosage[0].efficient_reps_assigned : dosage[0].default_efficient_reps_assigned;
+    } else if(cleanedExercise && dosage.length > 0 && planSelection === 1) {
+        cleanedExercise.repsAssigned = dosage[0].complete_reps_assigned > 0 ? dosage[0].complete_reps_assigned : dosage[0].default_complete_reps_assigned;
+    } else if(cleanedExercise && dosage.length > 0 && planSelection === 2) {
+        cleanedExercise.repsAssigned = dosage[0].comprehensive_reps_assigned > 0 ? dosage[0].comprehensive_reps_assigned : dosage[0].default_comprehensive_reps_assigned;
+    } else {
+        cleanedExercise.repsAssigned = 0;
+    }
+    let cleanedDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? 's' : cleanedExercise.unit_of_measure === 'yards' ? ' yds' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
+    let cleanedLongDosage = `${cleanedExercise.repsAssigned}${cleanedExercise.unit_of_measure === 'seconds' ? ' seconds' : cleanedExercise.unit_of_measure === 'yards' ? ' yards' : cleanedExercise.unit_of_measure === 'count' ? ' reps' : ''}`;
     cleanedExercise.dosage = `${cleanedDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.longDosage = `${cleanedLongDosage}${cleanedExercise.bilateral ? ' | Each Side' : ''}`;
     cleanedExercise.imageUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.gif`;
@@ -556,20 +682,23 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     }
 };
 
-const exerciseListButtonStyles = (isPrep, completedExercises, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? `${isPrep ? 'Mobilize ' : 'Recovery '}Complete` : `Check Boxes to Complete${isPrep ? ' Mobilize' : ' Recovery'}`;
+const exerciseListButtonStyles = (completedExercises, modality, isFSCompleteValid, isFunctionalStrength) => {
+    let buttonTitle = completedExercises.length > 0 ? 'Mobilize Complete' : 'Check Boxes to Complete Mobilize';
+    if(modality === 'coolDown') {
+        buttonTitle = completedExercises.length > 0 ? 'Active Recovery Complete' : 'Check Boxes to Complete Active Recovery';
+    }
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
-    let buttonDisabledStyle = {backgroundColor: AppColors.white,};
+    let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.slateXLight,};
     let buttonColor = completedExercises.length > 0 ? AppColors.white : AppColors.zeplin.yellow;
-    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.zeplin.yellow : AppColors.white;
+    let buttonBackgroundColor = completedExercises.length > 0 ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight;
     if(isFunctionalStrength) {
         buttonTitle = completedExercises.length > 0 ? 'Complete' : 'Check Boxes to Complete';
         isButtonOutlined = isFSCompleteValid ? false : true;
         buttonColor = isFSCompleteValid ? AppColors.white : AppColors.zeplin.yellow;
         buttonBackgroundColor = isFSCompleteValid ? AppColors.zeplin.yellow : AppColors.white;
     }
-    return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, }
+    return { buttonTitle, isButtonDisabled, isButtonOutlined, buttonDisabledStyle, buttonColor, buttonBackgroundColor, };
 };
 
 const allGoodBodyPartMessage = () => {
@@ -772,6 +901,10 @@ const selectedActiveTimes = (selectedIndex = 2) => {
     }
 }
 
+const selectedPriorities = (selectedIndex = 0) => {
+    return ['1', '2', '3'];
+}
+
 function completionModalExerciseList(exerciseList, completedExercises, isFS = false) {
     let cleanedExerciseList = {};
     _.map(exerciseList.cleanedExerciseList, (exerciseIndex, index) => {
@@ -807,6 +940,7 @@ export default {
     coachesDashboardSortBy,
     coachesDashboardCardsData,
     completionModalExerciseList,
+    coolDownExerciseListOrder,
     durationOptionGroups,
     exerciseListButtonStyles,
     fathomSliderText,
@@ -816,10 +950,13 @@ export default {
     muscleLevels,
     overallReadiness,
     painSorenessMessage,
+    preExerciseListOrder,
+    postExerciseListOrder,
     postSessionFeel,
     randomizeSessionsCompletionModalText,
     scrollableTabViewPage,
     selectedActiveTimes,
+    selectedPriorities,
     sessionTypes,
     sleepQuality,
     sorenessPainScaleMapping,
@@ -829,4 +966,5 @@ export default {
     timeOptionGroups,
     translateStrengthConditioningTypeToSport,
     userSelectedActiveTimeMessage,
+    warmUpExerciseListOrder,
 };

@@ -2,7 +2,7 @@
  * Onboarding Screen
  *  - Steps through the multiple steps
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
@@ -204,7 +204,7 @@ class Onboarding extends Component {
         let errorsArray = this._validateForm();
         this.setState({
             form_fields: { user: newFormFields, },
-            isFormValid: errorsArray.length === 0 ? true : false,
+            isFormValid: errorsArray.length === 0,
             resultMsg:   newResultMsgFields,
         });
         if(name === 'role') {
@@ -276,7 +276,6 @@ class Onboarding extends Component {
         this.setState({
             ['resultMsg.error']: errorsArray,
         });
-
         if(newUser.injury_status === 'returning_from_injury' || newUser.injury_status === 'returning_from_acute_injury') {
             Alert.alert(
                 '',
@@ -286,6 +285,11 @@ class Onboarding extends Component {
                     {text: 'Not Cleared', onPress: () => this._handlePasswordSpacesCheck(newUser, false, errorsArray)},
                 ],
             );
+        } else if(_.toNumber(newUser.biometric_data.mass.lb) < 50 || _.toNumber(newUser.biometric_data.mass.lb) > 1000) {
+            let newResultMsgFields = _.update( this.state.resultMsg, 'error', () => ['Please enter a valid Weight']);
+            newResultMsgFields = _.update( this.state.resultMsg, 'status', () => '');
+            newResultMsgFields = _.update( this.state.resultMsg, 'success', () => '');
+            this.setState({ resultMsg: newResultMsgFields, });
         } else {
             this._handlePasswordSpacesCheck(newUser, false, errorsArray);
         }
@@ -405,8 +409,8 @@ class Onboarding extends Component {
                             .then(res => {
                                 this.props.setAppLogs();
                                 if(user.health_enabled) {
-                                    return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
-                                        .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                    return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitData(user, user.health_sync_date, user.historic_health_sync_date));
                                 }
                                 return res;
                             })

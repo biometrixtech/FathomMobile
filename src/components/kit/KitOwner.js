@@ -8,7 +8,7 @@
 /**
  * Kit Owner Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
@@ -275,7 +275,7 @@ class KitOwnerView extends Component {
                 </ScrollView>
                 <FathomModal
                     isVisible={this.props.isModalVisible}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent,}]}
                 >
                     <View onLayout={(ev) => { this.resizeModal(ev); }}>
                         <Card title={'Set Kit Name'}>
@@ -312,7 +312,7 @@ class KitOwnerView extends Component {
                 </FathomModal>
                 <FathomModal
                     isVisible={this.props.isResetModalVisible}
-                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                    style={[AppStyles.containerCentered, this.state.modalStyle, {backgroundColor: AppColors.transparent,}]}
                 >
                     <View onLayout={(ev) => { this.resizeModal(ev); }}>
                         <Card title={'Erase Owner'}>
