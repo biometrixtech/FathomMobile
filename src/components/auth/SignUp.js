@@ -1,6 +1,6 @@
 /*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:32:58 
+ * @Author: Vir Desai
+ * @Date: 2017-10-12 11:32:58
  * @Last Modified by: Vir Desai
  * @Last Modified time: 2018-07-16 18:41:44
  */
@@ -10,18 +10,16 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import {
-    ScrollView,
-} from 'react-native';
+import { ScrollView, } from 'react-native';
 import FormValidation from 'tcomb-form-native';
-import { Actions } from 'react-native-router-flux';
+import { Actions, } from 'react-native-router-flux';
 
 // Consts and Libs
-import { AppAPI } from '../../lib';
-import { AppStyles } from '../../constants';
+import { AppAPI, } from '../../lib';
+import { AppStyles, } from '../../constants';
 
 // Components
-import { Alerts, Card, Button } from '../custom';
+import { Alerts, Button, Card, } from '../custom';
 
 /* Component ==================================================================== */
 class SignUp extends Component {

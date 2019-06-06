@@ -26,14 +26,14 @@ import {
 } from 'react-native';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions ,} from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
 import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
-import { onboardingUtils } from '../../constants/utils';
+import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, FathomModal, FormInput, ListItem, Spacer, TabIcon, Text, } from '../custom';

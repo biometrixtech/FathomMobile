@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { init, plan as PlanActions, user as UserActions } from '../../actions';
+import { init, plan as PlanActions, user as UserActions, } from '../../actions';
 
 const Start = ({
     Layout,

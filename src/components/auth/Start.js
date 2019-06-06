@@ -5,7 +5,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -19,7 +19,7 @@ import moment from 'moment';
 import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
 import { Alerts, Button, Spacer, Text, } from '../custom';
-import { store } from '../../store';
+import { store, } from '../../store';
 
 // setup consts
 const Crashlytics = Fabric.Crashlytics;

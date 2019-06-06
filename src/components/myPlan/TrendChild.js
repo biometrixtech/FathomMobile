@@ -26,7 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     cardSubtitle: {
-        color:    AppColors.zeplin.slate,
+        color:    AppColors.zeplin.slateLight,
         fontSize: AppFonts.scaleFont(15),
     },
     ctaWrapper: {
