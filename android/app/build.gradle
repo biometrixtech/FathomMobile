@@ -129,8 +129,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 28
-        versionName "2.12.0"
+        versionCode 30
+        versionName "3.0.0"
     }
     configurations.all {
         resolutionStrategy {
@@ -207,6 +207,10 @@ dependencies {
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-fabric')
+    implementation project(':react-native-wifi')
+    implementation project(':react-native-magic-move')
+    implementation project(':react-native-haptic-feedback')
+    implementation project(':react-native-svg')
     // For animated GIF support
     implementation 'com.facebook.fresco:animated-gif:1.10.0'
 }

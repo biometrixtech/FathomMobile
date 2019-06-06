@@ -134,7 +134,9 @@ export default function bleReducer(state = initialState, action) {
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
-                wifiMacAddress: action.data !== '00:00:00:00:00:00' ? action.data : null
+                mobile_udid:    action.data.mobile_udid,
+                sensor_pid:     action.data.sensor_pid,
+                wifiMacAddress: action.data.macAddress !== '00:00:00:00:00:00' ? action.data.macAddress : null
             }
         });
     case Actions.GET_ACCESSORY_KEY:

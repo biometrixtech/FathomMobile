@@ -1,17 +1,12 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:30:58
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-13 10:09:59
- */
-
 /**
  * API Config
  */
 
 // what {version} are we on?
+const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/3_1';
+const plansAPIVersion = '/plans/4_0';
+const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_2';
 
 export default {
@@ -36,6 +31,7 @@ export default {
     //    - AppAPI.favorites.patch()
     //    - AppAPI.blog.delete()
     endpoints: new Map([
+        // User specific routes
         ['authorize',          `${usersAPIVersion}/user/{userId}/authorize`],
         ['check_account_code', `${usersAPIVersion}/account`], // GET
         ['create_user',        `${usersAPIVersion}/user`],
@@ -49,15 +45,18 @@ export default {
         ['update_user',        `${usersAPIVersion}/user/{userId}`],
         // My Plan specific routes
         ['activate_fs',           `${plansAPIVersion}/functional_strength/activate`], // POST
-        ['active_recovery',       `${plansAPIVersion}/active_recovery`], // POST/PATCH
+        ['active_recovery',       `${plansAPIVersion}/active_recovery/exercise_modalities`], // POST/PATCH
         ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST
+        ['body_active_recovery',  `${plansAPIVersion}/active_recovery/body_part_modalities`], // POST/PATCH
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
         ['coach_dashboard',       `${plansAPIVersion}/coach/{userId}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH
+        ['get_mobilize',          `${plansAPIVersion}/active_recovery/get_mobilize`], // POST
         ['get_my_plan',           `${plansAPIVersion}/daily_plan`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/previous`], // POST
         ['health_data',           `${plansAPIVersion}/health_data`], // POST
+        ['insights_read',         `${plansAPIVersion}/insights/read`], // POST
         ['no_sessions',           `${plansAPIVersion}/session/no_sessions`], // POST
         ['patch_sessions',        `${plansAPIVersion}/session/{session_id}`], // PATCH
         ['post_readiness_survey', `${plansAPIVersion}/daily_readiness`], // POST
@@ -98,25 +97,33 @@ export default {
 
     PREPROCESSING_APIs: {
         DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        TEST: 'https://apis.test.fathomai.com',
         QA:   'https://apis.qa.fathomai.com/preprocessing',
         PROD: 'https://apis.production.fathomai.com/preprocessing',
     },
 
-    preprocessingHostname: 'https://apis.production.fathomai.com/preprocessing',
+    // preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
+    // preprocessingHostname: 'https://apis.qa.fathomai.com', // qa
+    preprocessingHostname: 'https://apis.test.fathomai.com', // test
+    // preprocessingHostname: 'https://apis.dev.fathomai.com', // development
 
     preprocessingEndpoints: new Map([
-        ['status', '/status'] // body: { start_date: '<start of week>', end_date: '<end of week>' }
+        ['status', `${preprocessingAPIVersion}/status/athlete`], // GET
     ]),
 
     HARDWARE_APIs: {
-        DEV:  'https://apis.dev.fathomai.com/hardware',
-        QA:   'https://apis.qa.fathomai.com/hardware',
-        PROD: 'https://apis.production.fathomai.com/hardware',
+        DEV:  'https://apis.dev.fathomai.com',
+        TEST: 'https://apis.test.fathomai.com',
+        QA:   'https://apis.qa.fathomai.com',
+        PROD: 'https://apis.production.fathomai.com',
     },
 
-    hardwareHostname: 'https://apis.production.fathomai.com/hardware',
+    // hardwareHostname: 'https://apis.production.fathomai.com', // deployment
+    // hardwareHostname: 'https://apis.qa.fathomai.com', // qa
+    hardwareHostname: 'https://apis.test.fathomai.com', // test
+    // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
-        ['accessory', '/accessory/{wifiMacAddress}'], // GET: settings key, PATCH: owner-uuid with body: { owner_id: '<uuid>' }
+        ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
     ]),
 };

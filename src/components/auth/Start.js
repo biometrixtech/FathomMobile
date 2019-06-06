@@ -3,7 +3,7 @@
  *  - Get Started -> onboarding steps
  *  - Already a memeber? -> login
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -191,8 +191,8 @@ class Start extends Component {
                             this.props.setAppLogs();
                         }
                         if(userObj.health_enabled) {
-                            return AppUtil.getAppleHealthKitDataPrevious(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date)
-                                .then(() => AppUtil.getAppleHealthKitData(userObj.id, userObj.health_sync_date, userObj.historic_health_sync_date));
+                            return AppUtil.getAppleHealthKitDataPrevious(userObj, userObj.health_sync_date, userObj.historic_health_sync_date)
+                                .then(() => AppUtil.getAppleHealthKitData(userObj, userObj.health_sync_date, userObj.historic_health_sync_date));
                         }
                         return response;
                     })
@@ -202,11 +202,7 @@ class Start extends Component {
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
-            .then(() =>
-                _.delay(() => {
-                    this.hideSplash(() => AppUtil.routeOnLogin(userObj));
-                }, 500)
-            )
+            .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
                 this.hideSplash();
                 const error = AppAPI.handleError(err);
@@ -228,21 +224,21 @@ class Start extends Component {
                     style={[AppStyles.containerCentered, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
                 >
                     <LinearGradient
-                        colors={['rgba(51, 64, 85, 0.89)', 'rgba(11, 26, 52, 0.97)', 'black']}
+                        colors={['rgb(248, 224, 118)', 'rgb(235, 186, 45)']}
                         style={[styles.linearGradientStyle]}
                     >
                         <Image
                             resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/stacked_icon.png')}
+                            source={require('../../../assets/images/standard/stacked_icon_white.png')}
                             style={{ height: 100, width: 100, }}
                         />
                         <Spacer size={80} />
                         <ActivityIndicator
-                            color={AppColors.zeplin.yellow}
+                            color={AppColors.white}
                             size={'large'}
                         />
                         <Spacer size={30} />
-                        <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
                     </LinearGradient>
                 </ImageBackground>
             </View>

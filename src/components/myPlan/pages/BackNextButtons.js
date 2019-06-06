@@ -75,13 +75,13 @@ const BackNextButtons = ({
         { showAddBtn ?
             <TouchableHighlight
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
-                style={[AppStyles.paddingVerticalSml, styles.addBtn, showAddBtnDisabledStyle ? {borderColor: AppColors.zeplin.light,} : {}]}
+                style={[AppStyles.paddingVerticalSml, styles.addBtn, showAddBtnDisabledStyle ? {borderColor: AppColors.zeplin.slateXLight,} : {}]}
                 underlayColor={AppColors.transparent}
             >
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
                     { showBackIcon ?
                         <TabIcon
-                            color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey}
+                            color={isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight}
                             icon={'add'}
                             size={AppFonts.scaleFont(18)}
                             style={{paddingRight: AppSizes.paddingMed,}}
@@ -94,7 +94,7 @@ const BackNextButtons = ({
                         style={[
                             AppStyles.textCenterAligned,
                             {
-                                color:    showAddBtnDisabledStyle ? AppColors.zeplin.light : AppColors.zeplin.yellow,
+                                color:    showAddBtnDisabledStyle ? AppColors.zeplin.slateXLight : AppColors.zeplin.yellow,
                                 fontSize: AppFonts.scaleFont(14),
                             }
                         ]}
@@ -139,7 +139,7 @@ const BackNextButtons = ({
                     showAddBtn ? {} : { marginRight: AppSizes.paddingMed, },
                     {
                         backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
-                        borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
+                        borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
                         borderWidth:     1,
                     }
                 ]}
@@ -150,7 +150,7 @@ const BackNextButtons = ({
                     style={[
                         AppStyles.textCenterAligned,
                         {
-                            color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                            color:    isValid ? AppColors.white : AppColors.zeplin.slateXLight,
                             fontSize: AppFonts.scaleFont(14),
                         }
                     ]}
@@ -163,7 +163,7 @@ const BackNextButtons = ({
                 onPress={isValid ? onNextClick : null}
                 style={[AppStyles.backNextCircleButtons, {
                     backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
-                    borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.lightGrey,
+                    borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
                     borderWidth:     1,
                     marginRight:     AppSizes.paddingMed,
                 }]}
@@ -176,7 +176,7 @@ const BackNextButtons = ({
                         isValid ? styles.shadowEffect : {},
                         Platform.OS === 'ios' ? {} : {elevation: 2,},
                         {
-                            color:    isValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                            color:    isValid ? AppColors.white : AppColors.zeplin.slateXLight,
                             fontSize: AppFonts.scaleFont(12),
                         }
                     ]}

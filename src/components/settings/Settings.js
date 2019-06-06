@@ -8,9 +8,9 @@
 /**
  * Settings View
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Alert, BackHandler, Easing, Platform, Switch, View, } from 'react-native';
+import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Platform, StatusBar, Switch, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -19,9 +19,9 @@ import AppleHealthKit from 'rn-apple-healthkit';
 import Toast, { DURATION, } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, UserAccount, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
-import { ListItem, Spacer, TabIcon, } from '../custom';
+import { FathomModal, ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { PrivacyPolicyModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
@@ -31,12 +31,26 @@ import { store, } from '../../store';
 import { JoinATeamModal, } from './pages';
 
 /* Component ==================================================================== */
+const SettingsNavBar = () => (
+    <View>
+        <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
+        <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
+            <View style={{flex: 1, justifyContent: 'center',}} />
+            <View style={{flex: 8, justifyContent: 'center',}}>
+                <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>
+            </View>
+            <View style={{flex: 1, justifyContent: 'center',}} />
+        </View>
+    </View>
+);
+
 class Settings extends Component {
     static componentName = 'SettingsView';
     static propTypes = {
         accessoryData:                  PropTypes.object.isRequired,
         deleteUserSensorData:           PropTypes.func.isRequired,
         deleteAllSingleSensorPractices: PropTypes.func.isRequired,
+        getSensorFiles:                 PropTypes.func.isRequired,
         logout:                         PropTypes.func.isRequired,
         network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
@@ -49,16 +63,19 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isJoinATeamFormSubmitting: false,
-            isJoinATeamModalOpen:      false,
-            isLogoutBtnDisabled:       false,
-            isPrivacyPolicyOpen:       false,
-            isUnpairing:               false,
-            resultMsg:                 {
+            areSessionFinishedFetching: false,
+            is3SensorFilesModalVisible: false,
+            isJoinATeamFormSubmitting:  false,
+            isJoinATeamModalOpen:       false,
+            isLogoutBtnDisabled:        false,
+            isPrivacyPolicyOpen:        false,
+            isUnpairing:                false,
+            resultMsg:                  {
                 error:   '',
                 status:  '',
                 success: '',
             },
+            sessions:    [],
             form_values: {
                 code: '',
             },
@@ -121,7 +138,7 @@ class Settings extends Component {
                         style: 'cancel',
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             );
         }
     }
@@ -157,7 +174,7 @@ class Settings extends Component {
                         },
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             )
         } else {
             Alert.alert(
@@ -169,7 +186,7 @@ class Settings extends Component {
                         style: 'cancel'
                     },
                 ],
-                { cancelable: true }
+                { cancelable: true, }
             )
         }
     }
@@ -192,7 +209,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 
@@ -206,7 +223,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 
@@ -284,7 +301,7 @@ class Settings extends Component {
                     style: 'cancel'
                 },
             ],
-            { cancelable: true }
+            { cancelable: true, }
         )
     }
 
@@ -329,11 +346,24 @@ class Settings extends Component {
         }
     }
 
+    _toggle3SensorModal = () => {
+        this.setState(
+            { is3SensorFilesModalVisible: true, },
+            () => {
+                this.props.getSensorFiles()
+                    .then(res => this.setState({ areSessionFinishedFetching: true, sessions: res.sessions, }))
+                    .catch(err => this.setState({ areSessionFinishedFetching: true, sessions: [], }));
+            }
+        );
+    }
+
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
-        const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
-        const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
+        // const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
+        // const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
+        const userHasSingleSensorSystem = userObj && userObj.system_type && userObj.system_type === '1-sensor' ? true : false;
+        const userHas3SensorSensorSystem = userObj && userObj.system_type && userObj.system_type === '3-sensor' ? true : false;
         // set animated values
         const spinValue = new Animated.Value(0);
         // First set up animation
@@ -355,7 +385,29 @@ class Settings extends Component {
         });
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
-                { userHasSensorSystem ?
+                <SettingsNavBar />
+                {/* userHas3SensorSensorSystem &&
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={{
+                                color: AppColors.black,
+                                name:  'bluetooth',
+                                size:  24,
+                            }}
+                            onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._toggle3SensorModal() : Actions.bluetoothConnect3Sensor()}
+                            rightIcon={{
+                                color: AppColors.black,
+                                name:  'chevron-right',
+                                size:  24,
+                            }}
+                            title={this.props.accessoryData.sensor_pid !== 'None' ? 'SHOW YOUR SENSOR FILE(S)' : 'CONNECT TO FATHOM SENSORS'}
+                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
+                }
+                { userHasSingleSensorSystem &&
                     <View>
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -388,9 +440,7 @@ class Settings extends Component {
                         />
                         <Spacer isDivider />
                     </View>
-                    :
-                    null
-                }
+                */}
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
@@ -447,7 +497,7 @@ class Settings extends Component {
                         :
                         null
                 }
-                { Platform.OS === 'ios' && userObj.role !== 'coach' ?
+                { Platform.OS === 'ios' && userObj.role !== 'coach' &&
                     <View>
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -468,8 +518,6 @@ class Settings extends Component {
                         />
                         <Spacer isDivider />
                     </View>
-                    :
-                    null
                 }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
@@ -502,7 +550,7 @@ class Settings extends Component {
                             () => this.props.logout(this.props.user.id)
                                 .then(() => {
                                     this.setState({ isLogoutBtnDisabled: false, });
-                                    Actions.start();
+                                    Actions.reset('key1');
                                 })
                                 .catch(err => {
                                     this.setState({ isLogoutBtnDisabled: false, });
@@ -537,6 +585,31 @@ class Settings extends Component {
                     handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
                 />
+                <FathomModal
+                    isVisible={this.state.is3SensorFilesModalVisible}
+                >
+                    <View style={{alignItems: 'center', backgroundColor: AppColors.white, flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
+                        { this.state.areSessionFinishedFetching ?
+                            <View>
+                                <TabIcon
+                                    color={AppColors.black}
+                                    icon={'close'}
+                                    onPress={() => this.setState({ is3SensorFilesModalVisible: false, })}
+                                    size={24}
+                                />
+                                {_.map(this.state.sessions, (session, i) => <Text key={i}>{`#${(i + 1)}: Duration: ${session.duration.toFixed(2)}min, Status: ${session.upload_status}`}</Text>)}
+                            </View>
+                            :
+                            <View>
+                                <ActivityIndicator
+                                    animating={true}
+                                    color={AppColors.zeplin.yellow}
+                                    size={'large'}
+                                />
+                            </View>
+                        }
+                    </View>
+                </FathomModal>
             </View>
         );
     }

@@ -10,7 +10,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { View, } from 'react-native';
 
@@ -71,7 +71,7 @@ class ExerciseList extends Component {
                         onPress={toggleCompletedAMPMRecoveryModal}
                         outlined={isButtonOutlined}
                         title={buttonTitle}
-                        titleStyle={{color: isButtonDisabled ? AppColors.zeplin.greyText : buttonColor, fontSize: AppFonts.scaleFont(16),}}
+                        titleStyle={{color: isButtonDisabled ? AppColors.zeplin.slateLight : buttonColor, fontSize: AppFonts.scaleFont(16),}}
                         type={isButtonDisabled ? 'outline' : 'solid'}
                     />
                 </View>

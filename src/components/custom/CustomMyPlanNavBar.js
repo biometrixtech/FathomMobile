@@ -4,7 +4,7 @@
      <CustomMyPlanNavBar />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import {
     Animated,
@@ -349,8 +349,8 @@ class CustomMyPlanNavBar extends Component {
         return (
             <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingXSml,}}>
                 <TabIcon
-                    icon={'settings'}
-                    iconStyle={[{color: AppColors.black,}]}
+                    icon={'sort-variant'}
+                    iconStyle={[{color: AppColors.zeplin.slate,}]}
                     onPress={Actions.currentParams.onLeft}
                     reverse={false}
                     size={26}

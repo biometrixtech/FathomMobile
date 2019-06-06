@@ -1,7 +1,7 @@
 /**
  * Sensor Onboarding Educational Screen
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, View, } from 'react-native';
 
@@ -24,6 +24,7 @@ class Tutorial extends Component {
     static componentName = 'Tutorial';
 
     static propTypes = {
+        step:       PropTypes.string.isRequired,
         updateUser: PropTypes.func.isRequired,
         user:       PropTypes.object.isRequired,
     }
@@ -33,43 +34,34 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeDotStyle:  {backgroundColor: AppColors.zeplin.darkGrey,},
-            buttonTextStyle: {color: AppColors.zeplin.darkGrey,},
-            dotStyle:        {backgroundColor: AppColors.zeplin.lightGrey,},
+            activeDotStyle:  {backgroundColor: AppColors.zeplin.navy,},
+            buttonTextStyle: {color: AppColors.zeplin.navy,},
+            dotStyle:        {backgroundColor: AppColors.zeplin.slateXLight,},
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
-            uniqueValue:     0,
         }
         this._players = {};
         this._appIntroSlider = {};
     }
 
     componentDidMount = () => {
-        // NOTE: this seems to be needed to 'refresh' the page to get new router information :(
-        this.setState(
-            {
-                uniqueValue: this.state.uniqueValue + 1,
-            },
-            () => {
-                // setup constants
-                const step = Actions.currentParams.step;
-                const slides = onboardingUtils.getTutorialSlides(step).slides;
-                const showSkipButton = onboardingUtils.getTutorialSlides(step).showSkipButton;
-                let videoPlaybackOptions = {};
-                _.map(slides, slide => {
-                    if(slide.videoLink) {
-                        videoPlaybackOptions[slide.key] = {};
-                        videoPlaybackOptions[slide.key].paused = true;
-                    }
-                });
-                this.setState({
-                    ...this.state,
-                    showSkipButton,
-                    slides,
-                    videoPlaybackOptions,
-                });
-            },
-        );
+        // setup constants
+        const step = this.props.step;
+        const slides = onboardingUtils.getTutorialSlides(step).slides;
+        const showSkipButton = onboardingUtils.getTutorialSlides(step).showSkipButton;
+        let videoPlaybackOptions = {};
+        _.map(slides, slide => {
+            if(slide.videoLink) {
+                videoPlaybackOptions[slide.key] = {};
+                videoPlaybackOptions[slide.key].paused = true;
+            }
+        });
+        this.setState({
+            ...this.state,
+            showSkipButton,
+            slides,
+            videoPlaybackOptions,
+        });
     }
 
     _handleIconClick = goToPage => {
@@ -96,7 +88,7 @@ class Tutorial extends Component {
     _onSlideChange = (index, lastIndex, slides) => {
         this._handleVideoPlayback(index, lastIndex, slides);
         let newButtonTextStyle = slides[index].buttonTextStyle;
-        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.darkGrey,}, });
+        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.navy,}, });
     }
 
     _handleVideoPlayback = (index, lastIndex, slides) => {
@@ -186,7 +178,7 @@ class Tutorial extends Component {
                             <Spacer size={props.title && props.title.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
-                                style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
+                                style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
                             >
                                 {props.text}
                             </Text>
@@ -199,7 +191,7 @@ class Tutorial extends Component {
                             <Spacer size={props.text && props.text.length > 0 ? 20 : 0} />
                             <Text
                                 robotoRegular
-                                style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(16),}]}
+                                style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
                             >
                                 {props.subtext}
                             </Text>

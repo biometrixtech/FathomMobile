@@ -7,8 +7,17 @@ const onboardingUtils = {
     isUserAccountInformationValid(user, isUpdatingUser) {
         let errorsArray = [];
         let isValid;
+        const firstLastNameRegex = /\d/g;
         if( user.personal_data.first_name.length === 0 || user.personal_data.last_name.length === 0 ) {
             let newError = 'Your First and Last Name are required';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.first_name.length > 0 && firstLastNameRegex.test(user.personal_data.first_name) ) {
+            let newError = 'Please enter a valid First Name';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if( user.personal_data.last_name.length > 0 && firstLastNameRegex.test(user.personal_data.last_name) ) {
+            let newError = 'Please enter a valid Last Name';
             errorsArray.push(newError);
             isValid = false;
         } else if( !this.isEmailValid(user.personal_data.email).isValid ) {
@@ -63,7 +72,7 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }*/
-        if((user.biometric_data.mass.lb.length === 0 || user.biometric_data.mass.lb === 0)) {
+        if( _.toNumber(user.biometric_data.mass.lb) === 0 ) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
             isValid = false;
@@ -241,9 +250,9 @@ const onboardingUtils = {
                     linkStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoMedium, color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textDecorationLine: 'none',},
                     linkText:        'No, I\'ll do it later in Settings.',
                     subtext:         'This will only take 1min and must be completed to sync your activity.',
-                    subtextStyle:    {...AppStyles.textCenterAligned, ...AppStyles.robotoRegular, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(14),},
+                    subtextStyle:    {...AppStyles.textCenterAligned, ...AppStyles.robotoRegular, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),},
                     text:            'Are you ready to connect your sensor to your account?',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(20),},
+                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20),},
                 },
             ],
         };
@@ -255,34 +264,34 @@ const onboardingUtils = {
                     icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
                     title:           'Welcome to Sustainable Training',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-1',
-                    text:            'Complete your daily survey to improve \'Prepare\' & \'Recover\' recommendations.',
+                    text:            'Daily surveys help personalize prep & post-training recommendations.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.zeplin.darkSlate,
+                    backgroundColor: AppColors.zeplin.slate,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-2',
-                    text:            '\'Prepare\' helps mobilize before training & sooth pain & soreness.',
+                    text:            'Prep activities optimize your body\'s movement & mobilize tissues.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
                     backgroundColor: AppColors.zeplin.yellow,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-3',
-                    text:            'Log training daily to build your history & improve recovery.',
+                    text:            'Logging daily training allows us to analyze Trends & optimize your recovery rhythm.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
-                    backgroundColor: AppColors.zeplin.darkSlate,
+                    backgroundColor: AppColors.zeplin.slate,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-4',
-                    text:            '\'Recover\' improves circulation to rebuild muscle tissue.',
+                    text:            'Post-training activities improve circulation to rebuild muscle & speed up recovery.',
                     textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
                 },
                 {
@@ -290,7 +299,7 @@ const onboardingUtils = {
                     icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-5',
                     title:           'You\'re ready to use the app!',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
                 },
             ],
         };
@@ -302,7 +311,7 @@ const onboardingUtils = {
                     icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-0',
                     title:           'Let\'s Take a Tour of Fathom!',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
                 },
                 {
                     backgroundColor: AppColors.zeplin.yellow,
@@ -317,11 +326,11 @@ const onboardingUtils = {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-2',
                     title:           'Athlete App: Surveys',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/athletesurvey.mp4',
                 },
                 {
-                    backgroundColor: AppColors.zeplin.navyBlue,
+                    backgroundColor: AppColors.zeplin.navy,
                     buttonTextStyle: {color: AppColors.white,},
                     key:             'tutorial-3',
                     text:            'We synthesize athlete responses & provide simple recommendations to help reduce risk of injury and overtraining.',
@@ -333,7 +342,7 @@ const onboardingUtils = {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-4',
                     title:           'Coach’s App: Training Insights',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(25),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(25),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/coachinsight.mp4',
                 },
                 {
@@ -349,7 +358,7 @@ const onboardingUtils = {
                     backgroundColor: AppColors.white,
                     key:             'tutorial-6',
                     title:           'Athlete App: Recovery',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navyBlue, fontSize: AppFonts.scaleFont(30),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(30),},
                     videoLink:       'https://s3.amazonaws.com/onboarding-content/athleterecovery.mp4',
                 },
                 {
@@ -357,7 +366,7 @@ const onboardingUtils = {
                     icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
                     key:             'tutorial-9',
                     title:           'Now Let\'s Go To The Dashboard!',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(40),},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
                 },
             ],
         };

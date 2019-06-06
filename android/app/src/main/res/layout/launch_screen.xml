@@ -36,7 +36,7 @@
             android:fontFamily="@font/oswald_medium"
             android:gravity="center"
             android:text="@string/launch_screen"
-            android:textColor="@color/fathomYellow"
+            android:textColor="@color/white"
             android:textSize="22sp" />
 
     </LinearLayout>

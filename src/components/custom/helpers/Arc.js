@@ -1,6 +1,6 @@
 /* eslint new-cap: ["error", { "capIsNew": false }] */
 
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ART } from 'react-native';
 

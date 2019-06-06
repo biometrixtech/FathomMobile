@@ -13,7 +13,7 @@
     />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
@@ -30,7 +30,7 @@ import moment from 'moment';
 const styles = StyleSheet.create({
     complianceModalAthleteNameWrapper: {
         alignSelf:         'center',
-        borderBottomColor: AppColors.zeplin.shadow,
+        borderBottomColor: AppColors.zeplin.slateXLight,
         borderBottomWidth: 1,
         borderStyle:       'solid',
         width:             (AppSizes.screen.widthThreeQuarters - (AppSizes.paddingLrg + AppSizes.paddingLrg)),
@@ -71,7 +71,7 @@ class AthleteComplianceModal extends Component {
                 {
                     content:        incompleteAthletes,
                     leftIcon:       'alert-circle',
-                    leftIconColor:  AppColors.zeplin.coachesDashError,
+                    leftIconColor:  AppColors.zeplin.error,
                     leftIconFamily: 'material-community',
                     title:          'SURVEYS NOT COMPLETED',
                     subtitle:       `${numOfIncompletedAthletes}/${numOfTotalAthletes}`,
@@ -87,7 +87,7 @@ class AthleteComplianceModal extends Component {
                 {
                     content:        trainingCompliance.no_response,
                     leftIcon:       'alert-circle',
-                    leftIconColor:  AppColors.zeplin.coachesDashError,
+                    leftIconColor:  AppColors.zeplin.error,
                     leftIconFamily: 'material-community',
                     title:          'NO RESPONSE LOGGED',
                     subtitle:       `${trainingCompliance.no_response.length}/${numOfTotalAthletes}`,
@@ -117,7 +117,7 @@ class AthleteComplianceModal extends Component {
                         <View style={[styles.complianceModalAthleteNameWrapper]}>
                             <Text
                                 robotoLight
-                                style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15), paddingBottom: AppSizes.padding,}}
+                                style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingBottom: AppSizes.padding,}}
                             >
                                 {`${athlete.first_name} ${athlete.last_name}`}
                             </Text>
@@ -149,15 +149,15 @@ class AthleteComplianceModal extends Component {
                     }
                 </View>
                 <View style={{flex: 1, paddingRight: AppSizes.paddingSml,}}>
-                    <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(15),}}>{section.title}</Text>
+                    <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15),}}>{section.title}</Text>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between',}}>
-                        <Text robotoBold style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(12),}}>
                             {section.subtitle}
-                            <Text robotoRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(12),}}>{' athletes'}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(12),}}>{' athletes'}</Text>
                         </Text>
                         <TabIcon
                             icon={isActive ? 'chevron-up' : 'chevron-down'}
-                            iconStyle={[{color: AppColors.zeplin.darkGrey,}]}
+                            iconStyle={[{color: AppColors.zeplin.navy,}]}
                             reverse={false}
                             size={AppFonts.scaleFont(12)}
                             type={'material-community'}
@@ -193,10 +193,10 @@ class AthleteComplianceModal extends Component {
                         size={30}
                         type={'material-community'}
                     />
-                    <Text oswaldRegular style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(35),}}>
+                    <Text oswaldRegular style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(35),}}>
                         {'COMPLIANCE'}
                     </Text>
-                    <Text oswaldMedium style={{color: AppColors.zeplin.mediumGrey, fontSize: AppFonts.scaleFont(15),}}>{moment().format('MM/DD/YY')}</Text>
+                    <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{moment().format('MM/DD/YY')}</Text>
                     <Spacer size={15} />
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
                         <TouchableHighlight
@@ -204,14 +204,14 @@ class AthleteComplianceModal extends Component {
                             style={{borderBottomColor: page === 'readiness' ? AppColors.zeplin.yellow : AppColors.white, borderBottomWidth: 2,}}
                             underlayColor={AppColors.transparent}
                         >
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{'READINESS'}</Text>
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={() => this._togglePage('training')}
                             style={{borderBottomColor: page === 'training' ? AppColors.zeplin.yellow : AppColors.white, borderBottomWidth: 2,}}
                             underlayColor={AppColors.transparent}
                         >
-                            <Text oswaldMedium style={{color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(18),}}>{'TRAINING'}</Text>
                         </TouchableHighlight>
                     </View>
                 </View>

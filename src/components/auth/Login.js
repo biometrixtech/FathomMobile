@@ -10,7 +10,7 @@
  *  - Entry screen for all authentication
  *  - User can tap to login, forget password, or signUp...
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {
@@ -231,8 +231,8 @@ class Login extends Component {
                                             this.props.setAppLogs();
                                         }
                                         if(user.health_enabled) {
-                                            return AppUtil.getAppleHealthKitDataPrevious(user.id, user.health_sync_date, user.historic_health_sync_date)
-                                                .then(() => AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date));
+                                            return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)
+                                                .then(() => AppUtil.getAppleHealthKitData(user, user.health_sync_date, user.historic_health_sync_date));
                                         }
                                         return res;
                                     })
@@ -347,7 +347,7 @@ class Login extends Component {
 
                 <FathomModal
                     isVisible={this.state.isModalVisible}
-                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, margin: 0,}]}
+                    style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
                 >
                     <View>
                         <Card title={'Select environment'}>

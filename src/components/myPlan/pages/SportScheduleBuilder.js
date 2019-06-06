@@ -16,9 +16,9 @@
     />
  *
  */
-import React, { PureComponent } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, SectionList, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
+import { Image, SectionList, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-class SportScheduleBuilder extends PureComponent {
+class SportScheduleBuilder extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -75,7 +75,7 @@ class SportScheduleBuilder extends PureComponent {
             },
             isFormValid:       false,
             pickerScrollCount: 0,
-            showMoreOptions:   this.props.typicalSessions.length === 0,
+            showMoreOptions:   false,
             step:              0,
             timeValueGroups:   {
                 hours:   2,
@@ -85,6 +85,12 @@ class SportScheduleBuilder extends PureComponent {
         };
         this._activityRPERef = {};
         this._moreOptionsRef = {};
+    }
+
+    componentDidMount = () => {
+        if(this.props.typicalSessions && this.props.typicalSessions.length === 0) {
+            this.setState({ delayTimerId: _.delay(() => this.setState({ showMoreOptions: true, }), 600) });
+        }
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -219,13 +225,13 @@ class SportScheduleBuilder extends PureComponent {
                     currentStep={1}
                     onBack={step === 1 ? () => this._resetStep(true) : step === 0 && goBack ? () => goBack() : null}
                     onClose={handleTogglePostSessionSurvey}
-                    totalSteps={2}
+                    totalSteps={3}
                 />
                 { step === 0 ?
                     <View>
                         <View style={[typicalSessions.length > 0 ? {height: (AppSizes.screen.height - pillsHeight), justifyContent: 'center', paddingBottom: pillsHeight,} : {}]}>
                             <Spacer size={typicalSessions.length > 0 ? 20 : 50} />
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                 {'What activity did you do?'}
                             </Text>
                             <Spacer size={20} />
@@ -277,7 +283,9 @@ class SportScheduleBuilder extends PureComponent {
                             <Spacer size={30} />
                             { showMoreOptions ?
                                 <SectionList
+                                    initialNumToRender={30}
                                     keyExtractor={(item, index) => item + index}
+                                    removeClippedSubviews={true}
                                     renderItem={({item, index, section}) =>
                                         <TouchableOpacity
                                             key={index}
@@ -290,21 +298,21 @@ class SportScheduleBuilder extends PureComponent {
                                                 });
                                             }}
                                             style={[
-                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.shadow, borderBottomWidth: 1,},
+                                                (index+1) === section.data.length ? {} : {borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1,},
                                                 {alignItems: 'center', flexDirection: 'row', paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}
                                             ]}
                                         >
                                             <Image
                                                 source={item.imagePath}
-                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.seaBlue, width: 25,}}
+                                                style={{height: 25, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.splash, width: 25,}}
                                             />
-                                            <Text robotoMedium style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
+                                            <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{item.label}</Text>
                                         </TouchableOpacity>
                                     }
                                     renderSectionHeader={({section: {title}}) =>
                                         <Text
                                             oswaldMedium
-                                            style={{backgroundColor: AppColors.zeplin.lightSlate, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
+                                            style={{backgroundColor: AppColors.zeplin.slateXLight, color: AppColors.white, fontSize: AppFonts.scaleFont(15), paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}}
                                         >
                                             {title.toUpperCase()}
                                         </Text>
@@ -314,6 +322,7 @@ class SportScheduleBuilder extends PureComponent {
                                 :
                                 null
                             }
+                            <Spacer size={AppSizes.iphoneXBottomBarPadding} />
                         </View>
                     </View>
                     : step === 1 ?
@@ -323,7 +332,7 @@ class SportScheduleBuilder extends PureComponent {
                                 { sportImage ?
                                     <Image
                                         source={sportImage}
-                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.seaBlue, width: AppSizes.screen.widthThird,}]}
+                                        style={[styles.shadowEffect, {height: AppSizes.screen.widthThird, shadowRadius: 6, tintColor: AppColors.zeplin.splash, width: AppSizes.screen.widthThird,}]}
                                     />
                                     :
                                     null
@@ -342,7 +351,7 @@ class SportScheduleBuilder extends PureComponent {
                                     <Spacer size={10} />
                                     <View style={{flex: 1, flexDirection: 'row',}}>
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
@@ -356,7 +365,7 @@ class SportScheduleBuilder extends PureComponent {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hours}
                                             highlightBorderWidth={2}
@@ -370,7 +379,7 @@ class SportScheduleBuilder extends PureComponent {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.hourLabel}
                                             highlightBorderWidth={2}
@@ -384,7 +393,7 @@ class SportScheduleBuilder extends PureComponent {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minutes}
                                             highlightBorderWidth={2}
@@ -398,7 +407,7 @@ class SportScheduleBuilder extends PureComponent {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={MyPlanConstants.durationOptionGroups.minLabel}
                                             highlightBorderWidth={2}
@@ -412,7 +421,7 @@ class SportScheduleBuilder extends PureComponent {
                                             wrapperHeight={180}
                                         />
                                         <WheelScrollPicker
-                                            activeItemColor={AppColors.zeplin.darkGrey}
+                                            activeItemColor={AppColors.zeplin.navy}
                                             activeItemHighlight={'#EBBA2D4D'}
                                             dataSource={[' ', ' ', ' ']}
                                             highlightBorderWidth={2}
@@ -432,67 +441,40 @@ class SportScheduleBuilder extends PureComponent {
                             <Button
                                 buttonStyle={{
                                     backgroundColor: isFormValid ? AppColors.zeplin.yellow : AppColors.white,
-                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.lightGrey,
+                                    borderColor:     isFormValid ? AppColors.white : AppColors.zeplin.slateXLight,
                                     borderWidth:     1,
                                     width:           AppSizes.screen.widthThird,
                                 }}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center',}}
                                 onPress={() => isFormValid ? this._scrollTo(this._activityRPERef) : null}
                                 title={'Next'}
-                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.lightGrey, fontSize: AppFonts.scaleFont(14),}}
+                                titleStyle={{color: isFormValid ? AppColors.white : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(14),}}
                             />
                             <Spacer size={30} />
                             { isFormValid ?
                                 <View onLayout={event => {this._activityRPERef = {x: event.nativeEvent.layout.x, y: event.nativeEvent.layout.y,}}}>
                                     <Spacer size={20} />
-                                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                         {'How was '}
                                         <Text robotoMedium>{sportText}</Text>
                                         {' today?'}
                                     </Text>
-                                    <View style={{flex: 1, paddingTop: AppSizes.paddingSml,}}>
-                                        { _.map(MyPlanConstants.postSessionFeel, (value, key) => {
+                                    <View style={{paddingVertical: AppSizes.paddingSml,}}>
+                                        { _.map(MyPlanConstants.postSessionFeel, (scale, key) => {
                                             let RPEValue = postSession.post_session_survey.RPE;
-                                            let isSelected = RPEValue === key;
-                                            let opacity = isSelected ? 1 : (key * 0.1);
+                                            let isSelected = RPEValue === scale.value;
                                             return(
-                                                <TouchableHighlight
-                                                    key={value+key}
-                                                    onPress={() => {
-                                                        handleFormChange('post_session_survey.RPE', key);
-                                                        if(key === 0 || key >= 1) {
+                                                <ScaleButton
+                                                    isSelected={isSelected}
+                                                    key={key}
+                                                    scale={scale}
+                                                    updateStateAndForm={() => {
+                                                        handleFormChange('post_session_survey.RPE', scale.value);
+                                                        if(scale.value === 0 || scale.value >= 1) {
                                                             this._scrollToBottom();
                                                         }
                                                     }}
-                                                    underlayColor={AppColors.transparent}
-                                                >
-                                                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', paddingVertical: AppSizes.paddingXSml,}}>
-                                                        <View style={{alignItems: 'flex-end', alignSelf: 'center', flex: 4, justifyContent: 'center',}}>
-                                                            <ScaleButton
-                                                                isSelected={isSelected}
-                                                                keyLabel={key}
-                                                                opacity={opacity}
-                                                                updateStateAndForm={() => {
-                                                                    handleFormChange('post_session_survey.RPE', key);
-                                                                    if(key === 0 || key >= 1) {
-                                                                        this._scrollToBottom();
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </View>
-                                                        <View style={{flex: 6, justifyContent: 'center', paddingLeft: AppSizes.padding,}}>
-                                                            <Text
-                                                                oswaldMedium
-                                                                style={{
-                                                                    color:    isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
-                                                                    fontSize: AppFonts.scaleFont(isSelected ? 22 : 14),
-                                                                }}
-                                                            >
-                                                                {value.toUpperCase()}
-                                                            </Text>
-                                                        </View>
-                                                    </View>
-                                                </TouchableHighlight>
+                                                />
                                             )
                                         })}
                                     </View>

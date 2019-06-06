@@ -49,7 +49,7 @@ const FathomSlider = ({
                     oswaldMedium
                     key={val+key}
                     style={{
-                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
+                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.navy,
                         fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
                     }}
                 >
@@ -80,7 +80,7 @@ const FathomSlider = ({
                     oswaldMedium
                     key={val+key}
                     style={{
-                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.darkGrey,
+                        color:    key === value ? AppColors.zeplin.yellow : AppColors.zeplin.navy,
                         fontSize: AppFonts.scaleFont(key === value ? 22 : 12),
                     }}
                 >

@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2017-10-12 11:19:46
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-12 19:02:12
- */
-
 /**
  * App Theme - Sizes
  */
@@ -50,6 +43,7 @@ export default {
     tabbarHeight:    51,
 
     iphoneXBottomBarPadding: isIphoneX ? 30 : Platform.OS === 'ios' ? 20 : 0,
+    isIphoneX,
 
     progressPillsHeight: screenHeight * 0.08,
 

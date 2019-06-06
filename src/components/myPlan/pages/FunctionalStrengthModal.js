@@ -10,7 +10,7 @@
      />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView, View, } from 'react-native';
 
@@ -68,7 +68,7 @@ class FunctionalStrengthModal extends Component {
 
                     <TabIcon
                         containerStyle={[{alignItems: 'flex-end', height: backNextHeight, padding: AppSizes.padding,}]}
-                        color={AppColors.zeplin.blueGrey}
+                        color={AppColors.zeplin.slate}
                         icon={'close'}
                         onPress={() => toggleFSModal()}
                         raised={false}
@@ -81,8 +81,8 @@ class FunctionalStrengthModal extends Component {
                             justifyContent: 'center',
                         }}
                     >
-                        <Text oswaldMedium style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}]}>{'LET\'S PERSONALIZE YOUR\nFUNCTIONAL STRENGTH!'}</Text>
-                        <Text robotoLight style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.darkBlue, fontSize: AppFonts.scaleFont(28), paddingBottom: 25, textAlign: 'center',}]}>{'What activity would you\nlike to target?'}</Text>
+                        <Text oswaldMedium style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}]}>{'LET\'S PERSONALIZE YOUR\nFUNCTIONAL STRENGTH!'}</Text>
+                        <Text robotoLight style={[AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(28), paddingBottom: 25, textAlign: 'center',}]}>{'What activity would you\nlike to target?'}</Text>
                         <View style={{alignSelf: 'center',}}>
                             {_.map(typicalSessions, (session, i) => {
                                 let filteredSession = session.sport_name || session.sport_name === 0 ?
@@ -127,7 +127,7 @@ class FunctionalStrengthModal extends Component {
                 >
                     { hasPositions ?
                         <View>
-                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVertical, {color: AppColors.zeplin.darkGrey, fontSize: AppFonts.scaleFont(32),}]}>
+                            <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVertical, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>
                                 {'What is your primary position in '}
                                 <Text robotoBold>
                                     {PlanLogic.handleFunctionalStrengthOptions({ sport_name: functionalStrength.current_sport_name, }).sessionName.toLowerCase()}

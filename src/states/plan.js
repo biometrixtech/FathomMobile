@@ -1,6 +1,3 @@
-// import third-party libraries
-import moment from 'moment';
-
 // import required files
 import { PlanLogic, } from '../lib';
 
@@ -21,62 +18,35 @@ const defaultPlanState = {
         // won't be submitted, help with UI
         already_trained_number:    null,
     },
-    functionalStrength: {
-        current_position:   null,
-        current_sport_name: null,
-        event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
-    },
-    healthData: {
+    expandNotifications: false,
+    healthData:          {
         ignoredWorkouts: [],
         sleep:           [],
         workouts:        [],
     },
-    isCompletedAMPMRecoveryModalOpen:     true,
-    isFunctionalStrengthCollapsed:        true,
-    isFunctionalStrengthModalOpen:        false,
-    isFSCalculating:                      false,
-    isFSExerciseCompletionModalOpen:      false,
+    isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
-    isPrepCalculating:                    false,
-    isPrepareExerciseCompletionModalOpen: false,
     isPrepareSessionsCompletionModalOpen: false,
-    isPrepareSlideUpPanelOpen:            false,
     isReadinessSurveyModalOpen:           false,
-    isRecoverCalculating:                 false,
-    isRecoverExerciseCompletionModalOpen: false,
-    isRecoverSlideUpPanelOpen:            false,
-    isSelectedExerciseModalOpen:          false,
     isTrainSessionsCompletionModalOpen:   false,
+    loading:                              false,
     page0:                                {},
     page1:                                {},
     page2:                                {},
     postSession:                          {
-        description: '',
-        sessions:    [PlanLogic.returnEmptySession()],
-        soreness:    [],
+        description:      '',
+        sessions:         [PlanLogic.returnEmptySession()],
+        sessions_planned: null,
+        soreness:         [],
     },
-    prepare: {
-        finishedRecovery:           false,
-        isActiveRecoveryCollapsed:  true,
-        isReadinessSurveyCollapsed: false,
-        isReadinessSurveyCompleted: false,
-    },
-    prepareSelectedActiveTime: 2,
-    recover:                   {
-        finished:                  false,
-        isActiveRecoveryCollapsed: true,
-    },
-    recoverSelectedActiveTime: 2,
-    selectedExercise:          {},
-    showLoadingText:           false,
-    timer:                     null,
-    train:                     {
-        completedPostPracticeSurvey: false,
-        postPracticeSurveys:         [],
+    prepare:         {},
+    recover:         {},
+    showLoadingText: false,
+    train:           {
+        postPracticeSurveys: [],
     },
     trainLoadingScreenText: 'LOADING WORKOUTS...',
-    loading:                false,
 };
 
 /* Export ==================================================================== */

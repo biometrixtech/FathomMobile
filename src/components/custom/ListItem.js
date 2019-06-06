@@ -11,7 +11,7 @@
      <ListItem title={'Hello World'} />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ListItem } from 'react-native-elements';
 
@@ -70,6 +70,8 @@ class CustomListItem extends Component {
         if (this.props.subtitleStyle) {
             props.subtitleStyle.push(this.props.subtitleStyle);
         }
+
+        props.titleProps = { allowFontScaling: false, };
 
         return props;
     }

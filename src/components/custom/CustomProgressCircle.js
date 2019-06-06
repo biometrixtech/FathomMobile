@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { ART, Animated, StyleSheet, Text, View } from 'react-native';
 
@@ -185,6 +185,7 @@ export class CustomProgressCircle extends Component {
                       }}
                   >
                       <Text
+                          allowFontScaling={false}
                           style={[
                               {
                                   color,

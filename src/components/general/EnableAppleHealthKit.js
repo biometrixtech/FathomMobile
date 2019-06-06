@@ -50,10 +50,7 @@ const EnableAppleHealthKit = ({
     isModalOpen,
 }) => (
     <FathomModal
-        backdropColor={AppColors.white}
-        backdropOpacity={1}
         isVisible={isModalOpen}
-        style={{margin: 0,}}
     >
         <View style={{flex: 1,}}>
             <ImageBackground
@@ -72,13 +69,13 @@ const EnableAppleHealthKit = ({
                                 onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
                                 underlayColor={AppColors.transparent}
                             >
-                                <Text robotoBold style={{color: AppColors.zeplin.lightSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
+                                <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Skip'}</Text>
                             </TouchableHighlight>
                         </View>
                         <View style={{flex: 9, justifyContent: 'space-between', paddingVertical: AppSizes.padding,}}>
-                            <Text oswaldMedium style={{color: AppColors.zeplin.seaBlue, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
+                            <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
                             <Spacer size={AppSizes.paddingSml} />
-                            <Text robotoLight style={{color: AppColors.zeplin.darkSlate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{healthKitText}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{healthKitText}</Text>
                             <Spacer size={AppSizes.paddingSml} />
                             <View style={{flex: 6, paddingVertical: AppSizes.paddingSml,}}>
                                 <ImageBackground

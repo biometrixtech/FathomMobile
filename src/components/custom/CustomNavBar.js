@@ -4,7 +4,7 @@
      <CustomNavBar />
  *
  */
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
 
