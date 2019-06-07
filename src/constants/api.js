@@ -7,7 +7,7 @@ const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
 const plansAPIVersion = '/plans/4_0';
 const preprocessingAPIVersion = '/preprocessing/1_1';
-const usersAPIVersion = '/users/2_2';
+const usersAPIVersion = '/users/2_3';
 
 export default {
     APIs: {

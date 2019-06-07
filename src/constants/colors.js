@@ -100,6 +100,7 @@ const zeplin = {
     slateLight:   '#ADB1B7',
     slateXLight:  '#E2E4E6',
     splash:       '#40A8B4',
+    splashDark:   '#288994',
     splashLight:  '#70BEC7',
     success:      '#4EC1A6',
     successLight: '#71CDB7',

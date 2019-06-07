@@ -21,14 +21,25 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, Keyboard, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, ScrollView, View, } from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    Image,
+    Keyboard,
+    NativeEventEmitter,
+    NativeModules,
+    Platform,
+    PermissionsAndroid,
+    ScrollView,
+    View,
+} from 'react-native';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
+import { Actions as DispatchActions, AppColors, } from '../../constants';
 import { AppUtil, } from '../../lib';
-import { Button, FormInput, ListItem, Spacer, ProgressBar, Text, } from '../custom';
 import { Loading, } from '../general';
 import { store, } from '../../store';
+import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, } from './ConnectScreens';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -37,39 +48,12 @@ import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import DialogInput from 'react-native-dialog-input';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import WifiManager from 'react-native-wifi';
 
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 /* Component ==================================================================== */
-const TopNav = ({ currentStep, title, totalSteps, }) => (
-    <View style={{backgroundColor: AppColors.transparent,}}>
-        <View style={{alignItems: 'center', flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1,}}>
-                {/*<TabIcon
-                    containerStyle={[{flex: 1,}]}
-                    color={AppColors.zeplin.slateXLightSlate}
-                    icon={workout.deleted ? 'add' : 'close'}
-                    onPress={() => handleHealthDataFormChange(!workout.deleted)}
-                    reverse={false}
-                    size={30}
-                    type={'material'}
-                />*/}
-            </View>
-            <View style={{flex: 8,}}>
-                <Text oswaldMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{title}</Text>
-            </View>
-            <View style={{flex: 1,}} />
-        </View>
-        <ProgressBar
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-        />
-    </View>
-);
-
 class BluetoothConnect3Sensor extends Component {
     constructor(props) {
         super(props);
@@ -83,7 +67,7 @@ class BluetoothConnect3Sensor extends Component {
         };
         this._pages = {};
         this._timer = null;
-        this.wifiTimers = [];
+        this._wifiTimers = [];
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
         this.handleStopScan = this.handleStopScan.bind(this);
     }
@@ -110,70 +94,11 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     componentWillUnmount = () => {
-        this._pages = null;
+        this._pages = {};
         this._timer = null;
-        _.map(this.wifiTimers, (timer, i) => clearInterval(this.wifiTimers[i]));
+        _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
         this.handlerDiscover.remove();
         this.handlerStop.remove();
-    }
-
-    _onPageScrollEnd = currentPage => {
-        console.log('currentPage',currentPage);
-        if(currentPage === 2) {
-            this._handleBLEPair();
-        } else if(currentPage === 5) {
-            this._timer = _.delay(() => {
-                this._handleWifiScan();
-                // console.log(WifiManager);
-                // WifiManager.getCurrentWifiSSID()
-                //     .then(networkDetails => {
-                //         let currentWifiConnectionObj = Platform.OS === 'android' ? JSON.parse(networkDetails) : networkDetails;
-                //         currentWifiConnectionObj.password = '';
-                //         this.setState({ currentWifiConnection: currentWifiConnectionObj, })
-                //     })
-                //     .catch(error => console.log('Cannot get current SSID!',error));
-                // if(Platform.OS === 'android') {
-                //     WifiManager.loadWifiList(
-                //         list => this.setState(
-                //             { availableNetworks: _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))), },
-                //             () => console.log('wifi list', _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))))
-                //         ),
-                //         error => console.log('Cannot get current LIST!', error)
-                //     );
-                // }
-            }, 500);
-        }
-    }
-
-    _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
-        this.setState({ availableNetworks: [], });
-        getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
-            .then(res => {
-                if(res === 0) {
-                    this.setState({ availableNetworks: [], isWifiScanDone: true, });
-                }
-                let index = 0;
-                for(let i = 1; i <= res; i += 1) {
-                    this.wifiTimers[i] = _.delay(() => {
-                        getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
-                            .then(response => {
-                                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                                newAvailableNetworks.push(response);
-                                newAvailableNetworks = _.uniq(newAvailableNetworks);
-                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: true, });
-                            })
-                            .catch(error => console.log('error-i',error));
-                    }, 500 * index);
-                    index = index + 1;
-                }
-            })
-            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
-    }
-
-    _handleBLEPair = () => {
-        const { startScan, } = this.props;
-        startScan(10);
     }
 
     handleDiscoverPeripheral = data => {
@@ -208,30 +133,6 @@ class BluetoothConnect3Sensor extends Component {
                 }
                 return stopConnect();
             });
-    }
-
-    _toggleAlertNotification = (sensorId, userId) => {
-        const { stopConnect, } = this.props;
-        Alert.alert(
-            '',
-            'Did the LED turn green?',
-            [
-                {
-                    text:    'No',
-                    onPress: () => {
-                        this.setState({ pageIndex: 0 });
-                        this._pages.progress = 0;
-                        return stopConnect();
-                    },
-                    style: 'cancel',
-                },
-                {
-                    text:    'Yes',
-                    onPress: () => this._renderNextPage(),
-                },
-            ],
-            { cancelable: false }
-        );
     }
 
     _connectSensorToWifi = () => {
@@ -269,15 +170,86 @@ class BluetoothConnect3Sensor extends Component {
         }
     }
 
+    _handleBLEPair = () => {
+        const { startScan, } = this.props;
+        startScan(10);
+    }
+
+    _handleFormChange = (name, value) => {
+        let newFormFields = _.update( this.state.currentWifiConnection, name, () => value);
+        this.setState({ ['currentWifiConnection']: newFormFields, });
+    }
+
+    _handleWifiScan = () => {
+        const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
+        this.setState({ availableNetworks: [], });
+        getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
+            .then(res => {
+                if(res === 0) {
+                    this.setState({ availableNetworks: [], isWifiScanDone: true, });
+                }
+                let index = 0;
+                for(let i = 1; i <= res; i += 1) {
+                    this._wifiTimers[i] = _.delay(() => {
+                        getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
+                            .then(response => {
+                                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
+                                newAvailableNetworks.push(response);
+                                newAvailableNetworks = _.uniq(newAvailableNetworks);
+                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: true, });
+                            })
+                            .catch(error => console.log('error-i',error));
+                    }, 500 * index);
+                    index = index + 1;
+                }
+            })
+            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
+    }
+
+    // TODO: LOGIC HERE
+    _onPageScrollEnd = currentPage => {
+        console.log('currentPage',currentPage);
+        if(currentPage === 17) {
+            this._handleBLEPair();
+        } else if(currentPage === 18) {
+            this._timer = _.delay(() => this._handleWifiScan(), 500);
+        }
+    }
+
     _renderNextPage = () => {
         let nextPageIndex = (this.state.pageIndex + 1);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
     }
 
-    _handleFormChange = (name, value) => {
-        let newFormFields = _.update( this.state.currentWifiConnection, name, () => value);
-        this.setState({ ['currentWifiConnection']: newFormFields, });
+    _renderPreviousPage = () => {
+        let nextPageIndex = (this.state.pageIndex - 1);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _toggleAlertNotification = (sensorId, userId) => {
+        const { stopConnect, } = this.props;
+        Alert.alert(
+            '',
+            'Did the LED turn green?',
+            [
+                {
+                    text:    'No',
+                    onPress: () => {
+                        this.setState({ pageIndex: 0 });
+                        this._pages.progress = 0;
+                        return stopConnect();
+                    },
+                    style: 'cancel',
+                },
+                {
+                    text:    'Yes',
+                    onPress: () => this._renderNextPage(),
+                },
+            ],
+            { cancelable: false }
+        );
     }
 
     render = () => {
@@ -295,175 +267,49 @@ class BluetoothConnect3Sensor extends Component {
                     startPage={pageIndex}
                 >
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now Let\'s Pair Your Power Case!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Welcome Screen */}
+                    <CVP nextBtn={this._renderNextPage} />
 
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={1}
-                            title={'PAIR YOU SENSORS'}
-                            totalSteps={5}
-                        />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Hold The Button Until The LED Turns Blue'}</Text>
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
-                            {'Note: Once connected, your sensors will only sync with '}
-                            <Text robotoRegular style={{fontStyle: 'italic',}}>{'this user account.'}</Text>
-                        </Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Placement Tutorial */}
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={3} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={5} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={6} />
+                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={7} />
 
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={2}
-                            title={'PAIR YOU SENSORS'}
-                            totalSteps={5}
-                        />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Touch Your Phone To The Base to Pair'}</Text>
-                        { bluetooth.devicesFound && bluetooth.devicesFound.length > 0 &&
-                            _.map(bluetooth.devicesFound, (data, i) =>
-                                <Text key={i} onPress={() => this._connect(data)}>{`${data.name} ${data.id} ${data.rssi}`}</Text>
-                            )
-                        }
-                    </View>
+                    {/* Calibration */}
+                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
+                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Pairing successful!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Session */}
+                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
+                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now let\'s connect wifi.'}</Text>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Your sensors will need wifi to upload data after training. On the next screen add your home network and any wifi networks you typically use right after training.'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Connect */}
+                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
+                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    <Connect
+                        availableNetworks={availableNetworks}
+                        handleNetworkPress={network => this.setState({ currentWifiConnection: network, isDialogVisible: true, })}
+                        handleWifiScan={() => this._handleWifiScan()}
+                        isWifiScanDone={isWifiScanDone}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={3}
+                    />
+                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} />
 
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={3}
-                            title={'CONFIGURE WIFI'}
-                            totalSteps={5}
-                        />
-                        {/* currentWifiConnection && currentWifiConnection.ssid &&
-                            <View style={{flex: 1,}}>
-                                <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, paddingBottom: 0, textAlign: 'center',}}>
-                                    {`Current Wifi Connection: ${currentWifiConnection.ssid} ${currentWifiConnection.frequency ? currentWifiConnection.frequency : ''}`}
-                                </Text>
-                                <FormInput
-                                    autoCapitalize={'none'}
-                                    blurOnSubmit={false}
-                                    clearButtonMode={'never'}
-                                    containerStyle={{alignSelf: 'center', paddingTop: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
-                                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
-                                    keyboardType={'default'}
-                                    onChangeText={text => this._handleFormChange('password', text)}
-                                    onSubmitEditing={() => this._connectSensorToWifi()}
-                                    placeholder={'password'}
-                                    placeholderTextColor={AppColors.zeplin.yellow}
-                                    returnKeyType={'done'}
-                                    value={currentWifiConnection.password}
-                                />
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
-                                    containerStyle={{paddingTop: AppSizes.paddingLrg,}}
-                                    disabled={currentWifiConnection.password.length === 0}
-                                    onPress={() => this._connectSensorToWifi()}
-                                    title={'Update'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
-                                />
-                            </View>
-                        }*/}
-                        <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select a network you commonly use after training.'}</Text>
-                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                            <Text
-                                robotoBold
-                                style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
-                            >
-                                {'Networks In Range'}
-                            </Text>
-                        </View>
-                        <Spacer isDivider />
-                        <View style={{flex: 1,}}>
-                            { availableNetworks.length > 0 ?
-                                <ScrollView>
-                                    {_.map(availableNetworks, (network, i) =>
-                                        <ListItem
-                                            bottomDivider={true}
-                                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                                            key={i}
-                                            onPress={() => this.setState({ currentWifiConnection: network, isDialogVisible: true, })}
-                                            title={network.ssid}
-                                            titleStyle={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                                        />
-                                    )}
-                                </ScrollView>
-                                : availableNetworks.length === 0 && !isWifiScanDone ?
-                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
-                                        <ActivityIndicator
-                                            animating={true}
-                                            color={AppColors.zeplin.yellow}
-                                            size={'large'}
-                                        />
-                                    </View>
-                                    :
-                                    <View style={{flex: 1, padding: AppSizes.padding,}}>
-                                        <Text robotoBold style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>{'No available broadcasting networks are compatible with our sensor.'}</Text>
-                                        <Button
-                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                                            onPress={() => this._handleWifiScan()}
-                                            title={'Try Again'}
-                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                                        />
-                                    </View>
-                            }
-                            { availableNetworks.length > 0 && isWifiScanDone &&
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                                    containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                                    onPress={() => this._handleWifiScan()}
-                                    title={'Try Again'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                                />
-                            }
-                        </View>
-                    </View>
+                    {/* Battery */}
+                    <Battery nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} />
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'You\'re now ready to use the system!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => Actions.settings()}
-                            title={'Done'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* End */}
+                    <Complete nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} />
 
                 </Pages>
 

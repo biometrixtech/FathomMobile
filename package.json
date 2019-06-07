@@ -75,7 +75,6 @@
     "react-native-video": "^4.4.0",
     "react-native-view-overflow": "^0.0.4",
     "react-native-webview": "^5.5.0",
-    "react-native-wifi": "https://github.com/mazenchami/react-native-wifi.git",
     "react-navigation-magic-move": "^0.4.1",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
