@@ -96,6 +96,5 @@ Components installed once for usage but not currently being used
 | [Remote SVG](https://github.com/seekshiva/react-native-remote-svg) | Image component that supports SVG filetype in [React-Native](https://facebook.github.io/react-native/). |
 | [SVG Charts](https://github.com/JesperLekland/react-native-svg-charts) | One library to rule all charts for React-Native. Also installed [SVG](https://github.com/react-native-community/react-native-svg) to help with library. |
 | [Sectioned Multi Select](https://github.com/renrizzolo/react-native-sectioned-multi-select) | A multi (or single) select component with support for sub categories, search, chips. It's intended for long-ish lists, as it opens in a Modal (I might make this optional in the future).<br/><br/>This is based on [RN Multiple Select](https://github.com/toystars/react-native-multiple-select). The problems I had were that I needed it to be in a modal, because of nested ScrollViews not working on Android, and I needed to display categories with sub-categories. |
-| [WiFi](https://github.com/mazenchami/react-native-wifi.git) | Hacked from [RN WiFi](https://github.com/blackdeve/react-native-wifi) - A React-Native implementation for viewing and connecting to Wifi networks on Android and iOS devices. - Looked into using for some 3 Sensor work, but won't end up using |
 
 ---
