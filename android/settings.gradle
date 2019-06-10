@@ -32,8 +32,6 @@ include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/android')
 include ':react-native-fabric'
 project(':react-native-fabric').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fabric/android')
-include ':react-native-wifi'
-project(':react-native-wifi').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wifi/android')
 include ':react-native-magic-move'
 project(':react-native-magic-move').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-magic-move/android')
 include ':react-native-haptic-feedback'
