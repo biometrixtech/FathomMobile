@@ -26,7 +26,6 @@ import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.smixx.fabric.FabricPackage;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import com.reactlibrary.RNWifiPackage;
 import com.ijzerenhein.magicmove.ReactMagicMovePackage;
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 import com.horcrux.svg.SvgPackage;
@@ -63,7 +62,6 @@ public class MainApplication extends Application implements ReactApplication {
                 new LinearGradientPackage(),
                 new ReactNativePushNotificationPackage(),
                 new FabricPackage(),
-                new RNWifiPackage(),
                 new ReactMagicMovePackage(),
                 new RNReactNativeHapticFeedbackPackage(),
                 new SvgPackage()

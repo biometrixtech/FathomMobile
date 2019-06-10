@@ -37,7 +37,6 @@ import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
 import DialogInput from 'react-native-dialog-input';
 import Toast, { DURATION } from 'react-native-easy-toast';
-import WifiManager from 'react-native-wifi';
 
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
@@ -124,23 +123,6 @@ class BluetoothConnect3Sensor extends Component {
         } else if(currentPage === 5) {
             this._timer = _.delay(() => {
                 this._handleWifiScan();
-                // console.log(WifiManager);
-                // WifiManager.getCurrentWifiSSID()
-                //     .then(networkDetails => {
-                //         let currentWifiConnectionObj = Platform.OS === 'android' ? JSON.parse(networkDetails) : networkDetails;
-                //         currentWifiConnectionObj.password = '';
-                //         this.setState({ currentWifiConnection: currentWifiConnectionObj, })
-                //     })
-                //     .catch(error => console.log('Cannot get current SSID!',error));
-                // if(Platform.OS === 'android') {
-                //     WifiManager.loadWifiList(
-                //         list => this.setState(
-                //             { availableNetworks: _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))), },
-                //             () => console.log('wifi list', _.filter(JSON.parse(list), o => o.frequency < 2500 && (o.capabilities.includes('WPA2') || o.capabilities.includes('WPA') || o.capabilities.includes('WEP') || o.capabilities.includes('ESS'))))
-                //         ),
-                //         error => console.log('Cannot get current LIST!', error)
-                //     );
-                // }
             }, 500);
         }
     }

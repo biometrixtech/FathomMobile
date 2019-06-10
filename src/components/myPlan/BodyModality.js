@@ -351,7 +351,7 @@ class BodyModality extends Component {
                                                     { modality === 'heat' ?
                                                         'Position the heat to cover the entire muscle or joint.'
                                                         : modality === 'ice' ?
-                                                            'Position the heat to cover the entire muscle or joint.'
+                                                            'Position the ice to cover the entire muscle or joint.'
                                                             :
                                                             'Completely submerge your lower body, no higher than the top of you hips'
                                                     }

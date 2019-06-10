@@ -106,7 +106,6 @@
 		72F030E922554C9100943040 /* Oswald-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F030CF22554C9000943040 /* Oswald-SemiBold.ttf */; };
 		72F030EA22554C9100943040 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F030D022554C9000943040 /* Roboto-BoldItalic.ttf */; };
 		72F030EB22554C9100943040 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F030D122554C9100943040 /* Roboto-Light.ttf */; };
-		72F1D9A3226A045C0009903D /* libRNWifi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F1D99F226A04460009903D /* libRNWifi.a */; };
 		72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F24352228C8741008C6B93 /* libRNSVG.a */; };
 		72FA2CE22278D75B00282A2C /* libRNMagicMove.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72FA2CDA2278D74400282A2C /* libRNMagicMove.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -585,13 +584,6 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNCAsyncStorage;
 		};
-		72F1D99E226A04460009903D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 72F1D95C226A04460009903D /* RNWifi.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNWifi;
-		};
 		72F24351228C8741008C6B93 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */;
@@ -743,7 +735,6 @@
 		72F030CF22554C9000943040 /* Oswald-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Oswald-SemiBold.ttf"; path = "../../../assets/fonts/Oswald-SemiBold.ttf"; sourceTree = "<group>"; };
 		72F030D022554C9000943040 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BoldItalic.ttf"; path = "../../../assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		72F030D122554C9100943040 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "../../../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
-		72F1D95C226A04460009903D /* RNWifi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNWifi.xcodeproj; path = "../node_modules/react-native-wifi/ios/RNWifi.xcodeproj"; sourceTree = "<group>"; };
 		72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMagicMove.xcodeproj; path = "../node_modules/react-native-magic-move/ios/RNMagicMove.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -769,7 +760,6 @@
 				72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */,
 				72A486922285C0B900C351EE /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				72FA2CE22278D75B00282A2C /* libRNMagicMove.a in Frameworks */,
-				72F1D9A3226A045C0009903D /* libRNWifi.a in Frameworks */,
 				723539C02260DC37003049A5 /* libRNCNetInfo.a in Frameworks */,
 				72F03083225549E100943040 /* libRNCAsyncStorage.a in Frameworks */,
 				72F03060225543EA00943040 /* libSMXCrashlytics.a in Frameworks */,
@@ -1193,14 +1183,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		72F1D95D226A04460009903D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				72F1D99F226A04460009903D /* libRNWifi.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		72F2430F228C8741008C6B93 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1233,7 +1215,6 @@
 				72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */,
 				72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */,
 				72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */,
-				72F1D95C226A04460009903D /* RNWifi.xcodeproj */,
 				723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */,
 				72F0307D225549D000943040 /* RNCAsyncStorage.xcodeproj */,
 				72F03057225543DB00943040 /* SMXCrashlytics.xcodeproj */,
@@ -1573,10 +1554,6 @@
 				{
 					ProductGroup = 72F03001225540B400943040 /* Products */;
 					ProjectRef = 72F03000225540B400943040 /* RNVectorIcons.xcodeproj */;
-				},
-				{
-					ProductGroup = 72F1D95D226A04460009903D /* Products */;
-					ProjectRef = 72F1D95C226A04460009903D /* RNWifi.xcodeproj */;
 				},
 				{
 					ProductGroup = 72F03058225543DB00943040 /* Products */;
@@ -2044,13 +2021,6 @@
 			fileType = archive.ar;
 			path = libRNCAsyncStorage.a;
 			remoteRef = 72F03081225549D000943040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		72F1D99F226A04460009903D /* libRNWifi.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNWifi.a;
-			remoteRef = 72F1D99E226A04460009903D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		72F24352228C8741008C6B93 /* libRNSVG.a */ = {

@@ -129,7 +129,7 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 30
+        versionCode 31
         versionName "3.0.0"
     }
     configurations.all {
@@ -207,7 +207,6 @@ dependencies {
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-fabric')
-    implementation project(':react-native-wifi')
     implementation project(':react-native-magic-move')
     implementation project(':react-native-haptic-feedback')
     implementation project(':react-native-svg')

@@ -1165,7 +1165,7 @@ const PlanLogic = {
                     :
                     'comprehensive_active';
             if(object.goals) {
-                let goalStatus = object.goals[newGoal.goal_type][goalsIndex];
+                let goalStatus = object.goals && object.goals[newGoal.goal_type] ? object.goals[newGoal.goal_type][goalsIndex] : false;
                 newGoal.isSelected = goalStatus;
             } else {
                 newGoal.isSelected = true;
