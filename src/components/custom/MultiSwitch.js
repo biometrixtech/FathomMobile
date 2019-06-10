@@ -124,9 +124,9 @@ export default class MultiSwitch extends Component {
                     if (gestureState.dx > 0) {
                         if (finalValue >= 0 && finalValue <= 30) {
                             this._onStatusChanged(0);
-                        } else if (finalValue > 30 && finalValue <= 121) {
+                        } else if (finalValue >= 30 && finalValue <= 121) {
                             this._onStatusChanged(1);
-                        } else if (finalValue > 121 && finalValue <= 280) {
+                        } else if (finalValue >= 121 && finalValue <= 280) {
                             if (gestureState.dx > 0) {
                                 this._onStatusChanged(2);
                             } else {
@@ -134,7 +134,7 @@ export default class MultiSwitch extends Component {
                             }
                         }
                     } else {
-                        if (finalValue > 78 && finalValue <= 175) {
+                        if (finalValue >= 78 && finalValue <= 175) {
                             this._onStatusChanged(1);
                         } else if (finalValue >= -100 && finalValue <= 78) {
                             this._onStatusChanged(0);
