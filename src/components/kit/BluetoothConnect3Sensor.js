@@ -148,11 +148,16 @@ class BluetoothConnect3Sensor extends Component {
                 .then(res => {
                     // setup variables
                     let newUserPayloadObj = {};
-                    newUserPayloadObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
-                    newUserPayloadObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserPayloadObj.sensor_data = {};
+                    newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserPayloadObj.sensor_data.sensor_networks = [];
+                    newUserPayloadObj.sensor_data.system_type = '3-sensor';
                     let newUserObj = _.cloneDeep(user);
-                    newUserObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
-                    newUserObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserObj.sensor_data.sensor_networks = [];
+                    newUserObj.sensor_data.system_type = '3-sensor';
                     // update reducer as API might take too long to return a value
                     store.dispatch({
                         type: DispatchActions.USER_REPLACE,
@@ -206,9 +211,7 @@ class BluetoothConnect3Sensor extends Component {
             .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
     }
 
-    // TODO: LOGIC HERE
     _onPageScrollEnd = currentPage => {
-        console.log('currentPage',currentPage);
         if(currentPage === 17) {
             this._handleBLEPair();
         } else if(currentPage === 18) {

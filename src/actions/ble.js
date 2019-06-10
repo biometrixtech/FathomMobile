@@ -745,6 +745,10 @@ const assignKitIndividual = (accessory, user) => {
 };
 
 const getSensorFiles = (days = 30) => {
+    // days
+    // user.timezone
+    // user.sensor_data.sensor_pid
+    // TODO: CHANGE TO POST
     return dispatch =>  new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.get()
             .then(response => resolve(response))
