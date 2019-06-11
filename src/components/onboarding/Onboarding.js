@@ -61,6 +61,7 @@ class Onboarding extends Component {
         createUser:     PropTypes.func.isRequired,
         finalizeLogin:  PropTypes.func.isRequired,
         getMyPlan:      PropTypes.func.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
         lastOpened:     PropTypes.object.isRequired,
         network:        PropTypes.object.isRequired,
         onFormSubmit:   PropTypes.func.isRequired,
@@ -419,7 +420,8 @@ class Onboarding extends Component {
                                 return this.setState({ loading: false, resultMsg: { err }, });
                             });
                     })
-                    .then(() => this.props.finalizeLogin(user, credentials, authorization));
+                    .then(() => this.props.finalizeLogin(user, credentials, authorization))
+                    .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
             })
             .then(userRes => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },

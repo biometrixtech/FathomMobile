@@ -73,6 +73,10 @@ class CustomListItem extends Component {
 
         props.titleProps = { allowFontScaling: false, };
 
+        if(this.props.titleProps) {
+            props.titleProps = this.props.titleProps;
+        }
+
         return props;
     }
 

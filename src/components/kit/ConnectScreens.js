@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { ActivityIndicator, Animated, Image, ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -9,7 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Video from 'react-native-video';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { Button, ListItem, Spacer, TabIcon, Text, } from '../custom';
 
 /* Styles ==================================================================== */
@@ -80,7 +80,7 @@ const CVP = ({ nextBtn, }) => (
     </View>
 );
 
-const TopNav = ({ darkColor, onBack, step, }) => {
+const TopNav = ({ darkColor, onBack, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
         <View>
@@ -150,7 +150,7 @@ const TopNav = ({ darkColor, onBack, step, }) => {
                     <TabIcon
                         color={color}
                         icon={'close'}
-                        onPress={() => Actions.pop()}
+                        onPress={() => onClose ? onClose() : Actions.pop()}
                         reverse={false}
                         size={30}
                     />
@@ -528,7 +528,7 @@ const SESSION_CONTENT = [
     },
 ];
 
-const Session = ({ onBack, nextBtn, page, showTopNavStep = true, }) => {
+const Session = ({ onBack, onClose, nextBtn, page, showTopNavStep = true, }) => {
     let content = SESSION_CONTENT[page];
     if(page === 0) {
         return (
@@ -537,7 +537,7 @@ const Session = ({ onBack, nextBtn, page, showTopNavStep = true, }) => {
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 { showTopNavStep &&
-                    <TopNav darkColor={false} onBack={onBack} step={3} />
+                    <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={3} />
                 }
                 <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <LinearGradient
@@ -718,11 +718,12 @@ const CONNECT_CONTENT = [
         video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
     },
     {
-        buttonText: 'Next',
-        image:      require('../../../assets/images/sensor/bluetooth_connect_kit.png'),
-        subtitle:   false,
-        title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING PHONE NEAR THE KIT TO PAIR'}</Text>,
-        video:      false,
+        animatedImage: require('../../../assets/images/sensor/bluetooth_connect_phone.png'),
+        buttonText:    false,
+        image:         require('../../../assets/images/sensor/bluetooth_connect_kit.png'),
+        subtitle:      false,
+        title:         <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING PHONE NEAR THE KIT TO PAIR'}</Text>,
+        video:         false,
     },
     {
         buttonText: false,
@@ -753,10 +754,13 @@ const CONNECT_CONTENT = [
 
 const Connect = ({
     availableNetworks = [],
+    bounceValue,
     handleNetworkPress = () => {},
+    handleNotInRange = () => {},
     handleWifiScan = () => {},
     isWifiScanDone = true,
     onBack,
+    onClose,
     nextBtn,
     page,
     showTopNavStep = true,
@@ -766,7 +770,7 @@ const Connect = ({
         return (
             <View style={{flex: 1,}}>
                 { showTopNavStep &&
-                    <TopNav darkColor={true} onBack={onBack} step={4} />
+                    <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={4} />
                 }
                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                     {content.title}
@@ -788,6 +792,32 @@ const Connect = ({
                         :
                         null
                 }
+                { (page === 2 && content.animatedImage) &&
+                    <View style={{flex: 1,}}>
+                        <Image
+                            resizeMode={'contain'}
+                            source={content.animatedImage}
+                            style={{alignSelf: 'center', width: (AppSizes.screen.width - AppSizes.paddingLrg),}}
+                        />
+                    </View>
+                }
+                {/* (page === 2 && content.animatedImage) &&
+                    <Animated.View
+                        style={[{position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            backgroundColor: "red",
+                            // height: 100,
+                            transform: [{translateY: bounceValue}]}]}
+                    >
+                        <Image
+                            resizeMode={'contain'}
+                            source={content.animatedImage}
+                            style={{alignSelf: 'center', width: (AppSizes.screen.width - AppSizes.paddingLrg),}}
+                        />
+                    </Animated.View>
+                */}
                 { content.subtitle &&
                     <View style={{paddingHorizontal: AppSizes.paddingLrg, paddingTop: AppSizes.padding,}}>
                         {content.subtitle}
@@ -805,7 +835,7 @@ const Connect = ({
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 }
-                { page === 3 ?
+                { page === 3 &&
                     <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
                         <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: AppSizes.paddingMed, paddingBottom: AppSizes.paddingSml,}}>
                             <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>
@@ -830,14 +860,12 @@ const Connect = ({
                                     key={i}
                                     onPress={() => handleNetworkPress(network)}
                                     title={network.ssid}
-                                    titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
+                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
                                 />
                             )}
                         </ScrollView>
-                        <Text onPress={() => {}} robotoMedium style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), marginVertical: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{'I\'m not in range of my preferred wifi network'}</Text>
+                        <Text onPress={() => handleNotInRange()} robotoMedium style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), marginVertical: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{'I\'m not in range of my preferred wifi network'}</Text>
                     </View>
-                    :
-                    null
                 }
             </View>
         );

@@ -97,6 +97,7 @@ class Login extends Component {
         environment:    PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
         getMyPlan:      PropTypes.func.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
         lastOpened:     PropTypes.object.isRequired,
         network:        PropTypes.object.isRequired,
         onFormSubmit:   PropTypes.func,
@@ -241,7 +242,8 @@ class Login extends Component {
                                         return this.setState({ resultMsg: { err } });
                                     });
                             })
-                            .then(() => this.props.finalizeLogin(user, credentials, authorization));
+                            .then(() => this.props.finalizeLogin(user, credentials, authorization))
+                            .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
                     })
                     .then(() => this.setState({
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },

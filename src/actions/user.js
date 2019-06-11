@@ -42,14 +42,16 @@ const getUser = userId => {
   * Update My User Data
   * - Receives complete user data in return
   */
-const updateUser = (payload, userId) => {
+const updateUser = (payload, userId, updateLogin = true) => {
     return dispatch => AppAPI.update_user.patch({userId}, payload)
         .then(userData => {
-            dispatch({
-                type:     Actions.LOGIN,
-                email:    userData.user.personal_data.email || store.getState().init.email,
-                password: userData.user.password || store.getState().init.password,
-            });
+            if(updateLogin) {
+                dispatch({
+                    type:     Actions.LOGIN,
+                    email:    userData.user.personal_data.email || store.getState().init.email,
+                    password: userData.user.password || store.getState().init.password,
+                });
+            }
             dispatch({
                 type: Actions.USER_REPLACE,
                 data: userData.user

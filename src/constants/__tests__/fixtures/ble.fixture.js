@@ -133,6 +133,7 @@ export default {
         IS_SINGLE_SENSOR_IN_SETUP_MODE: parseInt('0x74', 16),
         // THREE SENSOR COMMANDS
         GET_MAC_ADDRESS:                parseInt('0xD4', 16),
+        READ_WIFI_CONNECT:              parseInt('0xDA', 16),
         READ_WIFI_SCAN_LONG:            parseInt('0xDD', 16),
         READ_WIFI_SCAN_SHORT:           parseInt('0xDC', 16),
         WRITE_WIFI_CONNECT:             parseInt('0x5A', 16),

@@ -24,6 +24,7 @@ import PropTypes from 'prop-types';
 import {
     ActivityIndicator,
     Alert,
+    Animated,
     Image,
     Keyboard,
     NativeEventEmitter,
@@ -36,7 +37,7 @@ import {
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, } from '../../constants';
-import { AppUtil, } from '../../lib';
+import { AlertHelper, AppUtil, } from '../../lib';
 import { Loading, } from '../general';
 import { store, } from '../../store';
 import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, } from './ConnectScreens';
@@ -52,16 +53,27 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
 
 /* Component ==================================================================== */
 class BluetoothConnect3Sensor extends Component {
+
     constructor(props) {
         super(props);
+        const { user, } = this.props;
+        let filteredFirstTimeExperience = _.filter(user.first_time_experience, o => /^3Sensor-Onboarding-/.test(o));
+        filteredFirstTimeExperience = _.map(filteredFirstTimeExperience, o => _.toInteger(o.substring((o.lastIndexOf('-') + 1), o.length)));
+        let largestCheckpoint = _.max(filteredFirstTimeExperience);
+        let updatedPageIndex = largestCheckpoint ?
+            largestCheckpoint
+            :
+            0;
         this.state = {
             availableNetworks:     [],
+            bounceValue:           new Animated.Value(100),
             currentWifiConnection: false,
             loading:               false,
-            pageIndex:             0,
+            pageIndex:             _.toInteger(updatedPageIndex),
             isDialogVisible:       false,
             isWifiScanDone:        false,
         };
@@ -91,6 +103,10 @@ class BluetoothConnect3Sensor extends Component {
                 }
             });
         }
+        // update user obj to say user is on first page
+        if(!this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}0`)) {
+            this._updateUserCheckpoint(0);
+        }
     }
 
     componentWillUnmount = () => {
@@ -116,18 +132,32 @@ class BluetoothConnect3Sensor extends Component {
             .then(() => {
                 let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
                 if(closestDevice.length > 0) {
-                    this._connect(closestDevice[0]);
+                    return this._connect(closestDevice[0]);
                 }
+                return Alert.alert(
+                    '',
+                    'We didn\'t find a kit.',
+                    [
+                        {
+                            text:    'Exit',
+                            onPress: () => Actions.pop(),
+                            style:   'cancel',
+                        },
+                        {
+                            text:    'Try again',
+                            onPress: () => this._renderNextPage(this.state.pageIndex - 1),
+                        },
+                    ],
+                    { cancelable: false, }
+                );
             });
     }
 
     _connect = data => {
-        const { bluetooth, getBLEMacAddress, stopConnect, stopScan, user, } = this.props;
-        stopScan()
-            .then(() => getBLEMacAddress(data.id))
+        const { bluetooth, getBLEMacAddress, stopConnect, user, } = this.props;
+        return getBLEMacAddress(data.id)
             .then(() => this._toggleAlertNotification(data.id, user.id))
             .catch(err => {
-                console.log('err in BluetoothConnect #4',err);
                 if (bluetooth.accessoryData && !bluetooth.accessoryData.sensor_pid) {
                     this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
                 }
@@ -139,45 +169,51 @@ class BluetoothConnect3Sensor extends Component {
         Keyboard.dismiss();
         const { assignKitIndividual, bluetooth, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
         const { currentWifiConnection, } = this.state;
-        if(currentWifiConnection && currentWifiConnection.password && currentWifiConnection.ssid && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.sensor_pid !== 'None') {
-            let sensorId = bluetooth.accessoryData.sensor_pid;
-            let ssid = currentWifiConnection.ssid;
-            let password = currentWifiConnection.password;
-            let securityByte = currentWifiConnection.security.toByte;
-            writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
-                .then(res => {
-                    // setup variables
-                    let newUserPayloadObj = {};
-                    newUserPayloadObj.sensor_data = {};
-                    newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                    newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    newUserPayloadObj.sensor_data.sensor_networks = [];
-                    newUserPayloadObj.sensor_data.system_type = '3-sensor';
-                    let newUserObj = _.cloneDeep(user);
-                    newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                    newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    newUserObj.sensor_data.sensor_networks = [];
-                    newUserObj.sensor_data.system_type = '3-sensor';
-                    // update reducer as API might take too long to return a value
-                    store.dispatch({
-                        type: DispatchActions.USER_REPLACE,
-                        data: newUserObj
-                    });
-                    // send commands
-                    updateUser(newUserPayloadObj, user.id) // 1. PATCH user specific endpoint
-                        .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
-                        .then(() => startDisconnection(sensorId, true)) // 3. disconnect from sensor
-                        .then(() => this.setState({ loading: false, }, () => this._renderNextPage())); // 4. route to next page
-                })
-                .catch(err => AppUtil.handleAPIErrorAlert(err));
+        let sensorId = bluetooth.accessoryData.sensor_pid;
+        let ssid = currentWifiConnection.ssid;
+        let password = currentWifiConnection.password;
+        let securityByte = currentWifiConnection.security.toByte;
+        return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
+            .then(res => {
+                // setup variables
+                let newUserPayloadObj = {};
+                newUserPayloadObj.sensor_data = {};
+                newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserPayloadObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+                newUserPayloadObj.sensor_data.system_type = '3-sensor';
+                let newUserObj = _.cloneDeep(user);
+                newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+                newUserObj.sensor_data.system_type = '3-sensor';
+                // update reducer as API might take too long to return a value
+                store.dispatch({
+                    type: DispatchActions.USER_REPLACE,
+                    data: newUserObj
+                });
+                // send commands
+                return updateUser(newUserPayloadObj, user.id) // 1. PATCH user specific endpoint
+                    .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
+                    .then(() => startDisconnection(sensorId, true)) // 3. disconnect from sensor
+                    .then(() => this.setState({ loading: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)} )) // 4. route to next page
+                    .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+            })
+            .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+    }
+
+    _handleAlertHelper = (title = '', message, isCancelable) => {
+        Actions.pop();
+        if(isCancelable) {
+            AlertHelper.showCancelableDropDown('custom', title, message);
         } else {
-            AppUtil.handleAPIErrorAlert('Please make sure to select the right details');
+            AlertHelper.showDropDown('custom', title, message);
         }
     }
 
     _handleBLEPair = () => {
         const { startScan, } = this.props;
-        startScan(10);
+        startScan(60);
     }
 
     _handleFormChange = (name, value) => {
@@ -185,42 +221,76 @@ class BluetoothConnect3Sensor extends Component {
         this.setState({ ['currentWifiConnection']: newFormFields, });
     }
 
+    _handleNetworkPress = network => {
+        _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
+        this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+    }
+
+    _handleWifiNotInRange = () => {
+        Alert.alert(
+            '',
+            'XYXYXYXYYXYX', // TODO: NEED UPDATED COPY!!
+            [
+                {
+                    text:    'I\'ll do it later',
+                    onPress: () => Actions.pop(),
+                },
+                {
+                    text:  'Configure Now',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     _handleWifiScan = () => {
         const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
-        this.setState({ availableNetworks: [], });
-        getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
+        this.setState({ availableNetworks: [], isWifiScanDone: false, });
+        return getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
             .then(res => {
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
-                let index = 0;
                 for(let i = 1; i <= res; i += 1) {
                     this._wifiTimers[i] = _.delay(() => {
                         getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
                             .then(response => {
                                 let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
                                 newAvailableNetworks.push(response);
-                                newAvailableNetworks = _.uniq(newAvailableNetworks);
-                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: true, });
+                                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
+                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: i === res, });
                             })
-                            .catch(error => console.log('error-i',error));
-                    }, 500 * index);
-                    index = index + 1;
+                            .catch(error => this.setState({ isWifiScanDone: true, }));
+                    }, 500 * i);
                 }
             })
             .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
     }
 
     _onPageScrollEnd = currentPage => {
-        if(currentPage === 17) {
+        const checkpointPages = [0, 1, 9, 12, 15, 19];
+        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+            this._updateUserCheckpoint(currentPage);
+        } else if(currentPage === 17) { // connect to accessory
             this._handleBLEPair();
-        } else if(currentPage === 18) {
-            this._timer = _.delay(() => this._handleWifiScan(), 500);
+            // TODO: FIX ME BELOW
+            // Animated.spring(
+            //     this.state.bounceValue,
+            //     {
+            //         friction: 8,
+            //         tension:  2,
+            //         toValue:  0,
+            //         velocity: 3,
+            //     }
+            // ).start();
+        } else if(currentPage === 18) { // wifi list, start scan
+            this._timer = _.delay(() => this._handleWifiScan(), 1000);
         }
     }
 
-    _renderNextPage = () => {
-        let nextPageIndex = (this.state.pageIndex + 1);
+    _renderNextPage = page => {
+        let nextPageIndex = page ? page : (this.state.pageIndex + 1);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
     }
@@ -229,6 +299,22 @@ class BluetoothConnect3Sensor extends Component {
         let nextPageIndex = (this.state.pageIndex - 1);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _submitPasswordInput = inputText => {
+        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+        newCurrentWifiConnection.password = inputText;
+        this.setState(
+            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, },
+            () => {
+                this._timer = _.delay(() => {
+                    this.setState(
+                        { loading: true, },
+                        () => this._connectSensorToWifi(),
+                    );
+                }, 500);
+            },
+        );
     }
 
     _toggleAlertNotification = (sensorId, userId) => {
@@ -240,8 +326,7 @@ class BluetoothConnect3Sensor extends Component {
                 {
                     text:    'No',
                     onPress: () => {
-                        this.setState({ pageIndex: 0 });
-                        this._pages.progress = 0;
+                        this._renderNextPage(this.state.pageIndex - 1);
                         return stopConnect();
                     },
                     style: 'cancel',
@@ -251,13 +336,31 @@ class BluetoothConnect3Sensor extends Component {
                     onPress: () => this._renderNextPage(),
                 },
             ],
-            { cancelable: false }
+            { cancelable: false, }
         );
     }
 
+    _updateUserCheckpoint = page => {
+        const { updateUser, user, } = this.props;
+        // setup variables
+        let value = `${FIRST_TIME_EXPERIENCE_PREFIX}${page}`;
+        if(!this.props.user.first_time_experience.includes(value)) {
+            let newUserPayloadObj = {};
+            newUserPayloadObj.first_time_experience = [value];
+            let newUserObj = _.cloneDeep(user);
+            newUserObj.first_time_experience.push(value);
+            // update reducer as API might take too long to return a value
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: newUserObj
+            });
+            // update user object
+            updateUser(newUserPayloadObj, user.id, false);
+        }
+    }
+
     render = () => {
-        const { bluetooth, } = this.props;
-        const { availableNetworks, currentWifiConnection, pageIndex, isDialogVisible, isWifiScanDone, } = this.state;
+        const { availableNetworks, bounceValue, currentWifiConnection, pageIndex, isDialogVisible, isWifiScanDone, } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -289,21 +392,33 @@ class BluetoothConnect3Sensor extends Component {
                     <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
 
                     {/* Session */}
-                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Session
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('Training Session Active.', 'Tap here to sync your training session with the Fathom App.', true)}
+                        page={0}
+                    />
                     <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
                     <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
 
                     {/* Connect */}
-                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
+                    <Connect
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('Sensor not connected.', 'Connect to sync data.', true)}
+                        page={0}
+                    />
                     <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
-                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    <Connect bounceValue={bounceValue} nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
                     <Connect
                         availableNetworks={availableNetworks}
-                        handleNetworkPress={network => this.setState({ currentWifiConnection: network, isDialogVisible: true, })}
+                        handleNetworkPress={network => this._handleNetworkPress(network)}
+                        handleNotInRange={() => this._handleWifiNotInRange()}
                         handleWifiScan={() => this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('Wifi not connected.', 'Tap here to sync your training session with the Fathom App.', false)}
                         page={3}
                     />
                     <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} />
@@ -327,21 +442,14 @@ class BluetoothConnect3Sensor extends Component {
                     isDialogVisible={isDialogVisible}
                     message={`"${currentWifiConnection ? currentWifiConnection.ssid : ''}"`}
                     modalStyle={{backdropColor: AppColors.zeplin.darkNavy, backdropOpacity: 0.8,}}
-                    submitInput={inputText => {
-                        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
-                        newCurrentWifiConnection.password = inputText;
-                        this.setState(
-                            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, loading: true, },
-                            () => this._connectSensorToWifi(),
-                        );
-                    }}
+                    submitInput={inputText => this._submitPasswordInput(inputText)}
                     submitText={'Save'}
                     title={'Connect to Network'}
                 />
 
                 { this.state.loading ?
                     <Loading
-                        text={'Saving WiFi Connection...'}
+                        text={'SAVING...'}
                     />
                     :
                     null

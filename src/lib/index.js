@@ -9,12 +9,14 @@
  * App Library Function
  */
 
+import AlertHelper from './AlertHelper';
 import AppAPI from './api';
 import AppUtil from './util';
 import JWT from './jwt';
 import PlanLogic from './planLogic';
 
 export {
+    AlertHelper,
     AppAPI,
     AppUtil,
     JWT,

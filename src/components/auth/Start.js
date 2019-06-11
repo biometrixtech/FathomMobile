@@ -49,6 +49,7 @@ class Start extends Component {
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
         getMyPlan:            PropTypes.func.isRequired,
+        getSensorFiles:       PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
         lastOpened:           PropTypes.object.isRequired,
@@ -202,6 +203,7 @@ class Start extends Component {
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
+            .then(() => userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? this.props.getSensorFiles(userObj) : userObj)
             .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
                 this.hideSplash();

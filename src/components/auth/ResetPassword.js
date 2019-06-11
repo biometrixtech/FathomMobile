@@ -30,6 +30,7 @@ class ResetPassword extends Component {
         email:            PropTypes.string,
         finalizeLogin:    PropTypes.func.isRequired,
         getMyPlan:        PropTypes.func.isRequired,
+        getSensorFiles:   PropTypes.func.isRequired,
         lastOpened:       PropTypes.object.isRequired,
         newPassword:      PropTypes.string,
         onFormSubmit:     PropTypes.func.isRequired,
@@ -168,7 +169,8 @@ class ResetPassword extends Component {
                                 return this.setState({ resultMsg: { err } });
                             });
                     })
-                    .then(() => this.props.finalizeLogin(user, userData, authorization));
+                    .then(() => this.props.finalizeLogin(user, userData, authorization))
+                    .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
             })
             .then(res => this.setState({
                 resultMsg: { success: 'Success, now loading your data!' },

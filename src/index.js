@@ -6,7 +6,7 @@ import { Image, Platform, PushNotificationIOS, StatusBar, StyleSheet, View, } fr
 
 // import components
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
-import { AppUtil, } from './lib';
+import { AlertHelper, AppUtil, } from './lib';
 import { Spacer, TabIcon, Text, } from './components/custom';
 import { store } from './store';
 import Routes from './routes';
@@ -108,11 +108,12 @@ class Root extends Component {
         this._dropdown.close();
     }
 
-    _renderDropdownImage = (props, side) => (
+    _renderDropdownImage = (props, side, onPress = () => {}) => (
         <TabIcon
             containerStyle={[{justifyContent: 'center',}]}
             icon={side === 'cancel' ? 'close' : 'cloud-off'}
             iconStyle={[{color: AppColors.white,}]}
+            onPress={onPress}
             reverse={false}
             type={side === 'cancel' ? 'material-community' : 'material'}
         />
@@ -227,16 +228,47 @@ class Root extends Component {
                     </Provider>
                     <DropdownAlert
                         closeInterval={0}
-                        containerStyle={{backgroundColor: AppColors.alerts.errorBackground,}}
+                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
                         defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
                         defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
                         messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
+                        messageTextProps={{allowFontScaling: false,}}
                         onCancel={data => {}}
                         onClose={data => {}}
                         ref={ref => {this._dropdown = ref;}}
                         renderCancel={props => this._renderDropdownImage(props, 'cancel')}
                         renderImage={props => this._renderDropdownImage(props, 'left')}
                         showCancel={true}
+                        translucent={Platform.OS === 'ios' ? false : true}
+                        updateStatusBar={Platform.OS === 'ios' ? true : false}
+                        useNativeDriver={true}
+                    />
+                    <DropdownAlert
+                        closeInterval={0}
+                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
+                        messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        messageTextProps={{allowFontScaling: false,}}
+                        onClose={data => data.action === 'tap' ? RouterActions.bluetoothConnect3Sensor() : {}}
+                        panResponderEnabled={false}
+                        ref={ref => AlertHelper.setCancelableDropDown(ref)}
+                        renderCancel={props => this._renderDropdownImage(props, 'cancel', () => AlertHelper.closeCancelableDropDown())}
+                        showCancel={true}
+                        titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        titleTextProps={{allowFontScaling: false,}}
+                        translucent={Platform.OS === 'ios' ? false : true}
+                        updateStatusBar={Platform.OS === 'ios' ? true : false}
+                        useNativeDriver={true}
+                    />
+                    <DropdownAlert
+                        closeInterval={0}
+                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
+                        messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        messageTextProps={{allowFontScaling: false,}}
+                        onClose={data => RouterActions.bluetoothConnect3Sensor()}
+                        panResponderEnabled={false}
+                        ref={ref => AlertHelper.setDropDown(ref)}
+                        titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        titleTextProps={{allowFontScaling: false,}}
                         translucent={Platform.OS === 'ios' ? false : true}
                         updateStatusBar={Platform.OS === 'ios' ? true : false}
                         useNativeDriver={true}
