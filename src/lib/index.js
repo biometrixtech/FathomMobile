@@ -14,6 +14,7 @@ import AppAPI from './api';
 import AppUtil from './util';
 import JWT from './jwt';
 import PlanLogic from './planLogic';
+import SensorLogic from './sensorLogic';
 
 export {
     AlertHelper,
@@ -21,4 +22,5 @@ export {
     AppUtil,
     JWT,
     PlanLogic,
+    SensorLogic,
 };

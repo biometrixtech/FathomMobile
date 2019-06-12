@@ -47,6 +47,9 @@ import BluetoothConnect3SensorComponent from '../components/kit/BluetoothConnect
 import SensorFilesContainer from '../containers/kit/SensorFiles';
 import SensorFilesComponent from '../components/kit/SensorFiles';
 
+import SensorFilesPageContainer from '../containers/kit/SensorFilesPage';
+import SensorFilesPageComponent from '../components/kit/SensorFilesPage';
+
 import MyPlanContainer from '../containers/myPlan/MyPlan';
 import MyPlanComponent from '../components/myPlan/MyPlan';
 
@@ -283,6 +286,13 @@ const Index = (
                 component={SensorFilesContainer}
                 hideNavBar={true}
                 key={'sensorFiles'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={SensorFilesPageComponent}
+                component={SensorFilesPageContainer}
+                hideNavBar={true}
+                key={'sensorFilesPage'}
                 panHandlers={null}
             />
         </Stack>
