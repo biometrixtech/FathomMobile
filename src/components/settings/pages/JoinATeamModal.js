@@ -82,7 +82,7 @@ const ModalData = ({
                     inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
                     keyboardType={'default'}
                     onChangeText={text => handleFormChange('code', text)}
-                    onSubmitEditing={() => this.handleFormSubmit()}
+                    onSubmitEditing={() => handleFormSubmit()}
                     placeholder={'code'}
                     placeholderTextColor={AppColors.zeplin.yellow}
                     returnKeyType={'done'}

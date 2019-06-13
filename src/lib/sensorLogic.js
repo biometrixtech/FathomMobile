@@ -24,9 +24,10 @@ const SensorLogic = {
     },
 
     /**
-    * Handles Sensor File Render Logic
-    * - SensorFiles
-    */
+      * Handles Sensor File Render Logic
+      * - SensorFiles
+      */
+    // TODO: UNIT TEST ME
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
         let hoursAgo = moment().diff(sensorData.accessory.last_sync_date, 'hours');
@@ -125,63 +126,74 @@ const SensorLogic = {
             batteryTextProps,
             batteryTextString,
             lastSyncString,
+            sensorNetwork: sensorData.sensor_networks[0],
         };
     },
 
     /**
-    * Handles Sensor Files Session Render Logic
-    * - SensorFilesPage
-    */
+      * Handles Sensor Files Session Render Logic
+      * - SensorFilesPage
+      */
+    // TODO: UNIT TEST ME
     handleSessionRenderLogic: session => {
-        let updateEndDateTimeString = moment(session.upload_end_date).format('M/D h:mma');
+        let updateEndDateTimeString = moment(session.upload_end_date).format('M/D, h:mma');
         let leftIconString = moment(session.event_date).format('M/D');
         let subtitle = session.status === 0 ?
-            'Session processing, keep Kit in wifi'
+            'Syncing your data! Do not remove from wifi.'
             : session.status === 1 ?
-                `upload complete ${updateEndDateTimeString}`
+                `Synced & processed at ${updateEndDateTimeString}`
                 :
-                'Oops something went wrong. We\'re working on it.';
+                'Hmm...something went wrong. We\'re working on it!';
+        let iconName = session.status === 0 ?
+            'sync'
+            : session.status === 1 ?
+                'check-circle'
+                :
+                false;
         let title = `${moment(session.event_date).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
         return {
+            iconName,
             leftIconString,
             subtitle,
             title,
         };
     },
 
+    /**
+      * Content for Placement pages
+      */
     getPlacementContent: styles => {
         return [
             {}, // will be manually set up
             {
                 buttonText: 'Next',
                 image:      false,
-                subtitle:   <Text robotoLight style={[styles.subtitleStyle,]}>{'Clean & dry your lower back & outside ankles'}</Text>,
-                title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP SKIN'}</Text>,
-                video:      'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Clean, dry, & remove lotion from lower back & outside ankles.'}</Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(This is where you\'ll place the Sensors)'}</Text>,
+                ],
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP YOUR SKIN'}</Text>,
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 buttonText: 'Next',
                 image:      require('../../assets/images/sensor/sensor_prep.png'),
-                subtitle:
-                    <Text robotoLight style={[styles.subtitleStyle,]}>
-                        {'Remove Sensors from your SmartBase & wait for Sensor LEDs to turn '}
-                        <Text robotoBold style={{color: AppColors.zeplin.success,}}>{'solid Green'}</Text>
-                    </Text>,
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP SENSORS'}</Text>,
-                video: false,
+                subtitle:   <Text robotoLight style={[styles.subtitleStyle,]}>{'Open lid, remove Sensors. Sensor LEDs will turn green.'}</Text>,
+                title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'REMOVE THE SENSORS'}</Text>,
+                video:      false,
             },
             {
                 buttonText: 'Next',
                 image:      require('../../assets/images/sensor/adhesive_prep.png'),
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Grab '}
-                        <Text robotoBold>{'3 adhesives'}</Text>
-                        {' provided in your carrying case'}
+                        {'Grab a strip of '}
+                        <Text robotoBold>{'3 Adhesives,'}</Text>
+                        {' one for each Sensor.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(We\'ll use them in the next step)'}</Text>
                 ],
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP ADHESIVES'}</Text>,
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'LOCATE THE ADHESIVES'}</Text>,
                 video: false,
             },
             {
@@ -189,30 +201,28 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Remove the white liner on 2 adhesives and  stick to '}
+                        {'Remove the white liner from the ankle adhesives & stick to '}
                         <Text robotoBold>{'back'}</Text>
-                        {' of the two ankle sensors'}
+                        {' of the two Ankle Sensors.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'The '}
-                        <Text robotoBold>{'BACK'}</Text>
-                        {' has 4 gold dots, NO LED.'}
+                        {'(Do not apply adhesive on LED side)'}
                     </Text>
                 ],
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP ANKLE SENSORS'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'APPLY TO ANKLE SENSORS'}</Text>,
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 buttonText: 'Next',
                 image:      require('../../assets/images/sensor/f_sensor_placement.png'),
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Peel away the tan liner. Stick ankle sensors above & behind each outer ankle.'}
+                        {'Peel away the tan liner. Stick Ankle Sensors above & behind each outer ankle.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'Once placed, sensor should '}
-                        <Text robotoBold>{'not'}</Text>
-                        {' touch your shoe'}
+                        {'(Make sure the sensors '}
+                        <Text robotoBold>{'don\'t touch'}</Text>
+                        {' your shoe)'}
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PLACE ANKLE SENSORS'}</Text>,
@@ -223,64 +233,86 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Remove the white liner & stick to the '}
+                        {'Remove the white liner from the hip adhesive & stick to the '}
                         <Text robotoBold>{'back'}</Text>
-                        {' of your hip sensor'}
+                        {' of your Hip Sensor.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'The '}
-                        <Text robotoBold>{'BACK'}</Text>
-                        {' has 4 gold dots, NO LED.'}
+                        {'(Do not apply adhesive on LED side)'}
                     </Text>
                 ],
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP HIP SENSORS'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'APPLY TO HIP SENSORS'}</Text>,
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 buttonText: 'Finish Placement!',
                 image:      require('../../assets/images/sensor/h_sensor_placement.png'),
-                subtitle:   <Text robotoLight style={[styles.subtitleStyle,]}>{'Peel away the tan liner. Stick just above the tailbone in the center of your spine.'}</Text>,
-                title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'PLACE HIP SENSOR'}</Text>,
-                video:      false,
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Peel away the tan liner. Stick Hip Sensor just above the tailbone in the center of your spine.'}</Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(Your waistband should cover the sensor)'}</Text>
+                ],
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PLACE HIP SENSOR'}</Text>,
+                video: false,
             },
         ];
     },
 
+    /**
+      * Content for Session pages
+      */
     getSessionContent: styles => {
         return [
             {}, // will be manually set up
             {
                 buttonText: 'Next',
                 image:      false,
-                subtitle:
-                    <Text robotoLight style={[styles.subtitleStyle,]}>
-                        {'When you’re ready click the '}
-                        <Text robotoBold>{'End Button'}</Text>
-                        {' to stop data capture & end your workout.'}
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>
+                        {'When done with your workout, '}
+                        <Text robotoBold>{'click the Button'}</Text>
+                        {' to stop data capture & end session.'}
                     </Text>,
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP SENSORS'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                    <View key={1} style={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
+                        <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
+                            {'( '}
+                        </Text>
+                        <TabIcon
+                            color={AppColors.zeplin.slate}
+                            icon={'run'}
+                            size={20}
+                            type={'material-community'}
+                        />
+                        <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
+                            {' LED will turn OFF when your workout has ended)'}
+                        </Text>
+                    </View>
+                ],
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'END WORKOUT'}</Text>,
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 buttonText: 'Next',
                 image:      require('../../assets/images/sensor/return_sensors.png'),
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Remove adhesive & return to the Case. '}
+                        {'Remove Adhesives & return Sensors to the Smart Charger.\n'}
                         <Text robotoBold>{'Firmly close the lid.'}</Text>
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'The SmartBase should '}
-                        <Text robotoBold>{'"snap"'}</Text>
-                        {' when fully closed.'}
+                        {'(you\'ll hear a '}
+                        <Text robotoBold>{'"click"'}</Text>
+                        {' when fully closed)'}
                     </Text>
                 ],
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'RETURN SENSORS TO BASE'}</Text>,
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'RETURN SENSORS'}</Text>,
                 video: false,
             },
         ];
     },
 
+    /**
+      * Content for Connect pages
+      */
     getConnectContent: styles => {
         return [
             {}, // will be manually set up
@@ -288,32 +320,43 @@ const SensorLogic = {
                 buttonText: 'Next',
                 image:      false,
                 subtitle:   [
-                    <Text key={0} robotoBold style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Hold'}
-                        <Text robotoLight>{' the '}</Text>
-                        {'Button'}
-                        <Text robotoLight>{' until LED turuns '}</Text>
-                        <Text robotoBold style={{color: 'blue',}}>{'blue.'}</Text>
-                    </Text>,
+                    <View key={0} style={{alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginBottom: AppSizes.paddingSml,}}>
+                        <Text robotoBold style={[styles.subtitleStyle,]}>
+                            {'Hold'}
+                            <Text robotoLight>{' the '}</Text>
+                            {'Button'}
+                            <Text robotoLight>{' until '}</Text>
+                        </Text>
+                        <TabIcon
+                            color={AppColors.zeplin.slate}
+                            icon={'battery-40'}
+                            size={20}
+                            type={'material-community'}
+                        />
+                        <Text robotoLight style={[styles.subtitleStyle,]}>
+                            {' LED turns '}
+                            <Text robotoBold style={{color: 'blue',}}>{'blue.'}</Text>
+                        </Text>
+                    </View>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'Make sure your phone’s Bluetooth is "On".'}
+                        {'(Make sure your phone\'s Bluetooth is "ON")'}
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'TURN ON BLUETOOTH'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 animatedImage: require('../../assets/images/sensor/bluetooth_connect_phone.png'),
                 buttonText:    false,
                 image:         require('../../assets/images/sensor/bluetooth_connect_kit.png'),
                 subtitle:      false,
-                title:         <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING PHONE NEAR THE KIT TO PAIR'}</Text>,
+                title:         <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING THE PHONE NEAR YOUR KIT TO PAIR'}</Text>,
                 video:         false,
             },
             {
                 buttonText: false,
                 image:      false,
-                subtitle:   <Text robotoLight style={[styles.smallerText, {textAlign: 'center',}]}>{'You\'ll need wifi to upload your data after you train. Select the network you\'ll have in range after using the system.'}</Text>,
+                subtitle:   <Text robotoLight style={[styles.smallerText, {textAlign: 'center',}]}>{'You\'ll need wifi to upload data after your workout. Select the wifi network that you\'ll have access to most reliably after training.'}</Text>,
                 title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'CONNECT TO WIFI'}</Text>,
                 video:      false,
             },
@@ -321,19 +364,20 @@ const SensorLogic = {
                 buttonText: 'Next',
                 image:      false,
                 subtitle:   [
-                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Your kit will now upload your training data.'}</Text>,
-                    <View key={1} style={{flexDirection: 'row', marginTop: AppSizes.padding,}}>
+                    <View key={0} style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: AppSizes.padding,}}>
+                        <Text robotoLight style={[styles.subtitleStyle,]}>{'The '}</Text>
                         <TabIcon
-                            color={AppColors.zeplin.slateLight}
+                            color={AppColors.zeplin.slate}
                             icon={'wifi'}
                             reverse={false}
                             size={20}
                         />
-                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(14), marginLeft: AppSizes.paddingSml,}]}>{'LED will turn green when data upload begins. Data upload should take 10-12 minutes.'}</Text>
+                        <Text robotoLight style={[styles.subtitleStyle,]}>{' LED is green while your workout data is uploading.'}</Text>
                     </View>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle,]}>{'Don\'t remove your Kit from wifi while uploading.'}</Text>,
                 ],
-                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'SUCCESS YOU\'RE CONNECTED'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                title: <Text oswaldRegular style={[styles.titleStyle,]}>{'SUCCESS, YOU\'RE CONNECTED'}</Text>,
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
                 buttonText: 'Next',
@@ -354,7 +398,7 @@ const SensorLogic = {
                     </View>,
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING KIT TO WIFI'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/9.mp4',
+                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
         ];
     },

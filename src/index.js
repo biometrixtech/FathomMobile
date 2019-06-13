@@ -236,7 +236,7 @@ class Root extends Component {
                         onCancel={data => {}}
                         onClose={data => {}}
                         ref={ref => {this._dropdown = ref;}}
-                        renderCancel={props => this._renderDropdownImage(props, 'cancel')}
+                        renderCancel={props => this._renderDropdownImage(props, 'cancel', () => this._dropdown.close())}
                         renderImage={props => this._renderDropdownImage(props, 'left')}
                         showCancel={true}
                         translucent={Platform.OS === 'ios' ? false : true}

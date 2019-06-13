@@ -75,6 +75,7 @@ class BluetoothConnect3Sensor extends Component {
             loading:               false,
             pageIndex:             _.toInteger(updatedPageIndex),
             isDialogVisible:       false,
+            isVideoMuted:          false,
             isWifiScanDone:        false,
         };
         this._pages = {};
@@ -136,15 +137,15 @@ class BluetoothConnect3Sensor extends Component {
                 }
                 return Alert.alert(
                     '',
-                    'We didn\'t find a kit.',
+                    'We\'re not able to find your Kit. Try bringing your phone closer.',
                     [
                         {
-                            text:    'Exit',
+                            text:    'Exit Tutorial',
                             onPress: () => Actions.pop(),
                             style:   'cancel',
                         },
                         {
-                            text:    'Try again',
+                            text:    'Try Again',
                             onPress: () => this._renderNextPage(this.state.pageIndex - 1),
                         },
                     ],
@@ -211,6 +212,20 @@ class BluetoothConnect3Sensor extends Component {
         }
     }
 
+    _handleAlertPress = () => {
+        Alert.alert(
+            '',
+            'Oops! Your Sensors need to finish syncing with the Smart Charger.\n\nPlease return all of the Sensors to the Charger, firmly close the lid, & wait for the LEDs to finish breathing green.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     _handleBLEPair = () => {
         const { startScan, } = this.props;
         startScan(60);
@@ -229,7 +244,7 @@ class BluetoothConnect3Sensor extends Component {
     _handleWifiNotInRange = () => {
         Alert.alert(
             '',
-            'XYXYXYXYYXYX', // TODO: NEED UPDATED COPY!!
+            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
             [
                 {
                     text:    'I\'ll do it later',
@@ -274,7 +289,7 @@ class BluetoothConnect3Sensor extends Component {
             this._updateUserCheckpoint(currentPage);
         } else if(currentPage === 17) { // connect to accessory
             this._handleBLEPair();
-            // TODO: FIX ME BELOW
+            // TODO: 3SENSOR FIX ME BELOW
             // Animated.spring(
             //     this.state.bounceValue,
             //     {
@@ -360,7 +375,7 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     render = () => {
-        const { availableNetworks, bounceValue, currentWifiConnection, pageIndex, isDialogVisible, isWifiScanDone, } = this.state;
+        const { availableNetworks, bounceValue, currentWifiConnection, pageIndex, isDialogVisible, isVideoMuted, isWifiScanDone, } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -373,61 +388,157 @@ class BluetoothConnect3Sensor extends Component {
                     startPage={pageIndex}
                 >
 
-                    {/* Welcome Screen */}
-                    <CVP nextBtn={this._renderNextPage} />
+                    {/* Welcome Screen - page 0 */}
+                    <CVP
+                        nextBtn={this._renderNextPage}
+                    />
 
-                    {/* Placement Tutorial */}
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={3} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={5} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={6} />
-                    <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={7} />
+                    {/* Placement Tutorial - pages 1-8 */}
+                    <Placement
+                        currentPage={pageIndex === 1}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 2}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 3}
+                        handleAlertPress={() => this._handleAlertPress()}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 4}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={3}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 5}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={4}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 6}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={5}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 7}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={6}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 8}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={7}
+                    />
 
-                    {/* Calibration */}
-                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={0} />
-                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
-                    <Calibration nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    {/* Calibration - pages 9-11 */}
+                    <Calibration
+                        currentPage={pageIndex === 9}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Calibration
+                        currentPage={pageIndex === 10}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Calibration
+                        currentPage={pageIndex === 11}
+                        handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
+                        isVideoMuted={isVideoMuted}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
 
-                    {/* Session */}
+                    {/* Session - pages 12-14 */}
                     <Session
+                        currentPage={pageIndex === 12}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('Training Session Active.', 'Tap here to sync your training session with the Fathom App.', true)}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
                         page={0}
                     />
-                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
-                    <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    <Session
+                        currentPage={pageIndex === 13}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Session
+                        currentPage={pageIndex === 14}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
 
-                    {/* Connect */}
+                    {/* Connect - pages 15-19 */}
                     <Connect
+                        currentPage={pageIndex === 15}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('Sensor not connected.', 'Connect to sync data.', true)}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
                     />
-                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={1} />
-                    <Connect bounceValue={bounceValue} nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} />
+                    <Connect
+                        currentPage={pageIndex === 16}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Connect
+                        bounceValue={bounceValue}
+                        currentPage={pageIndex === 17}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
                     <Connect
                         availableNetworks={availableNetworks}
+                        currentPage={pageIndex === 18}
                         handleNetworkPress={network => this._handleNetworkPress(network)}
                         handleNotInRange={() => this._handleWifiNotInRange()}
                         handleWifiScan={() => this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('Wifi not connected.', 'Tap here to sync your training session with the Fathom App.', false)}
+                        onClose={() => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)}
                         page={3}
                     />
-                    <Connect nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} />
+                    <Connect
+                        currentPage={pageIndex === 19}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={4}
+                    />
 
-                    {/* Battery */}
-                    <Battery nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} />
+                    {/* Battery - page 20 */}
+                    <Battery
+                        currentPage={pageIndex === 20}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                    />
 
-                    {/* End */}
-                    <Complete nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} />
+                    {/* End - page 21 */}
+                    <Complete
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                    />
 
                 </Pages>
 

@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { BackHandler, Platform, ScrollView, StatusBar, View, } from 'react-native';
+import { Alert, BackHandler, Platform, ScrollView, StatusBar, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -25,7 +25,7 @@ const TopNavBar = () => (
         <View style={{backgroundColor: AppColors.white, flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight, paddingVertical: AppSizes.paddingSml,}}>
             <View style={{flex: 1, justifyContent: 'center',}}>
                 <TabIcon
-                    color={AppColors.zeplin.slate}
+                    color={AppColors.zeplin.slateLight}
                     icon={'chevron-left'}
                     onPress={() => Actions.pop()}
                     size={40}
@@ -49,7 +49,8 @@ class SensorFilesPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pageIndex: 0,
+            isVideoMuted: false,
+            pageIndex:    0,
         };
         this._pages = {};
     }
@@ -71,6 +72,20 @@ class SensorFilesPage extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
+    _handleNotInRange = () => {
+        Alert.alert(
+            '',
+            'IF WIFI LED BLINKING RED:\nYour Kit is not finding the configured wifi network. Move within wifi range.\n\nIF WIFI LED OFF:\n1. Come within range of the Wifi network configured on your Kit\n\n2. Click the button to wake your Kit\n\n3. Wait for the Wifi LED to respond\n\nIf the Wifi LED is still off, this may mean you don\'t have any files to sync.\nIf the Battery LED is red or off, you\'ll need to charge your Kit. Let it charge while in wifi to sync automatically.  ',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     _renderNextPage = page => {
         let nextPageIndex = page ? page : (this.state.pageIndex + 1);
         this._pages.scrollToPage(nextPageIndex);
@@ -85,56 +100,135 @@ class SensorFilesPage extends Component {
 
     render = () => {
         const { pageStep, user, } = this.props;
-        const { pageIndex, } = this.state;
+        const { isVideoMuted, pageIndex, } = this.state;
         if(pageStep !== 'sessions') {
             return(
                 <View style={{backgroundColor: AppColors.white, flex: 1,}}>
-                    { pageStep === 'battery' ?
-                        <Battery showTopNavStep={false} />
-                        : pageStep === 'session' ?
-                            <Connect page={5} showTopNavStep={false} />
-                            : pageStep === 'calibrate' ?
+                    { pageStep === 'calibrate' ?
+                        <Pages
+                            containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
+                            indicatorPosition={'none'}
+                            // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: 3SENSOR DO WE NEED THIS?
+                            ref={pages => { this._pages = pages; }}
+                            scrollEnabled={false}
+                            startPage={pageIndex}
+                        >
+                            <Calibration
+                                currentPage={pageIndex === 0}
+                                nextBtn={this._renderNextPage}
+                                page={1}
+                                showTopNavStep={false}
+                            />
+                            <Calibration
+                                currentPage={pageIndex === 1}
+                                handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
+                                isVideoMuted={isVideoMuted}
+                                nextBtn={() => Actions.pop()}
+                                onBack={this._renderPreviousPage}
+                                page={2}
+                                showTopNavStep={false}
+                            />
+                        </Pages>
+                        : pageStep === 'placement' ?
+                            <Pages
+                                containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
+                                indicatorPosition={'none'}
+                                // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: 3SENSOR DO WE NEED THIS?
+                                ref={pages => { this._pages = pages; }}
+                                scrollEnabled={false}
+                                startPage={pageIndex}
+                            >
+                                <Placement
+                                    currentPage={pageIndex === 0}
+                                    nextBtn={this._renderNextPage}
+                                    page={1}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 1}
+                                    nextBtn={this._renderNextPage}
+                                    onBack={this._renderPreviousPage}
+                                    page={2}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 2}
+                                    nextBtn={this._renderNextPage}
+                                    onBack={this._renderPreviousPage}
+                                    page={3}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 3}
+                                    nextBtn={this._renderNextPage}
+                                    onBack={this._renderPreviousPage}
+                                    page={4}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 4}
+                                    nextBtn={this._renderNextPage}
+                                    onBack={this._renderPreviousPage}
+                                    page={5}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 5}
+                                    nextBtn={this._renderNextPage}
+                                    onBack={this._renderPreviousPage}
+                                    page={6}
+                                    showTopNavStep={false}
+                                />
+                                <Placement
+                                    currentPage={pageIndex === 6}
+                                    nextBtn={() => Actions.pop()}
+                                    onBack={this._renderPreviousPage}
+                                    page={7}
+                                    showTopNavStep={false}
+                                />
+                            </Pages>
+                            : pageStep === 'end' ?
                                 <Pages
                                     containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
                                     indicatorPosition={'none'}
-                                    // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: DO WE NEED THIS?
+                                    // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: 3SENSOR DO WE NEED THIS?
                                     ref={pages => { this._pages = pages; }}
                                     scrollEnabled={false}
                                     startPage={pageIndex}
                                 >
-                                    <Calibration nextBtn={this._renderNextPage} page={1} showTopNavStep={false} />
-                                    <Calibration nextBtn={() => Actions.pop()} onBack={this._renderPreviousPage} page={2} showTopNavStep={false} />
+                                    <Session
+                                        currentPage={pageIndex === 0}
+                                        nextBtn={this._renderNextPage}
+                                        page={1}
+                                        showTopNavStep={false}
+                                    />
+                                    <Session
+                                        currentPage={pageIndex === 1}
+                                        nextBtn={this._renderNextPage}
+                                        onBack={this._renderPreviousPage}
+                                        page={2}
+                                        showTopNavStep={false}
+                                    />
+                                    <Connect
+                                        currentPage={pageIndex === 2}
+                                        handleNotInRange={() => this._handleNotInRange()}
+                                        nextBtn={() => Actions.pop()}
+                                        onBack={this._renderPreviousPage}
+                                        page={5}
+                                        showTopNavStep={false}
+                                    />
                                 </Pages>
-                                : pageStep === 'placement' ?
-                                    <Pages
-                                        containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
-                                        indicatorPosition={'none'}
-                                        // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: DO WE NEED THIS?
-                                        ref={pages => { this._pages = pages; }}
-                                        scrollEnabled={false}
-                                        startPage={pageIndex}
-                                    >
-                                        <Placement nextBtn={this._renderNextPage} page={1} showTopNavStep={false} />
-                                        <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} showTopNavStep={false} />
-                                        <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={3} showTopNavStep={false} />
-                                        <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={4} showTopNavStep={false} />
-                                        <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={5} showTopNavStep={false} />
-                                        <Placement nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={6} showTopNavStep={false} />
-                                        <Placement nextBtn={() => Actions.pop()} onBack={this._renderPreviousPage} page={7} showTopNavStep={false} />
-                                    </Pages>
-                                    : pageStep === 'end' ?
-                                        <Pages
-                                            containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
-                                            indicatorPosition={'none'}
-                                            // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)} // TODO: DO WE NEED THIS?
-                                            ref={pages => { this._pages = pages; }}
-                                            scrollEnabled={false}
-                                            startPage={pageIndex}
-                                        >
-                                            <Session nextBtn={this._renderNextPage} page={1} showTopNavStep={false} />
-                                            <Session nextBtn={this._renderNextPage} onBack={this._renderPreviousPage} page={2} showTopNavStep={false} />
-                                            <Connect nextBtn={() => Actions.pop()} onBack={this._renderPreviousPage} page={5} showTopNavStep={false} />
-                                        </Pages>
+                                : pageStep === 'battery' ?
+                                    <Battery
+                                        currentPage={true}
+                                        showTopNavStep={false}
+                                    />
+                                    : pageStep === 'session' ?
+                                        <Connect
+                                            currentPage={true}
+                                            page={5}
+                                            showTopNavStep={false}
+                                        />
                                         :
                                         <View />
                     }
@@ -145,8 +239,8 @@ class SensorFilesPage extends Component {
             <View style={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}>
                 <TopNavBar />
                 <View style={{flex: 1,}}>
-                    <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'SENSOR SESSIONS'}</Text>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.padding, marginVertical: AppSizes.padding, textAlign: 'center',}}>{'Sessions that have started and completed upload will appear here. Make sure you bring your kit to wifi after you train to sync your data!'}</Text>
+                    <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'RECORDED WORKOUTS'}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.padding, marginVertical: AppSizes.padding, textAlign: 'center',}}>{'Here you\'ll find the upload & processing status of all workouts tracked with the Fathom PRO Kit!\n\nIf you don\'t see a workout, make sure your system is charged & in a paired wifi network to start upload.'}</Text>
                     <Spacer isDivider />
                     { user.sensor_data.sessions.length > 0 ?
                         <ScrollView
@@ -154,6 +248,7 @@ class SensorFilesPage extends Component {
                         >
                             {_.map(user.sensor_data.sessions, (session, key) => {
                                 const {
+                                    iconName,
                                     leftIconString,
                                     subtitle,
                                     title,
@@ -167,9 +262,19 @@ class SensorFilesPage extends Component {
                                                     <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{leftIconString}</Text>
                                                 </View>
                                             }
-                                            subtitle={subtitle}
-                                            subtitleStyle={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingMed,}}
-                                            subtitleProps={{allowFontScaling: false, numberOfLines: 1,}}
+                                            subtitle={
+                                                <View style={{alignItems: 'center', flexDirection: 'row', paddingLeft: AppSizes.paddingMed,}}>
+                                                    { iconName &&
+                                                        <TabIcon
+                                                            color={AppColors.zeplin.slateXLight}
+                                                            containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                                            icon={iconName}
+                                                            size={AppFonts.scaleFont(15)}
+                                                        />
+                                                    }
+                                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{subtitle}</Text>
+                                                </View>
+                                            }
                                             title={title}
                                             titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                                             titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
@@ -181,16 +286,16 @@ class SensorFilesPage extends Component {
                         </ScrollView>
                         :
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                            <Text style={{textAlign: 'center',}}>{'NO WORKOUTS YET!'}</Text> // TODO: STYLE ME!
+                            <Text oswaldRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(33), textAlign: 'center',}}>{'NO WORKOUTS YET!'}</Text>
                         </View>
                     }
                 </View>
                 <Text
                     onPress={() => Actions.sensorFilesPage({ pageStep: 'session', })}
                     robotoMedium
-                    style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}
+                    style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}
                 >
-                    {'Learn how to upload data'}
+                    {'Remind me how to update data'}
                 </Text>
             </View>
         );

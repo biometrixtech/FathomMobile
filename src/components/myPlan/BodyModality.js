@@ -3,6 +3,7 @@
  *
     <BodyModality
         handleBodyPartClick={handleBodyPartClick}
+        markStartedRecovery={markStartedRecovery}
         modality={modality}
         patchBodyActiveRecovery={patchBodyActiveRecovery}
         plan={plan}
@@ -91,6 +92,9 @@ class BodyModality extends Component {
     }
 
     _toggleTimer = time => {
+        const { modality, markStartedRecovery, } = this.props;
+        let updatedModality = modality === 'cwi' ? 'cold_water_immersion' : modality;
+        markStartedRecovery(updatedModality);
         this.setState(
             { showInstructions: false, },
             () => {
@@ -470,7 +474,7 @@ class BodyModality extends Component {
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Never use heat where swelling is involved because swelling is caused by bleeding in the tissue, and heat just draws more blood to the area.'}</Text>
                                     </View>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don\'t use cold or heat packs:'}</Text>
                                     <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
@@ -515,9 +519,9 @@ class BodyModality extends Component {
                                         </View>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingLrg,}}>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Don’t use ice packs on the left shoulder if you have a heart condition, and don’t use ice packs around the front or side of the neck.'}</Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Don\'t use ice packs on the left shoulder if you have a heart condition, and don\'t use ice packs around the front or side of the neck.'}</Text>
                                         </View>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don’t use cold or heat packs:'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), paddingBottom: AppSizes.paddingSml,}}>{'Don\'t use cold or heat packs:'}</Text>
                                         <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'\u2022'}</Text>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), paddingLeft: AppSizes.paddingXSml,}}>{'Over areas of skin that are in poor condition.'}</Text>
@@ -577,6 +581,7 @@ class BodyModality extends Component {
 
 BodyModality.propTypes = {
     handleBodyPartClick:     PropTypes.func.isRequired,
+    markStartedRecovery:     PropTypes.func.isRequired,
     modality:                PropTypes.string.isRequired,
     patchBodyActiveRecovery: PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,

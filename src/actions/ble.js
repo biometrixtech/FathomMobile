@@ -691,9 +691,9 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
             let readConnectDataArray = [commands.READ_WIFI_CONNECT, convertHex('0x00')];
             // check if ssid & password are out of scope of ble
             if(ssidDataArray && (ssidDataArray.length === 0 || ssidDataArray.length > 32)) {
-                return reject('Your ssid is too long. Please select a different network or change your password to be < 32 characters.');
+                return reject('This network name is longer than we can support. Please select a different network or change your password to be <32 characters.');
             } else if(passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
-                return reject('Your password is too long. Please select a different network or change your password to be < 32 characters.');
+                return reject('This password is longer than we can support. Please select a different network or change your password to be <32 characters.');
             }
             // checks done, now update sensor
             return BleManager.disconnect(sensorId)
@@ -737,7 +737,7 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
                 .then(peripheralInfo => write(peripheralInfo.id, readConnectDataArray, true)) // 5. write to check if connection was successful (6s later)
                 .then(res => {
                     if(res[4] === 0) {
-                        return reject('Your kit was not able to connect to wifi. Your stored password may not be correct.');
+                        return reject('Your Kit was not able to connect to wifi. Your stored password may not be correct.');
                     }
                     return resolve(
                         dispatch({
@@ -840,7 +840,7 @@ const getSensorFiles = (userObj, days = 14) => {
     let payload = {};
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     payload.timezone = userObj.timezone;
-    payload.days = 90;//days; // TODO: REMOVE ME
+    payload.days = 90;//days; // TODO: 3SENSOR REMOVE ME
     return dispatch =>  new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post(false, payload)
             .then(response => {

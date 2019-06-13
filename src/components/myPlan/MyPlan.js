@@ -212,11 +212,26 @@ const MyPlanNavBar = ({
     expandNotifications,
     onLeft,
     onRight,
+    user,
 }) => (
     <View style={{backgroundColor: AppColors.white,}}>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
         <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center',}} />
+            { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
+                <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => Actions.sensorFiles()}
+                    style={{flex: 1, justifyContent: 'center', marginLeft: AppSizes.paddingSml, paddingLeft: AppSizes.paddingSml,}}
+                >
+                    <Image
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/sensor/sensor_slate.png')}
+                        style={{height: 20, width: 20,}}
+                    />
+                </TouchableOpacity>
+                :
+                <View style={{flex: 1, justifyContent: 'center',}} />
+            }
             <Image
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
@@ -883,6 +898,7 @@ class MyPlan extends Component {
                     handleReadInsight={index => handleReadInsight(dailyPlanObj, index)}
                     onLeft={() => Actions.settings()}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
+                    user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />
 
                 <Placeholder

@@ -7,12 +7,14 @@ import { plan as PlanActions, } from '../../actions';
 const BodyModality = ({
     Layout,
     handleBodyPartClick,
+    markStartedRecovery,
     modality,
     patchBodyActiveRecovery,
     plan,
 }) => (
     <Layout
         handleBodyPartClick={handleBodyPartClick}
+        markStartedRecovery={markStartedRecovery}
         modality={modality}
         patchBodyActiveRecovery={patchBodyActiveRecovery}
         plan={plan}
@@ -21,6 +23,7 @@ const BodyModality = ({
 
 BodyModality.propTypes = {
     handleBodyPartClick:     PropTypes.func.isRequired,
+    markStartedRecovery:     PropTypes.func.isRequired,
     modality:                PropTypes.string.isRequired,
     patchBodyActiveRecovery: PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,
@@ -35,6 +38,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = {
     handleBodyPartClick:     PlanActions.handleBodyPartClick,
+    markStartedRecovery:     PlanActions.markStartedRecovery,
     patchBodyActiveRecovery: PlanActions.patchBodyActiveRecovery,
 };
 

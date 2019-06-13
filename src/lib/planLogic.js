@@ -738,14 +738,12 @@ const PlanLogic = {
         let isValid = false;
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
-            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0 || newSoreBodyParts.length === 0) ?
                 2
-                : isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
-                    3
-                    : isHKNextStep === 'add_session' ?
-                        1
-                        :
-                        1;
+                : isHKNextStep === 'add_session' ?
+                    1
+                    :
+                    1;
             isValid = isHealthKitValid;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = (pageState.pageIndex + 1);

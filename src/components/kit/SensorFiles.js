@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { BackHandler, Image, Platform, StatusBar, TouchableOpacity, View, } from 'react-native';
+import { Alert, BackHandler, Image, Platform, StatusBar, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -21,10 +21,10 @@ const ICON_SIZE = 24;
 const TopNavBar = () => (
     <View>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{backgroundColor: AppColors.white, flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight, paddingVertical: AppSizes.paddingSml,}}>
+        <View style={{backgroundColor: AppColors.white, flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight, paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingSml,}}>
             <View style={{flex: 1, justifyContent: 'center',}}>
                 <TabIcon
-                    color={AppColors.zeplin.slate}
+                    color={AppColors.zeplin.slateLight}
                     icon={'chevron-left'}
                     onPress={() => Actions.pop()}
                     size={40}
@@ -67,6 +67,24 @@ class SensorFiles extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
+    _handleWifiClicked = sensorNetwork => {
+        Alert.alert(
+            '',
+            `"${sensorNetwork}"\nis currently your preferred wifi.\n\nYou must be in range of your new network to update your wifi preferences.`,
+            [
+                {
+                    text:  'I\'ll do it later',
+                    style: 'cancel',
+                },
+                {
+                    text:    'Serach again', // TODO: 3SENSOR IS THIS CORRECT?
+                    onPress: () => console.log('HIII'),
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     render = () => {
         const { user, } = this.props;
         const { isTooltipOpen, } = this.state;
@@ -76,13 +94,14 @@ class SensorFiles extends Component {
             batteryTextProps,
             batteryTextString,
             lastSyncString,
+            sensorNetwork,
         } = SensorLogic.handleSensorFileRenderLogic(sensorData);
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}>
                 <View>
                     <TopNavBar />
-                    <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${_.toUpper(user.personal_data.first_name)}\'S PRO KIT`}</Text>
-                    <View style={{flexDirection: 'row', paddingVertical: AppSizes.padding,}}>
+                    <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${_.toUpper(user.personal_data.first_name)}\'S FATHOM PRO KIT`}</Text>
+                    <View style={{flexDirection: 'row', paddingVertical: (AppSizes.paddingLrg + AppSizes.paddingXSml),}}>
                         <View style={{flex: 1,}} />
                         <TouchableOpacity
                             activeOpacity={1}
@@ -98,7 +117,7 @@ class SensorFiles extends Component {
                                     </View>
                                 </View>
                                 <TabIcon
-                                    color={AppColors.zeplin.slate}
+                                    color={AppColors.zeplin.slateLight}
                                     containerStyle={[{alignItems: 'center', justifyContent: 'center',}]}
                                     icon={'chevron-right'}
                                     size={ICON_SIZE}
@@ -115,7 +134,7 @@ class SensorFiles extends Component {
                                 content={
                                     <View style={{padding: AppSizes.paddingMed,}}>
                                         <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingMed,}}>{'Your firmware needs an update!'}</Text>
-                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'To update, make sure your kit is connected to wifi and charging overnight. The newest update will auto-install.'}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(18),}}>{'To update, plug your Kit in to charge overnight and make sure it\'s connected to wifi. The newest update will auto-install.'}</Text>
                                         <TouchableOpacity
                                             onPress={() => this.setState({ isTooltipOpen: false, })}
                                             style={{alignSelf: 'flex-end',}}
@@ -168,9 +187,9 @@ class SensorFiles extends Component {
                             name:      'wifi',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => console.log('HI')}
+                        onPress={() => this._handleWifiClicked(sensorNetwork)}
                         rightIcon={{
-                            color: AppColors.zeplin.slate,
+                            color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
@@ -189,11 +208,11 @@ class SensorFiles extends Component {
                         }}
                         onPress={() => Actions.sensorFilesPage({ pageStep: 'sessions', })}
                         rightIcon={{
-                            color: AppColors.zeplin.slate,
+                            color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'SENSOR SESSIONS'}
+                        title={'RECORDED WORKOUTS'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
@@ -211,11 +230,11 @@ class SensorFiles extends Component {
                         }}
                         onPress={() => Actions.sensorFilesPage({ pageStep: 'placement', })}
                         rightIcon={{
-                            color: AppColors.zeplin.slate,
+                            color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'PLACE SENSORS'}
+                        title={'WEAR SENSORS'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
@@ -230,11 +249,11 @@ class SensorFiles extends Component {
                         }}
                         onPress={() => Actions.sensorFilesPage({ pageStep: 'calibrate', })}
                         rightIcon={{
-                            color: AppColors.zeplin.slate,
+                            color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'CALIBRATE SENSORS'}
+                        title={'CALIBRATE & START WORKOUT'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
@@ -249,11 +268,11 @@ class SensorFiles extends Component {
                         }}
                         onPress={() => Actions.sensorFilesPage({ pageStep: 'end', })}
                         rightIcon={{
-                            color: AppColors.zeplin.slate,
+                            color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'END TRAINING'}
+                        title={'END WORKOUT'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />

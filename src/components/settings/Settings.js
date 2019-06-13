@@ -380,7 +380,7 @@ class Settings extends Component {
                                     style={{transform: [{rotate: spin}],}}
                                 >
                                     <TabIcon
-                                        color={AppColors.zeplin.slate}
+                                        color={AppColors.zeplin.splash}
                                         icon={'loading'}
                                         iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
                                         size={ICON_SIZE}
@@ -402,7 +402,7 @@ class Settings extends Component {
                                 size:  ICON_SIZE,
                             }}
                             title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                            titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
@@ -410,7 +410,7 @@ class Settings extends Component {
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
-                        color:     AppColors.zeplin.slate,
+                        color:     AppColors.zeplin.splash,
                         iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                         name:      'account-group',
                         size:      ICON_SIZE,
@@ -423,7 +423,7 @@ class Settings extends Component {
                         size:  ICON_SIZE,
                     }}
                     title={'JOIN A TEAM'}
-                    titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 {
@@ -445,7 +445,7 @@ class Settings extends Component {
                             <ListItem
                                 containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                                 leftIcon={{
-                                    color:     AppColors.zeplin.slate,
+                                    color:     AppColors.zeplin.splash,
                                     iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                                     name:      'lock-reset',
                                     size:      ICON_SIZE,
@@ -458,7 +458,7 @@ class Settings extends Component {
                                     size:  ICON_SIZE,
                                 }}
                                 title={'RESET ACCOUNT DATA'}
-                                titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                                titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                             />
                             <Spacer isDivider />
                         </View>
@@ -470,7 +470,7 @@ class Settings extends Component {
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                             leftIcon={{
-                                color:     AppColors.zeplin.slate,
+                                color:     AppColors.zeplin.splash,
                                 iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                                 name:      'heart',
                                 size:      ICON_SIZE,
@@ -485,7 +485,7 @@ class Settings extends Component {
                                 />
                             }
                             title={'APPLE HEALTH'}
-                            titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
@@ -497,7 +497,7 @@ class Settings extends Component {
                             <Image
                                 resizeMode={'contain'}
                                 source={require('../../../assets/images/sensor/sensor_slate.png')}
-                                style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, width: 20,}}
+                                style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
                             />
                         </View>
                     }
@@ -507,14 +507,14 @@ class Settings extends Component {
                         name:  'chevron-right',
                         size:  ICON_SIZE,
                     }}
-                    title={has3SensorConnected ? 'MANAGE SENSORS' : 'CONNECT SENSORS'}
-                    titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    title={has3SensorConnected ? 'MANAGE FATHOM PRO KIT' : 'SET UP FATHOM PRO KIT'}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     leftIcon={{
-                        color:     AppColors.zeplin.slate,
+                        color:     AppColors.zeplin.splash,
                         iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                         name:      'gavel',
                         size:      ICON_SIZE,
@@ -526,14 +526,14 @@ class Settings extends Component {
                         size:  ICON_SIZE,
                     }}
                     title={'TERMS & PRIVACY'}
-                    titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     disabled={this.state.isLogoutBtnDisabled}
                     leftIcon={{
-                        color:     AppColors.zeplin.slate,
+                        color:     AppColors.zeplin.splash,
                         iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                         name:      'power-settings-new',
                         size:      ICON_SIZE,
@@ -558,7 +558,7 @@ class Settings extends Component {
                         size:  ICON_SIZE,
                     }}
                     title={'LOGOUT'}
-                    titleStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <Toast
