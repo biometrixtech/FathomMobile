@@ -30,13 +30,13 @@ const SensorLogic = {
     // TODO: UNIT TEST ME
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
-        let hoursAgo = moment().diff(sensorData.accessory.last_sync_date, 'hours');
-        let daysAgo = moment().diff(sensorData.accessory.last_sync_date, 'days');
+        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date, 'hours') : 0;
+        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date, 'days') : 0;
         let lastSyncTime = hoursAgo > 48 ? daysAgo : hoursAgo;
         let lastSyncExtraString = hoursAgo > 48 ? daysAgo === 1 || daysAgo === 0 ? 'day' : 'days' : hoursAgo === 1 || hoursAgo === 0 ? 'hr' : 'hrs';
         let lastSyncString = `${lastSyncTime} ${lastSyncExtraString} ago`;
         // battery logic
-        let batteryLevel = _.round(sensorData.accessory.battery_level * 100);
+        let batteryLevel = sensorData && sensorData.accessory && sensorData.accessory.battery_level ? _.round(sensorData.accessory.battery_level * 100) : 0;
         let batteryIconProps = { color: AppColors.zeplin.slate, icon: 'battery', iconStyle: [], size: 20, type: 'material-community', };
         let batteryTextString = 'CHARGED';
         let batteryTextProps = { color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(17), marginLeft: AppSizes.paddingXSml, opacity: 1, };

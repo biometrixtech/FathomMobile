@@ -126,7 +126,7 @@ class SensorFiles extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                             activeOpacity={1}
-                            onPress={() => sensorData.accessory.firmware_up_to_date ? null : this.setState({ isTooltipOpen: true, })}
+                            onPress={() => sensorData && sensorData.accessory && sensorData.accessory.firmware_up_to_date ? null : this.setState({ isTooltipOpen: true, })}
                             style={{alignItems: 'center', flex: 4, justifyContent: 'center',}}
                         >
                             <Tooltip
@@ -155,8 +155,8 @@ class SensorFiles extends Component {
                                             source={require('../../../assets/images/sensor/sensor_slate.png')}
                                             style={{height: 20, marginRight: AppSizes.paddingXSml, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, width: 20,}}
                                         />
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), marginRight: AppSizes.paddingSml,}}>{sensorData.accessory.firmware_version}</Text>
-                                        { sensorData.accessory.firmware_up_to_date ?
+                                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), marginRight: AppSizes.paddingSml,}}>{sensorData && sensorData.accessory && sensorData.accessory.firmware_version ? sensorData.accessory.firmware_version : ''}</Text>
+                                        { sensorData && sensorData.accessory && sensorData.accessory.firmware_up_to_date ?
                                             <TabIcon
                                                 color={AppColors.zeplin.success}
                                                 icon={'check'}

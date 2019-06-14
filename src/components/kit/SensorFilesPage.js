@@ -7,6 +7,7 @@ import {
     Alert,
     Animated,
     BackHandler,
+    Keyboard,
     NativeEventEmitter,
     NativeModules,
     Platform,
@@ -21,12 +22,16 @@ import { Actions, } from 'react-native-router-flux';
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import BleManager from 'react-native-ble-manager';
+import DialogInput from 'react-native-dialog-input';
+import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
 import { Battery, Calibration, Connect, Placement, Session, } from './ConnectScreens';
+import { Loading, } from '../general';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
+import { store, } from '../../store';
 
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
@@ -53,15 +58,23 @@ const TopNavBar = () => (
 
 class SensorFilesPage extends Component {
     static componentName = 'SensorFilesPage';
+
     static propTypes = {
+        assignKitIndividual:       PropTypes.func.isRequired,
         bluetooth:                 PropTypes.shape({}).isRequired,
         deviceFound:               PropTypes.func.isRequired,
+        getBLEMacAddress:          PropTypes.func.isRequired,
         getScannedWifiConnections: PropTypes.func.isRequired,
+        getSensorFiles:            PropTypes.func.isRequired,
         getSingleWifiConnection:   PropTypes.func.isRequired,
         pageStep:                  PropTypes.string.isRequired,
+        startDisconnection:        PropTypes.func.isRequired,
         startScan:                 PropTypes.func.isRequired,
+        stopConnect:               PropTypes.func.isRequired,
         stopScan:                  PropTypes.func.isRequired,
+        updateUser:                PropTypes.func.isRequired,
         user:                      PropTypes.shape({}).isRequired,
+        writeWifiDetailsToSensor:  PropTypes.func.isRequired,
     }
 
     static defaultProps = {}
@@ -69,11 +82,14 @@ class SensorFilesPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            availableNetworks: [],
-            bounceValue:       new Animated.Value(AppSizes.screen.height),
-            isVideoMuted:      false,
-            isWifiScanDone:    false,
-            pageIndex:         0,
+            availableNetworks:     [],
+            bounceValue:           new Animated.Value(AppSizes.screen.height),
+            currentWifiConnection: false,
+            isDialogVisible:       false,
+            isVideoMuted:          false,
+            isWifiScanDone:        false,
+            loading:               false,
+            pageIndex:             0,
         };
         this._pages = {};
         this._timer = null;
@@ -160,6 +176,56 @@ class SensorFilesPage extends Component {
             });
     }
 
+    _connect = data => {
+        const { bluetooth, getBLEMacAddress, stopConnect, user, } = this.props;
+        return getBLEMacAddress(data.id)
+            .then(() => this._toggleAlertNotification(data.id, user.id))
+            .catch(err => {
+                if (bluetooth.accessoryData && !bluetooth.accessoryData.sensor_pid) {
+                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+                }
+                return stopConnect();
+            });
+    }
+
+    _connectSensorToWifi = () => {
+        Keyboard.dismiss();
+        const { assignKitIndividual, bluetooth, getSensorFiles, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
+        const { currentWifiConnection, } = this.state;
+        let sensorId = bluetooth.accessoryData.sensor_pid;
+        let ssid = currentWifiConnection.ssid;
+        let password = currentWifiConnection.password;
+        let securityByte = currentWifiConnection.security.toByte;
+        return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
+            .then(res => {
+                // setup variables
+                let newUserPayloadObj = {};
+                newUserPayloadObj.sensor_data = {};
+                newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserPayloadObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+                newUserPayloadObj.sensor_data.system_type = '3-sensor';
+                let newUserObj = _.cloneDeep(user);
+                newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+                newUserObj.sensor_data.system_type = '3-sensor';
+                // update reducer as API might take too long to return a value
+                store.dispatch({
+                    type: DispatchActions.USER_REPLACE,
+                    data: newUserObj
+                });
+                // send commands
+                return updateUser(newUserPayloadObj, user.id) // 1. PATCH user specific endpoint
+                    .then(() => getSensorFiles(newUserObj))
+                    .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
+                    .then(() => startDisconnection(sensorId, true)) // 3. disconnect from sensor
+                    .then(() => this.setState({ loading: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)} )) // 4. route to next page
+                    .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+            })
+            .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+    }
+
     _handleAlertHelper = (title = '', message, isCancelable) => {
         Actions.pop();
         if(isCancelable) {
@@ -169,9 +235,28 @@ class SensorFilesPage extends Component {
         }
     }
 
+    _handleAlertPress = () => {
+        Alert.alert(
+            '',
+            'Oops! Your Sensors need to finish syncing with the Smart Charger.\n\nPlease return all of the Sensors to the Charger, firmly close the lid, & wait for the LEDs to finish breathing green.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     _handleBLEPair = () => {
         const { startScan, } = this.props;
         startScan(60);
+    }
+
+    _handleNetworkPress = network => {
+        _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
+        this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
     }
 
     _handleNotInRange = () => {
@@ -181,6 +266,30 @@ class SensorFilesPage extends Component {
             [
                 {
                     text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _handleWifiNotInRange = () => {
+        const { user, }= this.props;
+        Alert.alert(
+            '',
+            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
+            [
+                {
+                    text:    'I\'ll do it later',
+                    onPress: () => {
+                        Actions.pop();
+                        if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
+                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                        }
+                    },
+                },
+                {
+                    text:  'Configure Now',
                     style: 'cancel',
                 },
             ],
@@ -245,9 +354,48 @@ class SensorFilesPage extends Component {
         this.setState({ pageIndex: nextPageIndex, });
     }
 
+    _submitPasswordInput = inputText => {
+        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+        newCurrentWifiConnection.password = inputText;
+        this.setState(
+            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, },
+            () => {
+                this._timer = _.delay(() => {
+                    this.setState(
+                        { loading: true, },
+                        () => this._connectSensorToWifi(),
+                    );
+                }, 500);
+            },
+        );
+    }
+
+    _toggleAlertNotification = (sensorId, userId) => {
+        const { stopConnect, } = this.props;
+        Alert.alert(
+            '',
+            'Did the LED turn green?',
+            [
+                {
+                    text:    'No',
+                    onPress: () => {
+                        this._renderNextPage(this.state.pageIndex - 1);
+                        return stopConnect();
+                    },
+                    style: 'cancel',
+                },
+                {
+                    text:    'Yes',
+                    onPress: () => this._renderNextPage(),
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     render = () => {
         const { pageStep, user, } = this.props;
-        const { availableNetworks, bounceValue, isVideoMuted, isWifiScanDone, pageIndex, } = this.state;
+        const { availableNetworks, bounceValue, currentWifiConnection, isDialogVisible, isVideoMuted, isWifiScanDone, pageIndex, } = this.state;
         if(pageStep !== 'sessions') {
             return(
                 <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -335,6 +483,7 @@ class SensorFilesPage extends Component {
                                     />
                                     <Placement
                                         currentPage={pageIndex === 1}
+                                        handleAlertPress={() => this._handleAlertPress()}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
                                         page={2}
@@ -414,11 +563,36 @@ class SensorFilesPage extends Component {
                                         : pageStep === 'session' ?
                                             <Connect
                                                 currentPage={true}
+                                                handleNotInRange={() => this._handleNotInRange()}
                                                 page={5}
                                                 showTopNavStep={false}
                                             />
                                             :
                                             <View />
+                    }
+
+                    <Toast
+                        position={'bottom'}
+                        ref={'toast'}
+                    />
+
+                    <DialogInput
+                        closeDialog={() => this.setState({ currentWifiConnection: false, isDialogVisible: false, })}
+                        dialogStyle={{marginBottom: 100,}}
+                        isDialogVisible={isDialogVisible}
+                        message={`"${currentWifiConnection ? currentWifiConnection.ssid : ''}"`}
+                        modalStyle={{backdropColor: AppColors.zeplin.darkNavy, backdropOpacity: 0.8,}}
+                        submitInput={inputText => this._submitPasswordInput(inputText)}
+                        submitText={'Save'}
+                        title={'Connect to Network'}
+                    />
+
+                    { this.state.loading ?
+                        <Loading
+                            text={'SAVING...'}
+                        />
+                        :
+                        null
                     }
                 </View>
             );
@@ -430,7 +604,7 @@ class SensorFilesPage extends Component {
                     <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'RECORDED WORKOUTS'}</Text>
                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.padding, marginVertical: AppSizes.padding, textAlign: 'center',}}>{'Here you\'ll find the upload & processing status of all workouts tracked with the Fathom PRO Kit!\n\nIf you don\'t see a workout, make sure your system is charged & in a paired wifi network to start upload.'}</Text>
                     <Spacer isDivider />
-                    { user.sensor_data.sessions.length > 0 ?
+                    { user && user.sensor_data && user.sensor_data.sessions.length > 0 ?
                         <ScrollView contentContainerStyle={{flexGrow: 1,}}>
                             {_.map(user.sensor_data.sessions, (session, key) => {
                                 const {

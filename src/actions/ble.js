@@ -840,7 +840,6 @@ const getSensorFiles = (userObj, days = 14) => {
     let payload = {};
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     payload.timezone = userObj.timezone;
-    payload.days = 90;//days; // TODO: 3SENSOR REMOVE ME
     return dispatch =>  new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post(false, payload)
             .then(response => {
