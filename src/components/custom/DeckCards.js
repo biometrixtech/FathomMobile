@@ -265,7 +265,7 @@ class DeckCards extends Component {
                                     buttonStyle={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.padding,}}
                                     containerStyle={{marginRight: AppSizes.paddingSml,}}
                                     onPress={() => this.setState({ areAllSwiped: false, currentCardIndex: 0, })}
-                                    title={'Repeat?'}
+                                    title={'Repeat'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                                 />
                                 <Button

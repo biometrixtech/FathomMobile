@@ -242,13 +242,19 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     _handleWifiNotInRange = () => {
+        const { user, }= this.props;
         Alert.alert(
             '',
             'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
             [
                 {
                     text:    'I\'ll do it later',
-                    onPress: () => Actions.pop(),
+                    onPress: () => {
+                        Actions.pop();
+                        if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
+                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                        }
+                    },
                 },
                 {
                     text:  'Configure Now',
@@ -289,16 +295,18 @@ class BluetoothConnect3Sensor extends Component {
             this._updateUserCheckpoint(currentPage);
         } else if(currentPage === 17) { // connect to accessory
             this._handleBLEPair();
-            // TODO: 3SENSOR FIX ME BELOW
-            // Animated.spring(
-            //     this.state.bounceValue,
-            //     {
-            //         friction: 8,
-            //         tension:  2,
-            //         toValue:  0,
-            //         velocity: 3,
-            //     }
-            // ).start();
+            Animated.sequence([
+	              Animated.delay(750),
+                Animated.spring(
+                    this.state.bounceValue,
+                    {
+                        friction: 8,
+                        tension:  2,
+                        toValue:  0,
+                        velocity: 3,
+                    }
+                )
+            ]).start();
         } else if(currentPage === 18) { // wifi list, start scan
             this._timer = _.delay(() => this._handleWifiScan(), 1000);
         }

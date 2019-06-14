@@ -6,6 +6,7 @@ import { ActivityIndicator, Animated, Image, ImageBackground, Platform, ScrollVi
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
 import Video from 'react-native-video';
 
 // Consts and Libs
@@ -63,7 +64,7 @@ const CVP = ({ nextBtn, }) => (
         <View style={{alignItems: 'center', marginHorizontal: ((AppSizes.screen.width - AppSizes.screen.widthFourFifths) / 2),}}>
             <Image
                 resizeMode={'contain'}
-                source={require('../../../assets/images/sensor/CVP.png')}
+                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/CVP.png'}}
                 style={{alignSelf: 'center', height: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)), width: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)),}}
             />
             <Text robotoLight style={[styles.subtitleStyle,]}>
@@ -211,7 +212,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
     }
     return (
         <ImageBackground
-            source={require('../../../assets/images/sensor/start_tutorial.png')}
+            source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_tutorial.png'}}
             style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
         >
             <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 1 : false} />
@@ -287,7 +288,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
     if(page === 0) {
         return (
             <ImageBackground
-                source={require('../../../assets/images/sensor/start_calibration.png')}
+                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_calibration.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 2 : false} />
@@ -406,7 +407,7 @@ const Session = ({ currentPage, onBack, onClose, nextBtn, page, showTopNavStep =
     if(page === 0) {
         return (
             <ImageBackground
-                source={require('../../../assets/images/sensor/start_training.png')}
+                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_training.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : true} />
@@ -482,7 +483,7 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             </View>
             <Image
                 resizeMode={'contain'}
-                source={require('../../../assets/images/sensor/battery.png')}
+                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/battery.png'}}
                 style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
             />
             <View style={[nextBtn ? {} : {paddingBottom: AppSizes.paddingLrg,}, {paddingHorizontal: AppSizes.paddingLrg,}]}>
@@ -515,25 +516,36 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ onBack, nextBtn, showTopNavStep = true, }) => (
+const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
         <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
             <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingVertical: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
         </View>
-        <Image
-            resizeMode={'contain'}
-            source={require('../../../assets/images/sensor/end_tutorial.png')}
-            style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
-        />
-        <Button
-            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-            containerStyle={{flex: 1, justifyContent: 'flex-end', width: '100%',}}
-            onPress={() => nextBtn()}
-            title={'End Tutorial'}
-            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-        />
+        <View style={{flex: 1,}}>
+            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', overflow: 'hidden', width: AppSizes.screen.widthFourFifths,}}>
+                <Image
+                    resizeMode={'stretch'}
+                    source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/end_tutorial.png'}}
+                    style={{height: '100%', width: '100%',}}
+                />
+                <LottieView
+                    autoPlay={currentPage}
+                    loop={true}
+                    progress={1}
+                    source={require('../../../assets/animation/emphasis-yellow.json')}
+                    style={{height: AppSizes.screen.widthThird, position: 'absolute', width: AppSizes.screen.widthThird,}}
+                />
+            </View>
+            <Button
+                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                containerStyle={{justifyContent: 'flex-end', width: '100%',}}
+                onPress={() => nextBtn()}
+                title={'End Tutorial'}
+                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+            />
+        </View>
     </View>
 );
 
@@ -577,31 +589,24 @@ const Connect = ({
                         null
                 }
                 { (page === 2 && content.animatedImage) &&
-                    <View style={{flex: 1,}}>
-                        <Image
-                            resizeMode={'contain'}
-                            source={content.animatedImage}
-                            style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
-                        />
-                    </View>
-                }
-                {/* (page === 2 && content.animatedImage) &&
                     <Animated.View
-                        style={[{position: "absolute",
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            backgroundColor: "red",
-                            // height: 100,
-                            transform: [{translateY: bounceValue}]}]}
+                        style={[{
+                            alignItems: 'center',
+                            bottom:     0,
+                            left:       0,
+                            position:   'absolute',
+                            right:      0,
+                            transform:  [{translateY: bounceValue}],
+                            width:      AppSizes.screen.width,
+                        }]}
                     >
                         <Image
-                            resizeMode={'contain'}
+                            resizeMode={'stretch'}
                             source={content.animatedImage}
-                            style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
+                            style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
                         />
                     </Animated.View>
-                */}
+                }
                 { page !== 3 &&
                     <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
                         <View style={{flex: 1, justifyContent: 'space-between',}}>
@@ -676,7 +681,7 @@ const Connect = ({
     }
     return (
         <ImageBackground
-            source={require('../../../assets/images/sensor/start_owner.png')}
+            source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_owner.png'}}
             style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
         >
             <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 4 : false} />

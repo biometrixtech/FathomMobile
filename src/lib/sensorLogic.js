@@ -177,14 +177,14 @@ const SensorLogic = {
             },
             {
                 buttonText: 'Next',
-                image:      require('../../assets/images/sensor/sensor_prep.png'),
+                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/sensor_prep.png'},
                 subtitle:   <Text robotoLight style={[styles.subtitleStyle,]}>{'Open lid, remove Sensors. Sensor LEDs will turn green.'}</Text>,
                 title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'REMOVE THE SENSORS'}</Text>,
                 video:      false,
             },
             {
                 buttonText: 'Next',
-                image:      require('../../assets/images/sensor/adhesive_prep.png'),
+                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/adhesive_prep.png'},
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Grab a strip of '}
@@ -214,7 +214,7 @@ const SensorLogic = {
             },
             {
                 buttonText: 'Next',
-                image:      require('../../assets/images/sensor/f_sensor_placement.png'),
+                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/f_sensor_placement.png'},
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Peel away the tan liner. Stick Ankle Sensors above & behind each outer ankle.'}
@@ -246,7 +246,7 @@ const SensorLogic = {
             },
             {
                 buttonText: 'Finish Placement!',
-                image:      require('../../assets/images/sensor/h_sensor_placement.png'),
+                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/h_sensor_placement.png'},
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Peel away the tan liner. Stick Hip Sensor just above the tailbone in the center of your spine.'}</Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(Your waistband should cover the sensor)'}</Text>
@@ -292,7 +292,7 @@ const SensorLogic = {
             },
             {
                 buttonText: 'Next',
-                image:      require('../../assets/images/sensor/return_sensors.png'),
+                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/return_sensors.png'},
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Remove Adhesives & return Sensors to the Smart Charger.\n'}
@@ -346,9 +346,9 @@ const SensorLogic = {
                 video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
             },
             {
-                animatedImage: require('../../assets/images/sensor/bluetooth_connect_phone.png'),
+                animatedImage: {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/bluetooth_connect_phone.png'},
                 buttonText:    false,
-                image:         require('../../assets/images/sensor/bluetooth_connect_kit.png'),
+                image:         {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/bluetooth_connect_kit.png'},
                 subtitle:      false,
                 title:         <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING THE PHONE NEAR YOUR KIT TO PAIR'}</Text>,
                 video:         false,

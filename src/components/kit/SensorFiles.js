@@ -70,15 +70,15 @@ class SensorFiles extends Component {
     _handleWifiClicked = sensorNetwork => {
         Alert.alert(
             '',
-            `"${sensorNetwork}"\nis currently your preferred wifi.\n\nYou must be in range of your new network to update your wifi preferences.`,
+            `"${sensorNetwork}"\nis currently your preferred wifi.\n\nTo change your preferred network, you must be in range of the new network.`,
             [
                 {
-                    text:  'I\'ll do it later',
+                    text:  'Cancel',
                     style: 'cancel',
                 },
                 {
-                    text:    'Serach again', // TODO: 3SENSOR IS THIS CORRECT?
-                    onPress: () => console.log('HIII'),
+                    text:    'Continue',
+                    onPress: () => Actions.sensorFilesPage({ pageStep: 'connect', }),
                 },
             ],
             { cancelable: false, }
