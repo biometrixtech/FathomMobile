@@ -1989,7 +1989,7 @@ it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Vali
 
 it('Post Session Survey Next Page & Validation Logic - Page 0 (HealthKit) - Valid', () => {
     let isFormValidItems = {};
-    let expectedResult = {isValid: true, pageNum: 3,};
+    let expectedResult = {isValid: true, pageNum: 2,};
     expect(PlanLogic.handlePostSessionSurveyNextPage({}, 0, isFormValidItems, [], false, true, 'continue')).toEqual(expectedResult);
 });
 
