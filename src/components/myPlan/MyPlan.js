@@ -232,36 +232,31 @@ const MyPlanNavBar = ({
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
             />
-            { cards.length > 0 ?
-                <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
-                    <TabIcon
-                        icon={'notifications'}
-                        iconStyle={[{color: AppColors.zeplin.slate,}]}
-                        onPress={() => onRight()}
-                        size={26}
-                    />
-                    {_.filter(cards, ['read', false]).length > 0 &&
-                        <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
-                        </TouchableOpacity>
-                    }
-                </View>
-                :
-                <View style={{flex: 1, justifyContent: 'center',}} />
-            }
-        </View>
-        { cards.length > 0 &&
-            <Collapsible collapsed={!expandNotifications}>
-                <DeckCards
-                    cards={cards}
-                    handleReadInsight={index => handleReadInsight(index)}
-                    hideDeck={() => onRight()}
-                    isVisible={expandNotifications}
-                    shrinkNumberOfLines={true}
-                    unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+                <TabIcon
+                    icon={'notifications'}
+                    iconStyle={[{color: AppColors.zeplin.slate,}]}
+                    onPress={() => onRight()}
+                    size={26}
                 />
-            </Collapsible>
-        }
+                {_.filter(cards, ['read', false]).length > 0 &&
+                    <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
+                    </TouchableOpacity>
+                }
+            </View>
+        </View>
+        <Collapsible collapsed={!expandNotifications}>
+            <DeckCards
+                cards={_.concat(cards, {})}
+                handleReadInsight={index => handleReadInsight(index)}
+                hideDeck={() => onRight()}
+                isVisible={expandNotifications}
+                layout={'tinder'}
+                shrinkNumberOfLines={true}
+                unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+            />
+        </Collapsible>
     </View>
 );
 

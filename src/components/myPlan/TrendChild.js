@@ -105,7 +105,7 @@ class TrendChild extends PureComponent {
     _handleDeckCardsSwipe = index => {
         const { insightType, plan, } = this.props;
         const insightTitle = insightType === 0 ? 'stress' : insightType === 1 ? 'response' : 'biomechanics';
-        let newIndex = (index + 1);
+        let newIndex = index;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
@@ -208,12 +208,33 @@ class TrendChild extends PureComponent {
                                 dragEnd={() => this.setState({ isCardSwiping: false, })}
                                 dragStart={() => this.setState({ isCardSwiping: true, })}
                                 handleReadInsight={index => this._handleDeckCardsSwipe(index)}
-                                infinite={true}
+                                infinite={false}
                                 isVisible={true}
                                 shouldNavigate={false}
                                 showDate={false}
+                                showHide={false}
                                 startIndex={currentCardIndex}
                             />
+                            <View style={{alignSelf: 'center',  width: (AppSizes.screen.width * 0.85),}}>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => ((currentCardIndex + 1) === insightDetails.alerts.length && insightDetails.alerts.length > 1) ? this.setState({ currentCardIndex: 0, }) : {}}
+                                    style={{alignItems: 'center', alignSelf: 'flex-end', flexDirection: 'row',}}
+                                >
+                                    { (((currentCardIndex + 1) === insightDetails.alerts.length) && insightDetails.alerts.length > 1) &&
+                                        <TabIcon
+                                            color={AppColors.zeplin.slateLight}
+                                            containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                            icon={'rewind'}
+                                            size={AppFonts.scaleFont(15)}
+                                            type={'material-community'}
+                                        />
+                                    }
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>
+                                        {`${(currentCardIndex + 1)} of ${insightDetails.alerts.length}`}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
 
                         <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>

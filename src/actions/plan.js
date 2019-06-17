@@ -556,6 +556,9 @@ const handleBodyPartClick = (dailyPlan, bodyPartyId, side, modality) => {
   * Handle Read Insight
   */
 const handleReadInsight = (dailyPlan, insightIndex) => {
+    if(!dailyPlan.insights[insightIndex]) {
+        return dispatch => Promise.resolve();
+    }
     let newDailyPlanObj = _.clone(dailyPlan);
     let wasInsightPreviouslyRead = !newDailyPlanObj.insights[insightIndex].read;
     newDailyPlanObj.insights[insightIndex].read = true;

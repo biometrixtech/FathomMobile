@@ -44,7 +44,8 @@ import ActionButton from 'react-native-action-button';
 import LinearGradient from 'react-native-linear-gradient';
 
 // consts
-const helloPageText = 'Let us know how you feel so we can adapt your Recovery Plan to your body. This simple survey shouldn\'t take more than 2-minutes.';
+const helloPageText = 'Take a minute to complete your daily Readiness Survey and we\'ll update your Plan to your body and training.';
+const firstTimeHelloPageText = 'This daily Readiness Survey helps us build the optimal Plan of pre & post training activities for your body & training habits.';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -363,22 +364,34 @@ class ReadinessSurvey extends Component {
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                                     <View />
                                     <View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${userFirstName}!`}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>
+                                            {!user.first_time_experience.includes('rs_begin_page') ?
+                                                'LET\'S CREATE YOUR FIRST ACTIVITIES!'
+                                                :
+                                                `GOOD ${partOfDay}, ${userFirstName}!`
+                                            }
+                                        </Text>
                                         <Spacer size={5} />
-                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>
+                                            {!user.first_time_experience.includes('rs_begin_page') ?
+                                                firstTimeHelloPageText
+                                                :
+                                                helloPageText
+                                            }
+                                        </Text>
                                         <Spacer size={10} />
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                             containerStyle={{alignItems: 'center',}}
-                                            onPress={() => this._renderNextPage(0, isFormValidItems)}
-                                            icon={{
-                                                color: AppColors.white,
-                                                name:  'chevron-right',
-                                                size:  AppFonts.scaleFont(24),
+                                            onPress={() => {
+                                                if(!user.first_time_experience.includes('rs_begin_page')) {
+                                                    handleUpdateFirstTimeExperience('rs_begin_page');
+                                                }
+                                                this._renderNextPage(0, isFormValidItems)
                                             }}
                                             iconRight={true}
                                             title={'Begin'}
-                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '75%',}}
+                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '100%',}}
                                         />
                                     </View>
                                 </View>
