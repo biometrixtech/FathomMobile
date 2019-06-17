@@ -47,6 +47,7 @@ import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
 import Placeholder, { Line, Media, } from 'rn-placeholder';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 import moment from 'moment';
 
 // Consts and Libs
@@ -305,6 +306,7 @@ class MyPlan extends Component {
         this.state = defaultState;
         // set variables for MyPlan
         this._activeTabs = [];
+        this._panel = {};
         this._scrollViewRef = {};
         this._timer = null;
         this.goToPageTimer = null;
@@ -338,6 +340,8 @@ class MyPlan extends Component {
             // scroll to first active activity tab
             this._timer = _.delay(() => this._scrollToFirstActiveActivityTab(), 600);
         }
+        // handle Coach related items
+        this._checkCoachStatus();
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -349,7 +353,7 @@ class MyPlan extends Component {
             isTrainSessionsCompletionModalOpen,
             loading,
         } = this.state;
-        const { healthData, network, notification, plan, } = this.props;
+        const { healthData, network, notification, plan, user, } = this.props;
         AppUtil.getNetworkStatus(prevProps, network, Actions);
         // handle PN
         if(prevProps.notification && prevProps.notification !== notification) {
@@ -395,6 +399,8 @@ class MyPlan extends Component {
             // clear timer
             clearInterval(this._timer);
         }
+        // handle Coach related items
+        this._checkCoachStatus();
     }
 
     componentWillMount = () => {
@@ -412,6 +418,21 @@ class MyPlan extends Component {
         clearInterval(this._timer);
         clearInterval(this.goToPageTimer);
         clearInterval(this.scrollToTimer);
+    }
+
+    _checkCoachStatus = () => {
+        const { plan, user, } = this.props;
+        if(
+            plan.dailyPlan[0] &&
+            plan.dailyPlan[0] &&
+            plan.dailyPlan[0].daily_readiness_survey_completed &&
+            (
+                !user.first_time_experience.includes('plan_coach_1') ||
+                !user.first_time_experience.includes('plan_coach_2')
+            )
+        ) {
+            this._timer = _.delay(() => this._panel.show(), 1000);
+        }
     }
 
     _closePrepareSessionsCompletionModal = () => {
@@ -1144,6 +1165,51 @@ class MyPlan extends Component {
                     :
                     null
                 }
+                <SlidingUpPanel
+                    allowDragging={false}
+                    showBackdrop={false}
+                    ref={ref => {this._panel = ref;}}
+                >
+                    <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
+                        <View style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}>
+                            { !user.first_time_experience.includes('plan_coach_1') ?
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Plan'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingSml,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
+                                </View>
+                                :
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Your Insights'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingSml,}}>{'As you use Fathom, our AI system will look for insights in your data & notify you here!'}</Text>
+                                </View>
+                            }
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>
+                                        {'GOT IT'}
+                                    </Text>
+                                </View>
+                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                    <View style={{backgroundColor: !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                    <View style={{backgroundColor: user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
+                                </View>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => {
+                                        this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
+                                        if(user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
+                                            this._panel.hide();
+                                        }
+                                    }}
+                                >
+                                    <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
+                                        {'GOT IT'}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </SlidingUpPanel>
 
             </MagicMove.Scene>
         );

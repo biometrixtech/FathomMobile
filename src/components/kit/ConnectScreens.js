@@ -64,7 +64,7 @@ const CVP = ({ nextBtn, }) => (
         <View style={{alignItems: 'center', marginHorizontal: ((AppSizes.screen.width - AppSizes.screen.widthFourFifths) / 2),}}>
             <Image
                 resizeMode={'contain'}
-                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/CVP.png'}}
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/CVP.png'}}
                 style={{alignSelf: 'center', height: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)), width: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)),}}
             />
             <Text robotoLight style={[styles.subtitleStyle,]}>
@@ -212,7 +212,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
     }
     return (
         <ImageBackground
-            source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_tutorial.png'}}
+            source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_tutorial.png'}}
             style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
         >
             <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 1 : false} />
@@ -288,7 +288,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
     if(page === 0) {
         return (
             <ImageBackground
-                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_calibration.png'}}
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_calibration.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 2 : false} />
@@ -347,7 +347,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                                 paused={!currentPage}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={{uri: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4'}}//'https://dd4o7zw7l62dt.cloudfront.net/207.mp4'}}
+                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
@@ -407,7 +407,7 @@ const Session = ({ currentPage, onBack, onClose, nextBtn, page, showTopNavStep =
     if(page === 0) {
         return (
             <ImageBackground
-                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_training.png'}}
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_training.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : true} />
@@ -481,10 +481,12 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
                 <Text oswaldRegular style={[styles.titleStyle,]}>{'CHECK BATTERY'}</Text>
             </View>
-            <Image
-                resizeMode={'contain'}
-                source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/battery.png'}}
-                style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
+            <Video
+                paused={!currentPage}
+                repeat={true}
+                resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/charge_battery.mp4'}}
+                style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
             />
             <View style={[nextBtn ? {} : {paddingBottom: AppSizes.paddingLrg,}, {paddingHorizontal: AppSizes.paddingLrg,}]}>
                 <Text robotoLight style={[styles.subtitleStyle,]}>{'With Sensors inside & lid closed click the Button to check battery:'}</Text>
@@ -527,7 +529,7 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', overflow: 'hidden', width: AppSizes.screen.widthFourFifths,}}>
                 <Image
                     resizeMode={'stretch'}
-                    source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/end_tutorial.png'}}
+                    source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/end_tutorial.png'}}
                     style={{height: '100%', width: '100%',}}
                 />
                 <LottieView
@@ -681,7 +683,7 @@ const Connect = ({
     }
     return (
         <ImageBackground
-            source={{uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/start_owner.png'}}
+            source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_owner.png'}}
             style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
         >
             <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 4 : false} />

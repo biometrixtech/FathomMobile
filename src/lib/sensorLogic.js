@@ -173,25 +173,25 @@ const SensorLogic = {
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(This is where you\'ll place the Sensors)'}</Text>,
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PREP YOUR SKIN'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/skin_prep.mp4',
             },
             {
                 buttonText: 'Next',
-                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/sensor_prep.png'},
+                image:      {uri: 'https://d2xll36aqjtmhz.cloudfront.net/sensor_prep.png'},
                 subtitle:   <Text robotoLight style={[styles.subtitleStyle,]}>{'Open lid, remove Sensors. Sensor LEDs will turn green.'}</Text>,
                 title:      <Text oswaldRegular style={[styles.titleStyle,]}>{'REMOVE THE SENSORS'}</Text>,
                 video:      false,
             },
             {
                 buttonText: 'Next',
-                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/adhesive_prep.png'},
+                image:      {uri: 'https://d2xll36aqjtmhz.cloudfront.net/adhesive_prep.png'},
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Grab a strip of '}
                         <Text robotoBold>{'3 Adhesives,'}</Text>
                         {' one for each Sensor.'}
                     </Text>,
-                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(We\'ll use them in the next step)'}</Text>
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(WARNING: the adhesive is very strong. Only use if you\'re planning to train & sweat.)'}</Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'LOCATE THE ADHESIVES'}</Text>,
                 video: false,
@@ -210,23 +210,23 @@ const SensorLogic = {
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'APPLY TO ANKLE SENSORS'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/adhesive_f_sensor.mp4',
             },
             {
                 buttonText: 'Next',
-                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/f_sensor_placement.png'},
+                image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Peel away the tan liner. Stick Ankle Sensors above & behind each outer ankle.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(Make sure the sensors '}
+                        {'(Move foot, ensure sensors '}
                         <Text robotoBold>{'don\'t touch'}</Text>
                         {' your shoe)'}
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PLACE ANKLE SENSORS'}</Text>,
-                video: false,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/f_sensor_placement.mp4',
             },
             {
                 buttonText: 'Next',
@@ -242,17 +242,17 @@ const SensorLogic = {
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'APPLY TO HIP SENSORS'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/adhesive_h_sensor.mp4',
             },
             {
                 buttonText: 'Finish Placement!',
-                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/h_sensor_placement.png'},
+                image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Peel away the tan liner. Stick Hip Sensor just above the tailbone in the center of your spine.'}</Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(Your waistband should cover the sensor)'}</Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'PLACE HIP SENSOR'}</Text>,
-                video: false,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/h_sensor_placement.mp4',
             },
         ];
     },
@@ -288,11 +288,11 @@ const SensorLogic = {
                     </View>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'END WORKOUT'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/end_session.mp4',
             },
             {
                 buttonText: 'Next',
-                image:      {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/return_sensors.png'},
+                image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
                         {'Remove Adhesives & return Sensors to the Smart Charger.\n'}
@@ -305,7 +305,7 @@ const SensorLogic = {
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'RETURN SENSORS'}</Text>,
-                video: false,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/return_sensors.mp4',
             },
         ];
     },
@@ -343,12 +343,12 @@ const SensorLogic = {
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'TURN ON BLUETOOTH'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_on.mp4',
             },
             {
-                animatedImage: {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/bluetooth_connect_phone.png'},
+                animatedImage: {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone.png'},
                 buttonText:    false,
-                image:         {uri: 'https://fathomai-app-content.s3-us-west-2.amazonaws.com/bluetooth_connect_kit.png'},
+                image:         {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_kit.png'},
                 subtitle:      false,
                 title:         <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING THE PHONE NEAR YOUR KIT TO PAIR'}</Text>,
                 video:         false,
@@ -377,7 +377,7 @@ const SensorLogic = {
                     <Text key={1} robotoLight style={[styles.subtitleStyle,]}>{'Don\'t remove your Kit from wifi while uploading.'}</Text>,
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'SUCCESS, YOU\'RE CONNECTED'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
             },
             {
                 buttonText: 'Next',
@@ -398,7 +398,7 @@ const SensorLogic = {
                     </View>,
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'BRING KIT TO WIFI'}</Text>,
-                video: 'https://dd4o7zw7l62dt.cloudfront.net/207.mp4',
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
             },
         ];
     },
