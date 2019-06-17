@@ -18,7 +18,7 @@ import moment from 'moment';
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
-import { Alerts, Button, Spacer, Text, } from '../custom';
+import { Alerts, Button, Spacer, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
 
 // setup consts
@@ -27,13 +27,9 @@ const Crashlytics = Fabric.Crashlytics;
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     linearGradientStyle: {
-        alignItems:        'center',
-        alignSelf:         'stretch',
-        flex:              1,
-        justifyContent:    'center',
-        overflow:          'visible',
-        paddingHorizontal: 50,
-        paddingVertical:   50,
+        alignSelf: 'stretch',
+        flex:      1,
+        overflow:  'visible',
     },
 });
 
@@ -198,28 +194,34 @@ class Start extends Component {
                         return response;
                     })
                     .catch(error => {
-                        AppUtil.handleAPIErrorAlert(error);
-                        this.hideSplash();
+                        this.setState(
+                            { isLoggingIn: false, },
+                            () => AppUtil.handleAPIErrorAlert(error),
+                        );
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
             .then(() => userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? this.props.getSensorFiles(userObj) : userObj)
             .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
-                this.hideSplash();
-                const error = AppAPI.handleError(err);
-                console.log('err',error);
-                if(Platform.OS === 'ios') {
-                    Crashlytics.recordError(`ERROR on start: ${error.toString()}`);
-                } else {
-                    Crashlytics.logException(`ERROR on start: ${error.toString()}`);
-                }
+                this.setState(
+                    { isLoggingIn: false, },
+                    () => {
+                        const error = AppAPI.handleError(err);
+                        console.log('err',error);
+                        if(Platform.OS === 'ios') {
+                            Crashlytics.recordError(`ERROR on start: ${error.toString()}`);
+                        } else {
+                            Crashlytics.logException(`ERROR on start: ${error.toString()}`);
+                        }
+                    },
+                );
             });
     }
 
     render = () => {
         let { isLoggingIn, splashScreen, } = this.state;
-        return splashScreen && isLoggingIn ?
+        return splashScreen ?
             <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
@@ -229,18 +231,40 @@ class Start extends Component {
                         colors={['rgb(248, 224, 118)', 'rgb(235, 186, 45)']}
                         style={[styles.linearGradientStyle]}
                     >
-                        <Image
-                            resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/stacked_icon_white.png')}
-                            style={{ height: 100, width: 100, }}
-                        />
-                        <Spacer size={80} />
-                        <ActivityIndicator
-                            color={AppColors.white}
-                            size={'large'}
-                        />
-                        <Spacer size={30} />
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                        { isLoggingIn ?
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/stacked_icon_white.png')}
+                                    style={{ height: 100, width: 100, }}
+                                />
+                                <Spacer size={80} />
+                                <ActivityIndicator
+                                    color={AppColors.white}
+                                    size={'large'}
+                                />
+                                <Spacer size={30} />
+                                <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                            </View>
+                            :
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => this.setState({ isLoggingIn: true, }, () => this.login())}
+                                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+                            >
+                                <View style={{paddingHorizontal: 50, paddingVertical: AppSizes.padding,}}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[{paddingBottom: AppSizes.paddingMed,}]}
+                                        icon={'alert'}
+                                        size={40}
+                                        type={'material-community'}
+                                    />
+                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH! NO CONNECTION...'}</Text>
+                                    <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Tap anywhere to try again.'}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
                     </LinearGradient>
                 </ImageBackground>
             </View>
