@@ -6,7 +6,6 @@ module.exports = {
     setupFiles:        [
         '<rootDir>/jest.setup.js',
         '<rootDir>/__mocks__/@react-native-community/async-storage/index.js',
-        '<rootDir>/__mocks__/react-native-google-analytics-bridge.js',
         '<rootDir>/__mocks__/react-native-scrollable-tab-view.js'
     ],
     testMatch: [

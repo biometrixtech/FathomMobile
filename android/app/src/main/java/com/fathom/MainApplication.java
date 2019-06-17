@@ -16,7 +16,6 @@ import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import it.innove.BleManagerPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
@@ -54,7 +53,6 @@ public class MainApplication extends Application implements ReactApplication {
                 new BleManagerPackage(),
                 new RNDeviceInfo(),
                 new RNCWebViewPackage(),
-                new GoogleAnalyticsBridgePackage(),
                 new KCKeepAwakePackage(),
                 new RNSoundPackage(),
                 new SplashScreenReactPackage(),

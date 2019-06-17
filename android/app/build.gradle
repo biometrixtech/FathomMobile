@@ -199,7 +199,6 @@ dependencies {
     implementation project(':react-native-ble-manager')
     implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
-    implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-sound')
     implementation project(':react-native-splash-screen')

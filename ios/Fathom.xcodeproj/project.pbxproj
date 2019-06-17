@@ -45,7 +45,6 @@
 		72F02F1B225531AB00943040 /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F1A2255319C00943040 /* libBleManager.a */; };
 		72F02F252255323600943040 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F222255321500943040 /* libRNDeviceInfo.a */; };
 		72F02F2C2255357F00943040 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F2B2255357000943040 /* libRNCWebView.a */; };
-		72F02F33225535F900943040 /* libRCTGoogleAnalyticsBridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F32225535F000943040 /* libRCTGoogleAnalyticsBridge.a */; };
 		72F02F352255361300943040 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F342255361300943040 /* CoreData.framework */; };
 		72F02F372255361A00943040 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F362255361A00943040 /* SystemConfiguration.framework */; };
 		72F02F392255362A00943040 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F382255362A00943040 /* libz.tbd */; };
@@ -458,13 +457,6 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNCWebView;
 		};
-		72F02F31225535F000943040 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 72F02F2D225535F000943040 /* RCTGoogleAnalyticsBridge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A79185C61C30694E001236A6;
-			remoteInfo = RCTGoogleAnalyticsBridge;
-		};
 		72F02F402255367500943040 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 72F02F3C2255367500943040 /* KCKeepAwake.xcodeproj */;
@@ -673,7 +665,6 @@
 		72F02F152255319B00943040 /* BleManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleManager.xcodeproj; path = "../node_modules/react-native-ble-manager/ios/BleManager.xcodeproj"; sourceTree = "<group>"; };
 		72F02F1C2255321500943040 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		72F02F262255356F00943040 /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCWebView.xcodeproj; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; };
-		72F02F2D225535F000943040 /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
 		72F02F342255361300943040 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		72F02F362255361A00943040 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		72F02F382255362A00943040 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -777,7 +768,6 @@
 				72F02F392255362A00943040 /* libz.tbd in Frameworks */,
 				72F02F372255361A00943040 /* SystemConfiguration.framework in Frameworks */,
 				72F02F352255361300943040 /* CoreData.framework in Frameworks */,
-				72F02F33225535F900943040 /* libRCTGoogleAnalyticsBridge.a in Frameworks */,
 				72F02F2C2255357F00943040 /* libRNCWebView.a in Frameworks */,
 				72F02FE022553F3000943040 /* HealthKit.framework in Frameworks */,
 				72F02F252255323600943040 /* libRNDeviceInfo.a in Frameworks */,
@@ -1032,14 +1022,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		72F02F2E225535F000943040 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				72F02F32225535F000943040 /* libRCTGoogleAnalyticsBridge.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		72F02F3D2255367500943040 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1227,7 +1209,6 @@
 				72F02F4D2255383C00943040 /* RNSound.xcodeproj */,
 				72F02F43225537BE00943040 /* ART.xcodeproj */,
 				72F02F3C2255367500943040 /* KCKeepAwake.xcodeproj */,
-				72F02F2D225535F000943040 /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				72F02F262255356F00943040 /* RNCWebView.xcodeproj */,
 				72F02F1C2255321500943040 /* RNDeviceInfo.xcodeproj */,
 				72F02F152255319B00943040 /* BleManager.xcodeproj */,
@@ -1474,10 +1455,6 @@
 				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
-				},
-				{
-					ProductGroup = 72F02F2E225535F000943040 /* Products */;
-					ProjectRef = 72F02F2D225535F000943040 /* RCTGoogleAnalyticsBridge.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302BC1ABCB91800DB3ED1 /* Products */;
@@ -1895,13 +1872,6 @@
 			fileType = archive.ar;
 			path = libRNCWebView.a;
 			remoteRef = 72F02F2A2255357000943040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		72F02F32225535F000943040 /* libRCTGoogleAnalyticsBridge.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTGoogleAnalyticsBridge.a;
-			remoteRef = 72F02F31225535F000943040 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		72F02F412255367500943040 /* libKCKeepAwake.a */ = {

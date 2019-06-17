@@ -50,7 +50,6 @@
     "react-native-egg": "^1.0.1",
     "react-native-elements": "^1.1.0",
     "react-native-fabric": "^0.5.2",
-    "react-native-google-analytics-bridge": "^7.1.0",
     "react-native-haptic-feedback": "^1.8.0",
     "react-native-keep-awake": "^4.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",

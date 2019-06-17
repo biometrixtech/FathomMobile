@@ -40,7 +40,6 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
@@ -66,9 +65,6 @@ import { Loading, } from '../general';
 const numberOfPlaceholders = 8;
 const timerDelay = 30000; // delay for X ms
 const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(13) + (AppSizes.paddingXSml * 2));
-
-// setup GA Tracker
-const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -321,7 +317,7 @@ class MyPlan extends Component {
     }
 
     componentDidMount = () => {
-        const { notification, plan, scheduledMaintenance, user, } = this.props;
+        const { notification, plan, scheduledMaintenance, } = this.props;
         const { healthData, } = this.state;
         AppState.addEventListener('change', this._handleAppStateChange);
         if(!scheduledMaintenance.addressed) {
@@ -332,10 +328,6 @@ class MyPlan extends Component {
         if(notification) {
             this._handlePushNotification(this.props);
         }
-        // set GA variables
-        GATracker.setUser(user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
-        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
         let planObj = plan.dailyPlan[0] || {};
         if(
             planObj.daily_readiness_survey_completed &&
