@@ -773,12 +773,12 @@ const getScannedWifiConnections = sensorId => {
                 .catch(err => BleManager.retrieveServices(sensorId))
                 .then(peripheralInfo => write(peripheralInfo.id, writeDataArray, true))
                 .then(response => resolve(response[4]))
-                .catch(err => reject('Error fetching WIFI connections'));
+                .catch(err => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'));
         });
         return Promise.race([
             fetchingWifiConnections,
             new Promise((resolve, reject) => {
-                timeout = setTimeout(() => reject('Error fetching WIFI connections'), timeoutValue);
+                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), timeoutValue);
                 return timeout;
             })
         ])
@@ -808,12 +808,12 @@ const getSingleWifiConnection = (sensorId, index) => {
                     }
                     return resolve(cleanSingleWifiArray(response));
                 })
-                .catch(err => reject('Error fetching WIFI Details'));
+                .catch(err => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'));
         });
         return Promise.race([
             fetchingWifiConnection,
             new Promise((resolve, reject) => {
-                timeout = setTimeout(() => reject('Error fetching WIFI Details'), timeoutValue);
+                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), timeoutValue);
                 return timeout;
             })
         ])

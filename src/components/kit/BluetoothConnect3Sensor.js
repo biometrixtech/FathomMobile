@@ -286,7 +286,7 @@ class BluetoothConnect3Sensor extends Component {
                     }, 500 * i);
                 }
             })
-            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
+            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err, 'Please Try Again!')));
     }
 
     _onPageScrollEnd = currentPage => {
@@ -294,7 +294,7 @@ class BluetoothConnect3Sensor extends Component {
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         } else if(currentPage === 17) { // connect to accessory
-            this._handleBLEPair();
+            this._timer = _.delay(() => this._handleBLEPair(), 1000);
             Animated.sequence([
 	              Animated.delay(750),
                 Animated.spring(

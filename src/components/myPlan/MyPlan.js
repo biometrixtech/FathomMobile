@@ -213,12 +213,12 @@ const MyPlanNavBar = ({
 }) => (
     <View style={{backgroundColor: AppColors.white,}}>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
+        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginHorizontal: AppSizes.paddingSml, marginTop: AppSizes.statusBarHeight,}}>
             { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
                 <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => Actions.sensorFiles()}
-                    style={{flex: 1, justifyContent: 'center', marginLeft: AppSizes.paddingSml, paddingLeft: AppSizes.paddingSml,}}
+                    style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
                 >
                     <Image
                         resizeMode={'contain'}
@@ -233,19 +233,27 @@ const MyPlanNavBar = ({
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
             />
-            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+            <TouchableOpacity
+                onPress={() => onRight()}
+                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+            >
+                { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                    <LottieView
+                        autoPlay={true}
+                        source={require('../../../assets/animation/yellowpointer.json')}
+                    />
+                }
                 <TabIcon
                     icon={'notifications'}
                     iconStyle={[{color: AppColors.zeplin.slate,}]}
-                    onPress={() => onRight()}
                     size={26}
                 />
                 {_.filter(cards, ['read', false]).length > 0 &&
-                    <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
+                    <View style={[styles.unreadNotificationsWrapper,]}>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
-                    </TouchableOpacity>
+                    </View>
                 }
-            </View>
+            </TouchableOpacity>
         </View>
         <Collapsible collapsed={!expandNotifications}>
             <DeckCards
@@ -353,7 +361,7 @@ class MyPlan extends Component {
             isTrainSessionsCompletionModalOpen,
             loading,
         } = this.state;
-        const { healthData, network, notification, plan, user, } = this.props;
+        const { healthData, network, notification, plan, } = this.props;
         AppUtil.getNetworkStatus(prevProps, network, Actions);
         // handle PN
         if(prevProps.notification && prevProps.notification !== notification) {
