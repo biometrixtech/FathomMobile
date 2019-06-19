@@ -226,7 +226,7 @@ class TrendChild extends PureComponent {
                                             color={AppColors.zeplin.slateLight}
                                             containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
                                             icon={'rewind'}
-                                            size={AppFonts.scaleFont(15)}
+                                            size={AppFonts.scaleFont(20)}
                                             type={'material-community'}
                                         />
                                     }

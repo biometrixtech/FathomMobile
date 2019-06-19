@@ -490,5 +490,10 @@ export default {
         shadowOffset:  { width: 0, height: 3 },
         shadowOpacity: 1,
         shadowRadius:  6,
-    }
+    },
+
+    buttonVerticalPadding: {
+        paddingBottom: Sizes.isIphoneX ? ((Sizes.iphoneXBottomBarPadding + Sizes.paddingMed) / 2) : Sizes.paddingMed,
+        paddingTop:    Sizes.isIphoneX ? ((Sizes.iphoneXBottomBarPadding + Sizes.paddingMed) / 2) : Sizes.paddingMed,
+    },
 };

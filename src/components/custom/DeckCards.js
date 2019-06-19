@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor:   AppColors.white,
         borderRadius:      10,
-        elevation:         2,
         shadowColor:       'rgba(0, 0, 0, 0.16)',
         shadowOffset:      { height: 3, width: 0, },
         shadowOpacity:     1,
@@ -136,10 +135,10 @@ class DeckCards extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        const { isVisible, } = this.props;
+        const { cards, isVisible, } = this.props;
         if(!isVisible && prevProps.isVisible !== isVisible) {
-            this.setState({ areAllSwiped: false, currentCardIndex: 0, }, () => this._swiperRef.snapToItem(0));
-        } else if((prevProps.startIndex + 1) === this.props.cards.length && this.props.startIndex === 0) {
+            this.setState({ areAllSwiped: false, currentCardIndex: 0, }, () => cards.length > 0 ? this._swiperRef.snapToItem(0) : {});
+        } else if(cards.length > 0 && (prevProps.startIndex + 1) === this.props.cards.length && this.props.startIndex === 0) {
             this._swiperRef.snapToItem(0);
         }
     }
@@ -209,7 +208,7 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, layout, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
             cardTextArray,
@@ -221,12 +220,16 @@ class DeckCards extends Component {
         if ((!card.title || card.title === '') && currentCardIndex !== index) { // not to show view above when still scrolling
             return (null);
         }
+        let extraStyles = {};
+        if(Platform.OS === 'android' && layout && layout === 'tinder') {
+            extraStyles = {elevation: (cards.length - index), zIndex: (cards.length - index),};
+        }
         return (
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
                 onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
-                style={[styles.card,]}
+                style={[styles.card, extraStyles]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',}}>
@@ -293,6 +296,7 @@ class DeckCards extends Component {
                                 maxToRenderPerBatch={3}
                                 onSnapToItem={index => this._handleOnSwiped(index)}
                                 ref={ref => {this._swiperRef = ref;}}
+                                removeClippedSubviews={false}
                                 renderItem={({item, index}) => this._renderCard(item, index)}
                                 sliderWidth={AppSizes.screen.width}
                                 windowSize={3}

@@ -200,7 +200,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
                         }
                     </View>
                     <Button
-                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                        buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                         containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                         onPress={() => nextBtn()}
                         title={content.buttonText}
@@ -327,7 +327,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                         </View>
                         <View style={{backgroundColor: AppColors.zeplin.superLight, borderBottomLeftRadius: 5, borderBottomRightRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}}>
                             <Text robotoRegular style={[styles.subtitleStyle,]}>
-                                {'Proper calibration ensures optimal data quality & precise Recovery recommendations.\n\nYou\'ll need to this before every workout.'}
+                                {'Proper calibration ensures optimal data quality & precise Recovery recommendations.\n\nYou\'ll need to do this before every workout.'}
                             </Text>
                         </View>
                     </View>
@@ -391,7 +391,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                     </View>
                 }
                 <Button
-                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                     containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                     onPress={() => nextBtn()}
                     title={page === 1 ? 'Next' : 'Finish Calibration'}
@@ -437,7 +437,7 @@ const Session = ({ currentPage, onBack, onClose, nextBtn, page, showTopNavStep =
     }
     return (
         <View style={{flex: 1,}}>
-            <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 3 : false} />
+            <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
             <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                 {content.title}
             </View>
@@ -463,7 +463,7 @@ const Session = ({ currentPage, onBack, onClose, nextBtn, page, showTopNavStep =
                     {content.subtitle}
                 </View>
                 <Button
-                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                     containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                     onPress={() => nextBtn()}
                     title={content.buttonText}
@@ -507,7 +507,7 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             </View>
             { nextBtn &&
                 <Button
-                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                     containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                     onPress={() => nextBtn()}
                     title={'Next'}
@@ -541,7 +541,7 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
                 />
             </View>
             <Button
-                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                 containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                 onPress={() => nextBtn()}
                 title={'End Tutorial'}
@@ -623,7 +623,7 @@ const Connect = ({
                         </View>
                         { (content.buttonText && nextBtn) &&
                             <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                                 containerStyle={{justifyContent: 'flex-end', width: '100%',}}
                                 onPress={() => nextBtn()}
                                 title={content.buttonText}
@@ -639,7 +639,7 @@ const Connect = ({
                 }
                 { ( page === 3 && content.buttonText && nextBtn) &&
                     <Button
-                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                        buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}])}
                         containerStyle={{flex: 1, justifyContent: 'flex-end', width: '100%',}}
                         onPress={() => nextBtn()}
                         title={content.buttonText}
@@ -686,7 +686,7 @@ const Connect = ({
             source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_owner.png'}}
             style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
         >
-            <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 4 : false} />
+            <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 4 : false} />
             <View style={{flex: 1, justifyContent: 'flex-end',}}>
                 <LinearGradient
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}

@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai
- * @Date: 2018-04-23 16:40:29
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:14:28
- */
-
 /**
  * Settings View
  */
@@ -501,7 +494,7 @@ class Settings extends Component {
                             />
                         </View>
                     }
-                    onPress={() => has3SensorConnected ? Actions.sensorFiles() : Actions.bluetoothConnect3Sensor()}
+                    onPress={() => Actions.bluetoothConnect3Sensor()}//has3SensorConnected ? Actions.sensorFiles() : Actions.bluetoothConnect3Sensor()}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',

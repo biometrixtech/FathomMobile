@@ -854,7 +854,24 @@ const getSensorFiles = (userObj, days = 14) => {
             })
             .catch(error => reject(error));
     });
-}
+};
+
+const getAccessoryKey = (id, user) => {
+    // TODO: NEEDS TO BE FLESHED OUT!
+    return dispatch => AppAPI.hardware.accessory.get({ wifiMacAddress: id })
+        .then(response => {
+            return dispatch({
+                type:        Actions.GET_ACCESSORY_KEY,
+                settingsKey: response.accessory.settings_key,
+                user_id:     response.accessory.owner_id,
+                user
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            return Promise.reject(err);
+        });
+};
 
 /**
   * OLD FUNCTIONS
@@ -1222,22 +1239,6 @@ const setGyroCalibration = (id, type) => {
             });
         });
 };
-
-const getAccessoryKey = (id, user) => {
-    return dispatch => AppAPI.hardware.accessory.get({ wifiMacAddress: id })
-        .then(response => {
-            return dispatch({
-                type:        Actions.GET_ACCESSORY_KEY,
-                settingsKey: response.accessory.settings_key,
-                user_id:     response.accessory.owner_id,
-                user
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            return Promise.reject(err);
-        });
-}
 
 export default {
     assignKitIndividual,

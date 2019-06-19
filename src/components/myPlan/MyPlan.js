@@ -256,15 +256,17 @@ const MyPlanNavBar = ({
             </TouchableOpacity>
         </View>
         <Collapsible collapsed={!expandNotifications}>
-            <DeckCards
-                cards={_.concat(cards, {})}
-                handleReadInsight={index => handleReadInsight(index)}
-                hideDeck={() => onRight()}
-                isVisible={expandNotifications}
-                layout={'tinder'}
-                shrinkNumberOfLines={true}
-                unreadNotificationsCount={_.filter(cards, ['read', false]).length}
-            />
+            { expandNotifications &&
+                <DeckCards
+                    cards={cards.length === 0 ? cards : _.concat(cards, {})}
+                    handleReadInsight={index => handleReadInsight(index)}
+                    hideDeck={() => onRight()}
+                    isVisible={expandNotifications}
+                    layout={'tinder'}
+                    shrinkNumberOfLines={true}
+                    unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+                />
+            }
         </Collapsible>
     </View>
 );
@@ -408,7 +410,7 @@ class MyPlan extends Component {
             clearInterval(this._timer);
         }
         // handle Coach related items
-        this._checkCoachStatus();
+        // this._checkCoachStatus();
     }
 
     componentWillMount = () => {
@@ -432,8 +434,8 @@ class MyPlan extends Component {
         const { plan, user, } = this.props;
         if(
             plan.dailyPlan[0] &&
-            plan.dailyPlan[0] &&
             plan.dailyPlan[0].daily_readiness_survey_completed &&
+            user.first_time_experience &&
             (
                 !user.first_time_experience.includes('plan_coach_1') ||
                 !user.first_time_experience.includes('plan_coach_2')
@@ -1179,16 +1181,44 @@ class MyPlan extends Component {
                     ref={ref => {this._panel = ref;}}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
-                        <View style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}>
-                            { !user.first_time_experience.includes('plan_coach_1') ?
+                        { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                            <View style={{flex: 1,}}>
+                                <View style={{backgroundColor: AppColors.zeplin.navy, height: AppSizes.statusBarHeight, opacity: 0.8,}} />
+                                <View style={{backgroundColor: AppColors.transparent, flexDirection: 'row', height: AppSizes.navbarHeight,}}>
+                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
+                                    <View style={{flexDirection: 'row', width: (AppSizes.screen.width - (AppSizes.paddingSml * 2)),}}>
+                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8, paddingLeft: AppSizes.paddingSml,}}>
+                                            <View style={{width: 20,}} />
+                                        </View>
+                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 8, opacity: 0.8,}} />
+                                        <View style={{backgroundColor: AppColors.transparent, flex: 1, opacity: 0.8,}}>
+                                            <View style={{height: '100%', width: '100%',}} />
+                                        </View>
+                                    </View>
+                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
+                                </View>
+                                <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
+                            </View>
+                        }
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => {
+                                this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
+                                if(user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
+                                    this._panel.hide();
+                                }
+                            }}
+                            style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
+                        >
+                            { user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ?
                                 <View>
                                     <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Plan'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingSml,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
                                 </View>
                                 :
                                 <View>
                                     <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Your Insights'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingSml,}}>{'As you use Fathom, our AI system will look for insights in your data & notify you here!'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'As you use Fathom, our AI system will look for insights in your data & notify you here!'}</Text>
                                 </View>
                             }
                             <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -1198,24 +1228,14 @@ class MyPlan extends Component {
                                     </Text>
                                 </View>
                                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    <View style={{backgroundColor: !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
-                                    <View style={{backgroundColor: user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
+                                    <View style={{backgroundColor: user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                    <View style={{backgroundColor: user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
                                 </View>
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => {
-                                        this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
-                                        if(user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
-                                            this._panel.hide();
-                                        }
-                                    }}
-                                >
-                                    <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
-                                        {'GOT IT'}
-                                    </Text>
-                                </TouchableOpacity>
+                                <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
+                                    {'GOT IT'}
+                                </Text>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </SlidingUpPanel>
 

@@ -191,7 +191,11 @@ const SensorLogic = {
                         <Text robotoBold>{'3 Adhesives,'}</Text>
                         {' one for each Sensor.'}
                     </Text>,
-                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'(WARNING: the adhesive is very strong. Only use if you\'re planning to train & sweat.)'}</Text>
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
+                        {'(WARNING: the adhesive is '}
+                        <Text robotoBold>{'very strong.'}</Text>
+                        {' Only use if you\'re planning to train & sweat.)'}
+                    </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'LOCATE THE ADHESIVES'}</Text>,
                 video: false,
@@ -334,12 +338,12 @@ const SensorLogic = {
                             type={'material-community'}
                         />
                         <Text robotoLight style={[styles.subtitleStyle,]}>
-                            {' LED turns '}
+                            {' LED turns solid '}
                             <Text robotoBold style={{color: 'blue',}}>{'blue.'}</Text>
                         </Text>
                     </View>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(Make sure your phone\'s Bluetooth is "ON")'}
+                        {'(All sensors must be in the Kit with the lid firmly closed & your phone\'s bluetooth must be "ON")'}
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'TURN ON BLUETOOTH'}</Text>,

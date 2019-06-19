@@ -67,6 +67,11 @@ class Trends extends PureComponent {
         }
     }
 
+    componentWillUnmount = () => {
+        // clear timers
+        clearInterval(this._timer);
+    }
+
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
         // hide panel
@@ -105,8 +110,6 @@ class Trends extends PureComponent {
             <View style={{flex: 1,}}>
 
                 <ScrollView
-                    automaticallyAdjustContentInsets={false}
-                    bounces={false}
                     nestedScrollEnabled={true}
                     style={{backgroundColor: AppColors.white, flex: 1, paddingBottom: (AppSizes.paddingLrg + AppSizes.paddingMed + 20 + AppFonts.scaleFont(11) + extraBottomPadding),}}
                 >
@@ -178,19 +181,17 @@ class Trends extends PureComponent {
                     ref={ref => {this._panel = ref;}}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
-                        <View style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => this._handleUpdateFirstTimeExperience('trends_coach')}
+                            style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
+                        >
                             <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Trends'}</Text>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingSml,}}>{'Here, you\'ll find your data & any meaningful trends & insights that our AI system finds!'}</Text>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => this._handleUpdateFirstTimeExperience('trends_coach')}
-                                style={{alignSelf: 'flex-end',}}
-                            >
-                                <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
-                                    {'GOT IT'}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Here, you\'ll find your data & any meaningful trends & insights that our AI system finds!'}</Text>
+                            <Text robotoMedium style={{alignSelf: 'flex-end', color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
+                                {'GOT IT'}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </SlidingUpPanel>
 
