@@ -27,7 +27,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
+import { AppUtil, SensorLogic, } from '../../lib';
 import { Battery, Calibration, Connect, Placement, Session, } from './ConnectScreens';
 import { Loading, } from '../general';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
@@ -63,6 +63,7 @@ class SensorFilesPage extends Component {
         assignKitIndividual:       PropTypes.func.isRequired,
         bluetooth:                 PropTypes.shape({}).isRequired,
         deviceFound:               PropTypes.func.isRequired,
+        getAccessoryKey:           PropTypes.func.isRequired,
         getBLEMacAddress:          PropTypes.func.isRequired,
         getScannedWifiConnections: PropTypes.func.isRequired,
         getSensorFiles:            PropTypes.func.isRequired,
@@ -83,6 +84,7 @@ class SensorFilesPage extends Component {
         super(props);
         this.state = {
             availableNetworks:     [],
+            bleState:              '',
             bounceValue:           new Animated.Value(AppSizes.screen.height),
             currentWifiConnection: false,
             isDialogVisible:       false,
@@ -95,28 +97,13 @@ class SensorFilesPage extends Component {
         this._timer = null;
         this._wifiTimers = [];
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
-        this.handleStopScan = this.handleStopScan.bind(this);
+        this.handleBLEUpdateState = this.handleBLEUpdateState.bind(this);
     }
 
     componentDidMount = () => {
         BleManager.start({ showAlert: false, });
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
-        this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan);
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-                if (result) {
-                    console.log('Permission is OK');
-                } else {
-                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
-                        if(res) {
-                            console.log('User accept');
-                        } else {
-                            console.log('User refuse');
-                        }
-                    });
-                }
-            });
-        }
+        this.handlerCheck = bleManagerEmitter.addListener('BleManagerDidUpdateState', args => this.handleBLEUpdateState(args));
     }
 
     componentWillMount = () => {
@@ -130,7 +117,7 @@ class SensorFilesPage extends Component {
         this._timer = null;
         _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
         this.handlerDiscover.remove();
-        this.handlerStop.remove();
+        this.handlerCheck.remove();
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
@@ -140,51 +127,41 @@ class SensorFilesPage extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
+    handleBLEUpdateState = args => this.setState({ bleState: args.state, })
+
     handleDiscoverPeripheral = data => {
         const { deviceFound, } = this.props;
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        return data.name && data.name === 'fathomKit' ? deviceFound(data).then(() => this.handleStopScan()) : null; // 3-sensor solution
+        return data.name && data.name === 'fathomKit' && this.props.bluetooth.devicesFound.length === 0 ? deviceFound(data).then(() => this._handleStopScan()) : null; // 3-sensor solution
         // return data.name && /fathomS[*]_/i.test(data.name) ? deviceFound(data) : null; // 1-sensor solution
     }
 
-    handleStopScan = () => {
-        const { bluetooth, stopScan, } = this.props;
-        return stopScan()
-            .then(() => {
-                let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
-                if(closestDevice.length > 0) {
-                    return this._connect(closestDevice[0]);
-                }
-                return Alert.alert(
-                    '',
-                    'We\'re not able to find your Kit. Try bringing your phone closer.',
-                    [
-                        {
-                            text:    'Exit Tutorial',
-                            onPress: () => Actions.pop(),
-                            style:   'cancel',
-                        },
-                        {
-                            text:    'Try Again',
-                            onPress: () => this._renderNextPage(this.state.pageIndex - 1),
-                        },
-                    ],
-                    { cancelable: false, }
-                );
-            });
-    }
-
     _connect = data => {
-        const { bluetooth, getBLEMacAddress, stopConnect, user, } = this.props;
+        const { getAccessoryKey, getBLEMacAddress, startDisconnection, stopConnect, user, } = this.props;
         return getBLEMacAddress(data.id)
-            .then(() => this._toggleAlertNotification(data.id, user.id))
-            .catch(err => {
-                if (bluetooth.accessoryData && !bluetooth.accessoryData.sensor_pid) {
-                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+            .then(macAddress => getAccessoryKey(macAddress.data.macAddress))
+            .then(response => {
+                if(
+                    !response.accessory.owner_id ||
+                    (response.accessory.owner_id && response.accessory.owner_id !== user.id)
+                ) {
+                    return startDisconnection(data.id, true).then(() => this._handleBLEPair());
                 }
-                return stopConnect();
+                return this._toggleAlertNotification(data.id, user.id);
+            })
+            .catch(err => {
+                if (
+                    this.props.bluetooth.accessoryData &&
+                    !this.props.bluetooth.accessoryData.sensor_pid &&
+                    !this.props.bluetooth.accessoryData.mobile_udid &&
+                    !this.props.bluetooth.accessoryData.wifiMacAddress
+                ) {
+                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+                    return stopConnect();
+                }
+                return console.log(err);
             });
     }
 
@@ -226,15 +203,6 @@ class SensorFilesPage extends Component {
             .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
     }
 
-    _handleAlertHelper = (title = '', message, isCancelable) => {
-        Actions.pop();
-        if(isCancelable) {
-            AlertHelper.showCancelableDropDown('custom', title, message);
-        } else {
-            AlertHelper.showDropDown('custom', title, message);
-        }
-    }
-
     _handleAlertPress = () => {
         Alert.alert(
             '',
@@ -273,20 +241,41 @@ class SensorFilesPage extends Component {
         );
     }
 
+    _handleStopScan = () => {
+        const { bluetooth, stopScan, } = this.props;
+        return stopScan()
+            .then(() => {
+                let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
+                if(closestDevice.length > 0) {
+                    return this._connect(closestDevice[0]);
+                }
+                return Alert.alert(
+                    '',
+                    'We\'re not able to find your Kit. Try bringing your phone closer.',
+                    [
+                        {
+                            text:    'Exit Tutorial',
+                            onPress: () => Actions.pop(),
+                            style:   'cancel',
+                        },
+                        {
+                            text:    'Try Again',
+                            onPress: () => this._renderNextPage(this.state.pageIndex - 1),
+                        },
+                    ],
+                    { cancelable: false, }
+                );
+            });
+    }
+
     _handleWifiNotInRange = () => {
-        const { user, }= this.props;
         Alert.alert(
             '',
             'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
             [
                 {
                     text:    'I\'ll do it later',
-                    onPress: () => {
-                        Actions.pop();
-                        if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
-                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                        }
-                    },
+                    onPress: () => Actions.pop(),
                 },
                 {
                     text:  'Configure Now',
@@ -323,8 +312,27 @@ class SensorFilesPage extends Component {
 
     _onPageScrollEnd = currentPage => {
         const { pageStep, } = this.props;
-        if(currentPage === 1 && pageStep === 'connect') { // connect to accessory
-            this._handleBLEPair();
+        if(currentPage === 0 && pageStep === 'connect') { // turn on BLE
+            if (Platform.OS === 'android') {
+                BleManager.enableBluetooth();
+            }
+            if (Platform.OS === 'android' && Platform.Version >= 23) {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
+                    if (result) {
+                        console.log('Permission is OK');
+                    } else {
+                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
+                            if(res) {
+                                console.log('User accept');
+                            } else {
+                                console.log('User refuse');
+                            }
+                        });
+                    }
+                });
+            }
+        } else if(currentPage === 1 && pageStep === 'connect') { // connect to accessory
+            this._timer = _.delay(() => this._handleBLEPair(), 1000);
             Animated.sequence([
 	              Animated.delay(750),
                 Animated.spring(
@@ -395,7 +403,16 @@ class SensorFilesPage extends Component {
 
     render = () => {
         const { pageStep, user, } = this.props;
-        const { availableNetworks, bounceValue, currentWifiConnection, isDialogVisible, isVideoMuted, isWifiScanDone, pageIndex, } = this.state;
+        const {
+            availableNetworks,
+            bleState,
+            bounceValue,
+            currentWifiConnection,
+            isDialogVisible,
+            isVideoMuted,
+            isWifiScanDone,
+            pageIndex,
+        } = this.state;
         if(pageStep !== 'sessions') {
             return(
                 <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -410,6 +427,7 @@ class SensorFilesPage extends Component {
                         >
                             <Connect
                                 currentPage={pageIndex === 0}
+                                isNextDisabled={bleState !== 'on'}
                                 nextBtn={this._renderNextPage}
                                 page={1}
                                 showTopNavStep={false}
@@ -431,7 +449,6 @@ class SensorFilesPage extends Component {
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
                                 onBack={this._renderPreviousPage}
-                                onClose={() => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)}
                                 page={3}
                                 showTopNavStep={false}
                             />

@@ -13,6 +13,7 @@ const BluetoothConnect3Sensor = ({
     assignKitIndividual,
     bluetooth,
     deviceFound,
+    getAccessoryKey,
     getBLEMacAddress,
     getScannedWifiConnections,
     getSingleWifiConnection,
@@ -29,6 +30,7 @@ const BluetoothConnect3Sensor = ({
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
         deviceFound={deviceFound}
+        getAccessoryKey={getAccessoryKey}
         getBLEMacAddress={getBLEMacAddress}
         getScannedWifiConnections={getScannedWifiConnections}
         getSingleWifiConnection={getSingleWifiConnection}
@@ -48,6 +50,7 @@ BluetoothConnect3Sensor.propTypes = {
     assignKitIndividual:       PropTypes.func.isRequired,
     bluetooth:                 PropTypes.shape({}).isRequired,
     deviceFound:               PropTypes.func.isRequired,
+    getAccessoryKey:           PropTypes.func.isRequired,
     getBLEMacAddress:          PropTypes.func.isRequired,
     getScannedWifiConnections: PropTypes.func.isRequired,
     getSingleWifiConnection:   PropTypes.func.isRequired,
@@ -75,6 +78,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     assignKitIndividual:       BluetoothActions.assignKitIndividual,
     deviceFound:               BluetoothActions.deviceFound,
+    getAccessoryKey:           BluetoothActions.getAccessoryKey,
     getBLEMacAddress:          BluetoothActions.getBLEMacAddress,
     getScannedWifiConnections: BluetoothActions.getScannedWifiConnections,
     getSingleWifiConnection:   BluetoothActions.getSingleWifiConnection,

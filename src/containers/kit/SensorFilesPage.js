@@ -13,6 +13,7 @@ const SensorFilesPage = ({
     assignKitIndividual,
     bluetooth,
     deviceFound,
+    getAccessoryKey,
     getBLEMacAddress,
     getScannedWifiConnections,
     getSensorFiles,
@@ -30,6 +31,7 @@ const SensorFilesPage = ({
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
         deviceFound={deviceFound}
+        getAccessoryKey={getAccessoryKey}
         getBLEMacAddress={getBLEMacAddress}
         getScannedWifiConnections={getScannedWifiConnections}
         getSensorFiles={getSensorFiles}
@@ -49,6 +51,7 @@ SensorFilesPage.propTypes = {
     assignKitIndividual:       PropTypes.func.isRequired,
     bluetooth:                 PropTypes.shape({}).isRequired,
     deviceFound:               PropTypes.func.isRequired,
+    getAccessoryKey:           PropTypes.func.isRequired,
     getBLEMacAddress:          PropTypes.func.isRequired,
     getScannedWifiConnections: PropTypes.func.isRequired,
     getSensorFiles:            PropTypes.func.isRequired,
@@ -74,6 +77,7 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = {
     assignKitIndividual:       BluetoothActions.assignKitIndividual,
     deviceFound:               BluetoothActions.deviceFound,
+    getAccessoryKey:           BluetoothActions.getAccessoryKey,
     getBLEMacAddress:          BluetoothActions.getBLEMacAddress,
     getScannedWifiConnections: BluetoothActions.getScannedWifiConnections,
     getSensorFiles:            BluetoothActions.getSensorFiles,

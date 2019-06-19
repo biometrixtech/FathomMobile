@@ -10,7 +10,7 @@ const AlertHelper = {
         this._cancelableDropDown = dropDown;
     },
 
-    showCancelableDropDown: (type, title, message) => {console.log(this._cancelableDropDown);
+    showCancelableDropDown: (type, title, message) => {
         if(this._cancelableDropDown) {
             this._cancelableDropDown.alertWithType(type, title, message);
         }

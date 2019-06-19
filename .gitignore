@@ -35,6 +35,7 @@ com_crashlytics_export_strings.xml
 android/.settings/
 *.bundle
 *.hprof
+Fathom.zip
 
 # node.js
 #

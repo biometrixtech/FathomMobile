@@ -840,7 +840,7 @@ const getSensorFiles = (userObj, days = 14) => {
     let payload = {};
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     payload.timezone = userObj.timezone;
-    return dispatch =>  new Promise((resolve, reject) => {
+    return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post(false, payload)
             .then(response => {
                 let newUserObj = _.cloneDeep(userObj);
@@ -856,21 +856,10 @@ const getSensorFiles = (userObj, days = 14) => {
     });
 };
 
-const getAccessoryKey = (id, user) => {
-    // TODO: NEEDS TO BE FLESHED OUT!
-    return dispatch => AppAPI.hardware.accessory.get({ wifiMacAddress: id })
-        .then(response => {
-            return dispatch({
-                type:        Actions.GET_ACCESSORY_KEY,
-                settingsKey: response.accessory.settings_key,
-                user_id:     response.accessory.owner_id,
-                user
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            return Promise.reject(err);
-        });
+const getAccessoryKey = wifiMacAddress => {
+    return dispatch => AppAPI.hardware.accessory.get({ wifiMacAddress: wifiMacAddress })
+        .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(err));
 };
 
 /**

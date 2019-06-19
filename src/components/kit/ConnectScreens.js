@@ -558,6 +558,7 @@ const Connect = ({
     handleNetworkPress = () => {},
     handleNotInRange = () => {},
     handleWifiScan = () => {},
+    isNextDisabled,
     isWifiScanDone = true,
     onBack,
     onClose,
@@ -625,8 +626,11 @@ const Connect = ({
                             <Button
                                 buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                                 containerStyle={{justifyContent: 'flex-end', width: '100%',}}
+                                disabled={isNextDisabled}
+                                disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                                disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                 onPress={() => nextBtn()}
-                                title={content.buttonText}
+                                title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                             />
                         }
@@ -641,8 +645,11 @@ const Connect = ({
                     <Button
                         buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}])}
                         containerStyle={{flex: 1, justifyContent: 'flex-end', width: '100%',}}
+                        disabled={isNextDisabled}
+                        disabledStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.slateXLight, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}])}
+                        disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         onPress={() => nextBtn()}
-                        title={content.buttonText}
+                        title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 }
