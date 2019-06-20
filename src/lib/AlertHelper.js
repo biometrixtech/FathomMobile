@@ -16,6 +16,12 @@ const AlertHelper = {
         }
     },
 
+    closeDropDown: () => {
+        if(this._dropDown) {
+            this._dropDown.close();
+        }
+    },
+
     setDropDown: dropDown => {
         this._dropDown = dropDown;
     },

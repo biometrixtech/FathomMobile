@@ -677,6 +677,24 @@ const Connect = ({
                                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                                     key={i}
                                     onPress={() => handleNetworkPress(network)}
+                                    rightIcon={
+                                        <View>
+                                            {network.security.toByte !== 0 &&
+                                                <TabIcon
+                                                    color={AppColors.zeplin.slateXLight}
+                                                    containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                                    icon={'lock'}
+                                                    size={24}
+                                                    type={'font-awesome'}
+                                                />
+                                            }
+                                            <TabIcon
+                                                color={AppColors.zeplin.slateXLight}
+                                                icon={'wifi'}
+                                                size={24}
+                                            />
+                                        </View>
+                                    }
                                     title={network.ssid}
                                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
                                 />

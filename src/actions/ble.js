@@ -678,7 +678,7 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
         let fetchingWifiConnections = new Promise((resolve, reject) => {
             // setup consts needed
             const ssidDataArray = convertStringToByteArray(ssid);
-            const passwordDataArray = convertStringToByteArray(password);
+            const passwordDataArray = convertStringToByteArray(password ? password : '');
             let shortSlicedPswDataArray = _.slice(passwordDataArray, 0, 18);
             let longSlicedPswDataArray = _.slice(passwordDataArray, 18, 32);
             let shortPswDataArray = returnCleaned3SensorDataArray(shortSlicedPswDataArray, commands.WRITE_WIFI_PSW_SHORT);
@@ -692,7 +692,7 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
             // check if ssid & password are out of scope of ble
             if(ssidDataArray && (ssidDataArray.length === 0 || ssidDataArray.length > 32)) {
                 return reject('This network name is longer than we can support. Please select a different network or change your password to be <32 characters.');
-            } else if(passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
+            } else if(securityByte !== 0 && passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
                 return reject('This password is longer than we can support. Please select a different network or change your password to be <32 characters.');
             }
             // checks done, now update sensor
@@ -706,7 +706,7 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
                 .then(res => BleManager.retrieveServices(sensorId))
                 .then(peripheralInfo => longSlicedSsidDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longSsidDataArray, true)) // 2. check if long wifi -> write if needed
                 .then(res => BleManager.retrieveServices(sensorId))
-                .then(peripheralInfo => write(peripheralInfo.id, shortPswDataArray, true)) // 3. write short psw
+                .then(peripheralInfo => securityByte !== 0 ? write(peripheralInfo.id, shortPswDataArray, true) : peripheralInfo) // 3. write short psw
                 .then(res => BleManager.retrieveServices(sensorId))
                 .then(peripheralInfo => longSlicedPswDataArray.length === 0 ? peripheralInfo : write(peripheralInfo.id, longPswDataArray, true)) // 4. check if long psw -> write if needed
                 .then(res => BleManager.retrieveServices(sensorId))
@@ -813,7 +813,7 @@ const getSingleWifiConnection = (sensorId, index) => {
         return Promise.race([
             fetchingWifiConnection,
             new Promise((resolve, reject) => {
-                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), timeoutValue);
+                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), 15000);
                 return timeout;
             })
         ])

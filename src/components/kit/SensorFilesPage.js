@@ -224,7 +224,23 @@ class SensorFilesPage extends Component {
 
     _handleNetworkPress = network => {
         _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
-        this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+        if(network.security.toByte !== 0) {
+            this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+        } else {
+            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+            newCurrentWifiConnection.password = false;
+            this.setState(
+                { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },
+                () => {
+                    this._timer = _.delay(() => {
+                        this.setState(
+                            { loading: true, },
+                            () => this._connectSensorToWifi(),
+                        );
+                    }, 500);
+                },
+            );
+        }
     }
 
     _handleNotInRange = () => {
@@ -240,6 +256,34 @@ class SensorFilesPage extends Component {
             { cancelable: false, }
         );
     }
+
+    _handleSingleWifiConnectionFetch = (sensorId, numberOfConnections, currentIndex) => {
+        const { getSingleWifiConnection, } = this.props;
+        getSingleWifiConnection(sensorId, currentIndex)
+            .then(res => {
+                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
+                newAvailableNetworks.push(res);
+                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
+                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
+                this.setState(
+                    { availableNetworks: newAvailableNetworks, },
+                    () => {
+                        if(currentIndex === numberOfConnections) {
+                            this.setState({ isWifiScanDone: true, });
+                        } else {
+                            _.delay(() => this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1)), 750);
+                        }
+                    }
+                );
+            })
+            .catch(err => {
+                if(currentIndex === numberOfConnections) {
+                    this.setState({ isWifiScanDone: true, });
+                } else {
+                    this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1));
+                }
+            });
+    };
 
     _handleStopScan = () => {
         const { bluetooth, stopScan, } = this.props;
@@ -287,27 +331,16 @@ class SensorFilesPage extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
+        const { bluetooth, getScannedWifiConnections, } = this.props;
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         return getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
             .then(res => {
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
-                for(let i = 1; i <= res; i += 1) {
-                    this._wifiTimers[i] = _.delay(() => {
-                        getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
-                            .then(response => {
-                                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                                newAvailableNetworks.push(response);
-                                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
-                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: i === res, });
-                            })
-                            .catch(error => this.setState({ isWifiScanDone: true, }));
-                    }, 500 * i);
-                }
+                this._handleSingleWifiConnectionFetch(bluetooth.accessoryData.sensor_pid, res, 1);
             })
-            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
+            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err, 'Please Try Again!')));
     }
 
     _onPageScrollEnd = currentPage => {

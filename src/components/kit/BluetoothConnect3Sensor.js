@@ -23,16 +23,13 @@
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import {
-    ActivityIndicator,
     Alert,
     Animated,
-    Image,
     Keyboard,
     NativeEventEmitter,
     NativeModules,
     Platform,
     PermissionsAndroid,
-    ScrollView,
     View,
 } from 'react-native';
 
@@ -88,6 +85,8 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     componentDidMount = () => {
+        AlertHelper.closeCancelableDropDown();
+        AlertHelper.closeDropDown();
         BleManager.start({ showAlert: false, });
         BleManager.checkState();
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
@@ -206,6 +205,13 @@ class BluetoothConnect3Sensor extends Component {
         startScan(60);
     }
 
+    _handleDisconnection = callback => {
+        const { bluetooth, startDisconnection, } = this.props;
+        startDisconnection(bluetooth.accessoryData.sensor_pid, true)
+            .then(() => callback())
+            .catch(() => callback());
+    }
+
     _handleFormChange = (name, value) => {
         let newFormFields = _.update( this.state.currentWifiConnection, name, () => value);
         this.setState({ ['currentWifiConnection']: newFormFields, });
@@ -213,8 +219,52 @@ class BluetoothConnect3Sensor extends Component {
 
     _handleNetworkPress = network => {
         _.map(this._wifiTimers, (timer, i) => clearInterval(this._wifiTimers[i]));
-        this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+        if(network.security.toByte !== 0) {
+            this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+        } else {
+            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+            newCurrentWifiConnection.password = false;
+            this.setState(
+                { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },
+                () => {
+                    this._timer = _.delay(() => {
+                        this.setState(
+                            { loading: true, },
+                            () => this._connectSensorToWifi(),
+                        );
+                    }, 500);
+                },
+            );
+        }
     }
+
+    _handleSingleWifiConnectionFetch = (sensorId, numberOfConnections, currentIndex) => {
+        const { getSingleWifiConnection, } = this.props;
+        getSingleWifiConnection(sensorId, currentIndex)
+            .then(res => {
+                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
+                newAvailableNetworks.push(res);
+                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
+                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
+                this.setState(
+                    { availableNetworks: newAvailableNetworks, },
+                    () => {
+                        if(currentIndex === numberOfConnections) {
+                            this.setState({ isWifiScanDone: true, });
+                        } else {
+                            _.delay(() => this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1)), 750);
+                        }
+                    }
+                );
+            })
+            .catch(err => {
+                if(currentIndex === numberOfConnections) {
+                    this.setState({ isWifiScanDone: true, });
+                } else {
+                    this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1));
+                }
+            });
+    };
 
     _handleStopScan = () => {
         const { bluetooth, stopScan, } = this.props;
@@ -230,7 +280,7 @@ class BluetoothConnect3Sensor extends Component {
                     [
                         {
                             text:    'Exit Tutorial',
-                            onPress: () => Actions.pop(),
+                            onPress: () => this._handleDisconnection(() => Actions.pop()),
                             style:   'cancel',
                         },
                         {
@@ -252,7 +302,7 @@ class BluetoothConnect3Sensor extends Component {
                 {
                     text:    'I\'ll do it later',
                     onPress: () => {
-                        Actions.pop();
+                        this._handleDisconnection(() => Actions.pop());
                         if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
                             this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                         }
@@ -268,25 +318,14 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
+        const { bluetooth, getScannedWifiConnections, } = this.props;
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         return getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
             .then(res => {
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
-                for(let i = 1; i <= res; i += 1) {
-                    this._wifiTimers[i] = _.delay(() => {
-                        getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
-                            .then(response => {
-                                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                                newAvailableNetworks.push(response);
-                                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
-                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: i === res, });
-                            })
-                            .catch(error => this.setState({ isWifiScanDone: true, }));
-                    }, 500 * i);
-                }
+                this._handleSingleWifiConnectionFetch(bluetooth.accessoryData.sensor_pid, res, 1);
             })
             .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err, 'Please Try Again!')));
     }
@@ -547,8 +586,12 @@ class BluetoothConnect3Sensor extends Component {
                         bounceValue={bounceValue}
                         currentPage={pageIndex === 17}
                         nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
+                        onBack={() => this._handleDisconnection(() => this._renderPreviousPage())}
+                        onClose={() =>
+                            this._handleDisconnection(() =>
+                                this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)
+                            )
+                        }
                         page={2}
                     />
                     <Connect
@@ -560,7 +603,11 @@ class BluetoothConnect3Sensor extends Component {
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)}
+                        onClose={() =>
+                            this._handleDisconnection(() =>
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)
+                            )
+                        }
                         page={3}
                     />
                     <Connect
