@@ -431,7 +431,7 @@ class BodyModality extends Component {
                             }
                         </View>
                         <Button
-                            buttonStyle={[AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0,}]}
+                            buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0,}])}
                             containerStyle={{flex: 1, justifyContent: 'flex-end',}}
                             onPress={() => this._completeBodyPartModality()}
                             title={`Complete ${_.chain(pageTitle).toLower().startCase()}`}

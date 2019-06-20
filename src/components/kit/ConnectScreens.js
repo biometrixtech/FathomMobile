@@ -219,13 +219,13 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
             <View style={{flex: 1, justifyContent: 'flex-end',}}>
                 <LinearGradient
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
-                    style={{height: AppSizes.screen.heightThreeQuarters, justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
+                    style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                 >
                     <View>
                         <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'About to Workout?\nLet\'s Track It!'}</Text>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'First, we\'ll teach you how to use your Fathom PRO Kit during your workout to optimize your recovery & prevention.'}</Text>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml,}}>{'First, we\'ll teach you how to use your Fathom PRO Kit during your workout to optimize your recovery & prevention.'}</Text>
                     </View>
-                    <View style={{justifyContent: 'space-between',}}>
+                    <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'YOU\'LL NEED:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                             <TabIcon
@@ -268,16 +268,14 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.padding,}}>{'Sensor Adhesives'}</Text>
                         </View>
                     </View>
-                    <View>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                            containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
-                            onPress={() => nextBtn()}
-                            raised={true}
-                            title={'Start Tutorial'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    <Button
+                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                        containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
+                        onPress={() => nextBtn()}
+                        raised={true}
+                        title={'Start Tutorial'}
+                        titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                    />
                 </LinearGradient>
             </View>
         </ImageBackground>
@@ -295,22 +293,20 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                 <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <LinearGradient
                         colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
-                        style={{height: AppSizes.screen.heightHalf, justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
+                        style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                     >
                         <View>
                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'Now, Let\'s Start Tracking Data!'}</Text>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Every PRO workout starts with a short calibration! If you forget how, you can view these instructions again later.'}</Text>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml,}}>{'Every PRO workout starts with a short calibration! If you forget how, you can view these instructions again later.'}</Text>
                         </View>
-                        <View>
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
-                                onPress={() => nextBtn()}
-                                raised={true}
-                                title={'Start Calibration'}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                            />
-                        </View>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={'Start Calibration'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
                     </LinearGradient>
                 </View>
             </ImageBackground>
@@ -414,22 +410,20 @@ const Session = ({ currentPage, onBack, onClose, nextBtn, page, showTopNavStep =
                 <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <LinearGradient
                         colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
-                        style={{height: AppSizes.screen.heightHalf, justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
+                        style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                     >
                         <View>
                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'Go Workout & Come Back After!'}</Text>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Go workout for at least 10 minutes. When you\'re done come back & tap the button below to learn how to end your session.'}</Text>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml,}}>{'Go workout for at least 10 minutes. When you\'re done come back & tap the button below to learn how to end your session.'}</Text>
                         </View>
-                        <View>
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
-                                onPress={() => nextBtn()}
-                                raised={true}
-                                title={'End Workout'}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                            />
-                        </View>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={'End Workout'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
                     </LinearGradient>
                 </View>
             </ImageBackground>
@@ -678,7 +672,7 @@ const Connect = ({
                                     key={i}
                                     onPress={() => handleNetworkPress(network)}
                                     rightIcon={
-                                        <View>
+                                        <View style={{flexDirection: 'row',}}>
                                             {network.security.toByte !== 0 &&
                                                 <TabIcon
                                                     color={AppColors.zeplin.slateXLight}
@@ -715,10 +709,10 @@ const Connect = ({
             <View style={{flex: 1, justifyContent: 'flex-end',}}>
                 <LinearGradient
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
-                    style={{height: AppSizes.screen.heightThreeQuarters, justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
+                    style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                 >
-                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35),}}>{'Now, Let\'s Connect Wifi & Sync Workout'}</Text>
-                    <View style={{justifyContent: 'space-between',}}>
+                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'Now, Let\'s Connect Wifi & Sync Workout'}</Text>
+                    <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'YOU\'LL NEED:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                             <TabIcon
@@ -758,16 +752,14 @@ const Connect = ({
                             </View>
                         </View>
                     </View>
-                    <View>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                            containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
-                            onPress={() => nextBtn()}
-                            raised={true}
-                            title={'Connect & Sync'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    <Button
+                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                        containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
+                        onPress={() => nextBtn()}
+                        raised={true}
+                        title={'Connect & Sync'}
+                        titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                    />
                 </LinearGradient>
             </View>
         </ImageBackground>

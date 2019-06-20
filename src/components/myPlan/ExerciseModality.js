@@ -319,7 +319,7 @@ class ExerciseModality extends Component {
                             )}
                             { exerciseList.totalLength > 0 ?
                                 <Button
-                                    buttonStyle={[AppStyles.buttonVerticalPadding, {backgroundColor: buttonBackgroundColor, borderRadius: 0,}]}
+                                    buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: buttonBackgroundColor, borderRadius: 0,}])}
                                     disabledStyle={buttonDisabledStyle}
                                     disabledTitleStyle={{color: AppColors.white,}}
                                     disabled={isButtonDisabled}

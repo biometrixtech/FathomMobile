@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, } from 'react-native';
+import { Platform, View, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -350,7 +350,7 @@ const SensorLogic = {
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_on.mp4',
             },
             {
-                animatedImage: {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone.png'},
+                animatedImage: Platform.OS === 'ios' ? {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone.png'} : {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone_android.png'},
                 buttonText:    false,
                 image:         {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_kit.png'},
                 subtitle:      false,

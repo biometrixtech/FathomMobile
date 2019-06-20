@@ -222,14 +222,14 @@ class DeckCards extends Component {
         }
         let extraStyles = {};
         if(Platform.OS === 'android' && layout && layout === 'tinder') {
-            extraStyles = {elevation: (cards.length - index), zIndex: (cards.length - index),};
+            extraStyles = {borderColor: AppColors.zeplin.slateXLight, borderWidth: 1, elevation: (cards.length - index), zIndex: (cards.length - index),};
         }
         return (
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
                 onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
-                style={[styles.card, extraStyles]}
+                style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',}}>
