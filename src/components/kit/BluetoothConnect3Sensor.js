@@ -119,7 +119,7 @@ class BluetoothConnect3Sensor extends Component {
     _connect = data => {
         const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
         return getBLEMacAddress(data.id)
-            .then(macAddress => getAccessoryKey(macAddress.data.macAddress))
+            .then(macAddress => getAccessoryKey(macAddress))
             .then(response => {
                 if(!response.accessory.owner_id) {
                     return this._toggleAlertNotification(data.id, user.id);
