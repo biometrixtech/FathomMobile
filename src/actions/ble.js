@@ -182,7 +182,7 @@ const stopScan = () => {
         .then(() => dispatch({
             type: Actions.STOP_SCAN
         }))
-        .catch(err => { console.log(err); return Promise.reject(err); });
+        .catch(err => Promise.reject(err));
 };
 
 const deviceFound = data => {
@@ -628,6 +628,14 @@ const cleanSingleWifiArray = wifiArray => {
     }
 };
 
+const handle3SensorOutOfRange = (sensorId, message) => {
+    return new Promise((resolve, reject) => {
+        BleManager.isPeripheralConnected(sensorId)
+            .then(isConnected => isConnected ? resolve(message) : resolve('TIMEDOUT'))
+            .catch(er => resolve(message))
+    });
+};
+
 const getBLEMacAddress = sensorId => {
     // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
     let timeout = null;
@@ -646,16 +654,15 @@ const getBLEMacAddress = sensorId => {
                     if(macAddress === '00:00:00:00:00:00') {
                         return write(sensorId, dataArray, true);
                     }
-                    return resolve(
-                        dispatch({
-                            type: Actions.GET_WIFI_MAC_ADDRESS,
-                            data: {
-                                macAddress:  macAddress,
-                                mobile_udid: AppUtil.getDeviceUUID(),
-                                sensor_pid:  sensorId,
-                            },
-                        })
-                    );
+                    dispatch({
+                        type: Actions.GET_WIFI_MAC_ADDRESS,
+                        data: {
+                            macAddress:  macAddress,
+                            mobile_udid: AppUtil.getDeviceUUID(),
+                            sensor_pid:  sensorId,
+                        },
+                    })
+                    return resolve(macAddress);
                 })
                 .catch(err => reject(err));
         });
@@ -762,6 +769,7 @@ const writeWifiDetailsToSensor = (sensorId, ssid, password, securityByte) => {
 const getScannedWifiConnections = sensorId => {
     // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
     let timeout = null;
+    let errorMessage = 'Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.';
     return dispatch => {
         let fetchingWifiConnections = new Promise((resolve, reject) => {
             const writeDataArray = [commands.WRITE_WIFI_SCAN, convertHex('0x00')];
@@ -773,12 +781,12 @@ const getScannedWifiConnections = sensorId => {
                 .catch(err => BleManager.retrieveServices(sensorId))
                 .then(peripheralInfo => write(peripheralInfo.id, writeDataArray, true))
                 .then(response => resolve(response[4]))
-                .catch(err => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'));
+                .catch(err => handle3SensorOutOfRange(sensorId, errorMessage).then(errMsg => reject(errMsg)));
         });
         return Promise.race([
             fetchingWifiConnections,
             new Promise((resolve, reject) => {
-                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), timeoutValue);
+                timeout = setTimeout(() => handle3SensorOutOfRange(sensorId, errorMessage).then(errMsg => reject(errMsg)), 15000);
                 return timeout;
             })
         ])
@@ -790,6 +798,7 @@ const getScannedWifiConnections = sensorId => {
 const getSingleWifiConnection = (sensorId, index) => {
     // NOTE: timeout function added due to - 'Attempts to connect to a peripheral do not time out' (iOS documentation)
     let timeout = null;
+    let errorMessage = 'Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.';
     return dispatch => {
         let fetchingWifiConnection = new Promise((resolve, reject) => {
             const readDataArray = [commands.READ_WIFI_SCAN_SHORT, convertHex('0x01'), convertHex(`0x${index}`)];
@@ -808,12 +817,12 @@ const getSingleWifiConnection = (sensorId, index) => {
                     }
                     return resolve(cleanSingleWifiArray(response));
                 })
-                .catch(err => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'));
+                .catch(err => handle3SensorOutOfRange(sensorId, errorMessage).then(errMsg => reject(errMsg)));
         });
         return Promise.race([
             fetchingWifiConnection,
             new Promise((resolve, reject) => {
-                timeout = setTimeout(() => reject('Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.'), 15000);
+                timeout = setTimeout(() => handle3SensorOutOfRange(sensorId, errorMessage).then(errMsg => reject(errMsg)), 15000);
                 return timeout;
             })
         ])

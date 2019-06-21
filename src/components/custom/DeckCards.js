@@ -20,7 +20,6 @@ import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import Carousel from 'react-native-snap-carousel';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
@@ -28,6 +27,7 @@ import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { AppUtil, } from '../../lib';
 
 // Components
 import { Button, TabIcon, Text, } from '../custom';
@@ -228,7 +228,7 @@ class DeckCards extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
+                onPress={shouldNavigate ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
                 style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -279,7 +279,7 @@ class DeckCards extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}
                                 containerStyle={{marginRight: AppSizes.paddingSml,}}
-                                onPress={() => Actions.trends()}
+                                onPress={() => AppUtil.pushToScene('trends')}
                                 title={'View Trends'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                             />

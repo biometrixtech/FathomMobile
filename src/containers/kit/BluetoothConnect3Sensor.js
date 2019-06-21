@@ -16,6 +16,7 @@ const BluetoothConnect3Sensor = ({
     getAccessoryKey,
     getBLEMacAddress,
     getScannedWifiConnections,
+    getSensorFiles,
     getSingleWifiConnection,
     network,
     startDisconnection,
@@ -33,6 +34,7 @@ const BluetoothConnect3Sensor = ({
         getAccessoryKey={getAccessoryKey}
         getBLEMacAddress={getBLEMacAddress}
         getScannedWifiConnections={getScannedWifiConnections}
+        getSensorFiles={getSensorFiles}
         getSingleWifiConnection={getSingleWifiConnection}
         network={network}
         startDisconnection={startDisconnection}
@@ -53,6 +55,7 @@ BluetoothConnect3Sensor.propTypes = {
     getAccessoryKey:           PropTypes.func.isRequired,
     getBLEMacAddress:          PropTypes.func.isRequired,
     getScannedWifiConnections: PropTypes.func.isRequired,
+    getSensorFiles:            PropTypes.func.isRequired,
     getSingleWifiConnection:   PropTypes.func.isRequired,
     network:                   PropTypes.object.isRequired,
     startDisconnection:        PropTypes.func.isRequired,
@@ -81,6 +84,7 @@ const mapDispatchToProps = {
     getAccessoryKey:           BluetoothActions.getAccessoryKey,
     getBLEMacAddress:          BluetoothActions.getBLEMacAddress,
     getScannedWifiConnections: BluetoothActions.getScannedWifiConnections,
+    getSensorFiles:            BluetoothActions.getSensorFiles,
     getSingleWifiConnection:   BluetoothActions.getSingleWifiConnection,
     startDisconnection:        BluetoothActions.startDisconnection,
     startScan:                 BluetoothActions.startScan,

@@ -28,6 +28,23 @@ const SensorLogic = {
       * - SensorFiles
       */
     // TODO: UNIT TEST ME
+    handleFirstPageIndexRenderLogic: (user, wifiPageNumber) => {
+        let filteredFirstTimeExperience = _.cloneDeep(user.first_time_experience);
+        filteredFirstTimeExperience = _.filter(filteredFirstTimeExperience, o => /^3Sensor-Onboarding-/.test(o) && o !== `3Sensor-Onboarding-${wifiPageNumber}`);
+        filteredFirstTimeExperience = _.map(filteredFirstTimeExperience, o => _.toInteger(o.substring((o.lastIndexOf('-') + 1), o.length)));
+        let largestCheckpoint = _.max(filteredFirstTimeExperience);
+        let updatedPageIndex = largestCheckpoint ?
+            largestCheckpoint
+            :
+            0;
+        return _.toInteger(updatedPageIndex);
+    },
+
+    /**
+      * Handles Sensor File Render Logic
+      * - SensorFiles
+      */
+    // TODO: UNIT TEST ME
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
         let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date, 'hours') : 0;

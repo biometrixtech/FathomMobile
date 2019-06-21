@@ -16,7 +16,7 @@ import { ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View, } from
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { Button, DeckCards, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { FathomCharts, } from './graphs';
-import { PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -294,7 +294,7 @@ class TrendChild extends PureComponent {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, width: AppSizes.screen.widthThird,}}
                                 containerStyle={[{width: AppSizes.screen.widthThird,}]}
-                                onPress={() => Actions.myPlan()}
+                                onPress={() => AppUtil.pushToScene('myPlan')}
                                 raised={true}
                                 title={'My Plan'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}

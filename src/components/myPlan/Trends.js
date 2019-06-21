@@ -15,12 +15,11 @@ import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, V
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { FathomCharts, } from './graphs';
-import { PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 import { Text, } from '../custom';
 import { store } from '../../store';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 
@@ -127,7 +126,7 @@ class Trends extends PureComponent {
 
                     <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>
                         <TouchableOpacity
-                            onPress={() => Actions.trendChild({ insightType: 0, })}
+                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 0, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             <Text oswaldRegular style={[styles.cardTitle,]}>{'STRESS'}</Text>
@@ -142,7 +141,7 @@ class Trends extends PureComponent {
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => Actions.trendChild({ insightType: 1, })}
+                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 1, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             <Text oswaldRegular style={[styles.cardTitle,]}>{'RESPONSE'}</Text>
@@ -157,7 +156,7 @@ class Trends extends PureComponent {
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => Actions.trendChild({ insightType: 2, })}
+                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 2, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             <Text oswaldRegular style={[styles.cardTitle,]}>{'BIOMECHANICS'}</Text>

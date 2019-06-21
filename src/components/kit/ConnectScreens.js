@@ -552,6 +552,7 @@ const Connect = ({
     handleNetworkPress = () => {},
     handleNotInRange = () => {},
     handleWifiScan = () => {},
+    isLoading,
     isNextDisabled,
     isWifiScanDone = true,
     onBack,
@@ -585,7 +586,7 @@ const Connect = ({
                         :
                         null
                 }
-                { (page === 2 && content.animatedImage) &&
+                {/* (page === 2 && content.animatedImage) &&
                     <Animated.View
                         style={[{
                             alignItems: 'center',
@@ -603,7 +604,7 @@ const Connect = ({
                             style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
                         />
                     </Animated.View>
-                }
+                */}
                 { page !== 3 &&
                     <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
                         <View style={{flex: 1, justifyContent: 'space-between',}}>
@@ -623,6 +624,8 @@ const Connect = ({
                                 disabled={isNextDisabled}
                                 disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                                 disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                loading={isLoading}
+                                loadingProps={{color: AppColors.zeplin.yellow,}}
                                 onPress={() => nextBtn()}
                                 title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}

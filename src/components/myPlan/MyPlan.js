@@ -207,7 +207,6 @@ const MyPlanNavBar = ({
     cards = [],
     handleReadInsight,
     expandNotifications,
-    onLeft,
     onRight,
     user,
 }) => (
@@ -217,7 +216,7 @@ const MyPlanNavBar = ({
             { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
                 <TouchableOpacity
                     activeOpacity={1}
-                    onPress={() => Actions.sensorFiles()}
+                    onPress={() => AppUtil.pushToScene('sensorFiles')}
                     style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
                 >
                     <Image
@@ -546,6 +545,7 @@ class MyPlan extends Component {
                         clearHealthKitWorkouts();
                         clearCompletedExercises();
                         clearCompletedCoolDownExercises();
+                        AppUtil._handle3SensorBanner(user, response[0]);
                     }
                 );
             })
@@ -914,7 +914,6 @@ class MyPlan extends Component {
                     cards={dailyPlanObj.insights}
                     expandNotifications={expandNotifications}
                     handleReadInsight={index => handleReadInsight(dailyPlanObj, index)}
-                    onLeft={() => Actions.settings()}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />
@@ -971,7 +970,7 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? Actions.bodyModality({ modality: activeModality.modality, }) : Actions.exerciseModality({ index: key, modality: activeModality.modality, })}
+                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}
@@ -1017,7 +1016,7 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? Actions.bodyModality({ modality: activeModality.modality, }) : Actions.exerciseModality({ index: key, modality: activeModality.modality, })}
+                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}

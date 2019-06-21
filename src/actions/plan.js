@@ -214,7 +214,7 @@ const postReadinessSurvey = dailyReadinessObj => {
                 coolDownGoals:   coolDownGoals,
                 warmUpGoals:     warmUpGoals,
             });
-            return Promise.resolve(myPlanData);
+            return Promise.resolve(myPlanData.daily_plans);
         })
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };

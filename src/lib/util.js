@@ -8,19 +8,19 @@
 import { Alert, Platform, } from 'react-native';
 
 // import third-party libraries
-import _ from 'lodash';
 import { Actions as DispatchActions, MyPlan as MyPlanConstants, } from '../constants';
 import { Actions as RouterActions, } from 'react-native-router-flux';
-import { AppColors, AppStyles } from '../constants';
-import { store } from '../store';
+import { AppColors, AppStyles, } from '../constants';
+import { AlertHelper, } from './';
+import { init as InitActions, plan as PlanActions, } from '../actions';
+import { store, } from '../store';
+import _ from 'lodash';
 import AsyncStorage from '@react-native-community/async-storage';
 import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import uuidByString from 'uuid-by-string';
-
-import { init as InitActions, plan as PlanActions, } from '../actions';
 
 // get the available permissions from AppleHealthKit.Constants object
 const PERMS = AppleHealthKit.Constants.Permissions;
@@ -49,6 +49,14 @@ const MS_IN_DAY = 1000 * 60 * 60 * 24;
 // }
 
 const UTIL = {
+
+    pushToScene: (destinationScene, props = {}) => {
+        if (RouterActions.currentScene === destinationScene) {
+            return;
+        }
+        return RouterActions[destinationScene](props);
+    },
+
     getDeviceUUID: () => {
         // setup evn flag
         let currentState = store.getState();
@@ -196,9 +204,30 @@ const UTIL = {
                 if(userObj.role === 'coach') {
                     RouterActions.coachesDashboard();
                 } else {
+                    // 3-Sensor Banner
+                    let dailyPlanObj = store.getState().plan && store.getState().plan.dailyPlan && store.getState().plan.dailyPlan[0] ?
+                        store.getState().plan.dailyPlan[0]
+                        :
+                        {};
+                    UTIL._handle3SensorBanner(userObj, dailyPlanObj);
                     RouterActions.myPlan();
                 }
             }
+        }
+    },
+
+    _handle3SensorBanner: (user, plan) => {
+        if(
+            user.id &&
+            plan.daily_readiness_survey_completed &&
+            user.first_time_experience.includes('3Sensor-Onboarding-17') &&
+            !user.first_time_experience.includes('3Sensor-Onboarding-18')
+        ) {
+            AlertHelper.showDropDown(
+                'custom',
+                'FINISH WIFI SET-UP TO SYNC YOUR DATA.',
+                'Tap here once in range of your preferred wifi.'
+            );
         }
     },
 
