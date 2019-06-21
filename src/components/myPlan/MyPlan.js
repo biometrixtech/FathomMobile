@@ -408,8 +408,6 @@ class MyPlan extends Component {
             // clear timer
             clearInterval(this._timer);
         }
-        // handle Coach related items
-        // this._checkCoachStatus();
     }
 
     componentWillMount = () => {
@@ -545,7 +543,10 @@ class MyPlan extends Component {
                         clearHealthKitWorkouts();
                         clearCompletedExercises();
                         clearCompletedCoolDownExercises();
+                        // do we need to open 3-Sensor banner
                         AppUtil._handle3SensorBanner(user, response[0]);
+                        // handle Coach related items
+                        this._checkCoachStatus();
                     }
                 );
             })

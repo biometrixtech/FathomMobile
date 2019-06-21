@@ -191,7 +191,9 @@ class DeckCards extends Component {
             cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
         let showUnreadNotificationsBadge = currentCardIndex === index && unreadNotificationsCount > 0;
+        let allowNavigation = triggerType !== 25 && triggerType < 200;
         return {
+            allowNavigation,
             cardTextArray,
             dateText,
             insightType,
@@ -211,6 +213,7 @@ class DeckCards extends Component {
         const { cards, layout, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
+            allowNavigation,
             cardTextArray,
             dateText,
             insightType,
@@ -228,7 +231,7 @@ class DeckCards extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={shouldNavigate ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
+                onPress={shouldNavigate && allowNavigation ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
                 style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>

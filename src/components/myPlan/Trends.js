@@ -16,7 +16,7 @@ import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, V
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { FathomCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
-import { Text, } from '../custom';
+import { TabIcon, Text, } from '../custom';
 import { store } from '../../store';
 
 // import third-party libraries
@@ -41,6 +41,24 @@ const styles = StyleSheet.create({
         color:             AppColors.zeplin.slate,
         fontSize:          AppFonts.scaleFont(25),
         paddingHorizontal: AppSizes.padding,
+    },
+    lockedCardText: {
+        color:             AppColors.white,
+        fontSize:          AppFonts.scaleFont(15),
+        paddingHorizontal: AppSizes.padding,
+        textAlign:         'center',
+    },
+    lockedCardWrapper: {
+        backgroundColor: `${AppColors.zeplin.slateLight}B3`,
+        borderRadius:    6,
+        bottom:          0,
+        flex:            1,
+        left:            0,
+        paddingVertical: AppSizes.padding,
+        position:        'absolute',
+        right:           0,
+        top:             0,
+        width:           '100%',
     },
     yAxis: {
         color:     AppColors.zeplin.slate,
@@ -101,6 +119,9 @@ class Trends extends PureComponent {
             currentResponseAlert,
             currentStressAlert,
             extraBottomPadding,
+            isBiomechanicsLocked,
+            isResponseLocked,
+            isStressLocked,
         } = PlanLogic.handleTrendsRenderLogic(plan, Platform.OS);
         let currentStressAlertText = PlanLogic.handleChartTitleRenderLogic(currentStressAlert, styles.cardSubtitle);
         let currentResponseAlertText = PlanLogic.handleChartTitleRenderLogic(currentResponseAlert, styles.cardSubtitle);
@@ -126,11 +147,14 @@ class Trends extends PureComponent {
 
                     <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>
                         <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 0, })}
+                            activeOpacity={isStressLocked ? 1 : 0.2}
+                            onPress={() => isStressLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 0, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
-                            <Text oswaldRegular style={[styles.cardTitle,]}>{'STRESS'}</Text>
-                            { currentStressAlertText &&
+                            { !isStressLocked &&
+                                <Text oswaldRegular style={[styles.cardTitle,]}>{'STRESS'}</Text>
+                            }
+                            { (currentStressAlertText && !isStressLocked) &&
                                 currentStressAlertText
                             }
                             <FathomCharts
@@ -139,13 +163,33 @@ class Trends extends PureComponent {
                                 currentAlert={currentStressAlert}
                                 startSliceValue={7}
                             />
+                            { isStressLocked &&
+                                <View style={[styles.lockedCardWrapper,]}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'STRESS'}</Text>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                    </View>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'Insufficient data. Keep logging workouts in Fathom to unlock Stress Trends!'}</Text>
+                                    </View>
+                                </View>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 1, })}
+                            activeOpacity={isResponseLocked ? 1 : 0.2}
+                            onPress={() => isResponseLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 1, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
-                            <Text oswaldRegular style={[styles.cardTitle,]}>{'RESPONSE'}</Text>
-                            { currentResponseAlertText &&
+                            { !isResponseLocked &&
+                                <Text oswaldRegular style={[styles.cardTitle,]}>{'RESPONSE'}</Text>
+                            }
+                            { (currentResponseAlertText && !isResponseLocked) &&
                                 currentResponseAlertText
                             }
                             <FathomCharts
@@ -154,13 +198,33 @@ class Trends extends PureComponent {
                                 currentAlert={currentResponseAlert}
                                 startSliceValue={7}
                             />
+                            { isResponseLocked &&
+                                <View style={[styles.lockedCardWrapper,]}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'RESPONSE'}</Text>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                    </View>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Pain or Soreness Trends yet. Keep logging symptoms for insight into how your body responds to training.'}</Text>
+                                    </View>
+                                </View>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('trendChild', { insightType: 2, })}
+                            activeOpacity={isBiomechanicsLocked ? 1 : 0.2}
+                            onPress={() => isBiomechanicsLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 2, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
-                            <Text oswaldRegular style={[styles.cardTitle,]}>{'BIOMECHANICS'}</Text>
-                            { currentBiomechanicsAlertText &&
+                            { isBiomechanicsLocked &&
+                                <Text oswaldRegular style={[styles.cardTitle,]}>{'BIOMECHANICS'}</Text>
+                            }
+                            { (currentBiomechanicsAlertText && !isBiomechanicsLocked) &&
                                 currentBiomechanicsAlertText
                             }
                             <FathomCharts
@@ -169,6 +233,23 @@ class Trends extends PureComponent {
                                 currentAlert={currentBiomechanicsAlert}
                                 startSliceValue={0}
                             />
+                            { isBiomechanicsLocked &&
+                                <View style={[styles.lockedCardWrapper,]}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'BIOMECHANICS'}</Text>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                    </View>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Biomechanics Trends yet. Log your symptoms to help us identify possible weaknesses or strength imbalances.'}</Text>
+                                    </View>
+                                </View>
+                            }
                         </TouchableOpacity>
                     </View>
 
