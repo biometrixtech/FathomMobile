@@ -181,6 +181,7 @@ class SensorFilesPage extends Component {
                 newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
                 newUserPayloadObj.sensor_data.system_type = '3-sensor';
                 let newUserNetworksPayloadObj = {};
+                newUserNetworksPayloadObj['@sensor_data'] = {};
                 newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
                 let newUserObj = _.cloneDeep(user);
                 newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;

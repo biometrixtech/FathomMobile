@@ -494,7 +494,7 @@ class Settings extends Component {
                             />
                         </View>
                     }
-                    onPress={() => Actions.bluetoothConnect3Sensor()}//has3SensorConnected ? Actions.sensorFiles() : Actions.bluetoothConnect3Sensor()}
+                    onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect3Sensor()}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',

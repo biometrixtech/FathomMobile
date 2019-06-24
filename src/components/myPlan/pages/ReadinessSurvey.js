@@ -491,7 +491,7 @@ class ReadinessSurvey extends Component {
                                     backNextButtonOptions={{
                                         isValid:  isRPEValid && isSportValid,
                                         onBack:   () => this._addSession(),
-                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => _.debounce(() => this._checkNextStep(3), 500)),
+                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => this._checkNextStep(3)),
                                     }}
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {
