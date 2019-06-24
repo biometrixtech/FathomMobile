@@ -111,14 +111,13 @@ class BluetoothConnect3Sensor extends Component {
 
     _connect = data => {
         const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
-        // TODO: FIX ME
         return getBLEMacAddress(data.id)
-            // .then(macAddress => getAccessoryKey(macAddress))
+            .then(macAddress => getAccessoryKey(macAddress))
             .then(response => {
-                // if(!response.accessory.owner_id) {
+                if(!response.accessory.owner_id) {
                     return this._toggleAlertNotification(data.id, user.id);
-                // }
-                // return startDisconnection(data.id, true).then(() => this._handleBLEPair());
+                }
+                return startDisconnection(data.id, true).then(() => this._handleBLEPair());
             })
             .catch(err => {
                 if (
@@ -141,7 +140,7 @@ class BluetoothConnect3Sensor extends Component {
         let sensorId = bluetooth.accessoryData.sensor_pid;
         let ssid = currentWifiConnection.ssid;
         let password = currentWifiConnection.password;
-        let securityByte = currentWifiConnection.security.toByte;
+        let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
         return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
             .then(res => {
                 // setup variables
@@ -154,15 +153,11 @@ class BluetoothConnect3Sensor extends Component {
                 newUserNetworksPayloadObj['@sensor_data'] = {};
                 newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
                 let newUserObj = _.cloneDeep(user);
+                newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}18`);
                 newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
                 newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
                 newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
                 newUserObj.sensor_data.system_type = '3-sensor';
-                // update reducer as API might take too long to return a value
-                store.dispatch({
-                    type: DispatchActions.USER_REPLACE,
-                    data: newUserObj
-                });
                 // send commands
                 return updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
                     .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
@@ -321,7 +316,7 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [0, 1, 9, 12, 15, WIFI_PAGE_NUMBER, 18];
+        const checkpointPages = [0, 1, 9, 12, 15, WIFI_PAGE_NUMBER];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         }

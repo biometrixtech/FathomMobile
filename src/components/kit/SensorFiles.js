@@ -78,7 +78,7 @@ class SensorFiles extends Component {
                 },
                 {
                     text:    'Continue',
-                    onPress: () => Actions.sensorFilesPage({ pageStep: 'connect', }),
+                    onPress: () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', }),
                 },
             ],
             { cancelable: false, }
@@ -105,7 +105,7 @@ class SensorFiles extends Component {
                         <View style={{flex: 1,}} />
                         <TouchableOpacity
                             activeOpacity={1}
-                            onPress={() => Actions.sensorFilesPage({ pageStep: 'battery', })}
+                            onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'battery', })}
                             style={{alignItems: 'center', flex: 4, justifyContent: 'center',}}
                         >
                             <View style={{flexDirection: 'row',}}>
@@ -206,7 +206,7 @@ class SensorFiles extends Component {
                             name:      'directions-run',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => Actions.sensorFilesPage({ pageStep: 'sessions', })}
+                        onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'sessions', })}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
@@ -228,7 +228,7 @@ class SensorFiles extends Component {
                             size:      ICON_SIZE,
                             type:      'ionicon',
                         }}
-                        onPress={() => Actions.sensorFilesPage({ pageStep: 'placement', })}
+                        onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
@@ -247,7 +247,7 @@ class SensorFiles extends Component {
                             name:      'compare-arrows',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => Actions.sensorFilesPage({ pageStep: 'calibrate', })}
+                        onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
@@ -266,7 +266,7 @@ class SensorFiles extends Component {
                             name:      'cloud-upload',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => Actions.sensorFilesPage({ pageStep: 'end', })}
+                        onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'end', })}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',

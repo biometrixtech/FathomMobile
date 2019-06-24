@@ -41,46 +41,6 @@ const styles = StyleSheet.create({
 });
 
 /* Components =================================================================== */
-const CVP = ({ nextBtn, }) => (
-    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-        <View style={{flexDirection: 'row',}}>
-            <View style={{flex: 1,}} />
-            <View style={{flex: 8,}}>
-                <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
-                    {'FATHOM PRO KIT:\nTHE WORLD\'S MOST ADVANCED BIOMECHANICS TRACKING SYSTEM'}
-                </Text>
-            </View>
-            <View style={{flex: 1,}}>
-                <TabIcon
-                    color={AppColors.zeplin.slateLight}
-                    icon={'close'}
-                    iconStyle={[{alignSelf: 'flex-start',}]}
-                    onPress={() => Actions.pop()}
-                    reverse={false}
-                    size={30}
-                />
-            </View>
-        </View>
-        <View style={{alignItems: 'center', marginHorizontal: ((AppSizes.screen.width - AppSizes.screen.widthFourFifths) / 2),}}>
-            <Image
-                resizeMode={'contain'}
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/CVP.png'}}
-                style={{alignSelf: 'center', height: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)), width: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)),}}
-            />
-            <Text robotoLight style={[styles.subtitleStyle,]}>
-                {'Unlock precision prep, recovery & functional exercise perfectly designed for your body.'}
-            </Text>
-            <Button
-                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '100%',}}
-                onPress={() => nextBtn()}
-                raised={true}
-                title={'Let\'s Get Started'}
-                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-            />
-        </View>
-    </View>
-);
 
 const TopNav = ({ darkColor, onBack = () => {}, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
@@ -163,6 +123,35 @@ const TopNav = ({ darkColor, onBack = () => {}, onClose, step, }) => {
         </View>
     );
 };
+
+const CVP = ({ nextBtn, }) => (
+    <View style={{flex: 1,}}>
+        <TopNav darkColor={true} onBack={null} step={false} />
+        <View style={{alignItems: 'center', justifyContent: 'center',}}>
+            <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(22), marginHorizontal: AppSizes.padding, textAlign: 'center',}}>
+                {'FATHOM PRO KIT:\nTHE WORLD\'S MOST ADVANCED BIOMECHANICS TRACKING SYSTEM'}
+            </Text>
+            <View style={{alignItems: 'center', marginHorizontal: ((AppSizes.screen.width - AppSizes.screen.widthFourFifths) / 2),}}>
+                <Image
+                    resizeMode={'contain'}
+                    source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/CVP.png'}}
+                    style={{alignSelf: 'center', height: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)), width: (AppSizes.screen.width - (AppSizes.screen.width - AppSizes.screen.widthFourFifths)),}}
+                />
+                <Text robotoLight style={[styles.subtitleStyle,]}>
+                    {'Unlock precision prep, recovery & functional exercise perfectly designed for your body.'}
+                </Text>
+                <Button
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '100%',}}
+                    onPress={() => nextBtn()}
+                    raised={true}
+                    title={'Let\'s Get Started'}
+                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                />
+            </View>
+        </View>
+    </View>
+);
 
 const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showTopNavStep = true, }) => {
     let content = SensorLogic.getPlacementContent(styles)[page];
@@ -317,7 +306,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
             <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 2 : false} />
             <View style={{flex: 1, justifyContent: 'space-between',}}>
                 { page === 1 ?
-                    <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingMed,}}>
+                    <View style={[AppStyles.scaleButtonShadowEffect, {flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingMed,}]}>
                         <View style={{backgroundColor: AppColors.zeplin.error, borderTopLeftRadius: 5, borderTopRightRadius: 5, paddingVertical: AppSizes.paddingSml,}}>
                             <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'CALIBRATION IS IMPORTANT'}</Text>
                         </View>
@@ -565,7 +554,7 @@ const Connect = ({
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
-                <TopNav darkColor={true} onBack={isWifiScanDone ? () => onBack() : null} onClose={onClose} step={showTopNavStep ? 4 : false} />
+                <TopNav darkColor={true} onBack={isWifiScanDone && onBack ? () => onBack() : null} onClose={onClose} step={showTopNavStep ? 4 : false} />
                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                     {content.title}
                 </View>

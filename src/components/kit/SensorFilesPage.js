@@ -27,7 +27,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AppUtil, SensorLogic, } from '../../lib';
-import { Battery, Calibration, Connect, Placement, Session, } from './ConnectScreens';
+import { Battery, Calibration, Connect, Placement, Session, CVP, } from './ConnectScreens'; // TODO: REMOVE CVP
 import { Loading, } from '../general';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
@@ -139,9 +139,8 @@ class SensorFilesPage extends Component {
     _connect = data => {
         const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
         return getBLEMacAddress(data.id)
-            .then(macAddress => getAccessoryKey(macAddress.data.macAddress))
+            .then(macAddress => getAccessoryKey(macAddress))
             .then(response => {
-                // TODO: CONFIRM WITH GABBY
                 if(
                     !response.accessory.owner_id ||
                     (response.accessory.owner_id && response.accessory.owner_id !== user.id)
@@ -171,7 +170,7 @@ class SensorFilesPage extends Component {
         let sensorId = bluetooth.accessoryData.sensor_pid;
         let ssid = currentWifiConnection.ssid;
         let password = currentWifiConnection.password;
-        let securityByte = currentWifiConnection.security.toByte;
+        let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
         return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
             .then(res => {
                 // setup variables
@@ -188,11 +187,6 @@ class SensorFilesPage extends Component {
                 newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
                 newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
                 newUserObj.sensor_data.system_type = '3-sensor';
-                // update reducer as API might take too long to return a value
-                store.dispatch({
-                    type: DispatchActions.USER_REPLACE,
-                    data: newUserObj
-                });
                 // send commands
                 return updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
                     .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
@@ -370,7 +364,7 @@ class SensorFilesPage extends Component {
                     }
                 });
             }
-        } else if(currentPage === 2 && pageStep === 'connect') { // wifi list, start scan
+        } else if(currentPage === 1 && pageStep === 'connect') { // wifi list, start scan
             this._timer = _.delay(() => this._handleWifiScan(), 2000);
         }
     }
@@ -479,7 +473,7 @@ class SensorFilesPage extends Component {
                                 isLoading={isConnectingToSensor}
                                 isNextDisabled={bleState !== 'on' || isConnectingToSensor}
                                 nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
-                                onClose={() => this._handleDisconnection(() => {})}
+                                onClose={() => this._handleDisconnection(() => Actions.pop())}
                                 page={1}
                                 showTopNavStep={false}
                             />
@@ -492,7 +486,7 @@ class SensorFilesPage extends Component {
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
                                 onBack={this._renderPreviousPage}
-                                onClose={() => this._handleDisconnection(() => {})}
+                                onClose={() => this._handleDisconnection(() => Actions.pop())}
                                 page={3}
                                 showTopNavStep={false}
                             />
@@ -665,7 +659,7 @@ class SensorFilesPage extends Component {
                     <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'RECORDED WORKOUTS'}</Text>
                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.padding, marginVertical: AppSizes.padding, textAlign: 'center',}}>{'Here you\'ll find the upload & processing status of all workouts tracked with the Fathom PRO Kit!\n\nIf you don\'t see a workout, make sure your system is charged & in a paired wifi network to start upload.'}</Text>
                     <Spacer isDivider />
-                    { user && user.sensor_data && user.sensor_data.sessions.length > 0 ?
+                    { user && user.sensor_data && user.sensor_data.sessions && user.sensor_data.sessions.length > 0 ?
                         <ScrollView contentContainerStyle={{flexGrow: 1,}}>
                             {_.map(user.sensor_data.sessions, (session, key) => {
                                 const {
@@ -712,7 +706,7 @@ class SensorFilesPage extends Component {
                     }
                 </View>
                 <Text
-                    onPress={() => Actions.sensorFilesPage({ pageStep: 'session', })}
+                    onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'session', })}
                     robotoMedium
                     style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}
                 >

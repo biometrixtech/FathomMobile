@@ -13,7 +13,7 @@ import Routes from './routes';
 
 // import third-party libraries
 import 'react-native-magic-move';
-import { Actions as RouterActions, Router, Stack, } from 'react-native-router-flux';
+import { Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor } from 'react-native-redux-connectivity';
 import * as Fabric from 'react-native-fabric';
 import * as MagicMove from 'react-native-magic-move';
@@ -248,7 +248,7 @@ class Root extends Component {
                         containerStyle={{backgroundColor: AppColors.zeplin.error,}}
                         messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
                         messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => data.action === 'tap' ? RouterActions.bluetoothConnect3Sensor() : {}}
+                        onClose={data => data.action === 'tap' ? AppUtil.pushToScene('bluetoothConnect3Sensor') : {}}
                         panResponderEnabled={false}
                         ref={ref => AlertHelper.setCancelableDropDown(ref)}
                         renderCancel={props => this._renderDropdownImage(props, 'cancel', () => AlertHelper.closeCancelableDropDown())}
@@ -264,7 +264,7 @@ class Root extends Component {
                         containerStyle={{backgroundColor: AppColors.zeplin.error,}}
                         messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
                         messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => RouterActions.bluetoothConnect3Sensor()}
+                        onClose={data => AppUtil.pushToScene('bluetoothConnect3Sensor')}
                         panResponderEnabled={false}
                         ref={ref => AlertHelper.setDropDown(ref)}
                         titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}

@@ -59,8 +59,8 @@ const SensorLogic = {
     // TODO: UNIT TEST ME
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
-        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date, 'hours') : 0;
-        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date, 'days') : 0;
+        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'hours') : 0;
+        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'days') : 0;
         let lastSyncTime = hoursAgo > 48 ? daysAgo : hoursAgo;
         let lastSyncExtraString = hoursAgo > 48 ? daysAgo === 1 || daysAgo === 0 ? 'day' : 'days' : hoursAgo === 1 || hoursAgo === 0 ? 'hr' : 'hrs';
         let lastSyncString = `${lastSyncTime} ${lastSyncExtraString} ago`;
@@ -165,7 +165,7 @@ const SensorLogic = {
       */
     // TODO: UNIT TEST ME
     handleSessionRenderLogic: session => {
-        let updateEndDateTimeString = moment(session.upload_end_date).format('M/D, h:mma');
+        let updateEndDateTimeString = moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma');
         let leftIconString = moment(session.event_date).format('M/D');
         let subtitle = session.status === 0 ?
             'Syncing your data! Do not remove from wifi.'
@@ -179,7 +179,7 @@ const SensorLogic = {
                 'check-circle'
                 :
                 false;
-        let title = `${moment(session.event_date).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
+        let title = `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
         return {
             iconName,
             leftIconString,

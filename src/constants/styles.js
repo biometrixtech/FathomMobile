@@ -486,6 +486,7 @@ export default {
         shadowRadius:  20,
     },
     scaleButtonShadowEffect: {
+        elevation:     2,
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
         shadowOpacity: 1,
