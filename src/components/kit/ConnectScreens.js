@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Animated, Image, ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -82,7 +82,7 @@ const CVP = ({ nextBtn, }) => (
     </View>
 );
 
-const TopNav = ({ darkColor, onBack, onClose, step, }) => {
+const TopNav = ({ darkColor, onBack = () => {}, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
         <View>
@@ -565,7 +565,7 @@ const Connect = ({
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
-                <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 4 : false} />
+                <TopNav darkColor={true} onBack={isWifiScanDone ? () => onBack() : null} onClose={onClose} step={showTopNavStep ? 4 : false} />
                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                     {content.title}
                 </View>
@@ -586,25 +586,6 @@ const Connect = ({
                         :
                         null
                 }
-                {/* (page === 2 && content.animatedImage) &&
-                    <Animated.View
-                        style={[{
-                            alignItems: 'center',
-                            bottom:     0,
-                            left:       0,
-                            position:   'absolute',
-                            right:      0,
-                            transform:  [{translateY: bounceValue}],
-                            width:      AppSizes.screen.width,
-                        }]}
-                    >
-                        <Image
-                            resizeMode={'stretch'}
-                            source={content.animatedImage}
-                            style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
-                        />
-                    </Animated.View>
-                */}
                 { page !== 3 &&
                     <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
                         <View style={{flex: 1, justifyContent: 'space-between',}}>

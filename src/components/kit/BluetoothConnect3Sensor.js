@@ -111,13 +111,14 @@ class BluetoothConnect3Sensor extends Component {
 
     _connect = data => {
         const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
+        // TODO: FIX ME
         return getBLEMacAddress(data.id)
-            .then(macAddress => getAccessoryKey(macAddress))
+            // .then(macAddress => getAccessoryKey(macAddress))
             .then(response => {
-                if(!response.accessory.owner_id) {
+                // if(!response.accessory.owner_id) {
                     return this._toggleAlertNotification(data.id, user.id);
-                }
-                return startDisconnection(data.id, true).then(() => this._handleBLEPair());
+                // }
+                // return startDisconnection(data.id, true).then(() => this._handleBLEPair());
             })
             .catch(err => {
                 if (
@@ -594,7 +595,7 @@ class BluetoothConnect3Sensor extends Component {
                         handleWifiScan={() => this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
+                        onBack={() => this._handleDisconnection(() => this._renderPreviousPage())}
                         onClose={() =>
                             this._handleDisconnection(() =>
                                 this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)
