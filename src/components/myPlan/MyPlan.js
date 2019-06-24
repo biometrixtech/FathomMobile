@@ -547,6 +547,10 @@ class MyPlan extends Component {
                         AppUtil._handle3SensorBanner(user, response[0]);
                         // handle Coach related items
                         this._checkCoachStatus();
+                        // udpate RS first_time_experience
+                        if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
+                            this._handleUpdateFirstTimeExperience('rs_begin_page');
+                        }
                     }
                 );
             })

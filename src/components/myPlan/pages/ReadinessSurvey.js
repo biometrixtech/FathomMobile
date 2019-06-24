@@ -114,7 +114,6 @@ class ReadinessSurvey extends Component {
         clearInterval(this.timer);
     }
 
-
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
             this.setState({ resetHealthKitFirstPage: true, }, () => this.setState({ resetHealthKitFirstPage: false, }));
@@ -384,9 +383,6 @@ class ReadinessSurvey extends Component {
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                             containerStyle={{alignItems: 'center',}}
                                             onPress={() => {
-                                                if(!user.first_time_experience.includes('rs_begin_page')) {
-                                                    handleUpdateFirstTimeExperience('rs_begin_page');
-                                                }
                                                 this._renderNextPage(0, isFormValidItems)
                                             }}
                                             iconRight={true}
@@ -495,7 +491,7 @@ class ReadinessSurvey extends Component {
                                     backNextButtonOptions={{
                                         isValid:  isRPEValid && isSportValid,
                                         onBack:   () => this._addSession(),
-                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => this._checkNextStep(3)),
+                                        onSubmit: () => this.setState({ isFromManualSessionContinue: true, } , () => _.debounce(() => this._checkNextStep(3), 500)),
                                     }}
                                     goBack={() => this._handleSportScheduleBuilderGoBack(index)}
                                     handleFormChange={(location, value, isPain, bodyPartMapIndex, bodyPartSide, shouldScroll) => {

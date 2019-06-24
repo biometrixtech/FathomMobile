@@ -1523,9 +1523,9 @@ const PlanLogic = {
         let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
         let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsLocked = currentBiomechanicsAlert.trigger_type && (currentBiomechanicsAlert.trigger_type === 25 || currentBiomechanicsAlert.trigger_type >= 200);
-        let isResponseLocked = currentResponseAlert.trigger_type && (currentResponseAlert.trigger_type === 25 || currentResponseAlert.trigger_type >= 200);
-        let isStressLocked = currentStressAlert.trigger_type && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
+        let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
+        let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
         return {
             currentBiomechanicsAlert,
             currentResponseAlert,

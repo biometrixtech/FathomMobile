@@ -23,6 +23,18 @@ const SensorLogic = {
         return `${rhours} ${rhours > 1 ? 'HRS' : 'HR'} ${rminutes} ${rminutes > 1 ? 'MINS' : 'MIN'}`;
     },
 
+    errorMessages: () => {
+        return {
+            errorWifiConnection: 'Your Kit was not able to connect to wifi. Your stored password may not be correct.',
+            longPass:            'This password is longer than we can support. Please select a different network or change your password to be <32 characters.',
+            longSSID:            'This network name is longer than we can support. Please select a different network or change your password to be <32 characters.',
+            macFetch:            'Error fetching MAC Address',
+            outOfRange:          'Your Fathom PRO kit couldn\'t find a network in range. Please confirm you\'re within your preferred wifi network and try again once in range.',
+            pairError:           'Oops! Error Pairing! Please try again.',
+            wifiFetch:           'Error saving WIFI connection',
+        };
+    },
+
     /**
       * Handles Sensor File Render Logic
       * - SensorFiles
@@ -211,7 +223,7 @@ const SensorLogic = {
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
                         {'(WARNING: the adhesive is '}
                         <Text robotoBold>{'very strong.'}</Text>
-                        {' Only use if you\'re planning to train & sweat.)'}
+                        {' Only complete this tutorial if you\'re planning to train & sweat.)'}
                     </Text>
                 ],
                 title: <Text oswaldRegular style={[styles.titleStyle,]}>{'LOCATE THE ADHESIVES'}</Text>,
