@@ -27,7 +27,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AppUtil, SensorLogic, } from '../../lib';
-import { Battery, Calibration, Connect, Placement, Session, CVP, } from './ConnectScreens'; // TODO: REMOVE CVP
+import { Battery, Calibration, Connect, Placement, Session, } from './ConnectScreens';
 import { Loading, } from '../general';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
@@ -485,7 +485,7 @@ class SensorFilesPage extends Component {
                                 handleWifiScan={() => this._handleWifiScan()}
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
-                                onBack={this._renderPreviousPage}
+                                onBack={() => this._handleDisconnection(() => this._renderPreviousPage())}
                                 onClose={() => this._handleDisconnection(() => Actions.pop())}
                                 page={3}
                                 showTopNavStep={false}

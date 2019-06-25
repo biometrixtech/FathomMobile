@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 
 /* Components =================================================================== */
 
-const TopNav = ({ darkColor, onBack = () => {}, onClose, step, }) => {
+const TopNav = ({ darkColor, onBack, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
         <View>
@@ -508,10 +508,10 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
             <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingVertical: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
         </View>
-        <View style={{flex: 1,}}>
-            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', overflow: 'hidden', width: AppSizes.screen.widthFourFifths,}}>
+        <View style={{flex: 1, justifyContent: 'flex-end',}}>
+            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', width: AppSizes.screen.widthFourFifths,}}>
                 <Image
-                    resizeMode={'stretch'}
+                    resizeMode={'contain'}
                     source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/end_tutorial.png'}}
                     style={{height: '100%', width: '100%',}}
                 />
@@ -525,7 +525,7 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
             </View>
             <Button
                 buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
-                containerStyle={{justifyContent: 'flex-end', width: '100%',}}
+                containerStyle={{width: '100%',}}
                 onPress={() => nextBtn()}
                 title={'End Tutorial'}
                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}

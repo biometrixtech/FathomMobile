@@ -616,6 +616,7 @@ class BluetoothConnect3Sensor extends Component {
 
                     {/* End - page 20 */}
                     <Complete
+                        currentPage={pageIndex === 20}
                         nextBtn={() => Actions.pop()}
                         onBack={this._renderPreviousPage}
                     />
