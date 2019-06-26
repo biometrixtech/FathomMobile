@@ -211,7 +211,7 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Pain or Soreness Trends yet. Keep logging symptoms for insight into how your body responds to training.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Response Trends yet. Keep logging symptoms for insight into how your body responds to training.'}</Text>
                                     </View>
                                 </View>
                             }
@@ -246,7 +246,7 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Biomechanics Trends yet. Log your symptoms to help us identify possible weaknesses or strength imbalances.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Biomechanics Trends yet. Keep logging symptoms to help us identify possible weaknesses or strength imbalances.'}</Text>
                                     </View>
                                 </View>
                             }

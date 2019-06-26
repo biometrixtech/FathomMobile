@@ -1,6 +1,8 @@
 // import third-party libraries
+import React from 'react';
 import _ from 'lodash';
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../';
+import { Text, } from '../../components/custom';
 
 const onboardingUtils = {
 
@@ -32,14 +34,15 @@ const onboardingUtils = {
             let newError = this.getInvalidPasswordRules();
             errorsArray.push(newError);
             isValid = false;
-        } else if( user.personal_data.phone_number.length > 0 && !this.isPhoneNumberValid(user.personal_data.phone_number) ) {
-            let newError = 'Your Phone Number must be a valid format (1234567890)';
-            errorsArray.push(newError);
-            isValid = false;
         } else {
             errorsArray = [];
             isValid = true;
         }
+        // else if( user.personal_data.phone_number.length > 0 && !this.isPhoneNumberValid(user.personal_data.phone_number) ) {
+        //     let newError = 'Your Phone Number must be a valid format (1234567890)';
+        //     errorsArray.push(newError);
+        //     isValid = false;
+        // }
         return {
             errorsArray,
             isValid,
@@ -50,14 +53,9 @@ const onboardingUtils = {
         let errorsArray = [];
         let isValid;
         // possible array strings
-        const possibleSystemTypes =  UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value); // ['1-sensor', '3-sensor'];
-        const possibleInjuryStatuses = UserAccount.possibleInjuryStatuses.map(injuryStatus => injuryStatus.value); // ['healthy', 'healthy_chronically_injured', 'returning_from_injury'];
         const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
         if(
             user.personal_data.birth_date.length > 0 &&
-            // (user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) &&
-            // possibleInjuryStatuses.includes(user.injury_status) &&
-            // (possibleSystemTypes.includes(user.system_type) || !user.system_type) &&
             possibleGenders.includes(user.biometric_data.sex)
         ) {
             errorsArray = [];
@@ -67,15 +65,31 @@ const onboardingUtils = {
             errorsArray.push(newError);
             isValid = false;
         }
-        /*if(user.personal_data.zip_code.length !== 5) {
-            const newError = 'Please enter a valid Zip Code';
-            errorsArray.push(newError);
-            isValid = false;
-        }*/
         if( _.toNumber(user.biometric_data.mass.lb) === 0 ) {
             const newError = 'Please enter a valid Weight';
             errorsArray.push(newError);
             isValid = false;
+        }
+        return {
+            errorsArray,
+            isValid,
+        }
+    },
+
+    isSurveyValid(surveyValues) {
+        let errorsArray = [];
+        let isValid;
+        if(surveyValues.typical_weekly_sessions.length === 0) {
+            let newError = 'Your Activity Level is required';
+            errorsArray.push(newError);
+            isValid = false;
+        } else if(surveyValues.wearable_devices.length === 0) {
+            let newError = 'Your Wearable Device is required';
+            errorsArray.push(newError);
+            isValid = false;
+        } else {
+            errorsArray = [];
+            isValid = true;
         }
         return {
             errorsArray,
@@ -99,41 +113,28 @@ const onboardingUtils = {
         return (parseFloat(kgs) * 2.20462).toFixed(2);
     },
 
-    getCurrentStep(user) {
-        // all the different RegEx and arrays needed
-        const numbersRegex = /[0-9]/g;
-        const upperCaseLettersRegex = /[A-Z]/g;
-        const lowerCaseLettersRegex = /[a-z]/g;
-        const possibleSystemTypes =  UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value);
-        const possibleInjuryStatuses = UserAccount.possibleInjuryStatuses.map(injuryStatus => injuryStatus.value);
-        const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value);
-        // setup variable
-        let count = 1; // start at one for each optional items (right now only user.personal_data.phone_number)
-        // count each valid REQUIRED field
-        if(user.personal_data.first_name.length > 0) { count = count + 1; }
-        if(user.personal_data.last_name.length > 0) { count = count + 1; }
-        if(
-            user.password.length >= 8 &&
-            user.password.length <= 16 &&
-            numbersRegex.test(user.password) &&
-            user.confirm_password.length >= 8 &&
-            user.confirm_password.length <= 16 &&
-            numbersRegex.test(user.confirm_password)
-        ) { count = count + 1; }
-        if( this.isEmailValid(user.personal_data.email) ) { count = count + 1; }
-        // if(user.personal_data.zip_code.length > 0) { count = count + 1; }
-        if(user.personal_data.birth_date.length > 0) { count = count + 1; }
-        // if(user.biometric_data.height.in.length > 0 || user.biometric_data.height.in > 0) { count = count + 1; }
-        if(user.biometric_data.mass.lb.length > 0 || user.biometric_data.mass.lb > 0) { count = count + 1; }
-        // if(possibleInjuryStatuses.includes(user.injury_status)) { count = count + 1; }
-        // if(possibleSystemTypes.includes(user.system_type)) { count = count + 1; }
-        if(possibleGenders.includes(user.biometric_data.sex)) { count = count + 1; }
-        // return count
+    getCurrentStep(user, surveyValues, isUpdatingUser) {
+        let count = 0;
+        // information checks
+        const firstLastNameRegex = /\d/g;
+        if(user.personal_data.first_name.length > 0 && !firstLastNameRegex.test(user.personal_data.first_name)) { count += 1; }
+        if(user.personal_data.last_name.length > 0 && !firstLastNameRegex.test(user.personal_data.last_name)) { count += 1; }
+        if(this.isEmailValid(user.personal_data.email).isValid) { count += 1; }
+        if(!isUpdatingUser && this.isPasswordValid(user.password).isValid) { count += 1; }
+        if(!isUpdatingUser && user.password.length > 0 && user.confirm_password.length > 0 && user.password === user.confirm_password) { count += 1; }
+        // about checks
+        const possibleGenders = UserAccount.possibleGenders.map(gender => gender.value); // ['male', 'female', 'other'];
+        if(user.personal_data.birth_date.length > 0) { count += 1; }
+        if(possibleGenders.includes(user.biometric_data.sex)) { count += 1; }
+        if(_.toNumber(user.biometric_data.mass.lb) > 0) { count += 1; }
+        // survey checks
+        if(surveyValues.typical_weekly_sessions.length > 0) { count += 1; }
+        if(surveyValues.wearable_devices.length > 0) { count += 1; }
         return count;
     },
 
     getTotalSteps(user) {
-        return 7;
+        return 10;
     },
 
     isPhoneNumberValid(phoneNumber) {
@@ -161,8 +162,8 @@ const onboardingUtils = {
         // - Must include a number
         // - NOT include spaces
         const numbersRegex = /[0-9]/g;
-        const upperCaseLettersRegex = /[A-Z]/g;
-        const lowerCaseLettersRegex = /[a-z]/g;
+        // const upperCaseLettersRegex = /[A-Z]/g;
+        // const lowerCaseLettersRegex = /[a-z]/g;
         let isValid = true;
         let errorsArray = []
         if (
@@ -260,46 +261,54 @@ const onboardingUtils = {
             showSkipButton: false,
             slides:         [
                 {
-                    backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.zeplin.yellow, goToPage: 1, icon: 'arrow-right-circle', type: 'simple-line-icon',},
-                    key:             'tutorial-0',
-                    title:           'Welcome to Sustainable Training',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
-                },
-                {
-                    backgroundColor: AppColors.zeplin.yellow,
-                    buttonTextStyle: {color: AppColors.white,},
+                    backgroundImage: require('../../../assets/images/standard/tutorial_background.png'),
+                    icon:            require('../../../assets/images/standard/logo_inline_white.png'),
                     key:             'tutorial-1',
-                    text:            'Daily surveys help personalize prep & post-training recommendations.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
+                    image:           require('../../../assets/images/standard/tutorial1.png'),
+                    imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
+                    showEnableBtn:   false,
+                    text:            [
+                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Reduce Injury Risk'}</Text>,
+                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Corrective & preventative recovery exercises help reduce overuse injury risk factors by 63%.'}</Text>,
+                    ],
                 },
                 {
-                    backgroundColor: AppColors.zeplin.slate,
-                    buttonTextStyle: {color: AppColors.white,},
+                    backgroundImage: require('../../../assets/images/standard/tutorial_background.png'),
+                    icon:            require('../../../assets/images/standard/logo_inline_white.png'),
                     key:             'tutorial-2',
-                    text:            'Prep activities optimize your body\'s movement & mobilize tissues.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
+                    image:           require('../../../assets/images/standard/tutorial2.png'),
+                    imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
+                    showEnableBtn:   false,
+                    text:            [
+                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Decrease Recovery Time'}</Text>,
+                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Recover up to 30% faster with activities tailored to optimize tissue healing & improve mobility.'}</Text>,
+                    ],
                 },
                 {
-                    backgroundColor: AppColors.zeplin.yellow,
-                    buttonTextStyle: {color: AppColors.white,},
+                    backgroundImage: require('../../../assets/images/standard/tutorial_background.png'),
+                    icon:            require('../../../assets/images/standard/logo_inline_white.png'),
                     key:             'tutorial-3',
-                    text:            'Logging daily training allows us to analyze Trends & optimize your recovery rhythm.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
+                    image:           require('../../../assets/images/standard/tutorial3.png'),
+                    imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
+                    showEnableBtn:   false,
+                    text:            [
+                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Supported By Research'}</Text>,
+                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Developed & validated by Physical Therapists, Athletic Trainers & Sports Science Researchers.'}</Text>,
+                    ],
                 },
                 {
-                    backgroundColor: AppColors.zeplin.slate,
-                    buttonTextStyle: {color: AppColors.white,},
+                    backgroundImage: require('../../../assets/images/standard/tutorial_background.png'),
+                    doneLabel:       'skip',
+                    icon:            require('../../../assets/images/standard/logo_inline_white.png'),
                     key:             'tutorial-4',
-                    text:            'Post-training activities improve circulation to rebuild muscle & speed up recovery.',
-                    textStyle:       {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.white, fontSize: AppFonts.scaleFont(35),},
-                },
-                {
-                    backgroundColor: AppColors.white,
-                    icon:            {color: AppColors.zeplin.yellow, goToPage: false, icon: 'arrow-right-circle', type: 'simple-line-icon',},
-                    key:             'tutorial-5',
-                    title:           'You\'re ready to use the app!',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(40),},
+                    image:           require('../../../assets/images/standard/tutorial4.png'),
+                    imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
+                    showEnableBtn:   true,
+                    title:           'Turn On Notifications\nTo Get Started',
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingLrg,},
+                    text:            [
+                        <Text key={0} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'We\'ll send you occasional reminders at the most optimal time to complete your recovery activities.'}</Text>,
+                    ],
                 },
             ],
         };

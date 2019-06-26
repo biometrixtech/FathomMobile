@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
         justifyContent:  'center',
         position:        'absolute',
-        right:           (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
+        right:           0,
         top:             (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
         width:           UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
     },

@@ -341,6 +341,7 @@ class Settings extends Component {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
         const userHasSingleSensorSystem = userObj && userObj.system_type && userObj.system_type === '1-sensor';
+        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
         const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
         // set animated values
         const spinValue = new Animated.Value(0);
@@ -483,27 +484,31 @@ class Settings extends Component {
                         <Spacer isDivider />
                     </View>
                 }
-                <ListItem
-                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                    leftIcon={
-                        <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
-                            <Image
-                                resizeMode={'contain'}
-                                source={require('../../../assets/images/sensor/sensor_slate.png')}
-                                style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
-                            />
-                        </View>
-                    }
-                    onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect3Sensor()}
-                    rightIcon={{
-                        color: AppColors.zeplin.slate,
-                        name:  'chevron-right',
-                        size:  ICON_SIZE,
-                    }}
-                    title={has3SensorConnected ? 'MANAGE FATHOM PRO KIT' : 'SET UP FATHOM PRO KIT'}
-                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                />
-                <Spacer isDivider />
+                { userHas3SensorSystem &&
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={
+                                <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/sensor/sensor_slate.png')}
+                                        style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
+                                    />
+                                </View>
+                            }
+                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect3Sensor()}
+                            rightIcon={{
+                                color: AppColors.zeplin.slate,
+                                name:  'chevron-right',
+                                size:  ICON_SIZE,
+                            }}
+                            title={has3SensorConnected ? 'MANAGE FATHOM PRO KIT' : 'SET UP FATHOM PRO KIT'}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
+                }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     leftIcon={{

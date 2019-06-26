@@ -18,7 +18,7 @@ import moment from 'moment';
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
-import { Alerts, Button, Spacer, TabIcon, Text, } from '../custom';
+import { Button, Spacer, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
 
 // setup consts
@@ -132,11 +132,11 @@ class Start extends Component {
     }
 
     _routeToLogin = () => {
-        Actions.login();
+        AppUtil.pushToScene('login');
     }
 
-    _routeToAccountType = () => {
-        Actions.accountType();
+    _routeToTuroial = () => {
+        AppUtil.pushToScene('tutorial', {step: 'tutorial-tutorial'});
     }
 
     login = () => {
@@ -271,41 +271,37 @@ class Start extends Component {
             :
             <View style={{flex: 1,}}>
                 <ImageBackground
-                    source={require('../../../assets/images/standard/start.png')}
-                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}]}
+                    source={require('../../../assets/images/standard/welcome_background.png')}
+                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
                 >
-                    <View style={{alignItems: 'center', flex: 7, justifyContent: 'center',}}>
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38),}}>{'JOIN FATHOM'}</Text>
-                        <Spacer size={this.state.displayMessage ? 20 : 15} />
-                        <View style={{width: AppSizes.screen.widthThreeQuarters,}}>
-                            <Alerts
-                                error={this.state.displayMessage ? this.state.networkMessage: ''}
-                            />
-                        </View>
-                        <Spacer size={this.state.displayMessage ? 0 : 15} />
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed,}}
-                            disabled={this.state.displayMessage}
-                            onPress={() => this._routeToAccountType()}
-                            title={'Create Account'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../assets/images/standard/fathom_logo_yellow_stacked.png')}
+                            style={{height: 150, width: 150,}}
                         />
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                            {'Optimal recovery,\ndesigned for your body.'}
+                        </Text>
                     </View>
-                    <View style={{flex: 3,}}>
-                        <LinearGradient
-                            colors={['rgba(8, 24, 50, 0.0)', 'rgb(15, 19, 32)']}
-                            start={{x: 0.0, y: 0.0}}
-                            end={{x: 0.0, y: 0.99}}
-                            style={[styles.linearGradientStyle, {flex: 1,}]}
-                        >
-                            <TouchableOpacity
-                                onPress={this.state.displayMessage ? null : () => this._routeToLogin()}
-                                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, width: AppSizes.screen.width,}]}
-                            >
-                                <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingSml,}}>{'ALREADY A MEMBER?'}</Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18),}}>{'Let\'s login now.'}</Text>
-                            </TouchableOpacity>
-                        </LinearGradient>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            onPress={() => AppUtil.pushToScene('onboarding')}// this._routeToTuroial()} // TODO: FIX ME
+                            raised={true}
+                            title={'Create account'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                        />
+                        <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11), fontStyle: 'italic', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>{'Already a user?'}</Text>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            onPress={() => this._routeToLogin()}
+                            raised={true}
+                            title={'Login'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                        />
                     </View>
                 </ImageBackground>
             </View>

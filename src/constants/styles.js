@@ -488,7 +488,7 @@ export default {
     scaleButtonShadowEffect: {
         elevation:     2,
         shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { width: 0, height: 3 },
+        shadowOffset:  { height: 3, width: 0, },
         shadowOpacity: 1,
         shadowRadius:  6,
     },
@@ -496,5 +496,25 @@ export default {
     buttonVerticalPadding: {
         paddingBottom: Sizes.isIphoneX ? ((Sizes.iphoneXBottomBarPadding + Sizes.paddingMed) / 2) : Sizes.paddingMed,
         paddingTop:    Sizes.isIphoneX ? ((Sizes.iphoneXBottomBarPadding + Sizes.paddingMed) / 2) : Sizes.paddingMed,
+    },
+
+    onboardingInputContainer: {
+        backgroundColor:   Colors.zeplin.splashLight,
+        borderBottomWidth: 0,
+        borderRadius:      Sizes.paddingLrg,
+        elevation:         2,
+        marginBottom:      Sizes.paddingMed,
+        marginLeft:        0,
+        marginRight:       0,
+        shadowColor:       'rgba(0, 0, 0, 0.16)',
+        shadowOffset:      { height: 3, width: 0, },
+        shadowOpacity:     1,
+        shadowRadius:      6,
+        width:             Sizes.screen.widthFourFifths,
+    },
+    onboardingInputStyle: {
+        color:           Colors.white,
+        fontSize:        Fonts.scaleFont(20),
+        paddingVertical: Sizes.paddingMed,
     },
 };

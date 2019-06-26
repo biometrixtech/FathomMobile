@@ -149,14 +149,9 @@ const Index = (
             <Scene
                 Layout={OnboardingComponent}
                 component={OnboardingContainer}
-                headerTitleAllowFontScaling={false}
-                hideNavBar={false}
+                hideNavBar={true}
                 key={'onboarding'}
-                navBar={CustomNavBar}
-                onLeft={() => Actions.pop()}
                 panHandlers={null}
-                renderLeftButton={null}
-                title={'GET STARTED'}
             />
             <Scene
                 Layout={LoginComponent}

@@ -157,7 +157,7 @@ export default class RNPickerSelect extends PureComponent {
         style:                       {},
         children:                    null,
         hideIcon:                    false,
-        placeholderTextColor:        '#C7C7CD',
+        placeholderTextColor:        AppColors.white,
         useNativeAndroidPickerStyle: true,
         hideDoneBar:                 false,
         doneText:                    'Done',

@@ -154,7 +154,7 @@ class DeckCards extends Component {
             () => {
                 let hapticFeedbackMethod = index === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
-                handleReadInsight(index);
+                handleReadInsight(index - 1);
                 if(this.state.currentCardIndex === index && (!cards[index].title || cards[index].title === '')) {
                     this.setState({ areAllSwiped: true, });
                 }
@@ -224,7 +224,7 @@ class DeckCards extends Component {
             return (null);
         }
         let extraStyles = {};
-        if(Platform.OS === 'android' && layout && layout === 'tinder') {
+        if(Platform.OS === 'android') {
             extraStyles = {borderColor: AppColors.zeplin.slateXLight, borderWidth: 1, elevation: (cards.length - index), zIndex: (cards.length - index),};
         }
         return (

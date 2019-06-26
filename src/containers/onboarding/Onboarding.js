@@ -17,6 +17,7 @@ const Onboarding = ({
     lastOpened,
     network,
     onFormSubmit,
+    postSurvey,
     registerDevice,
     setAccountCode,
     setAppLogs,
@@ -35,6 +36,7 @@ const Onboarding = ({
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
+        postSurvey={postSurvey}
         registerDevice={registerDevice}
         setAccountCode={setAccountCode}
         setAppLogs={setAppLogs}
@@ -55,6 +57,7 @@ Onboarding.propTypes = {
     lastOpened:     PropTypes.object.isRequired,
     network:        PropTypes.object.isRequired,
     onFormSubmit:   PropTypes.func.isRequired,
+    postSurvey:     PropTypes.func.isRequired,
     registerDevice: PropTypes.func.isRequired,
     setAccountCode: PropTypes.func.isRequired,
     setAppLogs:     PropTypes.func.isRequired,
@@ -79,6 +82,7 @@ const mapDispatchToProps = {
     getMyPlan:      PlanActions.getMyPlan,
     getSensorFiles: ble.getSensorFiles,
     onFormSubmit:   InitActions.startLogin,
+    postSurvey:     PlanActions.postSurvey,
     registerDevice: InitActions.registerDevice,
     setAccountCode: InitActions.setAccountCode,
     setAppLogs:     PlanActions.setAppLogs,

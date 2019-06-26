@@ -1548,6 +1548,9 @@ const PlanLogic = {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
+        let updatedAlerts = _.cloneDeep(insightDetails.alerts);
+        updatedAlerts = _.filter(updatedAlerts, o => !(o.trigger_type === 25 || o.trigger_type >= 200));
+        insightDetails.alerts = updatedAlerts;
         let currentAlert = insightDetails.alerts[currentCardIndex];
         return {
             currentAlert,
