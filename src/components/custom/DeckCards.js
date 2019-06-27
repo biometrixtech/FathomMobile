@@ -154,7 +154,7 @@ class DeckCards extends Component {
             () => {
                 let hapticFeedbackMethod = index === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
-                handleReadInsight(index - 1);
+                handleReadInsight(index);
                 if(this.state.currentCardIndex === index && (!cards[index].title || cards[index].title === '')) {
                     this.setState({ areAllSwiped: true, });
                 }

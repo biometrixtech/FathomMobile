@@ -42,13 +42,6 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
     let myPlanFocused = new RegExp('myPlan', 'g').test(currentRouteName);
     let trendsFocused = new RegExp('trends', 'g').test(currentRouteName);
     let settingsFocused = new RegExp('settings', 'g').test(currentRouteName);
-    if(
-        !dailyPlanObj.daily_readiness_survey_completed ||
-        (myPlanFocused && (!user.first_time_experience.includes('plan_coach_1') || !user.first_time_experience.includes('plan_coach_2'))) ||
-        (trendsFocused && !user.first_time_experience.includes('trends_coach'))
-    ) {
-        return (null);
-    }
     return(
         <View>
             <View style={[styles.container,]}>

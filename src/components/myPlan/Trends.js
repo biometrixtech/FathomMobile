@@ -16,12 +16,11 @@ import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, V
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { FathomCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
-import { TabIcon, Text, } from '../custom';
+import { FathomModal, TabIcon, Text, } from '../custom';
 import { store } from '../../store';
 
 // import third-party libraries
 import _ from 'lodash';
-import SlidingUpPanel from 'rn-sliding-up-panel';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -73,14 +72,16 @@ const styles = StyleSheet.create({
 class Trends extends PureComponent {
     constructor(props) {
         super(props);
-        this._panel = {};
+        this.state = {
+            isCoachModalOpen: false,
+        };
         this._timer = null;
     }
 
     componentDidMount = () => {
         const { user, } = this.props;
         if(!user.first_time_experience.includes('trends_coach')) {
-            this._timer = _.delay(() => this._panel.show(), 1000);
+            this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
     }
 
@@ -91,8 +92,6 @@ class Trends extends PureComponent {
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
-        // hide panel
-        this._panel.hide();
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
@@ -113,6 +112,7 @@ class Trends extends PureComponent {
     }
 
     render = () => {
+        const { isCoachModalOpen, } = this.state;
         const { plan, } = this.props;
         let {
             currentBiomechanicsAlert,
@@ -221,7 +221,7 @@ class Trends extends PureComponent {
                             onPress={() => isBiomechanicsLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 2, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
-                            { isBiomechanicsLocked &&
+                            { !isBiomechanicsLocked &&
                                 <Text oswaldRegular style={[styles.cardTitle,]}>{'BIOMECHANICS'}</Text>
                             }
                             { (currentBiomechanicsAlertText && !isBiomechanicsLocked) &&
@@ -255,15 +255,14 @@ class Trends extends PureComponent {
 
                 </ScrollView>
 
-                <SlidingUpPanel
-                    allowDragging={false}
-                    showBackdrop={false}
-                    ref={ref => {this._panel = ref;}}
+                <FathomModal
+                    hasBackdrop={false}
+                    isVisible={isCoachModalOpen}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
                         <TouchableOpacity
                             activeOpacity={1}
-                            onPress={() => this._handleUpdateFirstTimeExperience('trends_coach')}
+                            onPress={() => this.setState({ isCoachModalOpen: false, } , () => this._handleUpdateFirstTimeExperience('trends_coach'))}
                             style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
                         >
                             <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Trends'}</Text>
@@ -273,7 +272,7 @@ class Trends extends PureComponent {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                </SlidingUpPanel>
+                </FathomModal>
 
             </View>
         );

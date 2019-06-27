@@ -72,14 +72,14 @@ class Tutorial extends Component {
                     source={props.backgroundImage}
                     style={{flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}}
                 >
-                    <View style={{flexDirection: 'row', marginTop: AppSizes.statusBarHeight,}}>
+                    <View style={{flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                             { props.key === 'tutorial-1' &&
                                 <TabIcon
                                     color={AppColors.white}
                                     icon={'chevron-left'}
                                     onPress={() => Actions.pop()}
-                                    size={30}
+                                    size={40}
                                     type={'material-community'}
                                 />
                             }
@@ -106,7 +106,7 @@ class Tutorial extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() => console.log()}
+                                onPress={() => console.log('HI')}
                                 raised={true}
                                 title={'Enable Notifications'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}

@@ -87,6 +87,7 @@ class UserAccountAbout extends Component {
             <KeyboardAwareScrollView
                 contentContainerStyle={{flexGrow: 1, justifyContent: 'center',}}
                 innerRef={ref => {this.scrollViewRef = ref;}}
+                scrollEnabled={false}
             >
                 <View style={[AppStyles.onboardingInputContainer, {paddingLeft: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}]}>
                     { user.personal_data.birth_date.length > 0 &&

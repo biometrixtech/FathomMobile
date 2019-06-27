@@ -47,7 +47,6 @@ import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
 import LottieView from 'lottie-react-native';
 import Placeholder, { Line, Media, } from 'rn-placeholder';
-import SlidingUpPanel from 'rn-sliding-up-panel';
 import moment from 'moment';
 
 // Consts and Libs
@@ -315,7 +314,6 @@ class MyPlan extends Component {
         this.state = defaultState;
         // set variables for MyPlan
         this._activeTabs = [];
-        this._panel = {};
         this._scrollViewRef = {};
         this._timer = null;
         this.goToPageTimer = null;
@@ -438,7 +436,7 @@ class MyPlan extends Component {
                 !user.first_time_experience.includes('plan_coach_2')
             )
         ) {
-            this._timer = _.delay(() => this._panel.show(), 1000);
+            this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
     }
 
@@ -888,6 +886,7 @@ class MyPlan extends Component {
             dailyReadiness,
             expandNotifications,
             healthData,
+            isCoachModalOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -918,7 +917,7 @@ class MyPlan extends Component {
                 <MyPlanNavBar
                     cards={dailyPlanObj.insights}
                     expandNotifications={expandNotifications}
-                    handleReadInsight={index => handleReadInsight(dailyPlanObj, index)}
+                    handleReadInsight={index => handleReadInsight(dailyPlanObj, (index - 1))}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />
@@ -1179,10 +1178,9 @@ class MyPlan extends Component {
                     :
                     null
                 }
-                <SlidingUpPanel
-                    allowDragging={false}
-                    showBackdrop={false}
-                    ref={ref => {this._panel = ref;}}
+                <FathomModal
+                    hasBackdrop={false}
+                    isVisible={isCoachModalOpen}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
                         { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
@@ -1209,7 +1207,7 @@ class MyPlan extends Component {
                             onPress={() => {
                                 this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
                                 if(user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
-                                    this._panel.hide();
+                                    this.setState({ isCoachModalOpen: false, });
                                 }
                             }}
                             style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
@@ -1241,7 +1239,7 @@ class MyPlan extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                </SlidingUpPanel>
+                </FathomModal>
 
             </MagicMove.Scene>
         );

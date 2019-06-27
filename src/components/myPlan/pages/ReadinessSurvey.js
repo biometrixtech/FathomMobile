@@ -41,7 +41,6 @@ import {
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
-import LinearGradient from 'react-native-linear-gradient';
 
 // consts
 const helloPageText = 'Take a minute to complete your daily Readiness Survey and we\'ll update your Plan to your body and training.';
@@ -351,15 +350,10 @@ class ReadinessSurvey extends Component {
 
                     <View style={{flex: 1,}}>
                         <ImageBackground
-                            source={require('../../../../assets/images/standard/start_page_background.png')}
+                            source={require('../../../../assets/images/standard/tutorial_background_white.png')}
                             style={[styles.imageBackgroundStyle]}
                         >
-                            <LinearGradient
-                                colors={['#ffffff00', 'white']}
-                                start={{x: 0.0, y: 0.0}}
-                                end={{x: 0.0, y: 0.65}}
-                                style={[styles.linearGradientStyle]}
-                            >
+                            <View style={[styles.linearGradientStyle]}>
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                                     <View />
                                     <View>
@@ -391,7 +385,7 @@ class ReadinessSurvey extends Component {
                                         />
                                     </View>
                                 </View>
-                            </LinearGradient>
+                            </View>
                         </ImageBackground>
                     </View>
 

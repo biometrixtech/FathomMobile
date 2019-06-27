@@ -167,42 +167,12 @@ const UTIL = {
                 data: userObj,
             });
         }
-        /*
-         * Items to look at
-         *  - email_verified
-         *  - onboarding_status
-         * Steps:
-         * 1. Download App
-         * 2. Select Create Account
-         * 3. Value Proposition Screens (WILL BE ADDED LATER)
-         * 4. Onboarding
-         * 5. App Tutorial Screen: simple, similar to single sensor
-         * 6. ** Sensor tutorial
-         */
         if(userObj) {
-            // TODO: HANDLE FOR DISABLED ACCOUNTS & ACCOUNTS WHO HAVEN'T VERIFIED THEIR EMAIL YET
-            // if(!userObj.email_verified) {
-            //     RouterActions.accountDetails();
-            // }
-            // TODO: uncomment below when educational content is in
-            // if(userObj.onboarding_status && !userObj.onboarding_status.includes('educational')) {
-            //   RouterActions.tutorial({step: 'educational-tutorial'});
-            // } else
             if(userObj.onboarding_status && !userObj.onboarding_status.includes('account_setup')) {
-                RouterActions.onboarding();
-            // TODO: uncomment below when single-sensor information is ready
-            // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('single-sensor-tutorial')) {
-            //     RouterActions.tutorial({step: 'single-sensor'});
-            // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('coach-tutorial') && userObj.role === 'coach') {
-            //     RouterActions.tutorial({step: 'coach-tutorial'});
-            // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('tutorial-tutorial') && userObj.role === 'athlete') {
-            //     // NOTE: THIS IS THE LAST SCREEN PRIOR TO MYPLAN
-            //     RouterActions.tutorial({step: 'tutorial-tutorial'});
-            // } else if(userObj.onboarding_status && !userObj.onboarding_status.includes('survey-questions')) {
-            //     RouterActions.survey();
+                UTIL.pushToScene('onboarding');
             } else {
                 if(userObj.role === 'coach') {
-                    RouterActions.coachesDashboard();
+                    UTIL.pushToScene('coachesDashboard');
                 } else {
                     // 3-Sensor Banner
                     let dailyPlanObj = store.getState().plan && store.getState().plan.dailyPlan && store.getState().plan.dailyPlan[0] ?
@@ -210,7 +180,7 @@ const UTIL = {
                         :
                         {};
                     UTIL._handle3SensorBanner(userObj, dailyPlanObj);
-                    RouterActions.myPlan();
+                    UTIL.pushToScene('myPlan');
                 }
             }
         }

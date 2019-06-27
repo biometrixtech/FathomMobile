@@ -288,7 +288,7 @@ class Start extends Component {
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                            onPress={() => AppUtil.pushToScene('onboarding')}// this._routeToTuroial()} // TODO: FIX ME
+                            onPress={() => this._routeToTuroial()}
                             raised={true}
                             title={'Create account'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}

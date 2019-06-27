@@ -54,13 +54,15 @@ const TopNav = ({ formFields, isUpdatingUser, onBack, resultMsg, surveyValues, t
     <View style={{marginTop: AppSizes.statusBarHeight,}}>
         <View style={{flexDirection: 'row', paddingVertical: AppSizes.paddingSml,}}>
             <View style={{flex: 1,}}>
-                <TabIcon
-                    color={AppColors.black}
-                    icon={'chevron-left'}
-                    onPress={() => onBack()}
-                    size={30}
-                    type={'material-community'}
-                />
+                { !isUpdatingUser &&
+                    <TabIcon
+                        color={AppColors.zeplin.slate}
+                        icon={'chevron-left'}
+                        onPress={() => onBack()}
+                        size={30}
+                        type={'material-community'}
+                    />
+                }
             </View>
             <View style={{flex: 8,}}>
                 <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
@@ -71,11 +73,9 @@ const TopNav = ({ formFields, isUpdatingUser, onBack, resultMsg, surveyValues, t
             currentStep={onboardingUtils.getCurrentStep(formFields.user, surveyValues, isUpdatingUser)}
             totalSteps={onboardingUtils.getTotalSteps(formFields.user)}
         />
-        { resultMsg.error.length > 0 &&
-            <Alerts
-                error={resultMsg.error}
-            />
-        }
+        <Alerts
+            error={(resultMsg && resultMsg.error && resultMsg.error.length > 0) ? resultMsg.error : ''}
+        />
     </View>
 );
 
@@ -255,7 +255,7 @@ class Onboarding extends Component {
         }
     }
 
-    _handleLoginFinalize = userObj => {
+    _handleLoginFinalize = (userObj, userResponse, surveyPayload) => {
         let credentials = {
             Email:    userObj.personal_data.email,
             Password: userObj.password,
@@ -265,7 +265,7 @@ class Onboarding extends Component {
             password: userObj.password,
         }, false)
             .then(response => {
-                let { authorization, user } = response;
+                let { authorization, user, } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => {
                         let clearMyPlan = (
@@ -289,6 +289,7 @@ class Onboarding extends Component {
                                 return this.setState({ loading: false, resultMsg: { err }, });
                             });
                     })
+                    .then(() => this.props.postSurvey(userResponse.id, surveyPayload))
                     .then(() => this.props.finalizeLogin(user, credentials, authorization))
                     .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
             })
@@ -307,7 +308,7 @@ class Onboarding extends Component {
         // reset error and set loading state
         this.setState({
             loading:   true,
-            resultMsg: { error: '' },
+            resultMsg: { error: '', },
         });
         // only submit required fields
         let userObj = {};
@@ -358,20 +359,23 @@ class Onboarding extends Component {
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
+                let userResponse = {};
                 return this.props.updateUser(userObj, this.props.user.id)
-                    .then(response => {
-                        this.setState({ loading: false });
-                        return AppUtil.routeOnLogin(response.user, true);
+                    .then(userData => {
+                        userResponse = userData.user;
+                        return this.props.postSurvey(userData.user.id, surveyPayload);
                     })
-                    .then(() => this.props.postSurvey(this.props.user.id, surveyPayload))
+                    .then(() => {
+                        this.setState({ loading: false });
+                        return AppUtil.routeOnLogin(userResponse, true);
+                    })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
                         return this.setState({ resultMsg: { error }, loading: false });
                     });
             }
             return this.props.createUser(userObj)
-                .then(response => this._handleLoginFinalize(userObj))
-                .then(() => this.props.postSurvey(this.props.user.id, surveyPayload))
+                .then(response => this._handleLoginFinalize(userObj, response.user, surveyPayload))
                 .catch(err => {
                     const error = AppAPI.handleError(err);
                     return this.setState({ resultMsg: { error }, loading: false });

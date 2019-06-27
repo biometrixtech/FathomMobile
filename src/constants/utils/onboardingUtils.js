@@ -1,9 +1,33 @@
-// import third-party libraries
 import React from 'react';
+
+// import RN components
+import { StyleSheet, } from 'react-native';
+
+// import third-party libraries
 import _ from 'lodash';
+
+
+// Components
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../';
 import { Text, } from '../../components/custom';
 
+// Styles
+const styles = StyleSheet.create({
+    subtext: {
+        color:      AppColors.white,
+        fontSize:   AppFonts.scaleFont(22),
+        lineHeight: AppFonts.scaleFont(30),
+        marginTop:  AppSizes.paddingMed,
+        textAlign:  'center',
+    },
+    text: {
+        color:     AppColors.white,
+        fontSize:  AppFonts.scaleFont(28),
+        textAlign: 'center',
+    },
+});
+
+//
 const onboardingUtils = {
 
     isUserAccountInformationValid(user, isUpdatingUser) {
@@ -268,8 +292,8 @@ const onboardingUtils = {
                     imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
                     showEnableBtn:   false,
                     text:            [
-                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Reduce Injury Risk'}</Text>,
-                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Corrective & preventative recovery exercises help reduce overuse injury risk factors by 63%.'}</Text>,
+                        <Text key={0} robotoBold style={[styles.text,]}>{'Welcome to Fathom'}</Text>,
+                        <Text key={1} robotoLight style={[styles.subtext,]}>{'Our AI-system designs prep & recovery exercises for your body to help reduce your injury risk factors.'}</Text>,
                     ],
                 },
                 {
@@ -280,8 +304,8 @@ const onboardingUtils = {
                     imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
                     showEnableBtn:   false,
                     text:            [
-                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Decrease Recovery Time'}</Text>,
-                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Recover up to 30% faster with activities tailored to optimize tissue healing & improve mobility.'}</Text>,
+                        <Text key={0} robotoBold style={[styles.text,]}>{'Decrease Recovery Time'}</Text>,
+                        <Text key={1} robotoLight style={[styles.subtext,]}>{'Recover from training up to 30% faster with activities designed to optimize tissue healing & improve mobility.'}</Text>,
                     ],
                 },
                 {
@@ -292,8 +316,8 @@ const onboardingUtils = {
                     imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
                     showEnableBtn:   false,
                     text:            [
-                        <Text key={0} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Supported By Research'}</Text>,
-                        <Text key={1} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'Developed & validated by Physical Therapists, Athletic Trainers & Sports Science Researchers.'}</Text>,
+                        <Text key={0} robotoBold style={[styles.text,]}>{'Supported By Research'}</Text>,
+                        <Text key={1} robotoLight style={[styles.subtext,]}>{'Fathom is developed with & validated by Physical Therapists, Athletic Trainers, and clinical researchers.'}</Text>,
                     ],
                 },
                 {
@@ -305,9 +329,9 @@ const onboardingUtils = {
                     imageStyle:      {height: 200, marginBottom: AppSizes.paddingXLrg, resizeMode: 'contain', width: 200,},
                     showEnableBtn:   true,
                     title:           'Turn On Notifications\nTo Get Started',
-                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingLrg,},
+                    titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(28), lineHeight: AppFonts.scaleFont(36), marginBottom: AppSizes.paddingLrg,},
                     text:            [
-                        <Text key={0} robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginTop: AppSizes.paddingMed, textAlign: 'center',}}>{'We\'ll send you occasional reminders at the most optimal time to complete your recovery activities.'}</Text>,
+                        <Text key={0} robotoLight style={[styles.subtext,]}>{'We\'ll send you occasional reminders at the most optimal time to complete your recovery activities.'}</Text>,
                     ],
                 },
             ],
