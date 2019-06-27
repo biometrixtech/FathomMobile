@@ -63,9 +63,10 @@ class Root extends Component {
             // (optional) Called when Token is generated (iOS and Android)
             onRegister: token => this._onRegisterForPushNotifications(token),
 
-            requestPermissions: true,
+            requestPermissions: false,
+
             // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-            senderID:           Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
+            senderID: Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
         });
         /*
          * Maintenance Window
@@ -132,7 +133,7 @@ class Root extends Component {
      *
      */
     _onNotificationReceived = notification => {
-        console.log( 'NOTIFICATION:', notification );
+        console.log('NOTIFICATION:', notification);
         /**
          * Unsure if this logic below will work for redux in active and inactive
          */

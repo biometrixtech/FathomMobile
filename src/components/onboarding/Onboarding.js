@@ -4,7 +4,16 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, BackHandler, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import {
+    Alert,
+    BackHandler,
+    ImageBackground,
+    Keyboard,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -173,6 +182,7 @@ class Onboarding extends Component {
                 }
             },
             isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios' && this.props.accountRole === 'athlete',
+            isKeyboardOpen:       false,
             isPage1Valid:         false,
             isPage2Valid:         false,
             isPrivacyPolicyOpen:  false,
@@ -190,6 +200,11 @@ class Onboarding extends Component {
             loading: false,
         };
         this._pages = null;
+    }
+
+    componentDidMount = () => {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -211,6 +226,8 @@ class Onboarding extends Component {
     }
 
     componentWillUnmount = () => {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
@@ -433,6 +450,10 @@ class Onboarding extends Component {
         }
     }
 
+    _keyboardDidShow = () => this.setState({ isKeyboardOpen: true, })
+
+    _keyboardDidHide = () => this.setState({ isKeyboardOpen: false, })
+
     _renderNextPage = () => {
         let nextPageIndex = (this.state.pageIndex + 1);
         this._pages.scrollToPage(nextPageIndex);
@@ -500,6 +521,7 @@ class Onboarding extends Component {
         const {
             form_fields,
             isHealthKitModalOpen,
+            isKeyboardOpen,
             isPage1Valid,
             isPage2Valid,
             isPrivacyPolicyOpen,
@@ -525,7 +547,6 @@ class Onboarding extends Component {
                     <Pages
                         containerStyle={{flex: 1,}}
                         indicatorPosition={'none'}
-                        // onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)}
                         ref={pages => { this._pages = pages; }}
                         scrollEnabled={false}
                         startPage={pageIndex}
@@ -539,29 +560,33 @@ class Onboarding extends Component {
                                     user={form_fields.user}
                                 />
                             </View>
-                            <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                    containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                    disabled={!isPage1Valid}
-                                    disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
-                                    disabledTitleStyle={{color: AppColors.white,}}
-                                    onPress={() => this._renderNextPage()}
-                                    raised={true}
-                                    title={'Continue'}
-                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                                />
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => this._togglePrivacyPolicyWebView()}
-                                    style={[{marginHorizontal: AppSizes.padding, marginTop: AppSizes.padding,}]}
-                                >
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
-                                        {'By signing up you agree to our '}
-                                        <Text robotoBold>{'Terms of Use.'}</Text>
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            { isKeyboardOpen && Platform.OS === 'android' ?
+                                <View />
+                                :
+                                <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                        disabled={!isPage1Valid}
+                                        disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                                        disabledTitleStyle={{color: AppColors.white,}}
+                                        onPress={() => this._renderNextPage()}
+                                        raised={true}
+                                        title={'Continue'}
+                                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                    />
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        onPress={() => this._togglePrivacyPolicyWebView()}
+                                        style={[{marginHorizontal: AppSizes.padding, marginTop: AppSizes.padding,}]}
+                                    >
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                            {'By signing up you agree to our '}
+                                            <Text robotoBold>{'Terms of Use.'}</Text>
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
                         </View>
 
                         <View style={{flex: 1, marginBottom: AppSizes.iphoneXBottomBarPadding,}}>
@@ -572,29 +597,33 @@ class Onboarding extends Component {
                                     user={form_fields.user}
                                 />
                             </View>
-                            <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                    containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                    disabled={!isPage2Valid}
-                                    disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
-                                    disabledTitleStyle={{color: AppColors.white,}}
-                                    onPress={() => this._handleFormSubmit()}
-                                    raised={true}
-                                    title={'Create Account'}
-                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                                />
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => this._togglePrivacyPolicyWebView()}
-                                    style={[{marginTop: AppSizes.padding,}]}
-                                >
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
-                                        {'By signing up you agree to our '}
-                                        <Text robotoBold>{'Terms of Use.'}</Text>
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
+                            { isKeyboardOpen && Platform.OS === 'android' ?
+                                <View />
+                                :
+                                <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                        disabled={!isPage2Valid}
+                                        disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                                        disabledTitleStyle={{color: AppColors.white,}}
+                                        onPress={() => this._handleFormSubmit()}
+                                        raised={true}
+                                        title={'Create Account'}
+                                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                    />
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        onPress={() => this._togglePrivacyPolicyWebView()}
+                                        style={[{marginTop: AppSizes.padding,}]}
+                                    >
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                            {'By signing up you agree to our '}
+                                            <Text robotoBold>{'Terms of Use.'}</Text>
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
                         </View>
 
                     </Pages>

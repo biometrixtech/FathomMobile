@@ -8,6 +8,7 @@ import { Image, ImageBackground, View, } from 'react-native';
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import PushNotification from 'react-native-push-notification';
 
 // Consts, Libs, and Utils
 import { AppColors, AppFonts, AppStyles, AppSizes, } from '../../constants';
@@ -106,7 +107,12 @@ class Tutorial extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() => console.log('HI')}
+                                onPress={() =>
+                                    PushNotification
+                                        .requestPermissions()
+                                        .then(grant => this._onDone())
+                                        .catch(err => this._onDone())
+                                }
                                 raised={true}
                                 title={'Enable Notifications'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
@@ -122,6 +128,7 @@ class Tutorial extends Component {
     }
 
     _onSlideChange = (index, lastIndex, slides) => {
+        // update done label
         let doneLabel = slides[index].doneLabel ? slides[index].doneLabel : 'next';
         this.setState({ doneLabel: doneLabel, });
     }
