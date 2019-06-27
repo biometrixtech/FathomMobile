@@ -79,15 +79,15 @@ class UserAccountInfo extends Component {
         /*eslint no-return-assign: 0*/
         return(
             <KeyboardAwareScrollView
-                contentContainerStyle={{flexGrow: 1, justifyContent: 'center',}}
+                contentContainerStyle={{flexGrow: 1,}}
                 innerRef={ref => {this.scrollViewRef = ref;}}
                 scrollEnabled={false}
             >
                 <FormInput
                     autoCapitalize={'none'}
                     autoCompleteType={'name'}
-                    blurOnSubmit={false}
-                    containerStyle={[AppStyles.onboardingInputContainer,]}
+                    blurOnSubmit={true}
+                    containerStyle={[AppStyles.onboardingInputContainer, {marginTop: AppSizes.padding,}]}
                     inputRef={ref => this.inputs.first_name = ref}
                     inputStyle={[AppStyles.onboardingInputStyle, user.personal_data.first_name.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
                     label={user.personal_data.first_name.length > 0 ? 'First name' : null}
@@ -103,7 +103,7 @@ class UserAccountInfo extends Component {
                 <FormInput
                     autoCapitalize={'none'}
                     autoCompleteType={'name'}
-                    blurOnSubmit={false}
+                    blurOnSubmit={true}
                     containerStyle={[AppStyles.onboardingInputContainer,]}
                     inputRef={ref => this.inputs.last_name = ref}
                     inputStyle={[AppStyles.onboardingInputStyle, user.personal_data.last_name.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
@@ -122,7 +122,7 @@ class UserAccountInfo extends Component {
                         <FormInput
                             autoCapitalize={'none'}
                             autoCompleteType={'username'}
-                            blurOnSubmit={false}
+                            blurOnSubmit={true}
                             containerStyle={[AppStyles.onboardingInputContainer,]}
                             editable={!isUpdatingUser}
                             inputRef={ref => this.inputs.email = ref}
@@ -172,7 +172,7 @@ class UserAccountInfo extends Component {
                                         color={
                                             isPasswordEditedOnce ?
                                                 onboardingUtils.isPasswordValid(user.password).isValid ?
-                                                    AppColors.zeplin.success
+                                                    AppColors.white
                                                     :
                                                     AppColors.zeplin.error
                                                 :
@@ -216,7 +216,7 @@ class UserAccountInfo extends Component {
                                                 onboardingUtils.isPasswordValid(user.password).isValid &&
                                                 onboardingUtils.isPasswordValid(user.confirm_password).isValid &&
                                                 user.password === user.confirm_password ?
-                                                    AppColors.zeplin.success
+                                                    AppColors.white
                                                     :
                                                     AppColors.zeplin.error
                                                 :

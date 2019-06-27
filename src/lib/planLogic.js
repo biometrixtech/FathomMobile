@@ -1421,7 +1421,7 @@ const PlanLogic = {
         let secondTrigger = noTriggerCoreLogic && filteredTrainingSessions.length > 0;
         let thirdTrigger = dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let triggerStep = firstTrigger ?
-            'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand. Enjoy your off day!'
+            'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand.\n\nEnjoy your off day!'
             : secondTrigger ?
                 'You should recover from this workout naturally, but you can tap the "+" for a recovery-focused Mobilize to go the extra mile!'
                 : thirdTrigger ?

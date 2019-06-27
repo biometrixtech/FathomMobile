@@ -85,11 +85,11 @@ class UserAccountAbout extends Component {
         /*eslint no-return-assign: 0*/
         return(
             <KeyboardAwareScrollView
-                contentContainerStyle={{flexGrow: 1, justifyContent: 'center',}}
+                contentContainerStyle={{flexGrow: 1,}}
                 innerRef={ref => {this.scrollViewRef = ref;}}
                 scrollEnabled={false}
             >
-                <View style={[AppStyles.onboardingInputContainer, {paddingLeft: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}]}>
+                <View style={[AppStyles.onboardingInputContainer, {marginTop: AppSizes.padding, paddingLeft: AppSizes.paddingSml, paddingVertical: AppSizes.paddingXSml,}]}>
                     { user.personal_data.birth_date.length > 0 &&
                         <Text style={[styles.inputLabel, user.personal_data.birth_date.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}>
                             {'Date of birth'}
