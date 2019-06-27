@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, View, } from 'react-native';
+import { Image, ImageBackground, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -107,11 +107,13 @@ class Tutorial extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() =>
+                                onPress={() => Platform.OS === 'ios' ?
                                     PushNotification
                                         .requestPermissions()
                                         .then(grant => this._onDone())
                                         .catch(err => this._onDone())
+                                    :
+                                    this._onDone()
                                 }
                                 raised={true}
                                 title={'Enable Notifications'}

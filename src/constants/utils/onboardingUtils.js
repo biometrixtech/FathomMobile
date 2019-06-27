@@ -1,7 +1,7 @@
 import React from 'react';
 
 // import RN components
-import { StyleSheet, } from 'react-native';
+import { Platform, StyleSheet, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -331,7 +331,7 @@ const onboardingUtils = {
                     title:           'Turn On Notifications\nTo Get Started',
                     titleStyle:      {...AppStyles.textCenterAligned, ...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(28), lineHeight: AppFonts.scaleFont(36), marginBottom: AppSizes.paddingLrg,},
                     text:            [
-                        <Text key={0} robotoLight style={[styles.subtext,]}>{'We\'ll send you occasional reminders at the most optimal time to complete your recovery activities.'}</Text>,
+                        <Text key={0} robotoLight style={[styles.subtext, {fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(26),}]}>{'We\'ll send you occasional reminders at the most optimal time to complete your recovery activities.'}</Text>,
                     ],
                 },
             ],

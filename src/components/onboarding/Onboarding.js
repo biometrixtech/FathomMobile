@@ -509,12 +509,33 @@ class Onboarding extends Component {
             errorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray;
         } else {
             if(isLastCheck) {
-                errorsArray = _.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray, onboardingUtils.isUserAboutValid(form_fields.user).errorsArray, onboardingUtils.isSurveyValid(survey_values).errorsArray);
+                errorsArray = _.concat(
+                    onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray,
+                    onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+                    onboardingUtils.isSurveyValid(survey_values).errorsArray
+                );
             } else {
-                errorsArray = _.concat(onboardingUtils.isUserAboutValid(form_fields.user).errorsArray, onboardingUtils.isSurveyValid(survey_values).errorsArray);
+                errorsArray = _.concat(
+                    onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+                    onboardingUtils.isSurveyValid(survey_values).errorsArray
+                );
             }
         }
         return errorsArray;
+    }
+
+    _validateWholeForm = callback => {
+        let isUpdatingUser = this.props.user.id ? true : false;
+        const { form_fields, survey_values, } = this.state;
+        let informationErrorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray;
+        let aboutSurveyErrorsArray = _.concat(
+            onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+            onboardingUtils.isSurveyValid(survey_values).errorsArray
+        );
+        this.setState({
+            isPage1Valid: informationErrorsArray && informationErrorsArray.length === 0 ? true : false,
+            isPage2Valid: aboutSurveyErrorsArray && aboutSurveyErrorsArray.length === 0 ? true : false,
+        }, () => callback && callback());
     }
 
     render = () => {
@@ -538,7 +559,7 @@ class Onboarding extends Component {
                     <TopNav
                         formFields={form_fields}
                         isUpdatingUser={this.props.user.id ? true : false}
-                        onBack={pageIndex === 0 ? () => Actions.pop() : () => this._renderPreviousPage()}
+                        onBack={pageIndex === 0 ? () => Actions.pop() : () => this._validateWholeForm(() => this._renderPreviousPage())}
                         resultMsg={resultMsg}
                         surveyValues={survey_values}
                         title={pageIndex === 0 ? 'CREATE YOUR ACCOUNT' : 'ABOUT YOU'}
@@ -570,7 +591,7 @@ class Onboarding extends Component {
                                         disabled={!isPage1Valid}
                                         disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                                         disabledTitleStyle={{color: AppColors.white,}}
-                                        onPress={() => this._renderNextPage()}
+                                        onPress={() => this._validateWholeForm(() => this._renderNextPage())}
                                         raised={true}
                                         title={'Continue'}
                                         titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}

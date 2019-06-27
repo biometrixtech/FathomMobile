@@ -544,7 +544,7 @@ class MyPlan extends Component {
                         // do we need to open 3-Sensor banner
                         AppUtil._handle3SensorBanner(user, response[0]);
                         // handle Coach related items
-                        this._checkCoachStatus();
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
                         // udpate RS first_time_experience
                         if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
                             this._handleUpdateFirstTimeExperience('rs_begin_page');
@@ -744,6 +744,8 @@ class MyPlan extends Component {
                 }
                 // scroll to first active activity tab
                 this._scrollToFirstActiveActivityTab();
+                // handle Coach related items
+                this._timer = _.delay(() => this._checkCoachStatus(), 500);
             })
             .catch(error => {
                 this.setState({ isPageCalculating: false, });

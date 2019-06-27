@@ -94,10 +94,10 @@ class UserAccountInfo extends Component {
                     labelStyle={[styles.inputLabel,]}
                     onChangeText={text => handleFormChange('personal_data.first_name', text)}
                     onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
-                    onSubmitEditing={() => this.focusNextField('last_name')}
+                    onSubmitEditing={() => Keyboard.dismiss()}
                     placeholder={'First name'}
                     placeholderTextColor={AppColors.white}
-                    returnKeyType={'next'}
+                    returnKeyType={'done'}
                     value={user.personal_data.first_name}
                 />
                 <FormInput
@@ -111,10 +111,10 @@ class UserAccountInfo extends Component {
                     labelStyle={[styles.inputLabel,]}
                     onChangeText={text => handleFormChange('personal_data.last_name', text)}
                     onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
-                    onSubmitEditing={() => !isUpdatingUser ? this.focusNextField('email') : Keyboard.dismiss()}
+                    onSubmitEditing={() => Keyboard.dismiss()}
                     placeholder={'Last name'}
                     placeholderTextColor={AppColors.white}
-                    returnKeyType={'next'}
+                    returnKeyType={'done'}
                     value={user.personal_data.last_name}
                 />
                 {!isUpdatingUser ?
@@ -132,10 +132,10 @@ class UserAccountInfo extends Component {
                             labelStyle={[styles.inputLabel,]}
                             onChangeText={text => handleFormChange('personal_data.email', text)}
                             onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
-                            onSubmitEditing={() => this.focusNextField('password')}
+                            onSubmitEditing={() => Keyboard.dismiss()}
                             placeholder={'E-mail'}
                             placeholderTextColor={AppColors.white}
-                            returnKeyType={'next'}
+                            returnKeyType={'done'}
                             value={user.personal_data.email}
                         />
                         <FormInput
@@ -155,10 +155,10 @@ class UserAccountInfo extends Component {
                                 this.setState({ showPasswordErrorText: true, });
                                 this._scrollToInput(findNodeHandle(event.target));
                             }}
-                            onSubmitEditing={() => this.focusNextField('confirm_password')}
+                            onSubmitEditing={() => Keyboard.dismiss()}
                             placeholder={'Password'}
                             placeholderTextColor={AppColors.white}
-                            returnKeyType={'next'}
+                            returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon

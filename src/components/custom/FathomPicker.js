@@ -84,7 +84,7 @@ const defaultStyles = StyleSheet.create({
         fontSize:   18,
     },
     underline: {
-        borderTopWidth:   1,
+        borderTopWidth:   0,
         borderTopColor:   '#888988',
         marginHorizontal: 4,
     },

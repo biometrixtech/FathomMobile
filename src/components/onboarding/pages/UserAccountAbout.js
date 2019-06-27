@@ -10,7 +10,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, View, findNodeHandle, } from 'react-native';
+import { Keyboard, Platform, StyleSheet, View, findNodeHandle, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
@@ -108,7 +108,6 @@ class UserAccountAbout extends Component {
                         date={user.personal_data.birth_date || ''}
                         format={'MM/DD/YYYY'}
                         mode={'date'}
-                        onCloseModal={() => this.focusNextField('sex', true)}
                         onDateChange={date => handleFormChange('personal_data.birth_date', date)}
                         placeholder={'Date of birth'}
                         ref={input => {this.inputs.birth_date = input;}}
@@ -125,8 +124,7 @@ class UserAccountAbout extends Component {
                     <FathomPicker
                         hideIcon={true}
                         items={UserAccountConstants.possibleGenders}
-                        onDownArrow={() => this.focusNextField('mass')}
-                        onUpArrow={() => this.focusNextField('birth_date', false, true)}
+                        onDonePress={() => Keyboard.dismiss()}
                         onValueChange={value => value ? handleFormChange('biometric_data.sex', value) : null}
                         placeholder={{
                             color: AppColors.white,
@@ -152,7 +150,7 @@ class UserAccountAbout extends Component {
                     labelStyle={[styles.inputLabel,]}
                     onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
                     onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
-                    onSubmitEditing={() => this.focusNextField('typical_weekly_sessions', true)}
+                    onSubmitEditing={() => Keyboard.dismiss()}
                     placeholder={'Weight (lbs)'}
                     placeholderTextColor={AppColors.white}
                     returnKeyType={'done'}
@@ -167,9 +165,7 @@ class UserAccountAbout extends Component {
                     <FathomPicker
                         hideIcon={true}
                         items={UserAccountConstants.activityLevels}
-                        onDownArrow={() => this.focusNextField('wearable_devices', true)}
-                        onDonePress={() => this.focusNextField('wearable_devices', true)}
-                        onUpArrow={() => this.focusNextField('mass')}
+                        onDonePress={() => Keyboard.dismiss()}
                         onValueChange={value => value ? handleFormChange('typical_weekly_sessions', value, true) : null}
                         placeholder={{
                             color: AppColors.white,
@@ -195,7 +191,7 @@ class UserAccountAbout extends Component {
                     <FathomPicker
                         hideIcon={true}
                         items={UserAccountConstants.wearableDevices}
-                        onUpArrow={() => this.focusNextField('typical_weekly_sessions', true)}
+                        onDonePress={() => Keyboard.dismiss()}
                         onValueChange={value => value ? handleFormChange('wearable_devices', value, true) : null}
                         placeholder={{
                             color: AppColors.white,

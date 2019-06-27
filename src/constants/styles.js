@@ -500,6 +500,7 @@ export default {
 
     onboardingInputContainer: {
         backgroundColor:   Colors.zeplin.splashLight,
+        borderBottomColor: 'red',
         borderBottomWidth: 0,
         borderRadius:      Sizes.paddingLrg,
         elevation:         2,
