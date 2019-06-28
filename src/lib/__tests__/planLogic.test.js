@@ -1170,8 +1170,6 @@ const helperFunctions = {
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
 
-
-
 it('Add Title To Active Modality - NO OBJ', () => {
     expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
 });
