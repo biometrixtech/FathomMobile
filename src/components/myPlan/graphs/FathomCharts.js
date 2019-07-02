@@ -134,16 +134,6 @@ class FathomCharts extends PureComponent {
 
                 <V.VictoryChart
                     animate={{ duration: 300, }}
-                    // containerComponent={
-                        // <View style={{backgroundColor: 'red',}} />
-                        // <V.VictoryBrushContainer
-                        //     allowDrag={false}
-                        //     allowResize={false}
-                        //     brushDimension={'x'}
-                        //     brushDomain={{x: currentAlert.insight_type === 2 ? [12.5, 13.5] : currentAlert.visualization_type === 4 ? [3.5, 4.5] : [6.5, 7.5]}}
-                        //     brushStyle={{borderRadius: 5,}}//border: '1px solid red', fill: 'transparent',}}
-                        // />
-                    // }
                     domainPadding={{ x: AppSizes.padding, }}
                 >
 
