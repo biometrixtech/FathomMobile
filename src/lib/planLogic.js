@@ -7,6 +7,7 @@ import moment from 'moment';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
 import { Text, } from '../components/custom';
+import { SensorLogic, } from './';
 
 const PlanLogic = {
 
@@ -1522,18 +1523,26 @@ const PlanLogic = {
         let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
         let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
         let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let currentBodyResponseAlert = trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
+        let currentWorkloadAlert = trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isBodyResponseLocked = trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
+        let isWorkloadLocked = trends.workload ? trends.workload.lockout : true;
         return {
             currentBiomechanicsAlert,
+            currentBodyResponseAlert,
             currentResponseAlert,
             currentStressAlert,
+            currentWorkloadAlert,
             extraBottomPadding,
             isBiomechanicsLocked,
+            isBodyResponseLocked,
             isResponseLocked,
             isStressLocked,
+            isWorkloadLocked,
         };
     },
 
@@ -1670,6 +1679,88 @@ const PlanLogic = {
             lineChartData:  type === 3 || type === 4 || type === 5 ? newLineData : [],
             lineChartColor: fillColor,
             updatedBarData: newBarData,
+        };
+    },
+
+    /**
+      * Handle Workload Session Render Logic
+      * - Insights
+      */
+    // TODO: UNIT TEST ME
+    handleWorkloadSessionRenderLogic: session => {
+        let source = session.source;
+        let sessionName = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name);
+        let distance = session.distance;
+        let duration = source === 1 ?
+            `${moment(session.event_date.replace('Z', '')).format('hh:mma')}, ${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`
+            :
+            `${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`;
+        let rpe = session.RPE;
+        return {
+            distance,
+            duration,
+            imageSource: sessionName.imagePath,
+            rpe,
+            source,
+            sportTitle:  sessionName.label.toUpperCase(),
+        }
+    },
+
+    /**
+      * Handle Trends Title Render Logic
+      * - Trends & Insights
+      */
+    // TODO: UNIT TEST ME
+    handleTrendsTitleRenderLogic: (subtitleBoldedText, subtitleText) => {
+        let cleanedText = false;
+        if(subtitleBoldedText.length > 0 && subtitleText.length > 0) {
+            let textRegEx = new RegExp(subtitleBoldedText.join('|'), 'g');
+            let textMatchedArray = subtitleText.match(textRegEx);
+            let splitTextArray = _.split(subtitleText, textRegEx);
+            splitTextArray = _.remove(splitTextArray, o => o.length > 0);
+            if(!textMatchedArray) {
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+            } else {
+                // TODO: THIS NEEDS TO BE FIXED
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+            }
+        } else {
+            cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+        }
+        return cleanedText;
+    },
+
+    /**
+      * Handle Trend Render Logic
+      * - Trends & Insights
+      */
+    // TODO: UNIT TEST ME
+    handleTrendRenderLogic: currentAlert => {
+        if(!currentAlert || !currentAlert.status) {
+            return {
+                icon:          false,
+                iconType:      false,
+                subtitleColor: AppColors.zeplin.errorLight,
+                sportName:     false,
+            };
+        }
+        let subtitleColor = currentAlert.status.color === 4 ?
+            AppColors.zeplin.splashLight
+            : currentAlert.status.color === 5 ?
+                AppColors.zeplin.warningLight
+                :
+                AppColors.zeplin.errorLight;
+        let icon = currentAlert.status.icon;
+        let iconType = currentAlert.status.icon_type;
+        let sessionName = _.find(MyPlanConstants.teamSports, o => o.index === currentAlert.status.sport_name);
+        let imageSource = sessionName ? sessionName.imagePath : false;
+        let sportName =  sessionName ? sessionName.label.toUpperCase() : false;
+        return {
+            icon,
+            iconType,
+            imageSource,
+            subtitleColor,
+            sportName,
         };
     },
 

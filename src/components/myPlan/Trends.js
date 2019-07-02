@@ -16,7 +16,7 @@ import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, V
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { FathomCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
-import { FathomModal, TabIcon, Text, } from '../custom';
+import { FathomModal, Spacer, TabIcon, Text, } from '../custom';
 import { store } from '../../store';
 
 // import third-party libraries
@@ -26,7 +26,7 @@ import _ from 'lodash';
 const styles = StyleSheet.create({
     cardContainer: {
         backgroundColor: AppColors.white,
-        borderRadius:    6,
+        borderRadius:    12,
         elevation:       2,
         marginBottom:    AppSizes.padding,
         paddingVertical: AppSizes.padding,
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.padding,
     },
     cardTitle: {
-        color:             AppColors.zeplin.slate,
-        fontSize:          AppFonts.scaleFont(25),
+        color:             AppColors.zeplin.slateLight,
+        fontSize:          AppFonts.scaleFont(16),
         paddingHorizontal: AppSizes.padding,
     },
     lockedCardText: {
@@ -116,16 +116,36 @@ class Trends extends PureComponent {
         const { plan, } = this.props;
         let {
             currentBiomechanicsAlert,
+            currentBodyResponseAlert,
             currentResponseAlert,
             currentStressAlert,
+            currentWorkloadAlert,
             extraBottomPadding,
             isBiomechanicsLocked,
+            isBodyResponseLocked,
             isResponseLocked,
             isStressLocked,
+            isWorkloadLocked,
         } = PlanLogic.handleTrendsRenderLogic(plan, Platform.OS);
         let currentStressAlertText = PlanLogic.handleChartTitleRenderLogic(currentStressAlert, styles.cardSubtitle);
         let currentResponseAlertText = PlanLogic.handleChartTitleRenderLogic(currentResponseAlert, styles.cardSubtitle);
         let currentBiomechanicsAlertText = PlanLogic.handleChartTitleRenderLogic(currentBiomechanicsAlert, styles.cardSubtitle);
+        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(currentBodyResponseAlert.status.bolded_text, currentBodyResponseAlert.status.text);
+        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(currentWorkloadAlert.status.bolded_text, currentWorkloadAlert.status.text);
+        let {
+            icon: workloadIcon,
+            iconType: workloadIconType,
+            imageSource: workloadImageSource,
+            subtitleColor: workloadSubtitleColor,
+            sportName: workloadSportName,
+        } = PlanLogic.handleTrendRenderLogic(currentWorkloadAlert);
+        let {
+            icon: bodyResponseIcon,
+            iconType: bodyResponseIconType,
+            imageSource: bodyResponseImageSource,
+            subtitleColor: bodyResponseSubtitleColor,
+            sportName: bodyResponseSportName,
+        } = PlanLogic.handleTrendRenderLogic(currentBodyResponseAlert);
         return (
             <View style={{flex: 1,}}>
 
@@ -135,7 +155,7 @@ class Trends extends PureComponent {
                 >
 
                     <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
-                        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
+                        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
                             <View style={{flex: 1, justifyContent: 'center',}} />
                             <Image
                                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
@@ -146,7 +166,140 @@ class Trends extends PureComponent {
                     </View>
 
                     <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>
+                        <Text oswaldRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28),}}>{'THIS WEEK'}</Text>
+                        <Spacer size={AppSizes.paddingXSml} />
+                        <Spacer isDivider />
+                        <Spacer size={AppSizes.padding} />
                         <TouchableOpacity
+                            activeOpacity={isWorkloadLocked ? 1 : 0.2}
+                            onPress={isWorkloadLocked ? () => {} : () => AppUtil.pushToScene('insight', { insightType: 8, })}
+                            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                        >
+                            { !isWorkloadLocked &&
+                                <Text robotoRegular style={[styles.cardTitle,]}>{'Workouts'}</Text>
+                            }
+                            {/*<FathomCharts
+                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
+                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                                currentAlert={currentStressAlert}
+                                startSliceValue={7}
+                            />*/}
+                            { isWorkloadLocked &&
+                                <View style={[styles.lockedCardWrapper,]}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Workouts'}</Text>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                    </View>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Workout data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
+                                    </View>
+                                </View>
+                            }
+                            { currentWorkloadAlertText &&
+                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                    { workloadIcon ?
+                                        <TabIcon
+                                            color={workloadSubtitleColor}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={workloadIcon}
+                                            size={20}
+                                            type={workloadIconType}
+                                        />
+                                        : workloadSportName ?
+                                            <Image
+                                                source={workloadImageSource}
+                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: workloadSubtitleColor, width: 20,}}
+                                            />
+                                            :
+                                            null
+                                    }
+                                    {currentWorkloadAlertText}
+                                </View>
+                            }
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={isBodyResponseLocked ? 1 : 0.2}
+                            onPress={isBodyResponseLocked ? () => {} : () => AppUtil.pushToScene('insight', { insightType: 7, })}
+                            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                        >
+                            { !isBodyResponseLocked &&
+                                <Text robotoRegular style={[styles.cardTitle,]}>{'Body Response'}</Text>
+                            }
+                            {/*<FathomCharts
+                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
+                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                                currentAlert={currentStressAlert}
+                                startSliceValue={7}
+                            />*/}
+                            { isBodyResponseLocked &&
+                                <View style={[styles.lockedCardWrapper,]}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Body Response'}</Text>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                    </View>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Body Response data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
+                                    </View>
+                                </View>
+                            }
+                            { currentBodyResponseAlertText &&
+                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                    { bodyResponseIcon ?
+                                        <TabIcon
+                                            color={bodyResponseSubtitleColor}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={bodyResponseIcon}
+                                            size={20}
+                                            type={bodyResponseIconType}
+                                        />
+                                        : bodyResponseSportName ?
+                                            <Image
+                                                source={bodyResponseImageSource}
+                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: bodyResponseSubtitleColor, width: 20,}}
+                                            />
+                                            :
+                                            null
+                                    }
+                                    {currentBodyResponseAlertText}
+                                </View>
+                            }
+                        </TouchableOpacity>
+                        <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}>
+                            {/*<FathomCharts
+                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
+                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
+                                currentAlert={currentStressAlert}
+                                startSliceValue={7}
+                            />*/}
+                            <View style={[styles.lockedCardWrapper,]}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                    <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Biomechanics'}</Text>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                        icon={'lock'}
+                                        iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                        size={40}
+                                    />
+                                </View>
+                                <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                    <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advance biomechanics tracking system coming soon.'}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        {/*<TouchableOpacity
                             activeOpacity={isStressLocked ? 1 : 0.2}
                             onPress={() => isStressLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 0, })}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
@@ -250,7 +403,7 @@ class Trends extends PureComponent {
                                     </View>
                                 </View>
                             }
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
                     </View>
 
                 </ScrollView>

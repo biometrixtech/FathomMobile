@@ -1,7 +1,7 @@
 /**
- * FathomCharts
+ * InsightsCharts
  *
-     <FathomCharts
+     <InsightsCharts
         barData={data}
         containerWidth={AppSizes.screen.width}
         currentAlert={currentAlert}
@@ -96,7 +96,7 @@ class XAxisLabels extends PureComponent {
     }
 }
 
-class FathomCharts extends PureComponent {
+class InsightsCharts extends PureComponent {
     static propTypes = {
         barData:         PropTypes.array.isRequired,
         currentAlert:    PropTypes.object,
@@ -136,6 +136,28 @@ class FathomCharts extends PureComponent {
                     animate={{ duration: 300, }}
                     domainPadding={{ x: AppSizes.padding, }}
                 >
+
+                    {/* to highlight today
+                    <V.VictoryAxis
+                        animate={{ duration: 300, easing: 'bounce', }}
+                        dependentAxis
+                        tickFormat={t => ' '}
+                        tickVmy only alues={[7]}
+                        standalone={false}
+                        style={{
+                            grid: { stroke: 'red', size: 1, }
+                        }}
+                        // x={updatedBarData.length === 14 ? 'key' : 'x'}
+                        // y0={7}
+                    /> */}
+                    <V.VictoryAxis
+                        animate={{ duration: 300, easing: 'bounce', }}
+                        // axisValue={data}
+                        dependentAxis
+                        style={{
+                            grid: { stroke: 'red', size: 1, }
+                        }}
+                    />
 
                     {/* Y-Axis */}
                     <V.VictoryAxis
@@ -302,4 +324,4 @@ class FathomCharts extends PureComponent {
 }
 
 /* Export Component ==================================================================== */
-export default FathomCharts;
+export default InsightsCharts;

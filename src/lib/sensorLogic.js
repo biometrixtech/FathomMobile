@@ -11,16 +11,16 @@ import { TabIcon, Text, } from '../components/custom';
 
 const SensorLogic = {
 
-    convertMinutesToHrsMins: minutes => {
+    convertMinutesToHrsMins: (minutes, toLower = false) => {
         let num = minutes;
         let hours = (num / 60);
         let rhours = _.floor(hours);
         let min = (hours - rhours) * 60;
         let rminutes = _.round(min);
         if(rhours === 0) {
-            return `${rminutes} ${rminutes > 1 ? 'MINS' : 'MIN'}`;
+            return toLower ? `${rminutes} ${rminutes > 1 ? 'mins' : 'min'}` : `${rminutes} ${rminutes > 1 ? 'MINS' : 'MIN'}`;
         }
-        return `${rhours} ${rhours > 1 ? 'HRS' : 'HR'} ${rminutes} ${rminutes > 1 ? 'MINS' : 'MIN'}`;
+        return toLower ? `${rhours} ${rhours > 1 ? 'hrs' : 'hr'} ${rminutes} ${rminutes > 1 ? 'mins' : 'min'}` : `${rhours} ${rhours > 1 ? 'HRS' : 'HR'} ${rminutes} ${rminutes > 1 ? 'MINS' : 'MIN'}`;
     },
 
     errorMessages: () => {
