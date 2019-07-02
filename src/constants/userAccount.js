@@ -204,6 +204,52 @@ const possibleGenders = [
     },
 ];
 
+const activityLevels = [
+    {
+        color: 'black',
+        label: '0-1 workouts/week',
+        value: '0-1',
+    },
+    {
+        color: 'black',
+        label: '2-4 workouts/week',
+        value: '2-4',
+    },
+    {
+        color: 'black',
+        label: '5+ workouts/week',
+        value: '5+',
+    },
+];
+
+const wearableDevices = [
+    {
+        color: 'black',
+        label: 'None',
+        value: 'None',
+    },
+    {
+        color: 'black',
+        label: 'Apple Watch',
+        value: 'Apple Watch',
+    },
+    {
+        color: 'black',
+        label: 'Garmin',
+        value: 'Garmin',
+    },
+    {
+        color: 'black',
+        label: 'Fitbit',
+        value: 'Fitbit',
+    },
+    {
+        color: 'black',
+        label: 'Other',
+        value: 'Other',
+    },
+];
+
 const seasonStartEndMonths = [
     { label: 'January', value: 'january', },
     { label: 'February', value: 'february', },
@@ -303,6 +349,7 @@ export default {
     ...HEIGHT_SECTIONS,
     ...LEVELS_OF_PLAY,
     ...SPORTS_POSITIONS,
+    activityLevels,
     possibleActivities,
     possibleDaysOfWeek,
     possibleGenders,
@@ -310,5 +357,6 @@ export default {
     possibleSystemTypes,
     possibleInjuryStatuses,
     seasonStartEndMonths,
+    wearableDevices,
     workoutOutsidePracticeOptions,
 };

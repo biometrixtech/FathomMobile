@@ -5,8 +5,10 @@
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
         deviceFound={deviceFound}
+        getAccessoryKey={getAccessoryKey}
         getBLEMacAddress={getBLEMacAddress}
         getScannedWifiConnections={getScannedWifiConnections}
+        getSensorFiles={getSensorFiles}
         getSingleWifiConnection={getSingleWifiConnection}
         network={network}
         startDisconnection={startDisconnection}
@@ -21,14 +23,22 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, Keyboard, NativeEventEmitter, NativeModules, Platform, PermissionsAndroid, ScrollView, View, } from 'react-native';
+import {
+    Alert,
+    Keyboard,
+    NativeEventEmitter,
+    NativeModules,
+    Platform,
+    PermissionsAndroid,
+    View,
+} from 'react-native';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
-import { AppUtil, } from '../../lib';
-import { Button, FormInput, ListItem, Spacer, ProgressBar, Text, } from '../custom';
+import { Actions as DispatchActions, AppColors, } from '../../constants';
+import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
 import { Loading, } from '../general';
 import { store, } from '../../store';
+import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, } from './ConnectScreens';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -41,213 +51,296 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 // setup consts
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
+const WIFI_PAGE_NUMBER = 17;
 
 /* Component ==================================================================== */
-const TopNav = ({ currentStep, title, totalSteps, }) => (
-    <View style={{backgroundColor: AppColors.transparent,}}>
-        <View style={{alignItems: 'center', flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1,}}>
-                {/*<TabIcon
-                    containerStyle={[{flex: 1,}]}
-                    color={AppColors.zeplin.slateXLightSlate}
-                    icon={workout.deleted ? 'add' : 'close'}
-                    onPress={() => handleHealthDataFormChange(!workout.deleted)}
-                    reverse={false}
-                    size={30}
-                    type={'material'}
-                />*/}
-            </View>
-            <View style={{flex: 8,}}>
-                <Text oswaldMedium style={{color: AppColors.black, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{title}</Text>
-            </View>
-            <View style={{flex: 1,}} />
-        </View>
-        <ProgressBar
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-        />
-    </View>
-);
-
 class BluetoothConnect3Sensor extends Component {
+
     constructor(props) {
         super(props);
+        const { user, } = this.props;
+        const updatedPageIndex = SensorLogic.handleFirstPageIndexRenderLogic(user, WIFI_PAGE_NUMBER);
         this.state = {
             availableNetworks:     [],
+            bleState:              '',
             currentWifiConnection: false,
-            loading:               false,
-            pageIndex:             0,
+            isConnectingToSensor:  false,
             isDialogVisible:       false,
+            isVideoMuted:          false,
             isWifiScanDone:        false,
+            loading:               false,
+            pageIndex:             updatedPageIndex,
         };
         this._pages = {};
         this._timer = null;
-        this.wifiTimers = [];
+        this.handleBLEUpdateState = this.handleBLEUpdateState.bind(this);
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
-        this.handleStopScan = this.handleStopScan.bind(this);
     }
 
     componentDidMount = () => {
+        AlertHelper.closeCancelableDropDown();
+        AlertHelper.closeDropDown();
         BleManager.start({ showAlert: false, });
+        BleManager.checkState();
+        this.handlerCheck = bleManagerEmitter.addListener('BleManagerDidUpdateState', args => this.handleBLEUpdateState(args));
         this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
-        this.handlerStop = bleManagerEmitter.addListener('BleManagerStopScan', this.handleStopScan);
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-                if (result) {
-                    console.log('Permission is OK');
-                } else {
-                    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
-                        if(res) {
-                            console.log('User accept');
-                        } else {
-                            console.log('User refuse');
-                        }
-                    });
-                }
-            });
+        // update user obj to say user is on first page
+        if(!this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}0`)) {
+            this._updateUserCheckpoint(0);
         }
     }
 
     componentWillUnmount = () => {
-        this._pages = null;
-        this._timer = null;
-        _.map(this.wifiTimers, (timer, i) => clearInterval(this.wifiTimers[i]));
+        this._pages = {};
+        clearInterval(this._timer);
+        this.handlerCheck.remove();
         this.handlerDiscover.remove();
-        this.handlerStop.remove();
     }
 
-    _onPageScrollEnd = currentPage => {
-        console.log('currentPage',currentPage);
-        if(currentPage === 2) {
-            this._handleBLEPair();
-        } else if(currentPage === 5) {
-            this._timer = _.delay(() => {
-                this._handleWifiScan();
-            }, 500);
-        }
-    }
-
-    _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, getSingleWifiConnection, } = this.props;
-        this.setState({ availableNetworks: [], });
-        getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
-            .then(res => {
-                if(res === 0) {
-                    this.setState({ availableNetworks: [], isWifiScanDone: true, });
-                }
-                let index = 0;
-                for(let i = 1; i <= res; i += 1) {
-                    this.wifiTimers[i] = _.delay(() => {
-                        getSingleWifiConnection(bluetooth.accessoryData.sensor_pid, i)
-                            .then(response => {
-                                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                                newAvailableNetworks.push(response);
-                                newAvailableNetworks = _.uniq(newAvailableNetworks);
-                                this.setState({ availableNetworks: newAvailableNetworks, isWifiScanDone: true, });
-                            })
-                            .catch(error => console.log('error-i',error));
-                    }, 500 * index);
-                    index = index + 1;
-                }
-            })
-            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => AppUtil.handleAPIErrorAlert(err)));
-    }
-
-    _handleBLEPair = () => {
-        const { startScan, } = this.props;
-        startScan(10);
-    }
+    handleBLEUpdateState = args => this.setState({ bleState: args.state, })
 
     handleDiscoverPeripheral = data => {
         const { deviceFound, } = this.props;
         if (data.advertising && data.advertising.kCBAdvDataLocalName) {
             data.name = data.advertising.kCBAdvDataLocalName;
         }
-        return data.name && data.name === 'fathomKit' ? deviceFound(data).then(() => this.handleStopScan()) : null; // 3-sensor solution
+        return data.name && data.name === 'fathomKit' && this.props.bluetooth.devicesFound.length === 0 ? deviceFound(data).then(() => this._handleStopScan()) : null; // 3-sensor solution
         // return data.name && /fathomS[*]_/i.test(data.name) ? deviceFound(data) : null; // 1-sensor solution
     }
 
-    handleStopScan = () => {
-        const { bluetooth, stopScan, } = this.props;
-        return stopScan()
-            .then(() => {
-                let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
-                if(closestDevice.length > 0) {
-                    this._connect(closestDevice[0]);
-                }
-            });
-    }
-
     _connect = data => {
-        const { bluetooth, getBLEMacAddress, stopConnect, stopScan, user, } = this.props;
-        stopScan()
-            .then(() => getBLEMacAddress(data.id))
-            .then(() => this._toggleAlertNotification(data.id, user.id))
-            .catch(err => {
-                console.log('err in BluetoothConnect #4',err);
-                if (bluetooth.accessoryData && !bluetooth.accessoryData.sensor_pid) {
-                    this.refs.toast.show('Failed to PAIR to sensor', (DURATION.LENGTH_SHORT * 2));
+        const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
+        return getBLEMacAddress(data.id)
+            .then(macAddress => getAccessoryKey(macAddress))
+            .then(response => {
+                if(!response.accessory.owner_id) {
+                    return this._toggleAlertNotification(data.id, user.id);
                 }
-                return stopConnect();
+                return startDisconnection(data.id, true).then(() => this._handleBLEPair());
+            })
+            .catch(err => {
+                if (
+                    this.props.bluetooth.accessoryData &&
+                    !this.props.bluetooth.accessoryData.sensor_pid &&
+                    !this.props.bluetooth.accessoryData.mobile_udid &&
+                    !this.props.bluetooth.accessoryData.wifiMacAddress
+                ) {
+                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+                    return this._handleDisconnection(() => this._renderPreviousPage());
+                }
+                return console.log(err);
             });
-    }
-
-    _toggleAlertNotification = (sensorId, userId) => {
-        const { stopConnect, } = this.props;
-        Alert.alert(
-            '',
-            'Did the LED turn green?',
-            [
-                {
-                    text:    'No',
-                    onPress: () => {
-                        this.setState({ pageIndex: 0 });
-                        this._pages.progress = 0;
-                        return stopConnect();
-                    },
-                    style: 'cancel',
-                },
-                {
-                    text:    'Yes',
-                    onPress: () => this._renderNextPage(),
-                },
-            ],
-            { cancelable: false }
-        );
     }
 
     _connectSensorToWifi = () => {
         Keyboard.dismiss();
-        const { assignKitIndividual, bluetooth, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
+        const { assignKitIndividual, bluetooth, getSensorFiles, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
         const { currentWifiConnection, } = this.state;
-        if(currentWifiConnection && currentWifiConnection.password && currentWifiConnection.ssid && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.sensor_pid !== 'None') {
-            let sensorId = bluetooth.accessoryData.sensor_pid;
-            let ssid = currentWifiConnection.ssid;
-            let password = currentWifiConnection.password;
-            let securityByte = currentWifiConnection.security.toByte;
-            writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
-                .then(res => {
-                    // setup variables
-                    let newUserPayloadObj = {};
-                    newUserPayloadObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
-                    newUserPayloadObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    let newUserObj = _.cloneDeep(user);
-                    newUserObj.sensor_pid = bluetooth.accessoryData.sensor_pid;
-                    newUserObj.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    // update reducer as API might take too long to return a value
-                    store.dispatch({
-                        type: DispatchActions.USER_REPLACE,
-                        data: newUserObj
-                    });
-                    // send commands
-                    updateUser(newUserPayloadObj, user.id) // 1. PATCH user specific endpoint
-                        .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
-                        .then(() => startDisconnection(sensorId, true)) // 3. disconnect from sensor
-                        .then(() => this.setState({ loading: false, }, () => this._renderNextPage())); // 4. route to next page
-                })
-                .catch(err => AppUtil.handleAPIErrorAlert(err));
+        let sensorId = bluetooth.accessoryData.sensor_pid;
+        let ssid = currentWifiConnection.ssid;
+        let password = currentWifiConnection.password;
+        let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
+        return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
+            .then(res => {
+                // setup variables
+                let newUserPayloadObj = {};
+                newUserPayloadObj.sensor_data = {};
+                newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserPayloadObj.sensor_data.system_type = '3-sensor';
+                let newUserNetworksPayloadObj = {};
+                newUserNetworksPayloadObj['@sensor_data'] = {};
+                newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
+                let newUserObj = _.cloneDeep(user);
+                newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}18`);
+                newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+                newUserObj.sensor_data.system_type = '3-sensor';
+                // send commands
+                return updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
+                    .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
+                    .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
+                    .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
+                    .then(() => startDisconnection(sensorId, true)) // 4. disconnect from sensor
+                    .then(() => this.setState({ loading: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)} )) // 5. route to next page
+                    .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+            })
+            .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+    }
+
+    _handleAlertHelper = (title = '', message, isCancelable) => {
+        Actions.pop();
+        if(isCancelable) {
+            AlertHelper.showCancelableDropDown('custom', title, message);
         } else {
-            AppUtil.handleAPIErrorAlert('Please make sure to select the right details');
+            AlertHelper.showDropDown('custom', title, message);
+        }
+    }
+
+    _handleAlertPress = () => {
+        Alert.alert(
+            '',
+            'Oops! Your Sensors need to finish syncing with the Smart Charger.\n\nPlease return all of the Sensors to the Charger, firmly close the lid, & wait for the LEDs to finish breathing green.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _handleBLEPair = () => {
+        const { startScan, } = this.props;
+        startScan(60);
+        this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 60000);
+    }
+
+    _handleDisconnection = callback => {
+        const { bluetooth, startDisconnection, } = this.props;
+        if(bluetooth.accessoryData && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.mobile_udid) {
+            startDisconnection(bluetooth.accessoryData.sensor_pid, true)
+                .then(() => callback())
+                .catch(() => callback());
+        } else {
+            callback();
+        }
+    }
+
+    _handleNetworkPress = network => {
+        if(network.security.toByte !== 0) {
+            this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
+        } else {
+            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+            newCurrentWifiConnection.password = false;
+            this.setState(
+                { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },
+                () => {
+                    this._timer = _.delay(() => {
+                        this.setState(
+                            { loading: true, },
+                            () => this._connectSensorToWifi(),
+                        );
+                    }, 500);
+                },
+            );
+        }
+    }
+
+    _handleSingleWifiConnectionFetch = (sensorId, numberOfConnections, currentIndex) => {
+        const { getSingleWifiConnection, } = this.props;
+        if(numberOfConnections === 0 && currentIndex > numberOfConnections) {
+            this.setState({ isWifiScanDone: true, });
+        } else {
+            getSingleWifiConnection(sensorId, currentIndex)
+                .then(res => {
+                    let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
+                    newAvailableNetworks.push(res);
+                    newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
+                    newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
+                    return this.setState(
+                        { availableNetworks: newAvailableNetworks, },
+                        () => _.delay(() => {
+                            if(currentIndex === numberOfConnections) {
+                                this.setState({ isWifiScanDone: true, });
+                            } else {
+                                this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1))
+                            }
+                        }, 750),
+                    );
+                })
+                .catch(err => {
+                    if(err === 'TIMEDOUT') {
+                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan()));
+                    } else if(currentIndex === numberOfConnections) {
+                        return this.setState({ isWifiScanDone: true, });
+                    }
+                    return this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1));
+                });
+        }
+    };
+
+    _handleStopScan = () => {
+        const { stopScan, } = this.props;
+        clearInterval(this._timer);
+        return stopScan()
+            .then(() => this._toggleSensorsConnectedAlert());
+    }
+
+    _handleWifiNotInRange = () => {
+        const { user, }= this.props;
+        Alert.alert(
+            '',
+            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
+            [
+                {
+                    text:    'I\'ll do it later',
+                    onPress: () => {
+                        this._handleDisconnection(() => Actions.pop());
+                        if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
+                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                        }
+                    },
+                },
+                {
+                    text:  'Configure Now',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _handleWifiScan = () => {
+        const { bluetooth, getScannedWifiConnections, } = this.props;
+        this.setState({ availableNetworks: [], isWifiScanDone: false, });
+        return getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
+            .then(res => {
+                if(res === 0) {
+                    this.setState({ availableNetworks: [], isWifiScanDone: true, });
+                }
+                return this._handleSingleWifiConnectionFetch(bluetooth.accessoryData.sensor_pid, res, 1);
+            })
+            .catch(err => {
+                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                    if(err === 'TIMEDOUT') {
+                        this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan())
+                    } else {
+                        AppUtil.handleAPIErrorAlert(err, 'Please Try Again!');
+                    }
+                });
+            });
+    }
+
+    _onPageScrollEnd = currentPage => {
+        const checkpointPages = [0, 1, 9, 12, 15, WIFI_PAGE_NUMBER];
+        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+            this._updateUserCheckpoint(currentPage);
+        }
+        if(currentPage === 16) { // turn on BLE & connect to accessory
+            if (Platform.OS === 'android') {
+                BleManager.enableBluetooth();
+            }
+            if (Platform.OS === 'android' && Platform.Version >= 23) {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
+                    if (result) {
+                        console.log('Permission is OK');
+                    } else {
+                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
+                            if(res) {
+                                console.log('User accept');
+                            } else {
+                                console.log('User refuse');
+                            }
+                        });
+                    }
+                });
+            }
+        } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
+            this._timer = _.delay(() => this._handleWifiScan(), 2000);
         }
     }
 
@@ -257,14 +350,105 @@ class BluetoothConnect3Sensor extends Component {
         this.setState({ pageIndex: nextPageIndex, });
     }
 
-    _handleFormChange = (name, value) => {
-        let newFormFields = _.update( this.state.currentWifiConnection, name, () => value);
-        this.setState({ ['currentWifiConnection']: newFormFields, });
+    _renderPreviousPage = () => {
+        let nextPageIndex = (this.state.pageIndex - 1);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _submitPasswordInput = inputText => {
+        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+        newCurrentWifiConnection.password = inputText;
+        this.setState(
+            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, },
+            () => {
+                this._timer = _.delay(() => {
+                    this.setState(
+                        { loading: true, },
+                        () => this._connectSensorToWifi(),
+                    );
+                }, 500);
+            },
+        );
+    }
+
+    _toggleAlertNotification = (sensorId, userId) => {
+        Alert.alert(
+            '',
+            'Did the LED turn green?',
+            [
+                {
+                    text:    'No',
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(() => this._renderPreviousPage())),
+                    style:   'cancel',
+                },
+                {
+                    text:    'Yes',
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 1000)}),
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _toggleSensorsConnectedAlert = () => {
+        const { bluetooth, } = this.props;
+        let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
+        if(closestDevice.length > 0) {
+            return this._connect(closestDevice[0]);
+        }
+        return this._toggleTimedoutBringCloserAlert(() => {});
+    }
+
+    _toggleTimedoutBringCloserAlert = callback => {
+        Alert.alert(
+            '',
+            'We\'re not able to find your Kit. Try bringing your phone closer.',
+            [
+                {
+                    text:    'Exit Tutorial',
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(() => Actions.pop())),
+                    style:   'cancel',
+                },
+                {
+                    text:    'Try Again',
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => callback && callback()),
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _updateUserCheckpoint = page => {
+        const { updateUser, user, } = this.props;
+        // setup variables
+        let value = `${FIRST_TIME_EXPERIENCE_PREFIX}${page}`;
+        if(!this.props.user.first_time_experience.includes(value)) {
+            let newUserPayloadObj = {};
+            newUserPayloadObj.first_time_experience = [value];
+            let newUserObj = _.cloneDeep(user);
+            newUserObj.first_time_experience.push(value);
+            // update reducer as API might take too long to return a value
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: newUserObj
+            });
+            // update user object
+            updateUser(newUserPayloadObj, user.id, false);
+        }
     }
 
     render = () => {
-        const { bluetooth, } = this.props;
-        const { availableNetworks, currentWifiConnection, pageIndex, isDialogVisible, isWifiScanDone, } = this.state;
+        const {
+            availableNetworks,
+            bleState,
+            currentWifiConnection,
+            pageIndex,
+            isConnectingToSensor,
+            isDialogVisible,
+            isVideoMuted,
+            isWifiScanDone,
+        } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -277,175 +461,165 @@ class BluetoothConnect3Sensor extends Component {
                     startPage={pageIndex}
                 >
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now Let\'s Pair Your Power Case!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Welcome Screen - page 0 */}
+                    <CVP
+                        nextBtn={this._renderNextPage}
+                    />
 
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={1}
-                            title={'PAIR YOU SENSORS'}
-                            totalSteps={5}
-                        />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Hold The Button Until The LED Turns Blue'}</Text>
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
-                            {'Note: Once connected, your sensors will only sync with '}
-                            <Text robotoRegular style={{fontStyle: 'italic',}}>{'this user account.'}</Text>
-                        </Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Placement Tutorial - pages 1-8 */}
+                    <Placement
+                        currentPage={pageIndex === 1}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 2}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 3}
+                        handleAlertPress={() => this._handleAlertPress()}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 4}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={3}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 5}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={4}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 6}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={5}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 7}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={6}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 8}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={7}
+                    />
 
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={2}
-                            title={'PAIR YOU SENSORS'}
-                            totalSteps={5}
-                        />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Touch Your Phone To The Base to Pair'}</Text>
-                        { bluetooth.devicesFound && bluetooth.devicesFound.length > 0 &&
-                            _.map(bluetooth.devicesFound, (data, i) =>
-                                <Text key={i} onPress={() => this._connect(data)}>{`${data.name} ${data.id} ${data.rssi}`}</Text>
+                    {/* Calibration - pages 9-11 */}
+                    <Calibration
+                        currentPage={pageIndex === 9}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Calibration
+                        currentPage={pageIndex === 10}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+                    <Calibration
+                        currentPage={pageIndex === 11}
+                        handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
+                        isVideoMuted={isVideoMuted}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={2}
+                    />
+
+                    {/* Session - pages 12-14 */}
+                    <Session
+                        currentPage={pageIndex === 12}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
+                        page={0}
+                    />
+                    <Session
+                        currentPage={pageIndex === 13}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
+                        page={1}
+                    />
+                    <Session
+                        currentPage={pageIndex === 14}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
+                        page={2}
+                    />
+
+                    {/* Connect - pages 15-18 */}
+                    <Connect
+                        currentPage={pageIndex === 15}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
+                        page={0}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 16}
+                        isLoading={isConnectingToSensor}
+                        isNextDisabled={bleState !== 'on' || isConnectingToSensor}
+                        nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
+                        onBack={this._renderPreviousPage}
+                        onClose={() =>
+                            this._handleDisconnection(() =>
+                                this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)
                             )
                         }
-                    </View>
+                        page={1}
+                    />
+                    <Connect
+                        availableNetworks={availableNetworks}
+                        currentPage={pageIndex === WIFI_PAGE_NUMBER}
+                        handleNetworkPress={network => this._handleNetworkPress(network)}
+                        handleNotInRange={() => this._handleWifiNotInRange()}
+                        handleWifiScan={() => this._handleWifiScan()}
+                        isWifiScanDone={isWifiScanDone}
+                        nextBtn={this._renderNextPage}
+                        onBack={() => this._handleDisconnection(() => this._renderPreviousPage())}
+                        onClose={() =>
+                            this._handleDisconnection(() =>
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)
+                            )
+                        }
+                        page={3}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 18}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={() => Actions.pop()}
+                        page={4}
+                    />
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Pairing successful!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* Battery - page 19 */}
+                    <Battery
+                        currentPage={pageIndex === 19}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                    />
 
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Now let\'s connect wifi.'}</Text>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Your sensors will need wifi to upload data after training. On the next screen add your home network and any wifi networks you typically use right after training.'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => this._renderNextPage()}
-                            title={'Next'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
-
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            currentStep={3}
-                            title={'CONFIGURE WIFI'}
-                            totalSteps={5}
-                        />
-                        {/* currentWifiConnection && currentWifiConnection.ssid &&
-                            <View style={{flex: 1,}}>
-                                <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, paddingBottom: 0, textAlign: 'center',}}>
-                                    {`Current Wifi Connection: ${currentWifiConnection.ssid} ${currentWifiConnection.frequency ? currentWifiConnection.frequency : ''}`}
-                                </Text>
-                                <FormInput
-                                    autoCapitalize={'none'}
-                                    blurOnSubmit={false}
-                                    clearButtonMode={'never'}
-                                    containerStyle={{alignSelf: 'center', paddingTop: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
-                                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
-                                    keyboardType={'default'}
-                                    onChangeText={text => this._handleFormChange('password', text)}
-                                    onSubmitEditing={() => this._connectSensorToWifi()}
-                                    placeholder={'password'}
-                                    placeholderTextColor={AppColors.zeplin.yellow}
-                                    returnKeyType={'done'}
-                                    value={currentWifiConnection.password}
-                                />
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingVertical: 20,}}
-                                    containerStyle={{paddingTop: AppSizes.paddingLrg,}}
-                                    disabled={currentWifiConnection.password.length === 0}
-                                    onPress={() => this._connectSensorToWifi()}
-                                    title={'Update'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
-                                />
-                            </View>
-                        }*/}
-                        <Text robotoBold style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20), padding: AppSizes.paddingLrg, textAlign: 'center',}}>{'Select a network you commonly use after training.'}</Text>
-                        <View style={{flexDirection: 'row', paddingBottom: AppSizes.paddingSml,}}>
-                            <Text
-                                robotoBold
-                                style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
-                            >
-                                {'Networks In Range'}
-                            </Text>
-                        </View>
-                        <Spacer isDivider />
-                        <View style={{flex: 1,}}>
-                            { availableNetworks.length > 0 ?
-                                <ScrollView>
-                                    {_.map(availableNetworks, (network, i) =>
-                                        <ListItem
-                                            bottomDivider={true}
-                                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                                            key={i}
-                                            onPress={() => this.setState({ currentWifiConnection: network, isDialogVisible: true, })}
-                                            title={network.ssid}
-                                            titleStyle={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                                        />
-                                    )}
-                                </ScrollView>
-                                : availableNetworks.length === 0 && !isWifiScanDone ?
-                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
-                                        <ActivityIndicator
-                                            animating={true}
-                                            color={AppColors.zeplin.yellow}
-                                            size={'large'}
-                                        />
-                                    </View>
-                                    :
-                                    <View style={{flex: 1, padding: AppSizes.padding,}}>
-                                        <Text robotoBold style={{color: AppColors.zeplin.navy, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>{'No available broadcasting networks are compatible with our sensor.'}</Text>
-                                        <Button
-                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                                            onPress={() => this._handleWifiScan()}
-                                            title={'Try Again'}
-                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                                        />
-                                    </View>
-                            }
-                            { availableNetworks.length > 0 && isWifiScanDone &&
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                                    containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                                    onPress={() => this._handleWifiScan()}
-                                    title={'Try Again'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                                />
-                            }
-                        </View>
-                    </View>
-
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splash, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'You\'re now ready to use the system!'}</Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                            onPress={() => Actions.settings()}
-                            title={'Done'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    </View>
+                    {/* End - page 20 */}
+                    <Complete
+                        currentPage={pageIndex === 20}
+                        nextBtn={() => Actions.pop()}
+                        onBack={this._renderPreviousPage}
+                    />
 
                 </Pages>
 
@@ -460,21 +634,14 @@ class BluetoothConnect3Sensor extends Component {
                     isDialogVisible={isDialogVisible}
                     message={`"${currentWifiConnection ? currentWifiConnection.ssid : ''}"`}
                     modalStyle={{backdropColor: AppColors.zeplin.darkNavy, backdropOpacity: 0.8,}}
-                    submitInput={inputText => {
-                        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
-                        newCurrentWifiConnection.password = inputText;
-                        this.setState(
-                            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, loading: true, },
-                            () => this._connectSensorToWifi(),
-                        );
-                    }}
+                    submitInput={inputText => this._submitPasswordInput(inputText)}
                     submitText={'Save'}
                     title={'Connect to Network'}
                 />
 
                 { this.state.loading ?
                     <Loading
-                        text={'Saving WiFi Connection...'}
+                        text={'SAVING...'}
                     />
                     :
                     null
@@ -489,8 +656,10 @@ BluetoothConnect3Sensor.propTypes = {
     assignKitIndividual:       PropTypes.func.isRequired,
     bluetooth:                 PropTypes.object.isRequired,
     deviceFound:               PropTypes.func.isRequired,
+    getAccessoryKey:           PropTypes.func.isRequired,
     getBLEMacAddress:          PropTypes.func.isRequired,
     getScannedWifiConnections: PropTypes.func.isRequired,
+    getSensorFiles:            PropTypes.func.isRequired,
     getSingleWifiConnection:   PropTypes.func.isRequired,
     network:                   PropTypes.object.isRequired,
     startDisconnection:        PropTypes.func.isRequired,

@@ -84,7 +84,7 @@ const defaultStyles = StyleSheet.create({
         fontSize:   18,
     },
     underline: {
-        borderTopWidth:   1,
+        borderTopWidth:   0,
         borderTopColor:   '#888988',
         marginHorizontal: 4,
     },
@@ -157,7 +157,7 @@ export default class RNPickerSelect extends PureComponent {
         style:                       {},
         children:                    null,
         hideIcon:                    false,
-        placeholderTextColor:        '#C7C7CD',
+        placeholderTextColor:        AppColors.white,
         useNativeAndroidPickerStyle: true,
         hideDoneBar:                 false,
         doneText:                    'Done',

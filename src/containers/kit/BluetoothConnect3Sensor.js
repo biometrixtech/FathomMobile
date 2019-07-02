@@ -13,8 +13,10 @@ const BluetoothConnect3Sensor = ({
     assignKitIndividual,
     bluetooth,
     deviceFound,
+    getAccessoryKey,
     getBLEMacAddress,
     getScannedWifiConnections,
+    getSensorFiles,
     getSingleWifiConnection,
     network,
     startDisconnection,
@@ -29,8 +31,10 @@ const BluetoothConnect3Sensor = ({
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
         deviceFound={deviceFound}
+        getAccessoryKey={getAccessoryKey}
         getBLEMacAddress={getBLEMacAddress}
         getScannedWifiConnections={getScannedWifiConnections}
+        getSensorFiles={getSensorFiles}
         getSingleWifiConnection={getSingleWifiConnection}
         network={network}
         startDisconnection={startDisconnection}
@@ -48,8 +52,10 @@ BluetoothConnect3Sensor.propTypes = {
     assignKitIndividual:       PropTypes.func.isRequired,
     bluetooth:                 PropTypes.shape({}).isRequired,
     deviceFound:               PropTypes.func.isRequired,
+    getAccessoryKey:           PropTypes.func.isRequired,
     getBLEMacAddress:          PropTypes.func.isRequired,
     getScannedWifiConnections: PropTypes.func.isRequired,
+    getSensorFiles:            PropTypes.func.isRequired,
     getSingleWifiConnection:   PropTypes.func.isRequired,
     network:                   PropTypes.object.isRequired,
     startDisconnection:        PropTypes.func.isRequired,
@@ -75,8 +81,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     assignKitIndividual:       BluetoothActions.assignKitIndividual,
     deviceFound:               BluetoothActions.deviceFound,
+    getAccessoryKey:           BluetoothActions.getAccessoryKey,
     getBLEMacAddress:          BluetoothActions.getBLEMacAddress,
     getScannedWifiConnections: BluetoothActions.getScannedWifiConnections,
+    getSensorFiles:            BluetoothActions.getSensorFiles,
     getSingleWifiConnection:   BluetoothActions.getSingleWifiConnection,
     startDisconnection:        BluetoothActions.startDisconnection,
     startScan:                 BluetoothActions.startScan,

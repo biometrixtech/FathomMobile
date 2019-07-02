@@ -35,11 +35,8 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const CustomTabBar = ({ navigation, plan }) => {
+const CustomTabBar = ({ navigation, plan, user, }) => {
     let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-    if(!dailyPlanObj.daily_readiness_survey_completed) {
-        return (null);
-    }
     let currentIndex = navigation.state.index;
     let currentRouteName = navigation.state.routes[currentIndex].routeName;
     let myPlanFocused = new RegExp('myPlan', 'g').test(currentRouteName);
@@ -102,6 +99,7 @@ CustomTabBar.defaultProps = {};
 /* Export Component ==================================================================== */
 const mapStateToProps = state => ({
     plan: state.plan,
+    user: state.user,
 });
 
 const mapDispatchToProps = {};

@@ -5,7 +5,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -18,8 +18,8 @@ import moment from 'moment';
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib/';
 import { Actions as DispatchActions, AppColors, AppSizes, AppStyles, AppFonts, ErrorMessages, } from '../../constants';
-import { Alerts, Button, Spacer, Text, } from '../custom';
-import { store } from '../../store';
+import { Button, Spacer, TabIcon, Text, } from '../custom';
+import { store, } from '../../store';
 
 // setup consts
 const Crashlytics = Fabric.Crashlytics;
@@ -27,13 +27,9 @@ const Crashlytics = Fabric.Crashlytics;
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     linearGradientStyle: {
-        alignItems:        'center',
-        alignSelf:         'stretch',
-        flex:              1,
-        justifyContent:    'center',
-        overflow:          'visible',
-        paddingHorizontal: 50,
-        paddingVertical:   50,
+        alignSelf: 'stretch',
+        flex:      1,
+        overflow:  'visible',
     },
 });
 
@@ -49,6 +45,7 @@ class Start extends Component {
         expires:              PropTypes.string,
         finalizeLogin:        PropTypes.func.isRequired,
         getMyPlan:            PropTypes.func.isRequired,
+        getSensorFiles:       PropTypes.func.isRequired,
         getUser:              PropTypes.func.isRequired,
         jwt:                  PropTypes.string,
         lastOpened:           PropTypes.object.isRequired,
@@ -135,11 +132,11 @@ class Start extends Component {
     }
 
     _routeToLogin = () => {
-        Actions.login();
+        AppUtil.pushToScene('login');
     }
 
-    _routeToAccountType = () => {
-        Actions.accountType();
+    _routeToTuroial = () => {
+        AppUtil.pushToScene('tutorial', {step: 'tutorial-tutorial'});
     }
 
     login = () => {
@@ -197,27 +194,34 @@ class Start extends Component {
                         return response;
                     })
                     .catch(error => {
-                        AppUtil.handleAPIErrorAlert(error);
-                        this.hideSplash();
+                        this.setState(
+                            { isLoggingIn: false, },
+                            () => AppUtil.handleAPIErrorAlert(error),
+                        );
                     });
             })
             .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
+            .then(() => userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? this.props.getSensorFiles(userObj) : userObj)
             .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
-                this.hideSplash();
-                const error = AppAPI.handleError(err);
-                console.log('err',error);
-                if(Platform.OS === 'ios') {
-                    Crashlytics.recordError(`ERROR on start: ${error.toString()}`);
-                } else {
-                    Crashlytics.logException(`ERROR on start: ${error.toString()}`);
-                }
+                this.setState(
+                    { isLoggingIn: false, },
+                    () => {
+                        const error = AppAPI.handleError(err);
+                        console.log('err',error);
+                        if(Platform.OS === 'ios') {
+                            Crashlytics.recordError(`ERROR on start: ${error.toString()}`);
+                        } else {
+                            Crashlytics.logException(`ERROR on start: ${error.toString()}`);
+                        }
+                    },
+                );
             });
     }
 
     render = () => {
         let { isLoggingIn, splashScreen, } = this.state;
-        return splashScreen && isLoggingIn ?
+        return splashScreen ?
             <View style={{flex: 1,}}>
                 <ImageBackground
                     source={require('../../../assets/images/standard/background.png')}
@@ -227,59 +231,77 @@ class Start extends Component {
                         colors={['rgb(248, 224, 118)', 'rgb(235, 186, 45)']}
                         style={[styles.linearGradientStyle]}
                     >
-                        <Image
-                            resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/stacked_icon_white.png')}
-                            style={{ height: 100, width: 100, }}
-                        />
-                        <Spacer size={80} />
-                        <ActivityIndicator
-                            color={AppColors.white}
-                            size={'large'}
-                        />
-                        <Spacer size={30} />
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                        { isLoggingIn ?
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/stacked_icon_white.png')}
+                                    style={{ height: 100, width: 100, }}
+                                />
+                                <Spacer size={80} />
+                                <ActivityIndicator
+                                    color={AppColors.white}
+                                    size={'large'}
+                                />
+                                <Spacer size={30} />
+                                <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>{'WARMING UP...'}</Text>
+                            </View>
+                            :
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => this.setState({ isLoggingIn: true, }, () => this.login())}
+                                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+                            >
+                                <View style={{paddingHorizontal: 50, paddingVertical: AppSizes.padding,}}>
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[{paddingBottom: AppSizes.paddingMed,}]}
+                                        icon={'alert'}
+                                        size={40}
+                                        type={'material-community'}
+                                    />
+                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH! NO CONNECTION...'}</Text>
+                                    <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Tap anywhere to try again.'}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
                     </LinearGradient>
                 </ImageBackground>
             </View>
             :
             <View style={{flex: 1,}}>
                 <ImageBackground
-                    source={require('../../../assets/images/standard/start.png')}
-                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}]}
+                    source={require('../../../assets/images/standard/welcome_background.png')}
+                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
                 >
-                    <View style={{alignItems: 'center', flex: 7, justifyContent: 'center',}}>
-                        <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(38),}}>{'JOIN FATHOM'}</Text>
-                        <Spacer size={this.state.displayMessage ? 20 : 15} />
-                        <View style={{width: AppSizes.screen.widthThreeQuarters,}}>
-                            <Alerts
-                                error={this.state.displayMessage ? this.state.networkMessage: ''}
-                            />
-                        </View>
-                        <Spacer size={this.state.displayMessage ? 0 : 15} />
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingMed,}}
-                            disabled={this.state.displayMessage}
-                            onPress={() => this._routeToAccountType()}
-                            title={'Create Account'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../assets/images/standard/fathom_logo_yellow_stacked.png')}
+                            style={{height: 150, width: 150,}}
                         />
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                            {'Optimal recovery,\ndesigned for your body.'}
+                        </Text>
                     </View>
-                    <View style={{flex: 3,}}>
-                        <LinearGradient
-                            colors={['rgba(8, 24, 50, 0.0)', 'rgb(15, 19, 32)']}
-                            start={{x: 0.0, y: 0.0}}
-                            end={{x: 0.0, y: 0.99}}
-                            style={[styles.linearGradientStyle, {flex: 1,}]}
-                        >
-                            <TouchableOpacity
-                                onPress={this.state.displayMessage ? null : () => this._routeToLogin()}
-                                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent, flex: 1, width: AppSizes.screen.width,}]}
-                            >
-                                <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(24), paddingBottom: AppSizes.paddingSml,}}>{'ALREADY A MEMBER?'}</Text>
-                                <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18),}}>{'Let\'s login now.'}</Text>
-                            </TouchableOpacity>
-                        </LinearGradient>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            onPress={() => this._routeToTuroial()}
+                            raised={true}
+                            title={'Create account'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                        />
+                        <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11), fontStyle: 'italic', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>{'Already a user?'}</Text>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            onPress={() => this._routeToLogin()}
+                            raised={true}
+                            title={'Login'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                        />
                     </View>
                 </ImageBackground>
             </View>

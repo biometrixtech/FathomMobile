@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { init, plan as PlanActions, } from '../../actions';
+import { ble, init, plan as PlanActions, } from '../../actions';
 
 const ResetPassword = ({
     Layout,
@@ -15,6 +15,7 @@ const ResetPassword = ({
     email,
     finalizeLogin,
     getMyPlan,
+    getSensorFiles,
     lastOpened,
     newPassword,
     onFormSubmit,
@@ -31,6 +32,7 @@ const ResetPassword = ({
         email={email}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
+        getSensorFiles={getSensorFiles}
         lastOpened={lastOpened}
         newPassword={newPassword}
         onFormSubmit={onFormSubmit}
@@ -50,6 +52,7 @@ ResetPassword.propTypes = {
     email:            PropTypes.string,
     finalizeLogin:    PropTypes.func.isRequired,
     getMyPlan:        PropTypes.func.isRequired,
+    getSensorFiles:   PropTypes.func.isRequired,
     lastOpened:       PropTypes.object.isRequired,
     newPassword:      PropTypes.string,
     onFormSubmit:     PropTypes.func.isRequired,
@@ -82,6 +85,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     finalizeLogin:   init.finalizeLogin,
     getMyPlan:       PlanActions.getMyPlan,
+    getSensorFiles:  ble.getSensorFiles,
     onFormSubmit:    init.resetPassword,
     onSubmitSuccess: init.startLogin,
     registerDevice:  init.registerDevice,

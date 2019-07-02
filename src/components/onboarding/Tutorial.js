@@ -3,21 +3,20 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, View, } from 'react-native';
+import { Image, ImageBackground, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import Video from 'react-native-video';
+import PushNotification from 'react-native-push-notification';
 
 // Consts, Libs, and Utils
-import { AppColors, AppFonts, AppStyles, AppSizes, ErrorMessages, } from '../../constants';
+import { AppColors, AppFonts, AppStyles, AppSizes, } from '../../constants';
 import { AppUtil, } from '../../lib';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { Spacer, TabIcon, Text, } from '../custom/';
+import { Button, TabIcon, Text, } from '../custom/';
 
 /* Component ==================================================================== */
 class Tutorial extends Component {
@@ -34,9 +33,10 @@ class Tutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeDotStyle:  {backgroundColor: AppColors.zeplin.navy,},
-            buttonTextStyle: {color: AppColors.zeplin.navy,},
-            dotStyle:        {backgroundColor: AppColors.zeplin.slateXLight,},
+            activeDotStyle:  {backgroundColor: AppColors.zeplin.yellow,},
+            buttonTextStyle: {color: AppColors.white,},
+            doneLabel:       'next',
+            dotStyle:        {backgroundColor: AppColors.white,},
             showSkipButton:  false,
             slides:          onboardingUtils.getTutorialSlides(),
         }
@@ -49,193 +49,90 @@ class Tutorial extends Component {
         const step = this.props.step;
         const slides = onboardingUtils.getTutorialSlides(step).slides;
         const showSkipButton = onboardingUtils.getTutorialSlides(step).showSkipButton;
-        let videoPlaybackOptions = {};
-        _.map(slides, slide => {
-            if(slide.videoLink) {
-                videoPlaybackOptions[slide.key] = {};
-                videoPlaybackOptions[slide.key].paused = true;
-            }
-        });
         this.setState({
             ...this.state,
             showSkipButton,
             slides,
-            videoPlaybackOptions,
         });
     }
 
-    _handleIconClick = goToPage => {
-        if(goToPage) {
-            this._appIntroSlider.goToSlide(goToPage);
-        } else {
-            this._onDone();
-        }
-    }
-
     _onDone = () => {
-        let payload = {};
-        payload.onboarding_status = [Actions.currentParams.step];
-        this.props.updateUser(payload, this.props.user.id);
-        let newUserObj = _.cloneDeep(this.props.user);
-        newUserObj.onboarding_status.push(Actions.currentParams.step);
-        AppUtil.routeOnLogin(newUserObj, true);
-    }
-
-    _onSkip = () => {
-        Actions.myPlan();
-    }
-
-    _onSlideChange = (index, lastIndex, slides) => {
-        this._handleVideoPlayback(index, lastIndex, slides);
-        let newButtonTextStyle = slides[index].buttonTextStyle;
-        this.setState({ buttonTextStyle: newButtonTextStyle || {color: AppColors.zeplin.navy,}, });
-    }
-
-    _handleVideoPlayback = (index, lastIndex, slides) => {
-        // if we have a video on this slide, we want to:
-        // (1) start this video
-        // (2) pause and restart the previous video
-        const currentSlide = slides[index];
-        const lastSlide = slides[lastIndex];
-        let newVideoPlaybackOptions = _.cloneDeep(this.state.videoPlaybackOptions);
-        if(newVideoPlaybackOptions[currentSlide.key]) {
-            newVideoPlaybackOptions[currentSlide.key].paused = false;
-        }
-        if(newVideoPlaybackOptions[lastSlide.key]) {
-            newVideoPlaybackOptions[lastSlide.key].paused = true;
-        }
-        this.setState(
-            {
-                ...this.state,
-                videoPlaybackOptions: newVideoPlaybackOptions,
-            },
-            () => {
-                if(this._players[lastSlide.key]) {
-                    this._players[lastSlide.key].seek(0);
-                }
-            },
-        );
+        AppUtil.pushToScene('onboarding');
     }
 
     _renderItem = props => {
         // setup variables
-        const videoPlaybackOptions = this.state.videoPlaybackOptions[props.key];
         const style = {
-            backgroundColor:   props.backgroundColor ? props.backgroundColor : AppColors.white,
-            flex:              1,
-            height:            props.height,
-            paddingBottom:     props.bottomSpacer,
-            paddingHorizontal: AppSizes.paddingLrg,
-            paddingTop:        props.topSpacer,
-            width:             props.width,
-        }
+            backgroundColor: props.backgroundColor ? props.backgroundColor : AppColors.white,
+            flex:            1,
+        };
         // render item
         return(
-            <View style={[style, AppStyles.containerCentered]}>
-                <View style={{flex: props.videoLink ? 0 : props.image ? 4 : 0, overflow: 'hidden',}}>
-                    { props.image && props.imageRight ?
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
-                            <View style={[props.imageLeftWrapperStyles ? props.imageLeftWrapperStyles : {alignItems: 'flex-end', width: AppSizes.screen.widthHalf,}]}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={props.image}
-                                    style={{flex: 1, width: AppSizes.screen.widthFourFifths,}}
+            <View style={[AppStyles.containerCentered, style]}>
+                <ImageBackground
+                    source={props.backgroundImage}
+                    style={{flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}}
+                >
+                    <View style={{flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                            { props.key === 'tutorial-1' &&
+                                <TabIcon
+                                    color={AppColors.white}
+                                    icon={'chevron-left'}
+                                    onPress={() => Actions.pop()}
+                                    size={40}
+                                    type={'material-community'}
                                 />
-                            </View>
-                            <View style={[props.imageRightWrapperStyles]}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={props.imageRight}
-                                    style={[props.imageRightStyles]}
-                                />
-                            </View>
+                            }
                         </View>
-                        : props.image ?
-                            <View style={{justifyContent: 'center',}}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={props.image}
-                                    style={{width: AppSizes.screen.widthFourFifths,}}
-                                />
-                            </View>
-                            :
-                            null
-                    }
-                </View>
-                <View style={{flex: props.videoLink ? 1 : props.image ? 5 : 9, justifyContent: props.image ? 'flex-start' : props.videoLink ? 'flex-end' : 'center', paddingTop: props.image ? AppSizes.padding : 0,}}>
-                    { props.title ?
-                        <Text
-                            oswaldMedium
-                            style={props.titleStyle ? [props.titleStyle] : [AppStyles.textCenterAligned, {fontSize: AppFonts.scaleFont(28),}]}
-                        >
-                            {props.title}
-                        </Text>
-                        :
-                        null
-                    }
-                    { props.text ?
-                        <View>
-                            <Spacer size={props.title && props.title.length > 0 ? 20 : 0} />
-                            <Text
-                                robotoRegular
-                                style={props.textStyle ? [props.textStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
-                            >
-                                {props.text}
-                            </Text>
-                        </View>
-                        :
-                        null
-                    }
-                    { props.subtext ?
-                        <View>
-                            <Spacer size={props.text && props.text.length > 0 ? 20 : 0} />
-                            <Text
-                                robotoRegular
-                                style={props.subtextStyle ? [props.subtextStyle] : [AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(16),}]}
-                            >
-                                {props.subtext}
-                            </Text>
-                        </View>
-                        :
-                        null
-                    }
-                    { props.icon ?
-                        <TabIcon
-                            containerStyle={[{paddingVertical: AppSizes.paddingLrg,}]}
-                            icon={props.icon.icon}
-                            iconStyle={[{color: props.icon.color,}]}
-                            onPress={() => this._handleIconClick(props.icon.goToPage)}
-                            reverse={false}
-                            size={45}
-                            type={props.icon.type}
-                        />
-                        :
-                        null
-                    }
-                </View>
-                { props.videoLink ?
-                    <View style={{flex: 9, paddingVertical: Platform.OS === 'ios' ? 0 : AppSizes.padding,}}>
-                        <Video
-                            paused={videoPlaybackOptions.paused}
-                            ref={ref => {this._players[props.key] = ref;}}
-                            repeat={true}
-                            resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                            source={{uri: props.videoLink}}
-                            style={{flex: 1, width: AppSizes.screen.widthTwoThirds,}}
-                        />
+                        { props.icon &&
+                            <Image
+                                source={props.icon}
+                                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
+                            />
+                        }
+                        <View style={{flex: 1,}} />
                     </View>
-                    :
-                    null
-                }
-                { props.linkText ?
-                    <View style={{flex: 1, justifyContent: 'flex-end', paddingBottom: AppSizes.padding,}}>
-                        <Text onPress={this._routeToNextPage} style={[props.linkStyle]}>{props.linkText}</Text>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', marginBottom: 16 + 26 + (AppSizes.isIphoneX ? 34 : 0), marginHorizontal: AppSizes.paddingLrg,}}>
+                        { props.title &&
+                            <Text style={[props.titleStyle,]}>{props.title}</Text>
+                        }
+                        { props.image &&
+                            <Image
+                                source={props.image}
+                                style={[props.imageStyle,]}
+                            />
+                        }
+                        { props.showEnableBtn &&
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                onPress={() => Platform.OS === 'ios' ?
+                                    PushNotification
+                                        .requestPermissions()
+                                        .then(grant => this._onDone())
+                                        .catch(err => this._onDone())
+                                    :
+                                    this._onDone()
+                                }
+                                raised={true}
+                                title={'Enable Notifications'}
+                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                            />
+                        }
+                        { props.text &&
+                            props.text
+                        }
                     </View>
-                    :
-                    null
-                }
+                </ImageBackground>
             </View>
         );
+    }
+
+    _onSlideChange = (index, lastIndex, slides) => {
+        // update done label
+        let doneLabel = slides[index].doneLabel ? slides[index].doneLabel : 'next';
+        this.setState({ doneLabel: doneLabel, });
     }
 
     render = () => {
@@ -245,11 +142,10 @@ class Tutorial extends Component {
                 <AppIntroSlider
                     activeDotStyle={this.state.activeDotStyle}
                     buttonTextStyle={this.state.buttonTextStyle}
-                    doneLabel={'done'}
+                    doneLabel={this.state.doneLabel}
                     dotStyle={this.state.dotStyle}
                     nextLabel={'next'}
                     onDone={this._onDone}
-                    onSkip={this._onSkip}
                     onSlideChange={(index, lastIndex) => this._onSlideChange(index, lastIndex, this.state.slides)}
                     prevLabel={'back'}
                     ref={ref => {this._appIntroSlider = ref;}}

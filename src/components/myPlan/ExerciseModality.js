@@ -319,13 +319,7 @@ class ExerciseModality extends Component {
                             )}
                             { exerciseList.totalLength > 0 ?
                                 <Button
-                                    buttonStyle={{
-                                        backgroundColor: buttonBackgroundColor,
-                                        borderRadius:    0,
-                                        marginTop:       AppSizes.paddingSml,
-                                        paddingBottom:   AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
-                                        paddingTop:      AppSizes.isIphoneX ? ((AppSizes.iphoneXBottomBarPadding + AppSizes.paddingMed) / 2) : AppSizes.paddingMed,
-                                    }}
+                                    buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: buttonBackgroundColor, borderRadius: 0,}])}
                                     disabledStyle={buttonDisabledStyle}
                                     disabledTitleStyle={{color: AppColors.white,}}
                                     disabled={isButtonDisabled}

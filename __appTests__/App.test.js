@@ -58,8 +58,6 @@ import {
     WebView,
 } from '../src/components/general';
 // TODO: ../src/components/kit
-import ActiveRecoveryBlocks from '../src/components/myPlan/pages/ActiveRecoveryBlocks';
-import ActiveTimeSlideUpPanel from '../src/components/myPlan/pages/ActiveTimeSlideUpPanel';
 import AreasOfSoreness from '../src/components/myPlan/pages/AreasOfSoreness';
 import BackNextButtons from '../src/components/myPlan/pages/BackNextButtons';
 import DefaultListGap from '../src/components/myPlan/pages/DefaultListGap';
@@ -68,12 +66,10 @@ import ExerciseCompletionModal from '../src/components/myPlan/pages/ExerciseComp
 import ExerciseListItem from '../src/components/myPlan/pages/ExerciseListItem';
 // import Exercises from '../src/components/myPlan/pages/Exercises'; // NOTE: issue with 'new'
 import ExercisesExercise from '../src/components/myPlan/pages/ExercisesExercise';
-// import FunctionalStrengthModal from '../src/components/myPlan/pages/FunctionalStrengthModal'; // NOTE: issue with 'new' from TimedExercise
 // import HealthKitWorkouts from '../src/components/myPlan/pages/HealthKitWorkouts'; // NOTE: issue with 'new' from TimedExercise
 // import PostSessionSurvey from '../src/components/myPlan/pages/PostSessionSurvey'; // NOTE: issue with 'new' from TimedExercise
 import ProgressPill from '../src/components/myPlan/pages/ProgressPill';
 // import ReadinessSurvey from '../src/components/myPlan/pages/ReadinessSurvey'; // NOTE: issue with 'new' from TimedExercise
-import RenderMyPlanTab from '../src/components/myPlan/pages/RenderMyPlanTab';
 import ScaleButton from '../src/components/myPlan/pages/ScaleButton';
 import SessionsCompletionModal from '../src/components/myPlan/pages/SessionsCompletionModal';
 import SingleExerciseItem from '../src/components/myPlan/pages/SingleExerciseItem';
@@ -278,12 +274,6 @@ describe('Testing Render of MyPlan Pages', () => {
     // it('My Plan', () => {
     //     renderer.create(<MyPlan activateFunctionalStrength={jest.fn()} ble={{}} clearCompletedExercises={jest.fn()} clearCompletedFSExercises={jest.fn()} clearHealthKitWorkouts={jest.fn()} getSoreBodyParts={jest.fn()} healthData={{}} lastOpened={{}} markStartedFunctionalStrength={jest.fn()} markStartedRecovery={jest.fn()} network={{}} noSessions={jest.fn()} patchActiveRecovery={jest.fn()} patchActiveTime={jest.fn()} patchFunctionalStrength={jest.fn()} plan={{}} postReadinessSurvey={jest.fn()} postSessionSurvey={jest.fn()} setAppLogs={jest.fn()} setCompletedExercises={jest.fn()} setCompletedFSExercises={jest.fn()} updateUser={jest.fn()} user={emptyUser} />);
     // });
-    it('Active Recovery Blocks', () => {
-        renderer.create(<ActiveRecoveryBlocks />);
-    });
-    it('Active Time Slide Up Panel', () => {
-        renderer.create(<ActiveTimeSlideUpPanel changeSelectedActiveTime={jest.fn()} isSlideUpPanelOpen={false} selectedActiveTime={1} toggleSlideUpPanel={jest.fn()} />);
-    });
     it('Areas Of Soreness', () => {
         renderer.create(<AreasOfSoreness handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} headerTitle={''} scrollToArea={jest.fn()} scrollToTop={jest.fn()} soreBodyParts={{body_parts: [], hist_sore_status: [], clear_candidates: [],}} soreBodyPartsState={[]} surveyObject={{}} toggleSlideUpPanel={jest.fn()} user={emptyUser} />);
     });
@@ -308,9 +298,6 @@ describe('Testing Render of MyPlan Pages', () => {
     it('Exercises Exercise', () => {
         renderer.create(<ExercisesExercise completedExercises={[]} exercise={{longDosage: '',}} progressPillsHeight={0} />);
     });
-    // it('Functional Strength Modal', () => {
-    //     renderer.create(<FunctionalStrengthModal functionalStrength={{}} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} toggleFSModal={jest.fn()} typicalSessions={[]} />);
-    // });
     // it('HealthKit Workouts', () => {
     //     renderer.create(<HealthKitWorkouts handleHealthDataFormChange={jest.fn()} handleNextStep={jest.fn()} handleToggleSurvey={jest.fn()} workouts={[]} />);
     // });
@@ -323,9 +310,6 @@ describe('Testing Render of MyPlan Pages', () => {
     // it('Readiness Survey', () => {
     //     renderer.create(<ReadinessSurvey dailyReadiness={{soreness: [],}} handleAreaOfSorenessClick={jest.fn()} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleHealthDataFormChange={jest.fn()} handleUpdateFirstTimeExperience={jest.fn()} soreBodyParts={{}} user={emptyUser} />);
     // });
-    it('Render My Plan Tab', () => {
-        renderer.create(<RenderMyPlanTab isPostSessionSurveyModalOpen={false} isReadinessSurveyModalOpen={false} isTabActive={false} loading={false} name={''} onLayoutHandler={jest.fn()} onPressHandler={jest.fn()} page={0} plan={{dailyPlan: [{nav_bar_indicator: 0,}],}} statePages={{}} updatePageState={jest.fn()} />);
-    });
     it('Scale Button', () => {
         renderer.create(<ScaleButton isSelected={false} keyLabel={0} opacity={0} updateStateAndForm={jest.fn()} />);
     });

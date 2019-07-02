@@ -2,44 +2,32 @@
  * UserAccountInfo
  *
     <UserAccountInfo
-        clearCoachContent={this._clearCoachContent}
         handleFormChange={handleFormChange}
-        isConfirmPasswordSecure={this.state.isConfirmPasswordSecure}
-        isPasswordSecure={this.state.isPasswordSecure}
         isUpdatingUser={isUpdatingUser}
-        scrollToInput={this._scrollToInput}
-        setAccordionSection={this._setAccordionSection}
-        toggleShowPassword={this._toggleShowPassword}
-        updateErrorMessage={this._updateErrorMessage}
         user={user}
     />
  *
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, findNodeHandle, } from 'react-native';
+import { Keyboard, StyleSheet, View, findNodeHandle, } from 'react-native';
+
+// import third-party libraries
+import { KeyboardAwareScrollView, } from 'react-native-keyboard-aware-scroll-view';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { FormInput, Spacer, TabIcon, Text, } from '../../custom';
+import { FormInput, TabIcon, Text, } from '../../custom';
 import { onboardingUtils, } from '../../../constants/utils';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     inputLabel: {
         ...AppFonts.robotoRegular,
-        color:       AppColors.zeplin.slate,
-        fontSize:    AppFonts.scaleFont(11),
+        color:       AppColors.white,
+        fontSize:    AppFonts.scaleFont(12),
         paddingLeft: AppSizes.paddingSml,
         paddingTop:  AppSizes.paddingSml,
-    },
-    leftItem: {
-        flex: 1,
-    },
-    rightItem: {
-        borderLeftWidth: 1,
-        borderLeftColor: AppColors.zeplin.slateXLight,
-        flex:            1,
     },
 });
 
@@ -49,123 +37,142 @@ class UserAccountInfo extends Component {
         super(props);
         this.state = {
             isConfirmPasswordEditedOnce: false,
+            isConfirmPasswordSecure:     true,
+            isPasswordSecure:            true,
             isPasswordEditedOnce:        false,
             showPasswordErrorText:       false,
         };
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
+        this.scrollViewRef = {};
     }
 
     focusNextField = id => {
         this.inputs[id].focus();
     }
 
+    _scrollToInput = reactNode => {
+        this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
+    }
+
+    _toggleShowPassword = isConfirmPassword => {
+        if(isConfirmPassword) {
+            this.setState({ isConfirmPasswordSecure: !this.state.isConfirmPasswordSecure, });
+        } else {
+            this.setState({ isPasswordSecure: !this.state.isPasswordSecure, });
+        }
+    };
+
     render = () => {
         const {
-            clearCoachContent,
             handleFormChange,
-            isConfirmPasswordSecure,
-            isPasswordSecure,
             isUpdatingUser,
-            scrollToInput,
-            setAccordionSection,
-            toggleShowPassword,
-            updateErrorMessage,
             user,
         } = this.props;
-        const { isConfirmPasswordEditedOnce, isPasswordEditedOnce, showPasswordErrorText, } = this.state;
+        const {
+            isConfirmPasswordEditedOnce,
+            isConfirmPasswordSecure,
+            isPasswordEditedOnce,
+            isPasswordSecure,
+            showPasswordErrorText,
+        } = this.state;
         /*eslint no-return-assign: 0*/
         return(
-            <View>
-                <View style={{borderTopColor: AppColors.zeplin.slateXLight, borderTopWidth: 1, flexDirection: 'row',}}>
-                    <View style={[styles.leftItem,]}>
-                        <FormInput
-                            blurOnSubmit={false}
-                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                            inputRef={ref => this.inputs.first_name = ref}
-                            inputStyle={{color: AppColors.zeplin.slate,}}
-                            label={user.personal_data.first_name.length > 0 ? 'First name' : ' '}
-                            labelStyle={[styles.inputLabel]}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.first_name', text))}
-                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
-                            onSubmitEditing={() => this.focusNextField('last_name')}
-                            placeholder={'First name'}
-                            placeholderTextColor={AppColors.zeplin.slateXLight}
-                            returnKeyType={'next'}
-                            value={user.personal_data.first_name}
-                        />
-                    </View>
-                    <View style={[styles.rightItem,]}>
-                        <FormInput
-                            blurOnSubmit={false}
-                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
-                            inputRef={ref => this.inputs.last_name = ref}
-                            inputStyle={{color: AppColors.zeplin.slate,}}
-                            label={user.personal_data.last_name.length > 0 ? 'Last name' : ' '}
-                            labelStyle={[styles.inputLabel]}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.last_name', text))}
-                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
-                            onSubmitEditing={() => isUpdatingUser ? setAccordionSection(0, 1) : this.focusNextField('email')}
-                            placeholder={'Last name'}
-                            placeholderTextColor={AppColors.zeplin.slateXLight}
-                            returnKeyType={'next'}
-                            value={user.personal_data.last_name}
-                        />
-                    </View>
-                </View>
+            <KeyboardAwareScrollView
+                contentContainerStyle={{flexGrow: 1,}}
+                innerRef={ref => {this.scrollViewRef = ref;}}
+                scrollEnabled={false}
+            >
+                <FormInput
+                    autoCapitalize={'none'}
+                    autoCompleteType={'name'}
+                    blurOnSubmit={true}
+                    containerStyle={[AppStyles.onboardingInputContainer, {marginTop: AppSizes.padding,}]}
+                    inputRef={ref => this.inputs.first_name = ref}
+                    inputStyle={[AppStyles.onboardingInputStyle, user.personal_data.first_name.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
+                    label={user.personal_data.first_name.length > 0 ? 'First name' : null}
+                    labelStyle={[styles.inputLabel,]}
+                    onChangeText={text => handleFormChange('personal_data.first_name', text)}
+                    onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                    onSubmitEditing={() => Keyboard.dismiss()}
+                    placeholder={'First name'}
+                    placeholderTextColor={AppColors.white}
+                    returnKeyType={'done'}
+                    value={user.personal_data.first_name}
+                />
+                <FormInput
+                    autoCapitalize={'none'}
+                    autoCompleteType={'name'}
+                    blurOnSubmit={true}
+                    containerStyle={[AppStyles.onboardingInputContainer,]}
+                    inputRef={ref => this.inputs.last_name = ref}
+                    inputStyle={[AppStyles.onboardingInputStyle, user.personal_data.last_name.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
+                    label={user.personal_data.last_name.length > 0 ? 'Last name' : null}
+                    labelStyle={[styles.inputLabel,]}
+                    onChangeText={text => handleFormChange('personal_data.last_name', text)}
+                    onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                    onSubmitEditing={() => Keyboard.dismiss()}
+                    placeholder={'Last name'}
+                    placeholderTextColor={AppColors.white}
+                    returnKeyType={'done'}
+                    value={user.personal_data.last_name}
+                />
                 {!isUpdatingUser ?
                     <View>
                         <FormInput
                             autoCapitalize={'none'}
-                            blurOnSubmit={false}
-                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            autoCompleteType={'username'}
+                            blurOnSubmit={true}
+                            containerStyle={[AppStyles.onboardingInputContainer,]}
                             editable={!isUpdatingUser}
                             inputRef={ref => this.inputs.email = ref}
-                            inputStyle={{color: AppColors.zeplin.slate,}}
+                            inputStyle={[AppStyles.onboardingInputStyle, user.personal_data.email.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
                             keyboardType={'email-address'}
-                            label={user.personal_data.email.length > 0 ? 'E-mail address' : ' '}
-                            labelStyle={[styles.inputLabel]}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('personal_data.email', text))}
-                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
-                            onSubmitEditing={() => this.focusNextField('password')}
-                            placeholder={'E-mail address'}
-                            placeholderTextColor={AppColors.zeplin.slateXLight}
-                            returnKeyType={'next'}
+                            label={user.personal_data.email.length > 0 ? 'E-mail address' : null}
+                            labelStyle={[styles.inputLabel,]}
+                            onChangeText={text => handleFormChange('personal_data.email', text)}
+                            onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                            onSubmitEditing={() => Keyboard.dismiss()}
+                            placeholder={'E-mail'}
+                            placeholderTextColor={AppColors.white}
+                            returnKeyType={'done'}
                             value={user.personal_data.email}
                         />
                         <FormInput
+                            autoCapitalize={'none'}
+                            autoCompleteType={'password'}
                             blurOnSubmit={true}
-                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            containerStyle={[AppStyles.onboardingInputContainer,]}
                             errorMessage={showPasswordErrorText ? '8+ characters, 1 number' : ''}
-                            errorStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), paddingLeft: AppSizes.paddingXSml,}}
+                            errorStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(12), paddingBottom: AppSizes.paddingXSml, paddingLeft: AppSizes.paddingXSml,}}
                             inputRef={ref => this.inputs.password = ref}
-                            inputStyle={{color: AppColors.zeplin.slate,}}
-                            label={user.password.length > 0 ? 'Password' : ' '}
-                            labelStyle={[styles.inputLabel]}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('password', text))}
+                            inputStyle={[AppStyles.onboardingInputStyle, user.password.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
+                            label={user.password.length > 0 ? 'Password' : null}
+                            labelStyle={[styles.inputLabel,]}
+                            onChangeText={text => handleFormChange('password', text)}
                             onEndEditing={() => this.setState({ showPasswordErrorText: false, isPasswordEditedOnce: true, })}
                             onFocus={event => {
                                 this.setState({ showPasswordErrorText: true, });
-                                scrollToInput(findNodeHandle(event.target));
+                                this._scrollToInput(findNodeHandle(event.target));
                             }}
-                            onSubmitEditing={() => this.focusNextField('confirm_password')}
+                            onSubmitEditing={() => Keyboard.dismiss()}
                             placeholder={'Password'}
-                            placeholderTextColor={AppColors.zeplin.slateXLight}
-                            returnKeyType={'next'}
+                            placeholderTextColor={AppColors.white}
+                            returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
-                                        color={AppColors.zeplin.slateLight}
-                                        containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
+                                        color={AppColors.white}
+                                        containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
                                         icon={isPasswordSecure ? 'visibility-off' : 'visibility'}
-                                        onPress={() => toggleShowPassword()}
+                                        onPress={() => this._toggleShowPassword()}
                                         size={24}
                                     />
                                     <TabIcon
                                         color={
                                             isPasswordEditedOnce ?
                                                 onboardingUtils.isPasswordValid(user.password).isValid ?
-                                                    AppColors.zeplin.success
+                                                    AppColors.white
                                                     :
                                                     AppColors.zeplin.error
                                                 :
@@ -176,30 +183,31 @@ class UserAccountInfo extends Component {
                                     />
                                 </View>
                             }
+                            rightIconContainerStyle={{justifyContent: user.password.length > 0 ? 'flex-start' : 'center',}}
                             secureTextEntry={isPasswordSecure}
                             value={user.password}
                         />
                         <FormInput
+                            autoCapitalize={'none'}
                             blurOnSubmit={true}
-                            containerStyle={{marginLeft: 0, paddingLeft: AppSizes.paddingSml,}}
+                            containerStyle={[AppStyles.onboardingInputContainer,]}
                             inputRef={ref => this.inputs.confirm_password = ref}
-                            inputStyle={{color: AppColors.zeplin.slate,}}
-                            label={user.confirm_password.length > 0 ? 'Confirm password' : ' '}
-                            labelStyle={[styles.inputLabel]}
-                            onChangeText={(text) => clearCoachContent('', () => handleFormChange('confirm_password', text))}
+                            inputStyle={[AppStyles.onboardingInputStyle, user.confirm_password.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}
+                            label={user.confirm_password.length > 0 ? 'Confirm Password' : null}
+                            labelStyle={[styles.inputLabel,]}
+                            onChangeText={text => handleFormChange('confirm_password', text)}
                             onEndEditing={() => this.setState({ isConfirmPasswordEditedOnce: true, })}
-                            onFocus={event => scrollToInput(findNodeHandle(event.target))}
-                            onSubmitEditing={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
-                            placeholder={'Confirm password'}
-                            placeholderTextColor={AppColors.zeplin.slateXLight}
+                            onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
+                            placeholder={'Confirm Password'}
+                            placeholderTextColor={AppColors.white}
                             returnKeyType={'done'}
                             rightIcon={
                                 <View style={{flexDirection: 'row',}}>
                                     <TabIcon
-                                        color={AppColors.zeplin.slateLight}
-                                        containerStyle={[{paddingRight: AppSizes.paddingMed,}]}
+                                        color={AppColors.white}
+                                        containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
                                         icon={isConfirmPasswordSecure ? 'visibility-off' : 'visibility'}
-                                        onPress={() => toggleShowPassword(true)}
+                                        onPress={() => this._toggleShowPassword(true)}
                                         size={24}
                                     />
                                     <TabIcon
@@ -208,7 +216,7 @@ class UserAccountInfo extends Component {
                                                 onboardingUtils.isPasswordValid(user.password).isValid &&
                                                 onboardingUtils.isPasswordValid(user.confirm_password).isValid &&
                                                 user.password === user.confirm_password ?
-                                                    AppColors.zeplin.success
+                                                    AppColors.white
                                                     :
                                                     AppColors.zeplin.error
                                                 :
@@ -219,6 +227,7 @@ class UserAccountInfo extends Component {
                                     />
                                 </View>
                             }
+                            rightIconContainerStyle={{justifyContent: user.confirm_password.length > 0 ? 'flex-start' : 'center',}}
                             secureTextEntry={isConfirmPasswordSecure}
                             value={user.confirm_password}
                         />
@@ -226,32 +235,15 @@ class UserAccountInfo extends Component {
                     :
                     null
                 }
-                <Spacer size={40} />
-                <Text
-                    oswaldRegular
-                    onPress={() => onboardingUtils.isUserAccountInformationValid(user, isUpdatingUser).isValid ? setAccordionSection(0, 1) : updateErrorMessage()}
-                    style={[AppStyles.continueButton,
-                        {
-                            fontSize:      AppFonts.scaleFont(16),
-                            paddingBottom: AppSizes.padding,
-                        },
-                    ]}
-                >{'CONTINUE...'}</Text>
-            </View>
+            </KeyboardAwareScrollView>
         )
     }
 }
 
 UserAccountInfo.propTypes = {
-    handleFormChange:        PropTypes.func.isRequired,
-    isConfirmPasswordSecure: PropTypes.bool.isRequired,
-    isPasswordSecure:        PropTypes.bool.isRequired,
-    isUpdatingUser:          PropTypes.bool.isRequired,
-    scrollToInput:           PropTypes.func.isRequired,
-    setAccordionSection:     PropTypes.func.isRequired,
-    toggleShowPassword:      PropTypes.func.isRequired,
-    updateErrorMessage:      PropTypes.func.isRequired,
-    user:                    PropTypes.object.isRequired,
+    handleFormChange: PropTypes.func.isRequired,
+    isUpdatingUser:   PropTypes.bool.isRequired,
+    user:             PropTypes.object.isRequired,
 };
 UserAccountInfo.defaultProps = {};
 UserAccountInfo.componentName = 'UserAccountInfo';

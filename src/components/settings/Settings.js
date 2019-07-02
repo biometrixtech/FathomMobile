@@ -1,16 +1,9 @@
-/*
- * @Author: Vir Desai
- * @Date: 2018-04-23 16:40:29
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:14:28
- */
-
 /**
  * Settings View
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Platform, StatusBar, Switch, View, } from 'react-native';
+import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Image, Platform, StatusBar, Switch, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -21,7 +14,7 @@ import Toast, { DURATION, } from 'react-native-easy-toast';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, UserAccount, } from '../../constants';
 import { bleUtils, } from '../../constants/utils';
-import { FathomModal, ListItem, Spacer, TabIcon, Text, } from '../custom';
+import { ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { PrivacyPolicyModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { ble as BLEActions, user as UserActions, } from '../../actions';
@@ -30,6 +23,8 @@ import { store, } from '../../store';
 // Components
 import { JoinATeamModal, } from './pages';
 
+const ICON_SIZE = 24;
+
 /* Component ==================================================================== */
 const SettingsNavBar = () => (
     <View>
@@ -37,7 +32,7 @@ const SettingsNavBar = () => (
         <View style={{backgroundColor: AppColors.white, borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
             <View style={{flex: 1, justifyContent: 'center',}} />
             <View style={{flex: 8, justifyContent: 'center',}}>
-                <Text oswaldMedium style={{color: AppColors.zeplin.darkNavy, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>
+                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'SETTINGS'}</Text>
             </View>
             <View style={{flex: 1, justifyContent: 'center',}} />
         </View>
@@ -50,7 +45,6 @@ class Settings extends Component {
         accessoryData:                  PropTypes.object.isRequired,
         deleteUserSensorData:           PropTypes.func.isRequired,
         deleteAllSingleSensorPractices: PropTypes.func.isRequired,
-        getSensorFiles:                 PropTypes.func.isRequired,
         logout:                         PropTypes.func.isRequired,
         network:                        PropTypes.object.isRequired,
         user:                           PropTypes.object.isRequired,
@@ -63,19 +57,16 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            areSessionFinishedFetching: false,
-            is3SensorFilesModalVisible: false,
-            isJoinATeamFormSubmitting:  false,
-            isJoinATeamModalOpen:       false,
-            isLogoutBtnDisabled:        false,
-            isPrivacyPolicyOpen:        false,
-            isUnpairing:                false,
-            resultMsg:                  {
+            isJoinATeamFormSubmitting: false,
+            isJoinATeamModalOpen:      false,
+            isLogoutBtnDisabled:       false,
+            isPrivacyPolicyOpen:       false,
+            isUnpairing:               false,
+            resultMsg:                 {
                 error:   '',
                 status:  '',
                 success: '',
             },
-            sessions:    [],
             form_values: {
                 code: '',
             },
@@ -346,24 +337,12 @@ class Settings extends Component {
         }
     }
 
-    _toggle3SensorModal = () => {
-        this.setState(
-            { is3SensorFilesModalVisible: true, },
-            () => {
-                this.props.getSensorFiles()
-                    .then(res => this.setState({ areSessionFinishedFetching: true, sessions: res.sessions, }))
-                    .catch(err => this.setState({ areSessionFinishedFetching: true, sessions: [], }));
-            }
-        );
-    }
-
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
-        // const possibleSystemTypes = userObj ? UserAccount.possibleSystemTypes.map(systemTypes => systemTypes.value) : false; // ['1-sensor', '3-sensor'];
-        // const userHasSensorSystem = possibleSystemTypes ? possibleSystemTypes.includes(userObj.system_type) : false;
-        const userHasSingleSensorSystem = userObj && userObj.system_type && userObj.system_type === '1-sensor' ? true : false;
-        const userHas3SensorSensorSystem = userObj && userObj.system_type && userObj.system_type === '3-sensor' ? true : false;
+        const userHasSingleSensorSystem = userObj && userObj.system_type && userObj.system_type === '1-sensor';
+        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
+        const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
         // set animated values
         const spinValue = new Animated.Value(0);
         // First set up animation
@@ -386,27 +365,6 @@ class Settings extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <SettingsNavBar />
-                {/* userHas3SensorSensorSystem &&
-                    <View>
-                        <ListItem
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                            leftIcon={{
-                                color: AppColors.black,
-                                name:  'bluetooth',
-                                size:  24,
-                            }}
-                            onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._toggle3SensorModal() : Actions.bluetoothConnect3Sensor()}
-                            rightIcon={{
-                                color: AppColors.black,
-                                name:  'chevron-right',
-                                size:  24,
-                            }}
-                            title={this.props.accessoryData.sensor_pid !== 'None' ? 'SHOW YOUR SENSOR FILE(S)' : 'CONNECT TO FATHOM SENSORS'}
-                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                        />
-                        <Spacer isDivider />
-                    </View>
-                }
                 { userHasSingleSensorSystem &&
                     <View>
                         <ListItem
@@ -416,47 +374,50 @@ class Settings extends Component {
                                     style={{transform: [{rotate: spin}],}}
                                 >
                                     <TabIcon
-                                        color={AppColors.black}
+                                        color={AppColors.zeplin.splash}
                                         icon={'loading'}
-                                        size={24}
+                                        iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                        size={ICON_SIZE}
                                         type={'material-community'}
                                     />
                                 </Animated.View>
                                 :
                                 {
-                                    color: AppColors.black,
-                                    name:  'bluetooth',
-                                    size:  24,
+                                    color:     AppColors.zeplin.slate,
+                                    iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                                    name:      'bluetooth',
+                                    size:      ICON_SIZE,
                                 }
                             }
                             onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
                             rightIcon={{
-                                color: AppColors.black,
+                                color: AppColors.zeplin.slate,
                                 name:  'chevron-right',
-                                size:  24,
+                                size:  ICON_SIZE,
                             }}
                             title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
-                */}
+                }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
-                        color: AppColors.black,
-                        name:  'account-group',
-                        size:  24,
-                        type:  'material-community',
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'account-group',
+                        size:      ICON_SIZE,
+                        type:      'material-community',
                     }}
                     onPress={() => this._toggleJoinATeamModal()}
                     rightIcon={{
-                        color: AppColors.black,
+                        color: AppColors.zeplin.slate,
                         name:  'chevron-right',
-                        size:  24,
+                        size:  ICON_SIZE,
                     }}
                     title={'JOIN A TEAM'}
-                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 {
@@ -478,19 +439,20 @@ class Settings extends Component {
                             <ListItem
                                 containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                                 leftIcon={{
-                                    color: AppColors.black,
-                                    name:  'lock-reset',
-                                    size:  24,
-                                    type:  'material-community',
+                                    color:     AppColors.zeplin.splash,
+                                    iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                                    name:      'lock-reset',
+                                    size:      ICON_SIZE,
+                                    type:      'material-community',
                                 }}
                                 onPress={() => this._resetAccountData()}
                                 rightIcon={{
-                                    color: AppColors.black,
+                                    color: AppColors.zeplin.slate,
                                     name:  'chevron-right',
-                                    size:  24,
+                                    size:  ICON_SIZE,
                                 }}
                                 title={'RESET ACCOUNT DATA'}
-                                titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                                titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                             />
                             <Spacer isDivider />
                         </View>
@@ -502,19 +464,47 @@ class Settings extends Component {
                         <ListItem
                             containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                             leftIcon={{
-                                color: AppColors.black,
-                                name:  'heart',
-                                size:  24,
-                                type:  'material-community',
+                                color:     AppColors.zeplin.splash,
+                                iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                                name:      'heart',
+                                size:      ICON_SIZE,
+                                type:      'material-community',
                             }}
                             rightIcon={
                                 <Switch
+                                    ios_backgroundColor={AppColors.zeplin.slateLight}
                                     onValueChange={value => this._toggleHealthKitSwitch(value)}
+                                    trackColor={{false: AppColors.zeplin.slateLight, true: AppColors.zeplin.success,}}
                                     value={this.props.user.health_enabled}
                                 />
                             }
                             title={'APPLE HEALTH'}
-                            titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                        />
+                        <Spacer isDivider />
+                    </View>
+                }
+                { userHas3SensorSystem &&
+                    <View>
+                        <ListItem
+                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                            leftIcon={
+                                <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/sensor/sensor_slate.png')}
+                                        style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
+                                    />
+                                </View>
+                            }
+                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect3Sensor()}
+                            rightIcon={{
+                                color: AppColors.zeplin.slate,
+                                name:  'chevron-right',
+                                size:  ICON_SIZE,
+                            }}
+                            title={has3SensorConnected ? 'MANAGE FATHOM PRO KIT' : 'SET UP FATHOM PRO KIT'}
+                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
@@ -522,27 +512,29 @@ class Settings extends Component {
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     leftIcon={{
-                        color: AppColors.black,
-                        name:  'gavel',
-                        size:  24,
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'gavel',
+                        size:      ICON_SIZE,
                     }}
                     onPress={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     rightIcon={{
-                        color: AppColors.black,
+                        color: AppColors.zeplin.slate,
                         name:  'chevron-right',
-                        size:  24,
+                        size:  ICON_SIZE,
                     }}
                     title={'TERMS & PRIVACY'}
-                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     disabled={this.state.isLogoutBtnDisabled}
                     leftIcon={{
-                        color: AppColors.black,
-                        name:  'power-settings-new',
-                        size:  24,
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'power-settings-new',
+                        size:      ICON_SIZE,
                     }}
                     onPress={() =>
                         this.setState(
@@ -559,12 +551,12 @@ class Settings extends Component {
                         )
                     }
                     rightIcon={{
-                        color: AppColors.black,
+                        color: AppColors.zeplin.slate,
                         name:  'chevron-right',
-                        size:  24,
+                        size:  ICON_SIZE,
                     }}
                     title={'LOGOUT'}
-                    titleStyle={{color: AppColors.black, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <Toast
@@ -585,31 +577,6 @@ class Settings extends Component {
                     handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
                 />
-                <FathomModal
-                    isVisible={this.state.is3SensorFilesModalVisible}
-                >
-                    <View style={{alignItems: 'center', backgroundColor: AppColors.white, flex: 1, justifyContent: 'center', padding: AppSizes.padding,}}>
-                        { this.state.areSessionFinishedFetching ?
-                            <View>
-                                <TabIcon
-                                    color={AppColors.black}
-                                    icon={'close'}
-                                    onPress={() => this.setState({ is3SensorFilesModalVisible: false, })}
-                                    size={24}
-                                />
-                                {_.map(this.state.sessions, (session, i) => <Text key={i}>{`#${(i + 1)}: Duration: ${session.duration.toFixed(2)}min, Status: ${session.upload_status}`}</Text>)}
-                            </View>
-                            :
-                            <View>
-                                <ActivityIndicator
-                                    animating={true}
-                                    color={AppColors.zeplin.yellow}
-                                    size={'large'}
-                                />
-                            </View>
-                        }
-                    </View>
-                </FathomModal>
             </View>
         );
     }

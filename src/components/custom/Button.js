@@ -6,10 +6,12 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
+
+// import third-party libraries
 import { Button, } from 'react-native-elements';
 
 // Consts and Libs
-import { AppFonts, } from '../../constants';
+import { AppFonts, AppSizes, AppStyles, } from '../../constants';
 
 /* Component ==================================================================== */
 class CustomButton extends Component {
@@ -24,7 +26,7 @@ class CustomButton extends Component {
         // Defaults
         const props = { ...this.props, };
 
-        props.buttonStyle = { borderRadius: 4, ...props.buttonStyle, };
+        props.buttonStyle = { borderRadius: AppSizes.paddingLrg, ...props.buttonStyle, };
         props.titleStyle = { textAlign: 'center', ...props.titleStyle, ...AppFonts.robotoMedium, };
 
         if(props.type === 'outline') {
@@ -32,6 +34,11 @@ class CustomButton extends Component {
         }
 
         props.titleProps = { allowFontScaling: false, };
+
+        if(props.raised) {
+            props.raised = false;
+            props.containerStyle = { ...AppStyles.scaleButtonShadowEffect, ...props.containerStyle, };
+        }
 
         return props;
     }

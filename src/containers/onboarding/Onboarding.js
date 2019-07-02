@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { init as InitActions, plan as PlanActions, user as UserActions, } from '../../actions';
+import { ble, init as InitActions, plan as PlanActions, user as UserActions, } from '../../actions';
 
 const Onboarding = ({
     Layout,
@@ -12,10 +12,12 @@ const Onboarding = ({
     createUser,
     finalizeLogin,
     getMyPlan,
+    getSensorFiles,
     getUser,
     lastOpened,
     network,
     onFormSubmit,
+    postSurvey,
     registerDevice,
     setAccountCode,
     setAppLogs,
@@ -29,10 +31,12 @@ const Onboarding = ({
         createUser={createUser}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
+        getSensorFiles={getSensorFiles}
         getUser={getUser}
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
+        postSurvey={postSurvey}
         registerDevice={registerDevice}
         setAccountCode={setAccountCode}
         setAppLogs={setAppLogs}
@@ -49,9 +53,11 @@ Onboarding.propTypes = {
     createUser:     PropTypes.func.isRequired,
     finalizeLogin:  PropTypes.func.isRequired,
     getMyPlan:      PropTypes.func.isRequired,
+    getSensorFiles: PropTypes.func.isRequired,
     lastOpened:     PropTypes.object.isRequired,
     network:        PropTypes.object.isRequired,
     onFormSubmit:   PropTypes.func.isRequired,
+    postSurvey:     PropTypes.func.isRequired,
     registerDevice: PropTypes.func.isRequired,
     setAccountCode: PropTypes.func.isRequired,
     setAppLogs:     PropTypes.func.isRequired,
@@ -74,7 +80,9 @@ const mapDispatchToProps = {
     createUser:     UserActions.createUser,
     finalizeLogin:  InitActions.finalizeLogin,
     getMyPlan:      PlanActions.getMyPlan,
+    getSensorFiles: ble.getSensorFiles,
     onFormSubmit:   InitActions.startLogin,
+    postSurvey:     PlanActions.postSurvey,
     registerDevice: InitActions.registerDevice,
     setAccountCode: InitActions.setAccountCode,
     setAppLogs:     PlanActions.setAppLogs,

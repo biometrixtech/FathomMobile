@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { init, plan as PlanActions, user as UserActions } from '../../actions';
+import { ble, init, plan as PlanActions, user as UserActions, } from '../../actions';
 
 const Start = ({
     Layout,
@@ -14,6 +14,7 @@ const Start = ({
     expires,
     finalizeLogin,
     getMyPlan,
+    getSensorFiles,
     getUser,
     jwt,
     lastOpened,
@@ -35,6 +36,7 @@ const Start = ({
         expires={expires}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
+        getSensorFiles={getSensorFiles}
         getUser={getUser}
         jwt={jwt}
         lastOpened={lastOpened}
@@ -59,6 +61,7 @@ Start.propTypes = {
     expires:              PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
+    getSensorFiles:       PropTypes.func.isRequired,
     getUser:              PropTypes.func.isRequired,
     jwt:                  PropTypes.string,
     lastOpened:           PropTypes.object.isRequired,
@@ -103,6 +106,7 @@ const mapDispatchToProps = {
     authorizeUser:  init.authorizeUser,
     finalizeLogin:  init.finalizeLogin,
     getMyPlan:      PlanActions.getMyPlan,
+    getSensorFiles: ble.getSensorFiles,
     getUser:        UserActions.getUser,
     onFormSubmit:   init.startLogin,
     registerDevice: init.registerDevice,
