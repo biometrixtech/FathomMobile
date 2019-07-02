@@ -16,7 +16,7 @@ import { ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View, } from
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { Button, DeckCards, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { FathomCharts, } from './graphs';
-import { PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
@@ -26,7 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     cardSubtitle: {
-        color:    AppColors.zeplin.slate,
+        color:    AppColors.zeplin.slateLight,
         fontSize: AppFonts.scaleFont(15),
     },
     ctaWrapper: {
@@ -105,7 +105,7 @@ class TrendChild extends PureComponent {
     _handleDeckCardsSwipe = index => {
         const { insightType, plan, } = this.props;
         const insightTitle = insightType === 0 ? 'stress' : insightType === 1 ? 'response' : 'biomechanics';
-        let newIndex = (index + 1);
+        let newIndex = index;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
@@ -208,12 +208,33 @@ class TrendChild extends PureComponent {
                                 dragEnd={() => this.setState({ isCardSwiping: false, })}
                                 dragStart={() => this.setState({ isCardSwiping: true, })}
                                 handleReadInsight={index => this._handleDeckCardsSwipe(index)}
-                                infinite={true}
+                                infinite={false}
                                 isVisible={true}
                                 shouldNavigate={false}
                                 showDate={false}
+                                showHide={false}
                                 startIndex={currentCardIndex}
                             />
+                            <View style={{alignSelf: 'center',  width: (AppSizes.screen.width * 0.85),}}>
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => ((currentCardIndex + 1) === insightDetails.alerts.length && insightDetails.alerts.length > 1) ? this.setState({ currentCardIndex: 0, }) : {}}
+                                    style={{alignItems: 'center', alignSelf: 'flex-end', flexDirection: 'row',}}
+                                >
+                                    { (((currentCardIndex + 1) === insightDetails.alerts.length) && insightDetails.alerts.length > 1) &&
+                                        <TabIcon
+                                            color={AppColors.zeplin.slateLight}
+                                            containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                            icon={'rewind'}
+                                            size={AppFonts.scaleFont(20)}
+                                            type={'material-community'}
+                                        />
+                                    }
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>
+                                        {`${(currentCardIndex + 1)} of ${insightDetails.alerts.length}`}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
 
                         <View style={{marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.paddingLrg,}}>
@@ -221,14 +242,14 @@ class TrendChild extends PureComponent {
                                 {'OPTIMAL ROUTINE'}
                             </Text>
                             { insightDetails.cta.length === 0 ?
-                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>{'Recovery isn’t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>{'Recovery isn\'t high priority today, but you can tap the "+" on the Plan page for a recovery-focused Mobilize on demand.'}</Text>
                                 :
                                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginTop: AppSizes.paddingSml,}}>
                                     {'In order to '}
                                     <Text robotoBold>
                                         {insightDetails.goals.join(', ')}
                                     </Text>
-                                    {' we’ll add the following activities to your plan at the optimal time:'}
+                                    {' we\'ll add the following activities to your plan at the optimal time:'}
                                 </Text>
                             }
                             <View style={[styles.tilesContainer,]}>
@@ -273,7 +294,7 @@ class TrendChild extends PureComponent {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, width: AppSizes.screen.widthThird,}}
                                 containerStyle={[{width: AppSizes.screen.widthThird,}]}
-                                onPress={() => Actions.myPlan()}
+                                onPress={() => AppUtil.pushToScene('myPlan')}
                                 raised={true}
                                 title={'My Plan'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}

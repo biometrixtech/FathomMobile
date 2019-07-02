@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { init, plan as PlanActions, } from '../../actions';
+import { ble, init, plan as PlanActions, } from '../../actions';
 
 const Login = ({
     Layout,
@@ -19,6 +19,7 @@ const Login = ({
     environment,
     finalizeLogin,
     getMyPlan,
+    getSensorFiles,
     lastOpened,
     network,
     onFormSubmit,
@@ -38,6 +39,7 @@ const Login = ({
         environment={environment}
         finalizeLogin={finalizeLogin}
         getMyPlan={getMyPlan}
+        getSensorFiles={getSensorFiles}
         lastOpened={lastOpened}
         network={network}
         onFormSubmit={onFormSubmit}
@@ -60,6 +62,7 @@ Login.propTypes = {
     environment:          PropTypes.string,
     finalizeLogin:        PropTypes.func.isRequired,
     getMyPlan:            PropTypes.func.isRequired,
+    getSensorFiles:       PropTypes.func.isRequired,
     lastOpened:           PropTypes.object.isRequired,
     network:              PropTypes.object.isRequired,
     onFormSubmit:         PropTypes.func.isRequired,
@@ -99,6 +102,7 @@ const mapDispatchToProps = {
     authorizeUser:  init.authorizeUser,
     finalizeLogin:  init.finalizeLogin,
     getMyPlan:      PlanActions.getMyPlan,
+    getSensorFiles: ble.getSensorFiles,
     onFormSubmit:   init.startLogin,
     registerDevice: init.registerDevice,
     setAppLogs:     PlanActions.setAppLogs,

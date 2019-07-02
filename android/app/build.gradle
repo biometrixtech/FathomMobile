@@ -129,8 +129,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 31
-        versionName "3.0.0-beta.21"
+        versionCode 32
+        versionName "3.1.0-beta.11"
     }
     configurations.all {
         resolutionStrategy {
@@ -186,7 +186,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation "com.facebook.react:react-native:+"  // From node_modules
     compile('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
       transitive = true;
@@ -199,7 +199,6 @@ dependencies {
     implementation project(':react-native-ble-manager')
     implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
-    implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-sound')
     implementation project(':react-native-splash-screen')

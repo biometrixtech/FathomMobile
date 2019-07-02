@@ -26,14 +26,14 @@ import {
 } from 'react-native';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions ,} from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
 import { AppColors, APIConfig, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
-import { onboardingUtils } from '../../constants/utils';
+import { onboardingUtils, } from '../../constants/utils';
 
 // Components
 import { Alerts, Button, Card, FathomModal, FormInput, ListItem, Spacer, TabIcon, Text, } from '../custom';
@@ -97,6 +97,7 @@ class Login extends Component {
         environment:    PropTypes.string,
         finalizeLogin:  PropTypes.func.isRequired,
         getMyPlan:      PropTypes.func.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
         lastOpened:     PropTypes.object.isRequired,
         network:        PropTypes.object.isRequired,
         onFormSubmit:   PropTypes.func,
@@ -125,6 +126,7 @@ class Login extends Component {
         this.inputs = {};
         this.state = {
             isModalVisible: false,
+            loading:        false,
             resultMsg:      {
                 error:   '',
                 status:  '',
@@ -171,19 +173,16 @@ class Login extends Component {
     _handleFormSubmit = () => {
         // validation
         let errorsArray = this._validateForm();
-        if (errorsArray.length === 0)
-        {
+        if (errorsArray.length === 0) {
             this.login();
-        }
-        else
-        {
+        } else {
             let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
-            this.setState({ resultMsg: newErrorFields });
+            this.setState({ loading: false, resultMsg: newErrorFields });
         }
     }
 
     _routeToForgotPassword = () => {
-        Actions.forgotPassword();
+        AppUtil.pushToScene('forgotPassword');
     }
 
     _validateForm = () => {
@@ -241,16 +240,16 @@ class Login extends Component {
                                         return this.setState({ resultMsg: { err } });
                                     });
                             })
-                            .then(() => this.props.finalizeLogin(user, credentials, authorization));
+                            .then(() => this.props.finalizeLogin(user, credentials, authorization))
+                            .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
                     })
                     .then(() => this.setState({
                         resultMsg: { success: 'SUCCESS, NOW LOADING YOUR DATA!!' },
                     }, () => {
                         AppUtil.routeOnLogin(this.props.user);
                     })).catch((err) => {
-                        console.log('err',err);
                         const error = AppAPI.handleError(err);
-                        return this.setState({ resultMsg: { error } });
+                        return this.setState({ loading: false, resultMsg: { error } });
                     });
 
             });
@@ -258,92 +257,102 @@ class Login extends Component {
     }
 
     render = () => {
+        let isLoginBtnDisabled = !onboardingUtils.isEmailValid(this.state.form_values.email).isValid || this.state.form_values.password.length < 8;
         /*eslint no-return-assign: 0*/
         return (
             <Wrapper>
 
-                <TabIcon
-                    containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
-                    icon={'arrow-left'}
-                    iconStyle={[{color: AppColors.white,}]}
-                    onPress={() => Actions.pop()}
-                    reverse={false}
-                    size={26}
-                    type={'simple-line-icon'}
-                />
+                <ImageBackground
+                    source={require('../../../assets/images/standard/welcome_background.png')}
+                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
+                >
 
-                <View>
-                    <Egg
-                        onCatch={() => this.setState({ isModalVisible: true })}
-                        setps={'TTTTT'}
-                    >
-                        <Image
-                            resizeMode={'contain'}
-                            source={require('../../../assets/images/standard/fathom_logo_color_stacked.png')}
-                            style={styles.mainLogo}
-                        />
-                    </Egg>
-                </View>
+                    <TabIcon
+                        color={AppColors.zeplin.slateLight}
+                        containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
+                        icon={'chevron-left'}
+                        onPress={() => Actions.pop()}
+                        size={26}
+                    />
 
-                <View style={[AppStyles.containerCentered,]}>
-                    <Alerts
-                        error={this.state.resultMsg.error}
-                        extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
-                        success={this.state.resultMsg.success}
-                    />
-                    <FormInput
-                        autoCapitalize={'none'}
-                        blurOnSubmit={false}
-                        clearButtonMode={'never'}
-                        containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                        inputRef={ref => this.inputs.email = ref}
-                        inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
-                        keyboardType={'email-address'}
-                        onChangeText={(text) => this._handleFormChange('email', text)}
-                        onSubmitEditing={() => this._focusNextField('password')}
-                        placeholder={'email'}
-                        placeholderTextColor={AppColors.zeplin.yellow}
-                        returnKeyType={'next'}
-                        value={this.state.form_values.email}
-                    />
-                    <FormInput
-                        autoCapitalize={'none'}
-                        blurOnSubmit={true}
-                        clearButtonMode={'never'}
-                        containerStyle={{width: AppSizes.screen.widthTwoThirds,}}
-                        inputRef={ref => this.inputs.password = ref}
-                        inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center', paddingTop: 25,}}
-                        keyboardType={'default'}
-                        onChangeText={(text) => this._handleFormChange('password', text)}
-                        onSubmitEditing={() => this._handleFormSubmit()}
-                        password={true}
-                        placeholder={'password'}
-                        placeholderTextColor={AppColors.zeplin.yellow}
-                        returnKeyType={'done'}
-                        secureTextEntry={true}
-                        value={this.state.form_values.password}
-                    />
-                    <Spacer size={50} />
-                    <Button
-                        buttonStyle={{backgroundColor: AppColors.white, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, width: '100%',}}
-                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
-                        disabled={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? true : false}
-                        disabledStyle={{width: '100%'}}
-                        onPress={() => this._handleFormSubmit()}
-                        title={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? 'Logging in...' : 'Login'}
-                        titleStyle={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                    />
-                    <Spacer size={12} />
-                    <TouchableOpacity onPress={this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : Actions.forgotPassword}>
-                        <Text
-                            onPress={this._routeToForgotPassword}
-                            robotoRegular
-                            style={[AppStyles.textCenterAligned, {color: AppColors.white, opacity: 0.75, textDecorationLine: 'none', fontSize: AppFonts.scaleFont(15),}]}
-                        >
-                            {'forgot password'}
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <View>
+                            <Egg
+                                onCatch={() => this.setState({ isModalVisible: true, })}
+                                setps={'TTTTT'}
+                            >
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/fathom_logo_yellow_stacked.png')}
+                                    style={{height: 150, width: 150,}}
+                                />
+                            </Egg>
+                        </View>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                            {'Optimal recovery,\ndesigned for your body.'}
                         </Text>
-                    </TouchableOpacity>
-                </View>
+                    </View>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
+                        <Alerts
+                            error={this.state.resultMsg.error}
+                            extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
+                            success={this.state.resultMsg.success}
+                        />
+                        <Spacer size={AppSizes.paddingMed} />
+                        <FormInput
+                            autoCapitalize={'none'}
+                            autoCompleteType={'username'}
+                            blurOnSubmit={false}
+                            clearButtonMode={'never'}
+                            containerStyle={{backgroundColor: AppColors.zeplin.splashLight, borderBottomWidth: 0, borderRadius: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.email = ref}
+                            inputStyle={{color: AppColors.white, paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}
+                            keyboardType={'email-address'}
+                            onChangeText={(text) => this._handleFormChange('email', text)}
+                            onSubmitEditing={() => this._focusNextField('password')}
+                            placeholder={'username'}
+                            placeholderTextColor={AppColors.white}
+                            returnKeyType={'next'}
+                            value={this.state.form_values.email}
+                        />
+                        <Spacer size={AppSizes.paddingMed} />
+                        <FormInput
+                            autoCapitalize={'none'}
+                            autoCompleteType={'password'}
+                            blurOnSubmit={true}
+                            clearButtonMode={'never'}
+                            containerStyle={{backgroundColor: AppColors.zeplin.splashLight, borderBottomWidth: 0, borderRadius: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
+                            inputRef={ref => this.inputs.password = ref}
+                            inputStyle={{color: AppColors.white, paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}
+                            keyboardType={'default'}
+                            onChangeText={(text) => this._handleFormChange('password', text)}
+                            onSubmitEditing={() => this.state.loading ? null : this.setState({ loading: true, }, () => this._handleFormSubmit())}
+                            password={true}
+                            placeholder={'password'}
+                            placeholderTextColor={AppColors.white}
+                            returnKeyType={'done'}
+                            secureTextEntry={true}
+                            value={this.state.form_values.password}
+                        />
+                        <TouchableOpacity onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : AppUtil.pushToScene('forgotPassword')}>
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11), fontStyle: 'italic', marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingSml, textAlign: 'center',}}>{'forgot password?'}</Text>
+                        </TouchableOpacity>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            disabled={isLoginBtnDisabled}
+                            disabledStyle={{backgroundColor: AppColors.zeplin.slateLight,}}
+                            disabledTitleStyle={{color: AppColors.white,}}
+                            loading={this.state.loading}
+                            loadingProps={{color: AppColors.white,}}
+                            loadingStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
+                            onPress={() => this.state.loading ? null : this.setState({ loading: true, }, () => this._handleFormSubmit())}
+                            raised={true}
+                            title={'Login'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                        />
+                    </View>
+                </ImageBackground>
 
                 <FathomModal
                     isVisible={this.state.isModalVisible}

@@ -40,7 +40,6 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
@@ -67,9 +66,6 @@ const numberOfPlaceholders = 8;
 const timerDelay = 30000; // delay for X ms
 const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(13) + (AppSizes.paddingXSml * 2));
 
-// setup GA Tracker
-const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
-
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     completedSubtitle: {
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
         height:          UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
         justifyContent:  'center',
         position:        'absolute',
-        right:           (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
+        right:           0,
         top:             (UNREAD_NOTIFICATIONS_HEIGHT_WIDTH / 3),
         width:           UNREAD_NOTIFICATIONS_HEIGHT_WIDTH,
     },
@@ -210,47 +206,66 @@ const MyPlanNavBar = ({
     cards = [],
     handleReadInsight,
     expandNotifications,
-    onLeft,
     onRight,
+    user,
 }) => (
     <View style={{backgroundColor: AppColors.white,}}>
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginTop: AppSizes.statusBarHeight,}}>
-            <View style={{flex: 1, justifyContent: 'center',}} />
+        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginHorizontal: AppSizes.paddingSml, marginTop: AppSizes.statusBarHeight,}}>
+            { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
+                <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => AppUtil.pushToScene('sensorFiles')}
+                    style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
+                >
+                    <Image
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/sensor/sensor_slate.png')}
+                        style={{height: 20, width: 20,}}
+                    />
+                </TouchableOpacity>
+                :
+                <View style={{flex: 1, justifyContent: 'center',}} />
+            }
             <Image
                 source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
                 style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
             />
-            { cards.length > 0 ?
-                <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
-                    <TabIcon
-                        icon={'notifications'}
-                        iconStyle={[{color: AppColors.zeplin.slate,}]}
-                        onPress={() => onRight()}
-                        size={26}
+            <TouchableOpacity
+                onPress={() => onRight()}
+                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+            >
+                { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                    <LottieView
+                        autoPlay={true}
+                        source={require('../../../assets/animation/yellowpointer.json')}
                     />
-                    {_.filter(cards, ['read', false]).length > 0 &&
-                        <TouchableOpacity onPress={() => onRight()} style={[styles.unreadNotificationsWrapper,]}>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
-                        </TouchableOpacity>
-                    }
-                </View>
-                :
-                <View style={{flex: 1, justifyContent: 'center',}} />
-            }
+                }
+                <TabIcon
+                    icon={'notifications'}
+                    iconStyle={[{color: AppColors.zeplin.slate,}]}
+                    size={26}
+                />
+                {_.filter(cards, ['read', false]).length > 0 &&
+                    <View style={[styles.unreadNotificationsWrapper,]}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
+                    </View>
+                }
+            </TouchableOpacity>
         </View>
-        { cards.length > 0 &&
-            <Collapsible collapsed={!expandNotifications}>
+        <Collapsible collapsed={!expandNotifications}>
+            { expandNotifications &&
                 <DeckCards
-                    cards={cards}
+                    cards={cards.length === 0 ? cards : _.concat(cards, {})}
                     handleReadInsight={index => handleReadInsight(index)}
                     hideDeck={() => onRight()}
                     isVisible={expandNotifications}
+                    layout={'tinder'}
                     shrinkNumberOfLines={true}
                     unreadNotificationsCount={_.filter(cards, ['read', false]).length}
                 />
-            </Collapsible>
-        }
+            }
+        </Collapsible>
     </View>
 );
 
@@ -306,7 +321,7 @@ class MyPlan extends Component {
     }
 
     componentDidMount = () => {
-        const { notification, plan, scheduledMaintenance, user, } = this.props;
+        const { notification, plan, scheduledMaintenance, } = this.props;
         const { healthData, } = this.state;
         AppState.addEventListener('change', this._handleAppStateChange);
         if(!scheduledMaintenance.addressed) {
@@ -317,10 +332,6 @@ class MyPlan extends Component {
         if(notification) {
             this._handlePushNotification(this.props);
         }
-        // set GA variables
-        GATracker.setUser(user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
-        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
         let planObj = plan.dailyPlan[0] || {};
         if(
             planObj.daily_readiness_survey_completed &&
@@ -336,6 +347,8 @@ class MyPlan extends Component {
             // scroll to first active activity tab
             this._timer = _.delay(() => this._scrollToFirstActiveActivityTab(), 600);
         }
+        // handle Coach related items
+        this._checkCoachStatus();
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -410,6 +423,21 @@ class MyPlan extends Component {
         clearInterval(this._timer);
         clearInterval(this.goToPageTimer);
         clearInterval(this.scrollToTimer);
+    }
+
+    _checkCoachStatus = () => {
+        const { plan, user, } = this.props;
+        if(
+            plan.dailyPlan[0] &&
+            plan.dailyPlan[0].daily_readiness_survey_completed &&
+            user.first_time_experience &&
+            (
+                !user.first_time_experience.includes('plan_coach_1') ||
+                !user.first_time_experience.includes('plan_coach_2')
+            )
+        ) {
+            this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
+        }
     }
 
     _closePrepareSessionsCompletionModal = () => {
@@ -513,6 +541,14 @@ class MyPlan extends Component {
                         clearHealthKitWorkouts();
                         clearCompletedExercises();
                         clearCompletedCoolDownExercises();
+                        // do we need to open 3-Sensor banner
+                        AppUtil._handle3SensorBanner(user, response[0]);
+                        // handle Coach related items
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        // udpate RS first_time_experience
+                        if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
+                            this._handleUpdateFirstTimeExperience('rs_begin_page');
+                        }
                     }
                 );
             })
@@ -708,6 +744,8 @@ class MyPlan extends Component {
                 }
                 // scroll to first active activity tab
                 this._scrollToFirstActiveActivityTab();
+                // handle Coach related items
+                this._timer = _.delay(() => this._checkCoachStatus(), 500);
             })
             .catch(error => {
                 this.setState({ isPageCalculating: false, });
@@ -850,6 +888,7 @@ class MyPlan extends Component {
             dailyReadiness,
             expandNotifications,
             healthData,
+            isCoachModalOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -880,9 +919,9 @@ class MyPlan extends Component {
                 <MyPlanNavBar
                     cards={dailyPlanObj.insights}
                     expandNotifications={expandNotifications}
-                    handleReadInsight={index => handleReadInsight(dailyPlanObj, index)}
-                    onLeft={() => Actions.settings()}
+                    handleReadInsight={index => handleReadInsight(dailyPlanObj, (index - 1))}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
+                    user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />
 
                 <Placeholder
@@ -937,7 +976,7 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? Actions.bodyModality({ modality: activeModality.modality, }) : Actions.exerciseModality({ index: key, modality: activeModality.modality, })}
+                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}
@@ -983,7 +1022,7 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? Actions.bodyModality({ modality: activeModality.modality, }) : Actions.exerciseModality({ index: key, modality: activeModality.modality, })}
+                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}
@@ -1141,6 +1180,68 @@ class MyPlan extends Component {
                     :
                     null
                 }
+                <FathomModal
+                    hasBackdrop={false}
+                    isVisible={isCoachModalOpen}
+                >
+                    <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
+                        { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                            <View style={{flex: 1,}}>
+                                <View style={{backgroundColor: AppColors.zeplin.navy, height: AppSizes.statusBarHeight, opacity: 0.8,}} />
+                                <View style={{backgroundColor: AppColors.transparent, flexDirection: 'row', height: AppSizes.navbarHeight,}}>
+                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
+                                    <View style={{flexDirection: 'row', width: (AppSizes.screen.width - (AppSizes.paddingSml * 2)),}}>
+                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8, paddingLeft: AppSizes.paddingSml,}}>
+                                            <View style={{width: 20,}} />
+                                        </View>
+                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 8, opacity: 0.8,}} />
+                                        <View style={{backgroundColor: AppColors.transparent, flex: 1, opacity: 0.8,}}>
+                                            <View style={{height: '100%', width: '100%',}} />
+                                        </View>
+                                    </View>
+                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
+                                </View>
+                                <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
+                            </View>
+                        }
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => {
+                                this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
+                                if(user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
+                                    this.setState({ isCoachModalOpen: false, });
+                                }
+                            }}
+                            style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
+                        >
+                            { user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ?
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Plan'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
+                                </View>
+                                :
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Your Insights'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'As you use Fathom, our AI system will look for insights in your data & notify you here!'}</Text>
+                                </View>
+                            }
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
+                                <View>
+                                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22),}}>
+                                        {'GOT IT'}
+                                    </Text>
+                                </View>
+                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                    <View style={{backgroundColor: user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                    <View style={{backgroundColor: user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
+                                </View>
+                                <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
+                                    {'GOT IT'}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </FathomModal>
 
             </MagicMove.Scene>
         );

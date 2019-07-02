@@ -24,6 +24,7 @@ const defaultPlanState = {
         sleep:           [],
         workouts:        [],
     },
+    isCoachModalOpen:                     false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,

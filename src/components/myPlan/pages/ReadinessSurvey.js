@@ -41,10 +41,10 @@ import {
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
-import LinearGradient from 'react-native-linear-gradient';
 
 // consts
-const helloPageText = 'Let us know how you feel so we can adapt your Recovery Plan to your body. This simple survey shouldn\'t take more than 2-minutes.';
+const helloPageText = 'Take a minute to complete your daily Readiness Survey and we\'ll update your Plan to your body and training.';
+const firstTimeHelloPageText = 'This daily Readiness Survey helps us build the optimal Plan of pre & post training activities for your body & training habits.';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -112,7 +112,6 @@ class ReadinessSurvey extends Component {
         // clear timer
         clearInterval(this.timer);
     }
-
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         if(this.state.pageIndex === 1 && prevState.pageIndex !== this.state.pageIndex) { // reset HealthKit
@@ -351,38 +350,42 @@ class ReadinessSurvey extends Component {
 
                     <View style={{flex: 1,}}>
                         <ImageBackground
-                            source={require('../../../../assets/images/standard/start_page_background.png')}
+                            source={require('../../../../assets/images/standard/tutorial_background_white.png')}
                             style={[styles.imageBackgroundStyle]}
                         >
-                            <LinearGradient
-                                colors={['#ffffff00', 'white']}
-                                start={{x: 0.0, y: 0.0}}
-                                end={{x: 0.0, y: 0.65}}
-                                style={[styles.linearGradientStyle]}
-                            >
+                            <View style={[styles.linearGradientStyle]}>
                                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                                     <View />
                                     <View>
-                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>{`GOOD ${partOfDay}, ${userFirstName}!`}</Text>
+                                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(30), lineHeight: AppFonts.scaleFont(40),}}>
+                                            {!user.first_time_experience.includes('rs_begin_page') ?
+                                                'LET\'S CREATE YOUR FIRST ACTIVITIES!'
+                                                :
+                                                `GOOD ${partOfDay}, ${userFirstName}!`
+                                            }
+                                        </Text>
                                         <Spacer size={5} />
-                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>{helloPageText}</Text>
+                                        <Text robotoLight style={{color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(25),}}>
+                                            {!user.first_time_experience.includes('rs_begin_page') ?
+                                                firstTimeHelloPageText
+                                                :
+                                                helloPageText
+                                            }
+                                        </Text>
                                         <Spacer size={10} />
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, width: '100%',}}
                                             containerStyle={{alignItems: 'center',}}
-                                            onPress={() => this._renderNextPage(0, isFormValidItems)}
-                                            icon={{
-                                                color: AppColors.white,
-                                                name:  'chevron-right',
-                                                size:  AppFonts.scaleFont(24),
+                                            onPress={() => {
+                                                this._renderNextPage(0, isFormValidItems)
                                             }}
                                             iconRight={true}
                                             title={'Begin'}
-                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '75%',}}
+                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16), textAlign: 'center', width: '100%',}}
                                         />
                                     </View>
                                 </View>
-                            </LinearGradient>
+                            </View>
                         </ImageBackground>
                     </View>
 

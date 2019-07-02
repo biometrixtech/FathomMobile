@@ -20,14 +20,14 @@ import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
+import Carousel from 'react-native-snap-carousel';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import Swiper from 'react-native-deck-swiper';
 import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { AppUtil, } from '../../lib';
 
 // Components
 import { Button, TabIcon, Text, } from '../custom';
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor:   AppColors.white,
         borderRadius:      10,
-        elevation:         2,
         shadowColor:       'rgba(0, 0, 0, 0.16)',
         shadowOffset:      { height: 3, width: 0, },
         shadowOpacity:     1,
@@ -108,6 +107,7 @@ class DeckCards extends Component {
         isVisible:                PropTypes.bool.isRequired,
         shouldNavigate:           PropTypes.bool,
         showDate:                 PropTypes.bool,
+        showHide:                 PropTypes.bool,
         shrinkNumberOfLines:      PropTypes.bool,
         startIndex:               PropTypes.number,
         unreadNotificationsCount: PropTypes.number,
@@ -118,6 +118,7 @@ class DeckCards extends Component {
         infinite:                 false,
         shouldNavigate:           true,
         showDate:                 true,
+        showHide:                 true,
         shrinkNumberOfLines:      false,
         startIndex:               0,
         unreadNotificationsCount: 0,
@@ -134,9 +135,11 @@ class DeckCards extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
-        const { isVisible, } = this.props;
+        const { cards, isVisible, } = this.props;
         if(!isVisible && prevProps.isVisible !== isVisible) {
-            this.setState({ areAllSwiped: false, currentCardIndex: 0, }, () => this._swiperRef.jumpToCardIndex(0));
+            this.setState({ areAllSwiped: false, currentCardIndex: 0, }, () => cards.length > 0 ? this._swiperRef.snapToItem(0) : {});
+        } else if(cards.length > 0 && (prevProps.startIndex + 1) === this.props.cards.length && this.props.startIndex === 0) {
+            this._swiperRef.snapToItem(0);
         }
     }
 
@@ -147,11 +150,14 @@ class DeckCards extends Component {
             ignoreAndroidSystemSettings: false,
         };
         this.setState(
-            { currentCardIndex: (index + 1), },
+            { currentCardIndex: index, },
             () => {
-                let hapticFeedbackMethod = (index + 1) === cards.length ? 'notificationWarning' : 'impactMedium';
+                let hapticFeedbackMethod = index === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
                 handleReadInsight(index);
+                if(this.state.currentCardIndex === index && (!cards[index].title || cards[index].title === '')) {
+                    this.setState({ areAllSwiped: true, });
+                }
             },
         );
     }
@@ -185,7 +191,9 @@ class DeckCards extends Component {
             cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
         let showUnreadNotificationsBadge = currentCardIndex === index && unreadNotificationsCount > 0;
+        let allowNavigation = triggerType !== 25 && triggerType < 200;
         return {
+            allowNavigation,
             cardTextArray,
             dateText,
             insightType,
@@ -202,20 +210,29 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, layout, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { currentCardIndex, } = this.state;
         const {
+            allowNavigation,
             cardTextArray,
             dateText,
             insightType,
             // showUnreadNotificationsBadge,
             triggerType,
         } = this._handleRenderCardLogic(card, index);
+        if ((!card.title || card.title === '') && currentCardIndex !== index) { // not to show view above when still scrolling
+            return (null);
+        }
+        let extraStyles = {};
+        if(Platform.OS === 'android') {
+            extraStyles = {borderColor: AppColors.zeplin.slateXLight, borderWidth: 1, elevation: (cards.length - index), zIndex: (cards.length - index),};
+        }
         return (
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={shouldNavigate ? () => Actions.trendChild({ insightType: insightType, triggerType: triggerType, }) : () => {}}
-                style={[styles.card,]}
+                onPress={shouldNavigate && allowNavigation ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
+                style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row',}}>
@@ -252,51 +269,48 @@ class DeckCards extends Component {
     }
 
     render = () => {
-        const { cards, hideDeck, infinite, } = this.props;
+        const { cards, hideDeck, infinite, showHide, } = this.props;
         const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
-                <View style={[containerStyle,]}>
-                    { areAllSwiped && !infinite ?
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}</Text>
-                            <View style={{flexDirection: 'row', marginTop: AppSizes.padding,}}>
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.padding,}}
-                                    containerStyle={{marginRight: AppSizes.paddingSml,}}
-                                    onPress={() => this.setState({ areAllSwiped: false, currentCardIndex: 0, })}
-                                    title={'Repeat?'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
-                                />
-                                <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.splash, paddingHorizontal: AppSizes.padding,}}
-                                    onPress={hideDeck}
-                                    title={'Hide'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
-                                />
-                            </View>
+                <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
+                    { areAllSwiped && !infinite && showHide ?
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                {'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}
+                            </Text>
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}
+                                containerStyle={{marginRight: AppSizes.paddingSml,}}
+                                onPress={() => AppUtil.pushToScene('trends')}
+                                title={'View Trends'}
+                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
+                            />
                         </View>
-                        :
-                        <Swiper
-                            {...this.props}
-                            backgroundColor={AppColors.transparent}
-                            cardHorizontalMargin={AppSizes.padding}
-                            cardIndex={currentCardIndex}
-                            cardVerticalMargin={AppSizes.padding}
-                            cards={cards}
-                            infinite={infinite}
-                            onSwiped={index => this._handleOnSwiped(index)}
-                            onSwipedAll={() => this.setState({ areAllSwiped: true, currentCardIndex: 0, })}
-                            ref={ref => {this._swiperRef = ref;}}
-                            renderCard={(card, index) => this._renderCard(card, index)}
-                            stackScale={10}
-                            stackSeparation={-10}
-                            stackSize={cards.length === 1 && infinite ? 1 : 2}
-                            useViewOverflow={Platform.OS === 'ios'}
-                        />
+                        : cards.length > 0 ?
+                            <Carousel
+                                {...this.props}
+                                contentContainerCustomStyle={{alignItems: 'center', paddingVertical: AppSizes.padding, justifyContent: 'center',}}
+                                data={cards}
+                                firstItem={currentCardIndex}
+                                initialNumToRender={cards.length}
+                                itemWidth={(AppSizes.screen.width * 0.85)}
+                                lockScrollWhileSnapping={true}
+                                maxToRenderPerBatch={3}
+                                onSnapToItem={index => this._handleOnSwiped(index)}
+                                ref={ref => {this._swiperRef = ref;}}
+                                removeClippedSubviews={false}
+                                renderItem={({item, index}) => this._renderCard(item, index)}
+                                sliderWidth={AppSizes.screen.width}
+                                windowSize={3}
+                            />
+                            :
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, textAlign: 'center',}}>
+                                {'No alerts right now. We\'ll generate new insights as we learn about your body!'}
+                            </Text>
                     }
                 </View>
-                { !infinite &&
+                { showHide &&
                     <View style={[styles.hideTextContainerWrapper,]}>
                         <TouchableOpacity
                             activeOpacity={1}

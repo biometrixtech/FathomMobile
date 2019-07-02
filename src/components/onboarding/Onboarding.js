@@ -4,30 +4,38 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, BackHandler, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import {
+    Alert,
+    BackHandler,
+    ImageBackground,
+    Keyboard,
+    Platform,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 
 // import third-party libraries
-import { Actions } from 'react-native-router-flux';
+import { Actions, } from 'react-native-router-flux';
+import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import moment from 'moment';
 
 // Consts, Libs, and Utils
 import { AppAPI, AppUtil, } from '../../lib';
-import { AppColors, AppStyles, AppSizes, } from '../../constants';
+import { AppColors, AppFonts, AppStyles, AppSizes, } from '../../constants';
 import { onboardingUtils, } from '../../constants/utils';
 
 // Components
-import { ProgressBar, } from '../custom/';
+import { Alerts, Button, TabIcon, ProgressBar, Text, } from '../custom/';
 import { EnableAppleHealthKit, Loading, PrivacyPolicyModal, } from '../general';
-import { UserAccount, } from './pages/';
+import { UserAccountAbout, UserAccountInfo, } from './pages/';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     background: {
         backgroundColor: AppColors.white,
         flex:            1,
-        height:          AppSizes.screen.height,
-        width:           AppSizes.screen.width,
     },
     carouselBanner: {
         height:            AppSizes.navbarHeight,
@@ -51,6 +59,35 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const TopNav = ({ formFields, isUpdatingUser, onBack, resultMsg, surveyValues, title, }) => (
+    <View style={{marginTop: AppSizes.statusBarHeight,}}>
+        <View style={{flexDirection: 'row', paddingVertical: AppSizes.paddingSml,}}>
+            <View style={{flex: 1,}}>
+                { !isUpdatingUser &&
+                    <TabIcon
+                        color={AppColors.zeplin.slate}
+                        icon={'chevron-left'}
+                        onPress={() => onBack()}
+                        size={30}
+                        type={'material-community'}
+                    />
+                }
+            </View>
+            <View style={{flex: 8,}}>
+                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
+            </View>
+            <View style={{flex: 1,}} />
+        </View>
+        <ProgressBar
+            currentStep={onboardingUtils.getCurrentStep(formFields.user, surveyValues, isUpdatingUser)}
+            totalSteps={onboardingUtils.getTotalSteps(formFields.user)}
+        />
+        <Alerts
+            error={(resultMsg && resultMsg.error && resultMsg.error.length > 0) ? resultMsg.error : ''}
+        />
+    </View>
+);
+
 class Onboarding extends Component {
     static componentName = 'Onboarding';
 
@@ -61,9 +98,11 @@ class Onboarding extends Component {
         createUser:     PropTypes.func.isRequired,
         finalizeLogin:  PropTypes.func.isRequired,
         getMyPlan:      PropTypes.func.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
         lastOpened:     PropTypes.object.isRequired,
         network:        PropTypes.object.isRequired,
         onFormSubmit:   PropTypes.func.isRequired,
+        postSurvey:     PropTypes.func.isRequired,
         registerDevice: PropTypes.func.isRequired,
         setAccountCode: PropTypes.func.isRequired,
         setAppLogs:     PropTypes.func.isRequired,
@@ -75,7 +114,6 @@ class Onboarding extends Component {
 
     constructor(props) {
         super(props);
-
         const sportArray = {
             competition_level:  '',
             end_date:           '', // 'MM/DD/YYYY' or 'current'
@@ -143,20 +181,34 @@ class Onboarding extends Component {
                     workout_outside_practice: null,
                 }
             },
-            isFormValid:          false,
             isHealthKitModalOpen: !this.props.user.id && Platform.OS === 'ios' && this.props.accountRole === 'athlete',
+            isKeyboardOpen:       false,
+            isPage1Valid:         false,
+            isPage2Valid:         false,
             isPrivacyPolicyOpen:  false,
-            isTermsOpen:          false,
             modalStyle:           {},
+            pageIndex:            0,
             resultMsg:            {
                 error:   [],
                 status:  '',
                 success: '',
             },
-            step:       2, // TODO: UPDATE THIS VALUE BACK TO '1'
-            totalSteps: 1,
-            loading:    false,
+            survey_values: {
+                typical_weekly_sessions: '',
+                wearable_devices:        '',
+            },
+            loading: false,
         };
+        this._pages = null;
+    }
+
+    componentDidMount = () => {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    }
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
     componentWillMount = () => {
@@ -166,9 +218,7 @@ class Onboarding extends Component {
         // for current users
         if(this.props.user) {
             let errorsArray = this._validateForm();
-            this.setState({
-                isFormValid: errorsArray.length === 0 ? true : false,
-            });
+            this.setState({ isPage1Valid: errorsArray && errorsArray.length === 0 ? true : false, });
             if(this.props.user.health_enabled) {
                 this._updateStateFromHealthKit();
             }
@@ -176,103 +226,30 @@ class Onboarding extends Component {
     }
 
     componentWillUnmount = () => {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
     }
 
-    componentDidUpdate = (prevProps, prevState, snapshot) => {
-        AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
-    }
-
-    _toggleTermsWebView = () => {
-        this.setState({ isTermsOpen: !this.state.isTermsOpen, });
-    }
-
-    _togglePrivacyPolicyWebView = () => {
-        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, });
-    }
-
-    _handleUserFormChange = (name, value) => {
-        /**
-          * This let's us change arbitrarily nested objects with one pass
-          */
-        let newFormFields = _.update( this.state.form_fields.user, name, () => value);
-        let newResultMsgFields = _.update( this.state.resultMsg, 'error', () => []);
-        newResultMsgFields = _.update( this.state.resultMsg, 'status', () => '');
-        newResultMsgFields = _.update( this.state.resultMsg, 'success', () => '');
-        let errorsArray = this._validateForm();
-        this.setState({
-            form_fields: { user: newFormFields, },
-            isFormValid: errorsArray.length === 0,
-            resultMsg:   newResultMsgFields,
-        });
-        if(name === 'role') {
-            this._nextStep();
-        }
-    }
-
-    _validateForm = () => {
-        let isUpdatingUser = this.props.user.id ? true : false
-        const { form_fields, step, } = this.state;
-        let errorsArray = [];
-        if(step === 2) { // enter user information
-            errorsArray = _.concat(onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray, onboardingUtils.isUserAboutValid(form_fields.user).errorsArray);
-        }
-        return errorsArray;
-    }
-
-    _previousStep = () => {
-        const { form_fields, step } = this.state;
-        // validation
-        let errorsArray = this._validateForm();
-        if(step === 1) {
-            Actions.start();
-        } else {
-            let newStep = step - 1;
-            if (
-                newStep === 4
-                && !form_fields.user.workout_outside_practice
-            ) {
-                if(
-                    form_fields.user.injury_status === 'healthy'
-                ) { // if user is health and they don't workout outside of practice
-                    newStep = step + 3;
-                } else { // if the user doesn't workout outside of practice
-                    newStep = step + 2;
+    _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
+        this.setState(
+            { isHealthKitModalOpen: false, },
+            () => {
+                this._handleUserFormChange('health_enabled', healthKitFlag);
+                this._handleUserFormChange('first_time_experience', [firstTimeExperienceValue]);
+                if(healthKitFlag) {
+                    this._updateStateFromHealthKit();
                 }
-            }
-            this.setState({
-                isFormValid: errorsArray.length === 0 ? true : false,
-                step:        newStep,
-            });
-        }
-    }
-
-    _nextStep = () => {
-        // validation
-        let errorsArray = this._validateForm();
-        this.setState({
-            ['resultMsg.error']: errorsArray,
-        });
-    }
-
-    _notClearedBtnPressed = () => {
-        Alert.alert(
-            'Warning!',
-            'You will be using this app at your own risk!',
-            [
-                {text: 'Cancel', style: 'cancel'},
-                {text: 'Continue', onPress: this._nextStep},
-            ],
-            { cancelable: true }
-        )
+            },
+        );
     }
 
     _handleFormSubmit = () => {
         let newUser = _.cloneDeep(this.state.form_fields.user);
         // validation
-        let errorsArray = this._validateForm();
+        let errorsArray = this._validateForm(true);
         this.setState({
             ['resultMsg.error']: errorsArray,
         });
@@ -295,28 +272,60 @@ class Onboarding extends Component {
         }
     }
 
-    _handlePasswordSpacesCheck = (newUser, clearedToPlay, errorsArray) => {
-        const passwordHasWhiteSpaces = onboardingUtils.hasWhiteSpaces(newUser.password);
-        if(passwordHasWhiteSpaces) {
-            Alert.alert(
-                '',
-                'Your Password has a whitespace, is this intended?',
-                [
-                    {text: 'Yes, Continue', onPress: () => this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray)},
-                    {text: 'No, Let me fix it', style: 'cancel'},
-                ],
-                { cancelable: true }
-            );
-        } else {
-            this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray);
-        }
+    _handleLoginFinalize = (userObj, userResponse, surveyPayload) => {
+        let credentials = {
+            Email:    userObj.personal_data.email,
+            Password: userObj.password,
+        };
+        return this.props.onFormSubmit({
+            email:    userObj.personal_data.email,
+            password: userObj.password,
+        }, false)
+            .then(response => {
+                let { authorization, user, } = response;
+                return this.props.registerDevice(this.props.certificate, this.props.device, user)
+                    .then(() => {
+                        let clearMyPlan = (
+                            this.props.lastOpened.userId !== user.id ||
+                            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                        ) ?
+                            true
+                            :
+                            false;
+                        return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
+                            .then(res => {
+                                this.props.setAppLogs();
+                                if(user.health_enabled) {
+                                    return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)
+                                        .then(() => AppUtil.getAppleHealthKitData(user, user.health_sync_date, user.historic_health_sync_date));
+                                }
+                                return res;
+                            })
+                            .catch(error => {
+                                const err = AppAPI.handleError(error);
+                                return this.setState({ loading: false, resultMsg: { err }, });
+                            });
+                    })
+                    .then(() => this.props.postSurvey(userResponse.id, surveyPayload))
+                    .then(() => this.props.finalizeLogin(user, credentials, authorization))
+                    .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
+            })
+            .then(userRes => this.setState({
+                resultMsg: { success: 'Success, now loading your data!' },
+            }, () => {
+                this.setState({ loading: false, });
+                return AppUtil.routeOnLogin(userRes, true);
+            })).catch((err) => {
+                const error = AppAPI.handleError(err);
+                return this.setState({ loading: false, resultMsg: { error }, });
+            });
     }
 
     _handleOnboardingFieldSetup = (newUser, clearedToPlay, errorsArray) => {
         // reset error and set loading state
         this.setState({
             loading:   true,
-            resultMsg: { error: '' },
+            resultMsg: { error: '', },
         });
         // only submit required fields
         let userObj = {};
@@ -362,13 +371,20 @@ class Onboarding extends Component {
         }
         // clear account code reducer
         this.props.setAccountCode('');
+        // setup logic & make calls
+        let surveyPayload = _.cloneDeep(this.state.survey_values);
         // create or update, if no errors
         if(errorsArray.length === 0) {
             if(this.props.user.id) {
+                let userResponse = {};
                 return this.props.updateUser(userObj, this.props.user.id)
-                    .then(response => {
+                    .then(userData => {
+                        userResponse = userData.user;
+                        return this.props.postSurvey(userData.user.id, surveyPayload);
+                    })
+                    .then(() => {
                         this.setState({ loading: false });
-                        return AppUtil.routeOnLogin(response.user, true);
+                        return AppUtil.routeOnLogin(userResponse, true);
                     })
                     .catch(err => {
                         const error = AppAPI.handleError(err);
@@ -376,7 +392,7 @@ class Onboarding extends Component {
                     });
             }
             return this.props.createUser(userObj)
-                .then(response => this._handleLoginFinalize(userObj))
+                .then(response => this._handleLoginFinalize(userObj, response.user, surveyPayload))
                 .catch(err => {
                     const error = AppAPI.handleError(err);
                     return this.setState({ resultMsg: { error }, loading: false });
@@ -385,65 +401,73 @@ class Onboarding extends Component {
         return this.setState({ resultMsg: { error: 'Unexpected error occurred, please try again!' }, loading: false });
     }
 
-    _handleLoginFinalize = (userObj) => {
-        let credentials = {
-            Email:    userObj.personal_data.email,
-            Password: userObj.password,
-        };
-        return this.props.onFormSubmit({
-            email:    userObj.personal_data.email,
-            password: userObj.password,
-        }, false)
-            .then(response => {
-                let { authorization, user } = response;
-                return this.props.registerDevice(this.props.certificate, this.props.device, user)
-                    .then(() => {
-                        let clearMyPlan = (
-                            this.props.lastOpened.userId !== user.id ||
-                            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
-                        ) ?
-                            true
-                            :
-                            false;
-                        return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
-                            .then(res => {
-                                this.props.setAppLogs();
-                                if(user.health_enabled) {
-                                    return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)
-                                        .then(() => AppUtil.getAppleHealthKitData(user, user.health_sync_date, user.historic_health_sync_date));
-                                }
-                                return res;
-                            })
-                            .catch(error => {
-                                const err = AppAPI.handleError(error);
-                                return this.setState({ loading: false, resultMsg: { err }, });
-                            });
-                    })
-                    .then(() => this.props.finalizeLogin(user, credentials, authorization));
-            })
-            .then(userRes => this.setState({
-                resultMsg: { success: 'Success, now loading your data!' },
-            }, () => {
-                this.setState({ loading: false, });
-                return AppUtil.routeOnLogin(userRes, true);
-            })).catch((err) => {
-                console.log('err',err);
-                const error = AppAPI.handleError(err);
-                return this.setState({ loading: false, resultMsg: { error }, });
-            });
+    _handlePasswordSpacesCheck = (newUser, clearedToPlay, errorsArray) => {
+        const passwordHasWhiteSpaces = onboardingUtils.hasWhiteSpaces(newUser.password);
+        if(passwordHasWhiteSpaces) {
+            Alert.alert(
+                '',
+                'Your Password has a whitespace, is this intended?',
+                [
+                    {text: 'Yes, Continue', onPress: () => this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray)},
+                    {text: 'No, Let me fix it', style: 'cancel'},
+                ],
+                { cancelable: true }
+            );
+        } else {
+            this._handleOnboardingFieldSetup(newUser, clearedToPlay, errorsArray);
+        }
     }
 
-    _handleEnableAppleHealthKit = (firstTimeExperienceValue, healthKitFlag) => {
-        this.setState(
-            { isHealthKitModalOpen: false, },
-            () => {
-                this._handleUserFormChange('health_enabled', healthKitFlag);
-                this._handleUserFormChange('first_time_experience', [firstTimeExperienceValue]);
-                if(healthKitFlag) {
-                    this._updateStateFromHealthKit();
-                }
-            },
-        );
+    _handleUserFormChange = (name, value, isSurvey) => {
+        // This let's us change arbitrarily nested objects with one pass
+        let newResultMsgFields = _.update( this.state.resultMsg, 'error', () => []);
+        newResultMsgFields = _.update( this.state.resultMsg, 'status', () => '');
+        newResultMsgFields = _.update( this.state.resultMsg, 'success', () => '');
+        if(isSurvey) {
+            let newFormFields = _.update( this.state.survey_values, name, () => value);
+            this.setState({
+                survey_values: newFormFields,
+                resultMsg:     newResultMsgFields,
+            }, () => {
+                let errorsArray = this._validateForm();
+                this.setState({
+                    isPage1Valid: this.state.pageIndex === 0 ? errorsArray && errorsArray.length === 0 : false,
+                    isPage2Valid: this.state.pageIndex === 1 ? errorsArray && errorsArray.length === 0 : false,
+                });
+            });
+        } else {
+            let newFormFields = _.update( this.state.form_fields.user, name, () => value);
+            this.setState({
+                form_fields: { user: newFormFields, },
+                resultMsg:   newResultMsgFields,
+            }, () => {
+                let errorsArray = this._validateForm();
+                this.setState({
+                    isPage1Valid: this.state.pageIndex === 0 ? errorsArray && errorsArray.length === 0 : false,
+                    isPage2Valid: this.state.pageIndex === 1 ? errorsArray && errorsArray.length === 0 : false,
+                });
+            });
+        }
+    }
+
+    _keyboardDidShow = () => this.setState({ isKeyboardOpen: true, })
+
+    _keyboardDidHide = () => this.setState({ isKeyboardOpen: false, })
+
+    _renderNextPage = () => {
+        let nextPageIndex = (this.state.pageIndex + 1);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _renderPreviousPage = () => {
+        let nextPageIndex = (this.state.pageIndex - 1);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _togglePrivacyPolicyWebView = () => {
+        this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, });
     }
 
     _updateStateFromHealthKit = () => {
@@ -477,50 +501,168 @@ class Onboarding extends Component {
             }));
     }
 
+    _validateForm = isLastCheck => {
+        let isUpdatingUser = this.props.user.id ? true : false;
+        const { form_fields, pageIndex, survey_values, } = this.state;
+        let errorsArray = [];
+        if(pageIndex === 0) {
+            errorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray;
+        } else {
+            if(isLastCheck) {
+                errorsArray = _.concat(
+                    onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray,
+                    onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+                    onboardingUtils.isSurveyValid(survey_values).errorsArray
+                );
+            } else {
+                errorsArray = _.concat(
+                    onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+                    onboardingUtils.isSurveyValid(survey_values).errorsArray
+                );
+            }
+        }
+        return errorsArray;
+    }
+
+    _validateWholeForm = callback => {
+        let isUpdatingUser = this.props.user.id ? true : false;
+        const { form_fields, survey_values, } = this.state;
+        let informationErrorsArray = onboardingUtils.isUserAccountInformationValid(form_fields.user, isUpdatingUser).errorsArray;
+        let aboutSurveyErrorsArray = _.concat(
+            onboardingUtils.isUserAboutValid(form_fields.user).errorsArray,
+            onboardingUtils.isSurveyValid(survey_values).errorsArray
+        );
+        this.setState({
+            isPage1Valid: informationErrorsArray && informationErrorsArray.length === 0 ? true : false,
+            isPage2Valid: aboutSurveyErrorsArray && aboutSurveyErrorsArray.length === 0 ? true : false,
+        }, () => callback && callback());
+    }
+
     render = () => {
         const {
             form_fields,
-            isFormValid,
             isHealthKitModalOpen,
+            isKeyboardOpen,
+            isPage1Valid,
+            isPage2Valid,
             isPrivacyPolicyOpen,
-            isTermsOpen,
+            pageIndex,
             resultMsg,
-            step,
-            totalSteps,
+            survey_values,
         } = this.state;
         return (
-            <View style={[styles.background]}>
-                <ProgressBar
-                    currentStep={onboardingUtils.getCurrentStep(form_fields.user)}
-                    totalSteps={onboardingUtils.getTotalSteps(form_fields.user)}
-                />
-                <ScrollView contentContainerStyle={{flex: 1,}}>
-                    <UserAccount
-                        componentStep={2}
-                        currentStep={step}
-                        error={resultMsg.error}
-                        handleFormChange={this._handleUserFormChange}
-                        handleFormSubmit={this._handleFormSubmit}
-                        isFormValid={isFormValid}
+            <View style={[styles.background,]}>
+                <ImageBackground
+                    source={require('../../../assets/images/standard/tutorial_background_white.png')}
+                    style={{flex: 1,}}
+                >
+                    <TopNav
+                        formFields={form_fields}
                         isUpdatingUser={this.props.user.id ? true : false}
-                        togglePrivacyPolicyWebView={this._togglePrivacyPolicyWebView}
-                        user={form_fields.user}
+                        onBack={pageIndex === 0 ? () => Actions.pop() : () => this._validateWholeForm(() => this._renderPreviousPage())}
+                        resultMsg={resultMsg}
+                        surveyValues={survey_values}
+                        title={pageIndex === 0 ? 'CREATE YOUR ACCOUNT' : 'ABOUT YOU'}
                     />
-                </ScrollView>
-                { this.state.loading ?
-                    <Loading />
-                    :
-                    null
-                }
-                <EnableAppleHealthKit
-                    handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
-                    handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
-                    isModalOpen={isHealthKitModalOpen}
-                />
-                <PrivacyPolicyModal
-                    handleModalToggle={this._togglePrivacyPolicyWebView}
-                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
-                />
+
+                    <Pages
+                        containerStyle={{flex: 1,}}
+                        indicatorPosition={'none'}
+                        ref={pages => { this._pages = pages; }}
+                        scrollEnabled={false}
+                        startPage={pageIndex}
+                    >
+
+                        <View style={{flex: 1, marginBottom: AppSizes.iphoneXBottomBarPadding,}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                                <UserAccountInfo
+                                    handleFormChange={this._handleUserFormChange}
+                                    isUpdatingUser={this.props.user.id ? true : false}
+                                    user={form_fields.user}
+                                />
+                            </View>
+                            { isKeyboardOpen && Platform.OS === 'android' ?
+                                <View />
+                                :
+                                <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                        disabled={!isPage1Valid}
+                                        disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                                        disabledTitleStyle={{color: AppColors.white,}}
+                                        onPress={() => this._validateWholeForm(() => this._renderNextPage())}
+                                        raised={true}
+                                        title={'Continue'}
+                                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                    />
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        onPress={() => this._togglePrivacyPolicyWebView()}
+                                        style={[{marginHorizontal: AppSizes.padding, marginTop: AppSizes.padding,}]}
+                                    >
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
+                                            {'By signing up you agree to our '}
+                                            <Text robotoBold>{'Terms of Use.'}</Text>
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                        </View>
+
+                        <View style={{flex: 1, marginBottom: AppSizes.iphoneXBottomBarPadding,}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                                <UserAccountAbout
+                                    handleFormChange={this._handleUserFormChange}
+                                    surveyValues={survey_values}
+                                    user={form_fields.user}
+                                />
+                            </View>
+                            { isKeyboardOpen && Platform.OS === 'android' ?
+                                <View />
+                                :
+                                <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
+                                    <Button
+                                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                        containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                        disabled={!isPage2Valid}
+                                        disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                                        disabledTitleStyle={{color: AppColors.white,}}
+                                        onPress={() => this._handleFormSubmit()}
+                                        raised={true}
+                                        title={'Create Account'}
+                                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                    />
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        onPress={() => this._togglePrivacyPolicyWebView()}
+                                        style={[{marginTop: AppSizes.padding,}]}
+                                    >
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                            {'By signing up you agree to our '}
+                                            <Text robotoBold>{'Terms of Use.'}</Text>
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                        </View>
+
+                    </Pages>
+                    { this.state.loading ?
+                        <Loading />
+                        :
+                        null
+                    }
+                    <EnableAppleHealthKit
+                        handleSkip={() => this._handleEnableAppleHealthKit('apple_healthkit', false)}
+                        handleEnableAppleHealthKit={this._handleEnableAppleHealthKit}
+                        isModalOpen={isHealthKitModalOpen}
+                    />
+                    <PrivacyPolicyModal
+                        handleModalToggle={this._togglePrivacyPolicyWebView}
+                        isPrivacyPolicyOpen={isPrivacyPolicyOpen}
+                    />
+                </ImageBackground>
             </View>
         );
     }

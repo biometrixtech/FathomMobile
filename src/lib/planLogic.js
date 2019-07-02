@@ -738,14 +738,12 @@ const PlanLogic = {
         let isValid = false;
         let pageNum = 0;
         if(currentPage === 0) { // 0. Apple HealthKit (xN)
-            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0) ?
+            pageNum = isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length > 0 || newSoreBodyParts.length === 0) ?
                 2
-                : isHKNextStep === 'continue' && (newSoreBodyParts && newSoreBodyParts.length === 0) ?
-                    3
-                    : isHKNextStep === 'add_session' ?
-                        1
-                        :
-                        1;
+                : isHKNextStep === 'add_session' ?
+                    1
+                    :
+                    1;
             isValid = isHealthKitValid;
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = (pageState.pageIndex + 1);
@@ -1423,7 +1421,7 @@ const PlanLogic = {
         let secondTrigger = noTriggerCoreLogic && filteredTrainingSessions.length > 0;
         let thirdTrigger = dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let triggerStep = firstTrigger ?
-            'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand. Enjoy your off day!'
+            'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand.\n\nEnjoy your off day!'
             : secondTrigger ?
                 'You should recover from this workout naturally, but you can tap the "+" for a recovery-focused Mobilize to go the extra mile!'
                 : thirdTrigger ?
@@ -1525,11 +1523,17 @@ const PlanLogic = {
         let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
         let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
+        let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
+        let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
         return {
             currentBiomechanicsAlert,
             currentResponseAlert,
             currentStressAlert,
             extraBottomPadding,
+            isBiomechanicsLocked,
+            isResponseLocked,
+            isStressLocked,
         };
     },
 
@@ -1544,6 +1548,9 @@ const PlanLogic = {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
+        let updatedAlerts = _.cloneDeep(insightDetails.alerts);
+        updatedAlerts = _.filter(updatedAlerts, o => !(o.trigger_type === 25 || o.trigger_type >= 200));
+        insightDetails.alerts = updatedAlerts;
         let currentAlert = insightDetails.alerts[currentCardIndex];
         return {
             currentAlert,

@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import { GoogleAnalyticsTracker, } from 'react-native-google-analytics-bridge';
 import _ from 'lodash';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import moment from 'moment';
@@ -34,9 +33,6 @@ import { Button, CoachesDashboardTabBar, FathomModal, FathomPicker, Spacer, TabI
 
 // Tabs titles
 const tabs = ['TODAY', 'THIS WEEK'];
-
-// setup GA Tracker
-const GATracker = new GoogleAnalyticsTracker('UA-127040201-1');
 
 // constants
 const circleSize = ((AppSizes.screen.width - ((AppSizes.paddingMed * 3) + (AppSizes.padding * 3))) / 3);
@@ -182,10 +178,6 @@ class CoachesDashboard extends Component {
         _.delay(() => {
             this._handleEnteringApp();
         }, 500);
-        // set GA variables
-        GATracker.setUser(this.props.user.id);
-        GATracker.setAppVersion(AppUtil.getAppBuildNumber().toString());
-        GATracker.setAppName(`Fathom-${store.getState().init.environment}`);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -253,12 +245,6 @@ class CoachesDashboard extends Component {
                 </View>
             </TouchableWithoutFeedback>
         );
-    }
-
-    _onChangeTab = tabLocation => {
-        const currentScreenName = tabLocation.i === 0 ? 'TODAY' : tabLocation.i === 1 ? 'THIS WEEK' : '';
-        const fromScreenName = tabLocation.from === 0 ? 'TODAY' : tabLocation.from === 1 ? 'THIS WEEK' : '';
-        GATracker.trackScreenView(currentScreenName, { from: fromScreenName, });
     }
 
     _toggleComplianceModal = () => {
@@ -854,7 +840,6 @@ class CoachesDashboard extends Component {
             <View style={{flex: 1,}}>
                 <ScrollableTabView
                     locked={isScrollLocked || !selectedTeam}
-                    onChangeTab={tabLocation => this._onChangeTab(tabLocation)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
                         <CoachesDashboardTabBar

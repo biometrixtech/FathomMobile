@@ -11,7 +11,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Animated, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../../constants';
@@ -33,20 +33,33 @@ const customStyles = StyleSheet.create({
 class GoalPill extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            androidStyle: {
+                transform: [{rotate: '45deg',}],
+            },
+        };
         this._animatedValue = props.isSelected ? new Animated.Value(1) : new Animated.Value(0);
     }
 
     componentDidUpdate = prevProps => {
         if(prevProps.isSelected !== this.props.isSelected && this.props.isSelected) {
-            Animated.timing(this._animatedValue, {
-                duration: 250,
-                toValue:  1,
-            }).start();
+            if(Platform.OS === 'ios') {
+                Animated.timing(this._animatedValue, {
+                    duration: 250,
+                    toValue:  1,
+                }).start();
+            } else {
+                this.setState({ androidStyle: { transform: [{rotate: '45deg',}], }, });
+            }
         } else if(prevProps.isSelected !== this.props.isSelected && !this.props.isSelected) {
-            Animated.timing(this._animatedValue, {
-                duration: 250,
-                toValue:  0,
-            }).start();
+            if(Platform.OS === 'ios') {
+                Animated.timing(this._animatedValue, {
+                    duration: 250,
+                    toValue:  0,
+                }).start();
+            } else {
+                this.setState({ androidStyle: { transform: [{rotate: '0deg',}], }, });
+            }
         }
     }
 
@@ -56,7 +69,7 @@ class GoalPill extends Component {
             inputRange:  [0, 1],
             outputRange: ['0deg', '45deg'],
         });
-        const animatedStyle = {transform: [{rotate: interpolateRotation,}]};
+        const animatedStyle = Platform.OS === 'ios' ? {transform: [{rotate: interpolateRotation,}]} : this.state.androidStyle;
         return (
             <TouchableOpacity
                 activeOpacity={1}
@@ -74,13 +87,23 @@ class GoalPill extends Component {
                     >
                         {text}
                     </Text>
-                    <Animated.View style={[animatedStyle,]}>
-                        <TabIcon
-                            color={isSelected ? AppColors.zeplin.slate : AppColors.white}
-                            icon={'add'}
-                            size={AppFonts.scaleFont(20)}
-                        />
-                    </Animated.View>
+                    { Platform.OS === 'ios' ?
+                        <Animated.View style={[animatedStyle,]}>
+                            <TabIcon
+                                color={isSelected ? AppColors.zeplin.slate : AppColors.white}
+                                icon={'add'}
+                                size={AppFonts.scaleFont(20)}
+                            />
+                        </Animated.View>
+                        :
+                        <View style={[animatedStyle,]}>
+                            <TabIcon
+                                color={isSelected ? AppColors.zeplin.slate : AppColors.white}
+                                icon={'add'}
+                                size={AppFonts.scaleFont(20)}
+                            />
+                        </View>
+                    }
                 </View>
             </TouchableOpacity>
         )

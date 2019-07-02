@@ -77,7 +77,6 @@ Other Libraries used to aide development
 | [Device Info](https://github.com/react-native-community/react-native-device-info) | Device Information for React-Native iOS and Android | setting of device specific info (either reducer, display, or api) |
 | [Fabric](https://github.com/corymsmith/react-native-fabric) | A React-Native library for Fabric, Crashlytics and Answers. | 1. Logs when a user logs in<br/>2. Logs when an API is successful or failed |
 | [Forms](https://github.com/gcanti/tcomb-form-native) | Forms library for React-Native | Help with some form validation |
-| [Google Analytics Bridge](https://github.com/idehub/react-native-google-analytics-bridge) | Google Analytics Bridge is built to provide an easy interface to the native Google Analytics libraries on both iOS and Android. | __Athlete & Coach:__ <br/>1. setUser<br/>2. setAppVersion<br/>3. setAppName<br/>4. trackScreenView |
 | [NetInfo](https://github.com/react-native-community/react-native-netinfo) | React-Native Network Info API for Android & iOS | Help for other installed libraries |
 | [UUID](https://github.com/Danakt/uuid-by-string) | Generates the RFC-4122 Name-Based UUID | Help with getting some device specific information |
 
