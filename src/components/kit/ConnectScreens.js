@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
 });
 
 /* Components =================================================================== */
-
 const TopNav = ({ darkColor, onBack, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
@@ -363,15 +362,8 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
                         <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
                             {'(Workout started when '}
-                        </Text>
-                        <TabIcon
-                            color={AppColors.zeplin.slate}
-                            icon={'run'}
-                            size={20}
-                            type={'material-community'}
-                        />
-                        <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
-                            {' LED is solid green)'}
+                            <Text robotoBold>{'Running LED'}</Text>
+                            {' is solid green)'}
                         </Text>
                     </View>
                 }

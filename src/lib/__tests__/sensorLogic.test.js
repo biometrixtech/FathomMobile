@@ -1,5 +1,6 @@
 /* global it expect jest */
-/* global it expect beforeAll */
+/* global it expect describe */
+/* global it expect beforeEach */
 import 'react-native';
 
 // import third-party libraries
@@ -7,6 +8,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 // import logic file(s)
+import { ble as BleActions, } from '../../actions';
 import { SensorLogic, } from '../';
 
 // setup helper functions
@@ -74,6 +76,32 @@ const helperFunctions = {
     },
 
 };
+
+/*describe('3Sensor Tests', () => {
+    beforeEach(() => jest.resetModules());
+
+    it('Get BLE Mac Address', async () => {
+        const dispatch = jest.fn();
+        jest.mock('NativeModules', () => ({
+            BleManager: {
+                addListener:      jest.fn(),
+                checkState:       jest.fn(),
+                connect:          jest.fn(() => Promise.resolve()),
+                disconnect:       jest.fn(() => Promise.resolve()),
+                read:             jest.fn(),
+                retrieveServices: jest.fn(() => Promise.resolve({ id: '00:00:00:00:00', })),
+                write:            jest.fn(),
+            }
+        }));
+        let macAddressRes = BleActions.getBLEMacAddress('testing')(dispatch)
+            // .then(res => console.log('res',res))
+            // .catch(err => console.log('err',err));
+        // expect(macAddressRes).toEqual('00:00:00:00:00');
+        await expect(macAddressRes).resolves.toBe('00:00:00:00:00');
+        // expect(BleActions.getBLEMacAddress('testing')(dispatch)).rejects.toBe('00:00:00:00:00');
+    });
+
+});*/
 
 it('Handles Sensor File Render Logic - Not much data', () => {
     let sensorData = helperFunctions.getSensorDataObject();

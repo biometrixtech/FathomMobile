@@ -127,6 +127,11 @@ initialize() {
             # iOS patches
             # none for now...
 
+            # both platform patches
+            sed -i '' 's/useWebKit={false}/useWebKit={true}/g' ./node_modules/react-native-remote-svg/SvgImage.js
+            # TODO: NEED TO FIX BELOW TO COMMENT OUT LINE
+            # sed -i '' 's/scalesPageToFit={true}/scalesPageToFit={false}/g' ./node_modules/react-native-remote-svg/SvgImage.js
+
             # libraray patches
             yes | cp ./custom/javascript/ActionButtonItem.js ./node_modules/react-native-action-button/ActionButtonItem.js
             yes | cp ./custom/javascript/AppIntroSlider.js ./node_modules/react-native-app-intro-slider/AppIntroSlider.js
