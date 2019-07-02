@@ -183,7 +183,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                             {content.subtitle}
                         </View>
-                        { page === 2 &&
+                        { page === 1 &&
                             <Text onPress={() => handleAlertPress()} robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}>{'What if my sensor LEDs are blinking blue?'}</Text>
                         }
                     </View>

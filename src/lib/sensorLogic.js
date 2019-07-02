@@ -257,7 +257,7 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Peel the tan, ankle sensor liner. Stick just above the tailbone in the center of your spine.'}
+                        {'Peel the tan, ankle sensor liner. Stick the sensor above & behind each outer ankle.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
                         {'(Move foot, ensure sensors '}

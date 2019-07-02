@@ -475,13 +475,13 @@ class BluetoothConnect3Sensor extends Component {
                     />
                     <Placement
                         currentPage={pageIndex === 2}
+                        handleAlertPress={() => this._handleAlertPress()}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={1}
                     />
                     <Placement
                         currentPage={pageIndex === 3}
-                        handleAlertPress={() => this._handleAlertPress()}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={2}

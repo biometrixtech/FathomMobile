@@ -137,6 +137,28 @@ class FathomCharts extends PureComponent {
                     domainPadding={{ x: AppSizes.padding, }}
                 >
 
+                    {/* to highlight today
+                    <V.VictoryAxis
+                        animate={{ duration: 300, easing: 'bounce', }}
+                        dependentAxis
+                        tickFormat={t => ' '}
+                        tickVmy only alues={[7]}
+                        standalone={false}
+                        style={{
+                            grid: { stroke: 'red', size: 1, }
+                        }}
+                        // x={updatedBarData.length === 14 ? 'key' : 'x'}
+                        // y0={7}
+                    />
+                    <V.VictoryAxis
+                        animate={{ duration: 300, easing: 'bounce', }}
+                        // axisValue={data}
+                        dependentAxis
+                        style={{
+                            grid: { stroke: 'red', size: 1, }
+                        }}
+                    /> */}
+
                     {/* Y-Axis */}
                     <V.VictoryAxis
                         dependentAxis
