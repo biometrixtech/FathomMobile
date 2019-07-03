@@ -70,7 +70,7 @@ class XAxisLabels extends PureComponent {
                 ]}
             >
                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                    {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
+                    {currentData.x.charAt(1) ? `${currentData.x.charAt(0)}${currentData.x.charAt(1)}` : currentData.x.charAt(0)}
                 </Text>
                 { currentData.hasMultipleSports ?
                     <TabIcon
@@ -131,8 +131,9 @@ class InsightsCharts extends PureComponent {
                 }
 
                 <V.VictoryChart
-                    animate={{ duration: 300, }}
+                    animate={true}
                     domainPadding={{ x: AppSizes.padding, }}
+                    height={200}
                     maxDomain={currentAlert.visualization_type === 7 ? {y: 5,} : {}}
                     minDomain={currentAlert.visualization_type === 7 ? {y: 0,} : {}}
                 >
@@ -185,7 +186,6 @@ class InsightsCharts extends PureComponent {
                     {/* visualization_type 8*/}
                     { (currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) &&
                         <V.VictoryBar
-                            animate={false}
                             cornerRadius={{ bottom: (barWidth / 2), top: (barWidth / 2), }}
                             data={updatedBarData}
                             style={{ data: { fill: d => d.fillColor, width: barWidth, }, }}

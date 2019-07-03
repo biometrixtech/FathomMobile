@@ -71,7 +71,6 @@ class Insight extends PureComponent {
             showLeftDateButton,
             showRightDateButton,
         } = PlanLogic.handleInsightRenderLogic(currentAlert, currentDataIndex, insightType);
-        let { subtitleColor, } = PlanLogic.handleTrendRenderLogic(currentAlert.data[currentDataIndex]);
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -197,7 +196,7 @@ class Insight extends PureComponent {
                                                         <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                                             <Image
                                                                 source={sessionImageSource}
-                                                                style={{height: 30, marginRight: AppSizes.paddingSml, tintColor: subtitleColor, width: 30,}}
+                                                                style={{height: 30, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.splashLight, width: 30,}}
                                                             />
                                                             <Text oswaldRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
                                                                 {sportTitle}

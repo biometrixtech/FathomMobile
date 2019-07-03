@@ -1705,7 +1705,7 @@ const PlanLogic = {
             _.filter(MyPlanConstants.postSessionFeel, scale => scale.value === session.RPE)[0].workoutLabel
             :
             '';
-        let trainingVolume = 'Load Metric TBD';
+        let trainingVolume = `${session.training_volume} Load Units`;
         return {
             distance,
             duration,
@@ -1732,8 +1732,27 @@ const PlanLogic = {
             if(!textMatchedArray) {
                 cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
             } else {
-                // TODO: THIS NEEDS TO BE FIXED
-                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
+                    cleanedText = (
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                            {splitTextArray[0]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
+                            {splitTextArray[1]}
+                        </Text>
+                    );
+                } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
+                    cleanedText = (
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                            {splitTextArray[0]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
+                            {splitTextArray[1]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[1]}</Text>
+                            {splitTextArray[2]}
+                        </Text>
+                    );
+                } else {
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                }
             }
         } else {
             cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
@@ -1818,6 +1837,7 @@ const PlanLogic = {
             });
             currentLineGraphData.pain = painLineGraphData;
             currentLineGraphData.soreness = sorenessLineGraphData;
+            console.log('currentLineGraphData',currentLineGraphData);
         }
         return {
             barWidth,
