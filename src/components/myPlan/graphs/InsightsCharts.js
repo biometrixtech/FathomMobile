@@ -2,10 +2,10 @@
  * InsightsCharts
  *
      <InsightsCharts
-        barData={data}
-        containerWidth={AppSizes.screen.width}
         currentAlert={currentAlert}
-        startSliceValue={7}
+        data={currentAlert.data}
+        selectedIndex={currentDataIndex}
+        showSelection={showSelection}
     />
  *
  */
@@ -19,7 +19,7 @@ import _ from 'lodash';
 import Dash from 'react-native-dash';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, } from '../../../constants';
+import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         width:          AppFonts.scaleFont(30),
     },
     yAxis: {
-        color:     AppColors.zeplin.slate,
+        color:     AppColors.zeplin.slateLight,
         fontSize:  AppFonts.scaleFont(10),
         textAlign: 'center',
         width:     300,
@@ -57,27 +57,24 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 class XAxisLabels extends PureComponent {
     render = () => {
-        const { data, index, type, x, y, } = this.props;
+        const { data, index, selectedIndex, showSelection, x, y, } = this.props;
         const currentData = data[index];
-        let dataArrayLengthTrim = type === 4 ? 4 : 1;
-        let highlightedIndex = index === (data.length - dataArrayLengthTrim);
         if(!currentData) {
             return (null);
         }
         return (
-            <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
-                { highlightedIndex ?
-                    <Text robotoBold style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                        {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
-                    </Text>
-                    :
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                        {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
-                    </Text>
-                }
+            <View
+                style={[
+                    showSelection ? {borderColor: selectedIndex === index ? AppColors.zeplin.slateXLight : AppColors.transparent, borderRadius: 10, borderWidth: 2,} : {},
+                    {left: (x - this.props.style.padding), position: 'absolute', top: y,}
+                ]}
+            >
+                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
+                    {data.length === 14 ? currentData.x.charAt(0) : currentData.x}
+                </Text>
                 { currentData.hasMultipleSports ?
                     <TabIcon
-                        color={highlightedIndex ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight}
+                        color={AppColors.zeplin.slateXLight}
                         icon={'checkbox-multiple-marked-circle'}
                         size={15}
                         type={'material-community'}
@@ -85,7 +82,7 @@ class XAxisLabels extends PureComponent {
                     : currentData.filteredSport ?
                         <Image
                             source={currentData.filteredSport.imagePath}
-                            style={{height: 15, tintColor: highlightedIndex ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight, width: 15,}}
+                            style={{height: 15, tintColor: AppColors.zeplin.slateXLight, width: 15,}}
                         />
                         :
                         <View />
@@ -98,71 +95,51 @@ class XAxisLabels extends PureComponent {
 
 class InsightsCharts extends PureComponent {
     static propTypes = {
-        barData:         PropTypes.array.isRequired,
-        currentAlert:    PropTypes.object,
-        startSliceValue: PropTypes.number.isRequired,
+        currentAlert:  PropTypes.object,
+        data:          PropTypes.array.isRequired,
+        selectedIndex: PropTypes.number,
+        showSelection: PropTypes.bool,
     };
 
     static defaultProps = {
-        currentAlert: false,
+        currentAlert:  false,
+        selectedIndex: -1,
+        showSelection: true,
     };
 
     render = () => {
-        const { barData, containerWidth, currentAlert, } = this.props;
+        const { currentAlert, data, selectedIndex, showSelection, } = this.props;
         if(!currentAlert || !currentAlert.visualization_type || !currentAlert.visualization_data) {
             return (null);
         }
         let {
             barWidth,
+            currentLineGraphData,
             hasLeftAxis,
             hasRightAxis,
-            lineChartData,
-            lineChartColor,
             updatedBarData,
-        } = PlanLogic.handleFathomChartsRenderLogic(currentAlert.data, barData, currentAlert.visualization_type, currentAlert.visualization_data.plot_legends, this.props.startSliceValue, currentAlert.visualization_data, containerWidth);
+        } = PlanLogic.handleInsightsChartsRenderLogic(currentAlert, data);
         return (
             <View pointerEvents={'none'}>
 
-                { hasLeftAxis &&
+                { (hasLeftAxis && showSelection) &&
                     <View style={[styles.xyAxisWrapper, {left: 0,}]}>
                         <Text robotoRegular style={[styles.yAxis, {transform: [{ rotate: '-90deg'}],}]}>
-                            {_.toLower(currentAlert.visualization_data.y_axis_1)}
+                            {currentAlert.visualization_data.y_axis_1}
                         </Text>
                     </View>
                 }
 
-
                 <V.VictoryChart
                     animate={{ duration: 300, }}
                     domainPadding={{ x: AppSizes.padding, }}
+                    maxDomain={currentAlert.visualization_type === 7 ? {y: 5,} : {}}
+                    minDomain={currentAlert.visualization_type === 7 ? {y: 0,} : {}}
                 >
-
-                    {/* to highlight today
-                    <V.VictoryAxis
-                        animate={{ duration: 300, easing: 'bounce', }}
-                        dependentAxis
-                        tickFormat={t => ' '}
-                        tickVmy only alues={[7]}
-                        standalone={false}
-                        style={{
-                            grid: { stroke: 'red', size: 1, }
-                        }}
-                        // x={updatedBarData.length === 14 ? 'key' : 'x'}
-                        // y0={7}
-                    /> */}
-                    <V.VictoryAxis
-                        animate={{ duration: 300, easing: 'bounce', }}
-                        // axisValue={data}
-                        dependentAxis
-                        style={{
-                            grid: { stroke: 'red', size: 1, }
-                        }}
-                    />
 
                     {/* Y-Axis */}
                     <V.VictoryAxis
                         dependentAxis
-                        tickFormat={t => ' '}
                         standalone={true}
                         style={{
                             axis: {
@@ -179,7 +156,7 @@ class InsightsCharts extends PureComponent {
                                 fontSize: 0,
                             },
                         }}
-                        x={updatedBarData.length === 14 ? 'key' : 'x'}
+                        tickFormat={t => ' '}
                     />
 
                     {/* X-Axis */}
@@ -190,100 +167,63 @@ class InsightsCharts extends PureComponent {
                                 strokeOpacity: 0.5,
                                 size:          1,
                             },
+                            grid: {
+                                stroke:          t => showSelection && (t - 1) === selectedIndex ? AppColors.zeplin.slateXLight : AppColors.transparent,
+                                strokeDasharray: [5, 5],
+                                size:            1,
+                            },
                         }}
-                        tickLabelComponent={<XAxisLabels data={updatedBarData} type={currentAlert.visualization_type} />}
-                        tickValues={_.map(updatedBarData, o => updatedBarData.length === 14 ? o.key : o.x)}
-                        x={updatedBarData.length === 14 ? 'key' : 'x'}
+                        tickLabelComponent={
+                            <XAxisLabels
+                                data={(currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) ? updatedBarData : currentLineGraphData.pain}
+                                selectedIndex={selectedIndex}
+                                showSelection={showSelection}
+                            />
+                        }
                     />
 
-                    {/* visualization_type 1 - always show the bar graph. will autofill for visualization_type 2. */}
-                    <V.VictoryBar
-                        animate={false}
-                        cornerRadius={{ bottom: (barWidth / 2), top: (barWidth / 2), }}
-                        data={updatedBarData}
-                        style={{ data: { fill: d => currentAlert.visualization_type !== 2 ? AppColors.zeplin.slateXLight : d.fillColor, width: barWidth, }, }}
-                        x={updatedBarData.length === 14 ? 'key' : 'x'}
-                    />
-
-                    { currentAlert.visualization_type === 3 &&
-                        <V.VictoryGroup>
-                            <V.VictoryLine
-                                data={lineChartData}
-                                interpolation={'monotoneX'}
-                                style={{ data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 5, }, }}
-                                x={updatedBarData.length === 14 ? 'key' : 'x'}
-                            />
-                            <V.VictoryScatter
-                                data={lineChartData}
-                                size={5}
-                                style={{ data: { fill: lineChartColor, }, }}
-                                x={updatedBarData.length === 14 ? 'key' : 'x'}
-                            />
-                        </V.VictoryGroup>
-                    }
-
-                    { currentAlert.visualization_type === 4 &&
-                        <V.VictoryGroup>
-                            <V.VictoryLine
-                                data={_.map(lineChartData, (data, key) => {
-                                    if(key >= 0 && key <= 2) {
-                                        let newData = _.cloneDeep(data);
-                                        newData.value = null;
-                                        newData.y = null;
-                                        return newData;
-                                    }
-                                    return data;
-                                })}
-                                interpolation={'monotoneX'}
-                                style={{ data: { stroke: lineChartColor, strokeDasharray: 4, strokeWidth: 4, }, }}
-                                x={updatedBarData.length === 14 ? 'key' : 'x'}
-                            />
-                            <V.VictoryLine
-                                data={_.map(lineChartData, (data, key) => {
-                                    if(key >= 4 && key <= 6) {
-                                        let newData = _.cloneDeep(data);
-                                        newData.value = null;
-                                        newData.y = null;
-                                        return newData;
-                                    }
-                                    return data;
-                                })}
-                                interpolation={'monotoneX'}
-                                style={{ data: { stroke: lineChartColor, strokeLinecap: 'round', strokeWidth: 4, }, }}
-                                x={updatedBarData.length === 14 ? 'key' : 'x'}
-                            />
-                            <V.VictoryScatter
-                                data={lineChartData}
-                                size={5}
-                                style={{ data: { fill: lineChartColor, }, }}
-                                x={updatedBarData.length === 14 ? 'key' : 'x'}
-                            />
-                        </V.VictoryGroup>
-                    }
-
-                    { currentAlert.visualization_type === 5 &&
-                        <V.VictoryScatter
-                            data={lineChartData}
-                            labelComponent={
-                                <V.VictoryLabel
-                                    dy={AppFonts.scaleFont(14)}
-                                    style={{ fill: AppColors.white, fontFamily: 'Oswald', fontSize: AppFonts.scaleFont(12), }}
-                                    text={datum => datum.displayValue}
-                                />
-                            }
-                            labels={datum => datum.y}
-                            size={14}
-                            style={{ data: { fill: d => d.fillColor, }, }}
-                            x={updatedBarData.length === 14 ? 'key' : 'x'}
+                    {/* visualization_type 8*/}
+                    { (currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) &&
+                        <V.VictoryBar
+                            animate={false}
+                            cornerRadius={{ bottom: (barWidth / 2), top: (barWidth / 2), }}
+                            data={updatedBarData}
+                            style={{ data: { fill: d => d.fillColor, width: barWidth, }, }}
                         />
+                    }
+
+                    {/* visualization_type 7*/}
+                    { currentAlert.visualization_type === 7 &&
+                        <V.VictoryGroup>
+                            <V.VictoryLine
+                                data={currentLineGraphData.pain}
+                                interpolation={'monotoneX'}
+                                style={{ data: { stroke: d => d[0].color, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                            />
+                            <V.VictoryScatter
+                                data={currentLineGraphData.pain}
+                                size={5}
+                                style={{ data: { fill: d => d.color, }, }}
+                            />
+                            <V.VictoryLine
+                                data={currentLineGraphData.soreness}
+                                interpolation={'monotoneX'}
+                                style={{ data: { stroke: d => d[0].color, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                            />
+                            <V.VictoryScatter
+                                data={currentLineGraphData.soreness}
+                                size={5}
+                                style={{ data: { fill: d => d.color, }, }}
+                            />
+                        </V.VictoryGroup>
                     }
 
                 </V.VictoryChart>
 
-                { hasRightAxis &&
+                { (hasRightAxis && showSelection) &&
                     <View style={[styles.xyAxisWrapper, {right: 0,}]}>
                         <Text robotoRegular style={[styles.yAxis, {transform: [{ rotate: '90deg'}],}]}>
-                            {_.toLower(currentAlert.visualization_data.y_axis_2)}
+                            {currentAlert.visualization_data.y_axis_2}
                         </Text>
                     </View>
                 }
@@ -301,22 +241,41 @@ class InsightsCharts extends PureComponent {
                                     ]}
                                 >
                                     { legend.type === 0 ?
-                                        <View style={[styles.keyCircle, { backgroundColor: legend.color === 0 ? AppColors.zeplin.successLight : legend.color === 1 ? AppColors.zeplin.warningLight : legend.color === 2 ? AppColors.zeplin.errorLight : AppColors.zeplin.slateXLight, }]} />
+                                        <View
+                                            style={[
+                                                styles.keyCircle,
+                                                { backgroundColor: PlanLogic.returnInsightColorString(legend.color), }
+                                            ]}
+                                        />
                                         : legend.type === 1 ?
                                             null
                                             : legend.type === 2 ?
-                                                <Dash dashColor={legend.color === 0 ? AppColors.zeplin.successLight : legend.color === 1 ? AppColors.zeplin.warningLight : legend.color === 2 ? AppColors.zeplin.errorLight : AppColors.zeplin.slateXLight} style={{marginRight: AppSizes.paddingSml, width: '10%',}} />
-                                                :
-                                                null
+                                                <Dash
+                                                    dashColor={PlanLogic.returnInsightColorString(legend.color)}
+                                                    style={{
+                                                        marginRight: AppSizes.paddingSml,
+                                                        width:       '10%',
+                                                    }}
+                                                />
+                                                : legend.type === 3 ?
+                                                    <View
+                                                        style={{
+                                                            backgroundColor: PlanLogic.returnInsightColorString(legend.color),
+                                                            borderRadius:    5,
+                                                            height:          10,
+                                                            marginRight:     AppSizes.paddingSml,
+                                                            width:           35,
+                                                        }}
+                                                    />
+                                                    :
+                                                    null
                                     }
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{_.toLower(legend.text)}</Text>
+                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(legend.color), fontSize: AppFonts.scaleFont(12),}}>{legend.text}</Text>
                                 </View>
                             );
                         })
                     }
                 </View>
-
-                <View style={[StyleSheet.absoluteFill, {height: '100%', width: '100%',},]} />
 
             </View>
         );

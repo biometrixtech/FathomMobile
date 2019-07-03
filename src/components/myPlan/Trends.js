@@ -14,7 +14,7 @@ import { Image, Platform, ScrollView, StatusBar, StyleSheet, TouchableOpacity, V
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { FathomCharts, } from './graphs';
+import { FathomCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { FathomModal, Spacer, TabIcon, Text, } from '../custom';
 import { store } from '../../store';
@@ -115,6 +115,8 @@ class Trends extends PureComponent {
         const { isCoachModalOpen, } = this.state;
         const { plan, } = this.props;
         let {
+            biomechanics,
+            bodyResponse,
             currentBiomechanicsAlert,
             currentBodyResponseAlert,
             currentResponseAlert,
@@ -126,26 +128,27 @@ class Trends extends PureComponent {
             isResponseLocked,
             isStressLocked,
             isWorkloadLocked,
+            workload,
         } = PlanLogic.handleTrendsRenderLogic(plan, Platform.OS);
         let currentStressAlertText = PlanLogic.handleChartTitleRenderLogic(currentStressAlert, styles.cardSubtitle);
         let currentResponseAlertText = PlanLogic.handleChartTitleRenderLogic(currentResponseAlert, styles.cardSubtitle);
         let currentBiomechanicsAlertText = PlanLogic.handleChartTitleRenderLogic(currentBiomechanicsAlert, styles.cardSubtitle);
-        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(currentBodyResponseAlert.status.bolded_text, currentBodyResponseAlert.status.text);
-        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(currentWorkloadAlert.status.bolded_text, currentWorkloadAlert.status.text);
+        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse.status.bolded_text, bodyResponse.status.text);
+        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(workload.status.bolded_text, workload.status.text);
         let {
             icon: workloadIcon,
             iconType: workloadIconType,
             imageSource: workloadImageSource,
             subtitleColor: workloadSubtitleColor,
             sportName: workloadSportName,
-        } = PlanLogic.handleTrendRenderLogic(currentWorkloadAlert);
+        } = PlanLogic.handleTrendRenderLogic(workload);
         let {
             icon: bodyResponseIcon,
             iconType: bodyResponseIconType,
             imageSource: bodyResponseImageSource,
             subtitleColor: bodyResponseSubtitleColor,
             sportName: bodyResponseSportName,
-        } = PlanLogic.handleTrendRenderLogic(currentBodyResponseAlert);
+        } = PlanLogic.handleTrendRenderLogic(bodyResponse);
         return (
             <View style={{flex: 1,}}>
 
@@ -178,12 +181,11 @@ class Trends extends PureComponent {
                             { !isWorkloadLocked &&
                                 <Text robotoRegular style={[styles.cardTitle,]}>{'Workouts'}</Text>
                             }
-                            {/*<FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentStressAlert}
-                                startSliceValue={7}
-                            />*/}
+                            <InsightsCharts
+                                currentAlert={workload}
+                                data={workload.data}
+                                showSelection={false}
+                            />
                             { isWorkloadLocked &&
                                 <View style={[styles.lockedCardWrapper,]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -231,12 +233,11 @@ class Trends extends PureComponent {
                             { !isBodyResponseLocked &&
                                 <Text robotoRegular style={[styles.cardTitle,]}>{'Body Response'}</Text>
                             }
-                            {/*<FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentStressAlert}
-                                startSliceValue={7}
-                            />*/}
+                            <InsightsCharts
+                                currentAlert={bodyResponse}
+                                data={bodyResponse.data}
+                                showSelection={false}
+                            />
                             { isBodyResponseLocked &&
                                 <View style={[styles.lockedCardWrapper,]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -277,12 +278,11 @@ class Trends extends PureComponent {
                             }
                         </TouchableOpacity>
                         <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}>
-                            {/*<FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentStressAlert}
-                                startSliceValue={7}
-                            />*/}
+                            <InsightsCharts
+                                currentAlert={biomechanics}
+                                data={biomechanics.data}
+                                showSelection={false}
+                            />
                             <View style={[styles.lockedCardWrapper,]}>
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
                                     <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Biomechanics'}</Text>

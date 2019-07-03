@@ -16,6 +16,7 @@ import _ from 'lodash';
 
 // Consts and Libs
 import { AppColors, MyPlan as MyPlanConstants, } from '../../constants';
+import { PlanLogic, } from '../../lib';
 
 /* Component ==================================================================== */
 class BodyOverlay extends Component {
@@ -113,38 +114,7 @@ class BodyOverlay extends Component {
 
     render = () => {
         const { bodyParts, remainingWidth, } = this.props;
-        let frontBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === true);
-        let backBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === false);
-        let filteredFrontBodyParts = _.flatten(
-            _.map(bodyParts, bodyPart => {
-                let filteredBodyPart = _.filter(frontBodyParts, o => o.index === bodyPart.body_part);
-                if(filteredBodyPart.length > 0) {
-                    let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
-                    updatedBodyPart.imageSource = this._getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = bodyPart.pain === true ?
-                        bodyPart.value === 1 ? `${AppColors.zeplin.errorLight}FF` : bodyPart.value === 2 ? `${AppColors.zeplin.errorLight}80` : `${AppColors.zeplin.errorLight}40`
-                        :
-                        bodyPart.value === 1 ? `${AppColors.zeplin.warningLight}FF` : bodyPart.value === 2 ? `${AppColors.zeplin.warningLight}80` : `${AppColors.zeplin.warningLight}40`;
-                    return updatedBodyPart;
-                }
-                return [];
-            })
-        );
-        let filteredBackBodyParts = _.flatten(
-            _.map(bodyParts, bodyPart => {
-                let filteredBodyPart = _.filter(backBodyParts, o => o.index === bodyPart.body_part);
-                if(filteredBodyPart.length > 0) {
-                    let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
-                    updatedBodyPart.imageSource = this._getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = bodyPart.pain === true ?
-                        bodyPart.value === 1 ? `${AppColors.zeplin.errorLight}FF` : bodyPart.value === 2 ? `${AppColors.zeplin.errorLight}80` : `${AppColors.zeplin.errorLight}40`
-                        :
-                        bodyPart.value === 1 ? `${AppColors.zeplin.warningLight}FF` : bodyPart.value === 2 ? `${AppColors.zeplin.warningLight}80` : `${AppColors.zeplin.warningLight}40`;
-                    return updatedBodyPart;
-                }
-                return [];
-            })
-        );
+        let { filteredBackBodyParts, filteredFrontBodyParts, } = PlanLogic.handleBodyOverlayRenderLogic(bodyParts, this._getImageString);
         return (
             <View style={{flexDirection: 'row',}}>
                 <View>

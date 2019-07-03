@@ -10,15 +10,12 @@
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
-// import { ImageBackground, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { BodyOverlay, Spacer, TabIcon, Text, } from '../custom';
-// import { Button, DeckCards, Tooltip, } from '../custom';
-// import { FathomCharts, } from './graphs';
+import { InsightsCharts, } from './graphs';
 import { PlanLogic, } from '../../lib';
-// import { AppUtil, } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -32,7 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor:  AppColors.white,
         borderRadius:     12,
         elevation:        2,
-        marginBottom:     AppSizes.padding,
+        marginBottom:     AppSizes.iphoneXBottomBarPadding,
         marginHorizontal: AppSizes.paddingMed,
         padding:          AppSizes.padding,
     },
@@ -42,53 +39,41 @@ const styles = StyleSheet.create({
 class Insight extends PureComponent {
     constructor(props) {
         super(props);
-        const { insightType, plan, } = props;
+        const { insightType, plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentAlert = insightType === 7 ? trends.body_response : insightType === 8 ? trends.workload : {};
-        let newCurrentDataIndex = _.findLastIndex(currentAlert.data); // TODO: update to trim array down first?
+        let currentAlert = insightType === 7 ? _.cloneDeep(trends.body_response) : insightType === 8 ? _.cloneDeep(trends.workload) : {};
+        currentAlert.data = _.slice(currentAlert.data, 7, currentAlert.data.length);
         this.state  = {
-            currentDataIndex: newCurrentDataIndex,
+            currentAlert:     currentAlert,
+            currentDataIndex: 6, // NOTE: WILL HAVE TO ADDRESS WHEN WE HAVE AN ARRAY LARGER THAN 7
         };
     }
 
-    _renderPreviousPage = () => {
-        const { currentDataIndex, } = this.state;
-        let newPage = (currentDataIndex - 1); // TODO: DONT LET GO PAST CERTAIN INDEX
+    _renderNextPage = () => {
+        let newPage = (this.state.currentDataIndex + 1);
         this.setState({ currentDataIndex: newPage, });
     }
 
-    _renderNextPage = () => {
-        const { currentDataIndex, } = this.state;
-        let newPage = (currentDataIndex + 1);
+    _renderPreviousPage = () => {
+        let newPage = (this.state.currentDataIndex - 1);
         this.setState({ currentDataIndex: newPage, });
     }
 
     render = () => {
-        const { insightType, plan, } = this.props;
-        const { currentDataIndex, } = this.state;
-        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let insightTitle = insightType === 7 ? 'BODY RESPONSE' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
-        let currentAlert = insightType === 7 ? trends.body_response : insightType === 8 ? trends.workload : {};
-        let showRightDateButton = currentDataIndex !== (currentAlert.data.length - 1);
-        let showLeftDateButton = currentDataIndex > 7;
-        let selectedDate = moment(currentAlert.data[currentDataIndex].date, 'YYYY-MM-DD').format('ddd. MMM Do');
-        let sessions = currentAlert.data[currentDataIndex].sessions;
-        let cardTitle = insightType === 7 ? 'TISSUE REPORT' : insightType === 8 ? 'WORKOUT SUMMARY' : '';
-        let subtitleText = currentAlert.data[currentDataIndex].status.text;
-        let subtitleBoldedText = currentAlert.data[currentDataIndex].status.bolded_text;
-        console.log(currentDataIndex,currentAlert,currentAlert.data[currentDataIndex]);
+        const { insightType, } = this.props;
+        const { currentAlert, currentDataIndex, } = this.state;
         let {
-            icon,
-            iconType,
-            imageSource,
-            subtitleColor,
-            sportName,
-        } = PlanLogic.handleTrendRenderLogic(currentAlert.data[currentDataIndex]);
-        let cleanedSubtitleText = PlanLogic.handleTrendsTitleRenderLogic(subtitleBoldedText, subtitleText);
+            cardTitle,
+            insightTitle,
+            selectedDate,
+            sessions,
+            showLeftDateButton,
+            showRightDateButton,
+        } = PlanLogic.handleInsightRenderLogic(currentAlert, currentDataIndex, insightType);
+        let { subtitleColor, } = PlanLogic.handleTrendRenderLogic(currentAlert.data[currentDataIndex]);
         return (
-            <View style={{backgroundColor: AppColors.white, flex: 1, paddingBottom: AppSizes.iphoneXBottomBarPadding,}}>
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
                 <View style={{backgroundColor: AppColors.white, height: AppSizes.statusBarHeight,}} />
 
@@ -121,36 +106,16 @@ class Insight extends PureComponent {
                                 <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28),}}>
                                     {_.toUpper(insightTitle)}
                                 </Text>
-                                <View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingSml,}}>
-                                    { icon ?
-                                        <TabIcon
-                                            color={subtitleColor}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={icon}
-                                            size={20}
-                                            type={iconType}
-                                        />
-                                        : sportName ?
-                                            <Image
-                                                source={imageSource}
-                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: subtitleColor, width: 20,}}
-                                            />
-                                            :
-                                            null
-                                    }
-                                    {cleanedSubtitleText}
-                                </View>
                             </View>
                         </View>
 
-                        {/*<View style={{marginBottom: AppSizes.padding,}}>
-                            <FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, startSliceValue)}
-                                containerWidth={AppSizes.screen.width}
+                        <View style={{marginBottom: AppSizes.padding,}}>
+                            <InsightsCharts
                                 currentAlert={currentAlert}
-                                startSliceValue={startSliceValue}
+                                data={currentAlert.data}
+                                selectedIndex={currentDataIndex}
                             />
-                        </View>*/}
+                        </View>
 
                         <View style={[AppStyles.scaleButtonShadowEffect, styles.cardStyle,]}>
 
@@ -183,11 +148,9 @@ class Insight extends PureComponent {
                                 </View>
                             </View>
 
-                            {/* PAGES? */}
                             { insightType === 7 ?
                                 <View>
                                     <View style={{alignItems: 'center', borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, paddingVertical: AppSizes.padding,}}>
-                                        {/* BODY PART STUFF HERE */}
                                         <BodyOverlay
                                             bodyParts={currentAlert.data[currentDataIndex].body_parts}
                                             remainingWidth={(AppSizes.screen.width - (AppSizes.paddingMed + AppSizes.padding))}
@@ -200,8 +163,8 @@ class Insight extends PureComponent {
                                             </Text>
                                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml,}}>
                                                 <View style={{backgroundColor: AppColors.zeplin.warningLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: AppColors.zeplin.warningLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, opacity: 0.5, width: 20,}} />
-                                                <View style={{backgroundColor: AppColors.zeplin.warningLight, borderRadius: (20 / 2), height: 20, opacity: 0.25, width: 20,}} />
+                                                <View style={{backgroundColor: `${AppColors.zeplin.warningLight}80`, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: `${AppColors.zeplin.warningLight}40`, borderRadius: (20 / 2), height: 20, width: 20,}} />
                                             </View>
                                         </View>
                                         <View>
@@ -210,8 +173,8 @@ class Insight extends PureComponent {
                                             </Text>
                                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml,}}>
                                                 <View style={{backgroundColor: AppColors.zeplin.errorLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: AppColors.zeplin.errorLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, opacity: 0.5, width: 20,}} />
-                                                <View style={{backgroundColor: AppColors.zeplin.errorLight, borderRadius: (20 / 2), height: 20, opacity: 0.25, width: 20,}} />
+                                                <View style={{backgroundColor: `${AppColors.zeplin.errorLight}80`, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: `${AppColors.zeplin.errorLight}40`, borderRadius: (20 / 2), height: 20, width: 20,}} />
                                             </View>
                                         </View>
                                     </View>
@@ -227,6 +190,7 @@ class Insight extends PureComponent {
                                                     rpe,
                                                     source,
                                                     sportTitle,
+                                                    trainingVolume,
                                                 } = PlanLogic.handleWorkloadSessionRenderLogic(session);
                                                 return (
                                                     <View key={i} style={[{paddingVertical: AppSizes.padding,} , (sessions.length - 1) !== i ? {borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1,} : {}]}>
@@ -277,17 +241,28 @@ class Insight extends PureComponent {
                                                                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${distance} ${session.distance > 0 ? 'miles' : 'mile'}`}</Text>
                                                                 </View>
                                                             }
+                                                            <View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingMed,}}>
+                                                                <TabIcon
+                                                                    color={AppColors.zeplin.splashLight}
+                                                                    containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                                                    icon={'weight'}
+                                                                    size={20}
+                                                                    type={'material-community'}
+                                                                />
+                                                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{trainingVolume}</Text>
+                                                            </View>
                                                         </View>
                                                     </View>
                                                 )
                                             })}
                                         </View>
                                         :
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'No workouts logged'}</Text>
+                                        <View style={{alignItems: 'center', justifyContent: 'center', paddingVertical: AppSizes.padding,}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'No workouts logged'}</Text>
+                                        </View>
                                     :
                                     null
                             }
-
 
                         </View>
 
