@@ -16,6 +16,9 @@ import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, View, } from 'react-native';
 
+// import third-party libraries
+import _ from 'lodash';
+
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan } from '../../../constants';
 import { TabIcon, Text } from '../../custom';
@@ -30,6 +33,17 @@ class ExerciseListItem extends Component {
             dosage:         cleanedExercise.dosage,
             imageThumbnail: {uri: cleanedExercise.thumbnailUrl},
         };
+    }
+
+    componentDidUpdate = prevProps => {
+        if(!_.isEqual(prevProps, this.props)) {
+            let cleanedExercise = MyPlan.cleanExercise(this.props.exercise, this.props.priority, this.props.goals);
+            this.setState({
+                displayName:    cleanedExercise.displayName,
+                dosage:         cleanedExercise.dosage,
+                imageThumbnail: {uri: cleanedExercise.thumbnailUrl},
+            });
+        }
     }
 
     render = () => {

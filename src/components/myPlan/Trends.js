@@ -133,8 +133,8 @@ class Trends extends PureComponent {
         let currentStressAlertText = PlanLogic.handleChartTitleRenderLogic(currentStressAlert, styles.cardSubtitle);
         let currentResponseAlertText = PlanLogic.handleChartTitleRenderLogic(currentResponseAlert, styles.cardSubtitle);
         let currentBiomechanicsAlertText = PlanLogic.handleChartTitleRenderLogic(currentBiomechanicsAlert, styles.cardSubtitle);
-        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse.status.bolded_text, bodyResponse.status.text);
-        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(workload.status.bolded_text, workload.status.text);
+        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse && bodyResponse.status ? bodyResponse.status.bolded_text : [], bodyResponse && bodyResponse.status ? bodyResponse.status.text : '');
+        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(workload && workload.status ? workload.status.bolded_text : [], workload && workload.status ? workload.status.text : '');
         let {
             icon: workloadIcon,
             iconType: workloadIconType,

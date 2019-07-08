@@ -198,7 +198,7 @@ class Insight extends PureComponent {
                                                                 source={sessionImageSource}
                                                                 style={{height: 30, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.splashLight, width: 30,}}
                                                             />
-                                                            <Text oswaldRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
+                                                            <Text oswaldRegular style={{color: AppColors.zeplin.splashLight, flex: 1, fontSize: AppFonts.scaleFont(20),}}>
                                                                 {sportTitle}
                                                             </Text>
                                                             { source === 1 &&
@@ -228,7 +228,7 @@ class Insight extends PureComponent {
                                                                 />
                                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{rpe}</Text>
                                                             </View>
-                                                            { distance &&
+                                                            { (distance || distance === 0) &&
                                                                 <View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingMed,}}>
                                                                     <TabIcon
                                                                         color={AppColors.zeplin.splashLight}
@@ -237,10 +237,10 @@ class Insight extends PureComponent {
                                                                         size={20}
                                                                         type={'material-community'}
                                                                     />
-                                                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${distance} ${session.distance > 0 ? 'miles' : 'mile'}`}</Text>
+                                                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${distance} ${session.distance === 1 ? 'mile' : 'miles'}`}</Text>
                                                                 </View>
                                                             }
-                                                            <View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingMed,}}>
+                                                            {/*<View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingMed,}}>
                                                                 <TabIcon
                                                                     color={AppColors.zeplin.splashLight}
                                                                     containerStyle={[{marginRight: AppSizes.paddingSml,}]}
@@ -249,7 +249,7 @@ class Insight extends PureComponent {
                                                                     type={'material-community'}
                                                                 />
                                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{trainingVolume}</Text>
-                                                            </View>
+                                                            </View>*/}
                                                         </View>
                                                     </View>
                                                 )

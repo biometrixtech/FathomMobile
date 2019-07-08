@@ -1521,19 +1521,19 @@ const PlanLogic = {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
-        let bodyResponse = trends.body_response ? trends.body_response : [];
-        let currentBodyResponseAlert = trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
-        let workload = trends.workload ? trends.workload : [];
+        let currentResponseAlert = trends && trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let bodyResponse = trends && trends.body_response ? trends.body_response : [];
+        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
+        let workload = trends && trends.workload ? trends.workload : [];
         let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
-        let currentWorkloadAlert = trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
+        let currentWorkloadAlert = trends && trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
-        let isBodyResponseLocked = trends.body_response ? trends.body_response.lockout : true;
+        let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
-        let isWorkloadLocked = trends.workload ? trends.workload.lockout : true;
+        let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
         return {
             biomechanics,
             bodyResponse,
@@ -1705,7 +1705,7 @@ const PlanLogic = {
             _.filter(MyPlanConstants.postSessionFeel, scale => scale.value === session.RPE)[0].workoutLabel
             :
             '';
-        let trainingVolume = `${session.training_volume} Load Units`;
+        let trainingVolume = `${_.round(session.training_volume, 1)} Load Units`;
         return {
             distance,
             duration,
@@ -1754,8 +1754,6 @@ const PlanLogic = {
                     cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
                 }
             }
-        } else {
-            cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
         }
         return cleanedText;
     },
@@ -1837,8 +1835,10 @@ const PlanLogic = {
             });
             currentLineGraphData.pain = painLineGraphData;
             currentLineGraphData.soreness = sorenessLineGraphData;
-            console.log('currentLineGraphData',currentLineGraphData);
         }
+        updatedBarData = updatedBarData.length > 7 ? _.slice(updatedBarData, 7, updatedBarData.length) : updatedBarData;
+        currentLineGraphData.pain = currentLineGraphData.pain.length > 7 ? _.slice(currentLineGraphData.pain, 7, currentLineGraphData.pain.length) : currentLineGraphData.pain;
+        currentLineGraphData.soreness = currentLineGraphData.soreness.length > 7 ? _.slice(currentLineGraphData.soreness, 7, currentLineGraphData.soreness.length) : currentLineGraphData.soreness;
         return {
             barWidth,
             currentLineGraphData,

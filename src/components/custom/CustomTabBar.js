@@ -37,12 +37,18 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const CustomTabBar = ({ navigation, plan, user, }) => {
     let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+    // making sure we don't do any any logic here while loading
+    if(dailyPlanObj && !dailyPlanObj.daily_readiness_survey_completed || user.loading) {
+        return (
+            null
+        );
+    }
     let currentIndex = navigation.state.index;
     let currentRouteName = navigation.state.routes[currentIndex].routeName;
     let myPlanFocused = new RegExp('myPlan', 'g').test(currentRouteName);
     let trendsFocused = new RegExp('trends', 'g').test(currentRouteName);
     let settingsFocused = new RegExp('settings', 'g').test(currentRouteName);
-    return(
+    return (
         <View>
             <View style={[styles.container,]}>
                 <TouchableOpacity onPress={() => Actions.myPlan()} style={{flex: 1,}}>

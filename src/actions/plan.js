@@ -194,6 +194,9 @@ const postReadinessSurvey = dailyReadinessObj => {
     newDailyPlanObj[0].daily_readiness_survey_completed = true;
     // update reducer
     store.dispatch({
+        type: Actions.START_REQUEST,
+    });
+    store.dispatch({
         type: Actions.GET_MY_PLAN,
         data: newDailyPlanObj,
     });
@@ -213,6 +216,9 @@ const postReadinessSurvey = dailyReadinessObj => {
                 activeRestGoals: activeRestGoals,
                 coolDownGoals:   coolDownGoals,
                 warmUpGoals:     warmUpGoals,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
             });
             return Promise.resolve(myPlanData.daily_plans);
         })
@@ -241,6 +247,9 @@ const postSingleSensorData = dataObj => {
   */
 const postSessionSurvey = postSessionObj => {
     // call api
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
         .then(myPlanData => {
             // setup variables to be used
@@ -256,6 +265,9 @@ const postSessionSurvey = postSessionObj => {
                 activeRestGoals: activeRestGoals,
                 coolDownGoals:   coolDownGoals,
                 warmUpGoals:     warmUpGoals,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
             });
             return Promise.resolve(myPlanData);
         })
@@ -347,11 +359,17 @@ const patchActiveTime = active_time => {
 const noSessions = () => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => AppAPI.no_sessions.post(false, bodyObj)
         .then(data => {
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: data.daily_plans,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
             });
             return Promise.resolve(data);
         })
@@ -590,6 +608,9 @@ const handleReadInsight = (dailyPlan, insightIndex) => {
 const getMobilize = () => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => AppAPI.get_mobilize.post(false, bodyObj)
         .then(data => {
             // update My Plan reducer
@@ -608,6 +629,9 @@ const getMobilize = () => {
             dispatch({
                 type: Actions.SET_ACTIVE_REST_GOALS,
                 data: areActiveRestGoalsAlreadySet > 0 ? activeRestGoals : currentActiveRestGoals,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
             });
             // resolve promise
             return Promise.resolve(data);
