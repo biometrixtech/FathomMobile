@@ -222,7 +222,12 @@ const postReadinessSurvey = dailyReadinessObj => {
             });
             return Promise.resolve(myPlanData.daily_plans);
         })
-        .catch(err => Promise.reject(AppAPI.handleError(err)));
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
 };
 
 /**
@@ -271,7 +276,12 @@ const postSessionSurvey = postSessionObj => {
             });
             return Promise.resolve(myPlanData);
         })
-        .catch(err => Promise.reject(AppAPI.handleError(err)));
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
 };
 
 /**
@@ -373,7 +383,12 @@ const noSessions = () => {
             });
             return Promise.resolve(data);
         })
-        .catch(err => Promise.reject(AppAPI.handleError(err)));
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
 };
 
 /**
@@ -636,7 +651,12 @@ const getMobilize = () => {
             // resolve promise
             return Promise.resolve(data);
         })
-        .catch(err => Promise.reject(AppAPI.handleError(err)));
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
 };
 
 export default {

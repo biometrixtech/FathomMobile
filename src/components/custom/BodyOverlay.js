@@ -10,6 +10,7 @@
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Image as RNImage, View, } from 'react-native';
+import resolveAssetSource from 'resolveAssetSource';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -29,6 +30,20 @@ class BodyOverlay extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount = () => {
+        let backImage =  require('../../../assets/images/body/body_overlay/body_full_back.png');
+        let backImageSource = resolveAssetSource(backImage);
+        let frontImage =  require('../../../assets/images/body/body_overlay/body_full_front.png');
+        let frontImageSource = resolveAssetSource(frontImage);
+        const { remainingWidth, } = this.props;
+        let backImageRatio = ((remainingWidth / 2) / backImageSource.width);
+        let frontImageRatio = ((remainingWidth / 2) / frontImageSource.width);
+        this.setState({
+            back:  { height: ((remainingWidth / 2) / backImageRatio), width: (remainingWidth / 2), },
+            front: { height: ((remainingWidth / 2) / frontImageRatio), width: (remainingWidth / 2), },
+        });
     }
 
     _getImageString = image => {
@@ -113,7 +128,8 @@ class BodyOverlay extends Component {
     }
 
     render = () => {
-        const { bodyParts, remainingWidth, } = this.props;
+        const { bodyParts, } = this.props;
+        const { back, front, } = this.state;
         let { filteredBackBodyParts, filteredFrontBodyParts, } = PlanLogic.handleBodyOverlayRenderLogic(bodyParts, this._getImageString);
         return (
             <View style={{flexDirection: 'row',}}>
@@ -121,14 +137,14 @@ class BodyOverlay extends Component {
                     <RNImage
                         resizeMode={'contain'}
                         source={require('../../../assets/images/body/body_overlay/body_full_back.png')}
-                        style={{height: (remainingWidth / 2), width: (remainingWidth / 2),}}
+                        style={{height: back.height, width: back.width,}}
                     />
                     {_.map(filteredBackBodyParts, (bodyPart, i) =>
                         <RNImage
                             key={i}
                             resizeMode={'contain'}
                             source={bodyPart.imageSource}
-                            style={{height: (remainingWidth / 2), position: 'absolute', tintColor: bodyPart.tintColor, width: (remainingWidth / 2),}}
+                            style={{height: back.height, position: 'absolute', tintColor: bodyPart.tintColor,  width: back.width,}}
                         />
                     )}
                 </View>
@@ -136,14 +152,14 @@ class BodyOverlay extends Component {
                     <RNImage
                         resizeMode={'contain'}
                         source={require('../../../assets/images/body/body_overlay/body_full_front.png')}
-                        style={{height: (remainingWidth / 2), width: (remainingWidth / 2),}}
+                        style={{height: front.height, width: front.width,}}
                     />
                     {_.map(filteredFrontBodyParts, (bodyPart, i) =>
                         <RNImage
                             key={i}
                             resizeMode={'contain'}
                             source={bodyPart.imageSource}
-                            style={{height: (remainingWidth / 2), position: 'absolute', tintColor: bodyPart.tintColor, width: (remainingWidth / 2),}}
+                            style={{height: front.height, position: 'absolute', tintColor: bodyPart.tintColor, width: front.width,}}
                         />
                     )}
                 </View>

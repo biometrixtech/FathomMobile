@@ -63,15 +63,17 @@ class XAxisLabels extends PureComponent {
             return (null);
         }
         return (
-            <View
-                style={[
-                    showSelection ? {borderColor: selectedIndex === index ? AppColors.zeplin.slateXLight : AppColors.transparent, borderRadius: 10, borderWidth: 2,} : {},
-                    {left: (x - this.props.style.padding), position: 'absolute', top: y,}
-                ]}
-            >
-                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginBottom: AppSizes.paddingXSml, textAlign: 'center',}}>
-                    {currentData.x.charAt(1) ? `${currentData.x.charAt(0)}${currentData.x.charAt(1)}` : currentData.x.charAt(0)}
-                </Text>
+            <View style={{left: (x - this.props.style.padding), position: 'absolute', top: y,}}>
+                <View
+                    style={[
+                        showSelection ? {borderBottomColor: selectedIndex === index ? AppColors.zeplin.yellow : AppColors.transparent, borderBottomLeftRadius: 1, borderBottomRightRadius: 1, borderTopLeftRadius: 1, borderTopRightRadius: 1, borderBottomWidth: 2,} : {},
+                        {marginBottom: AppSizes.paddingXSml,}
+                    ]}
+                >
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                        {currentData.x.charAt(1) ? `${currentData.x.charAt(0)}${currentData.x.charAt(1)}` : currentData.x.charAt(0)}
+                    </Text>
+                </View>
                 { currentData.hasMultipleSports ?
                     <TabIcon
                         color={AppColors.zeplin.slateXLight}
@@ -169,7 +171,7 @@ class InsightsCharts extends PureComponent {
                                 size:          1,
                             },
                             grid: {
-                                stroke:          t => showSelection && (t - 1) === selectedIndex ? AppColors.zeplin.slateXLight : AppColors.transparent,
+                                stroke:          t => showSelection && (t - 1) === selectedIndex ? AppColors.zeplin.yellow : AppColors.transparent,
                                 strokeDasharray: [5, 5],
                                 size:            1,
                             },
@@ -183,7 +185,7 @@ class InsightsCharts extends PureComponent {
                         }
                     />
 
-                    {/* visualization_type 8*/}
+                    {/* visualization_type 8 */}
                     { (currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) &&
                         <V.VictoryBar
                             cornerRadius={{ bottom: (barWidth / 2), top: (barWidth / 2), }}
@@ -192,13 +194,13 @@ class InsightsCharts extends PureComponent {
                         />
                     }
 
-                    {/* visualization_type 7*/}
+                    {/* visualization_type 7 */}
                     { currentAlert.visualization_type === 7 &&
                         <V.VictoryGroup>
                             <V.VictoryLine
                                 data={currentLineGraphData.pain}
                                 interpolation={'monotoneX'}
-                                style={{ data: { stroke: d => d[0].color, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                                style={{ data: { stroke: d => d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
                             />
                             <V.VictoryScatter
                                 data={currentLineGraphData.pain}
@@ -208,7 +210,7 @@ class InsightsCharts extends PureComponent {
                             <V.VictoryLine
                                 data={currentLineGraphData.soreness}
                                 interpolation={'monotoneX'}
-                                style={{ data: { stroke: d => d[0].color, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                                style={{ data: { stroke: d => d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
                             />
                             <V.VictoryScatter
                                 data={currentLineGraphData.soreness}

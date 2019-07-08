@@ -111,6 +111,15 @@ const zeplin = {
     yellowLight:  '#EEC756',
 }
 
+const bodyOverlay = {
+    painMild:       '#FBE2DA',
+    painMod:        '#F6C5B6',
+    painSevere:     zeplin.errorLight,
+    sorenessMild:   '#FCEDDD',
+    sorenessMod:    '#F8DBBA',
+    sorenessSevere: zeplin.warningLight,
+}
+
 const alerts = {
     errorBackground:   zeplin.error,
     statusBackground:  zeplin.splash,
@@ -134,6 +143,7 @@ export default {
     ...sliders,
     ...tabbar,
     alerts,
+    bodyOverlay,
     sensor,
     zeplin,
 };

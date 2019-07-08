@@ -118,52 +118,54 @@ class Insight extends PureComponent {
 
                         <View style={[AppStyles.scaleButtonShadowEffect, styles.cardStyle,]}>
 
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}}>
+                            <View>
+                                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
                                     {cardTitle}
                                 </Text>
-                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    { showLeftDateButton &&
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                    { showLeftDateButton ?
                                         <TabIcon
                                             color={AppColors.zeplin.slateLight}
-                                            containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
                                             icon={'chevron-left'}
                                             onPress={() => this._renderPreviousPage()}
-                                            size={20}
+                                            size={30}
                                         />
+                                        :
+                                        <View style={{height: 30, width: 30,}} />
                                     }
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13), marginHorizontal: AppSizes.paddingXSml,}}>
                                         {selectedDate}
                                     </Text>
-                                    { showRightDateButton &&
+                                    { showRightDateButton ?
                                         <TabIcon
                                             color={AppColors.zeplin.slateLight}
-                                            containerStyle={[{marginLeft: AppSizes.paddingXSml,}]}
                                             icon={'chevron-right'}
                                             onPress={() => this._renderNextPage()}
-                                            size={20}
+                                            size={30}
                                         />
+                                        :
+                                        <View style={{height: 30, width: 30,}} />
                                     }
                                 </View>
                             </View>
 
                             { insightType === 7 ?
                                 <View>
-                                    <View style={{alignItems: 'center', borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, paddingVertical: AppSizes.padding,}}>
+                                    <View style={{alignItems: 'center', borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 1, paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.padding,}}>
                                         <BodyOverlay
                                             bodyParts={currentAlert.data[currentDataIndex].body_parts}
-                                            remainingWidth={(AppSizes.screen.width - (AppSizes.paddingMed + AppSizes.padding))}
+                                            remainingWidth={(AppSizes.screen.width - (AppSizes.paddingMed + AppSizes.padding + AppSizes.paddingSml + AppSizes.paddingSml))}
                                         />
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.padding,}}>
-                                        <View style={{marginRight: AppSizes.padding,}}>
+                                        <View style={{marginRight: AppSizes.paddingLrg,}}>
                                             <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
                                                 {'Soreness'}
                                             </Text>
                                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml,}}>
-                                                <View style={{backgroundColor: AppColors.zeplin.warningLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: `${AppColors.zeplin.warningLight}80`, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: `${AppColors.zeplin.warningLight}40`, borderRadius: (20 / 2), height: 20, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.sorenessMild, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.sorenessMod, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.sorenessSevere, borderRadius: (20 / 2), height: 20, width: 20,}} />
                                             </View>
                                         </View>
                                         <View>
@@ -171,9 +173,9 @@ class Insight extends PureComponent {
                                                 {'Pain'}
                                             </Text>
                                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml,}}>
-                                                <View style={{backgroundColor: AppColors.zeplin.errorLight, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: `${AppColors.zeplin.errorLight}80`, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
-                                                <View style={{backgroundColor: `${AppColors.zeplin.errorLight}40`, borderRadius: (20 / 2), height: 20, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.painMild, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.painMod, borderRadius: (20 / 2), height: 20, marginRight: AppSizes.paddingSml, width: 20,}} />
+                                                <View style={{backgroundColor: AppColors.bodyOverlay.painSevere, borderRadius: (20 / 2), height: 20, width: 20,}} />
                                             </View>
                                         </View>
                                     </View>
@@ -228,7 +230,7 @@ class Insight extends PureComponent {
                                                                 />
                                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{rpe}</Text>
                                                             </View>
-                                                            { (distance || distance === 0) &&
+                                                            { (distance || distance > 0) &&
                                                                 <View style={{alignItems: 'center', flexDirection: 'row', marginTop: AppSizes.paddingMed,}}>
                                                                     <TabIcon
                                                                         color={AppColors.zeplin.splashLight}

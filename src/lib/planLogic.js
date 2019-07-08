@@ -1800,7 +1800,7 @@ const PlanLogic = {
         let currentLineGraphData = { pain: [], soreness: [], };
         if(currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) {
             updatedBarData = _.map(data, (d, i) => {
-                let filteredSport = d.sessions.length === 1 && _.filter(MyPlanConstants.teamSports, s => s.index === d.sessions[0])[0] ? _.filter(MyPlanConstants.teamSports, s => s.index === d.sessions[0])[0] : false;
+                let filteredSport = d.sessions.length === 1 ? _.filter(MyPlanConstants.teamSports, s => s.index === d.sessions[0].sport_name)[0] : false;
                 let hasMultipleSports = d.sessions.length > 1;
                 let newObj = {};
                 newObj.fillColor = PlanLogic.returnInsightColorString(currentAlert.status ? currentAlert.status.color : d.status.color);
@@ -1822,7 +1822,7 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(6);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = d.pain_value;
+                newObj.y = d.pain_value && d.pain_value > 0 ? d.pain_value : null;
                 return newObj;
             });
             let sorenessLineGraphData = _.map(data, (d, i) => {
@@ -1830,7 +1830,7 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(5);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = d.soreness_value;
+                newObj.y = d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null;
                 return newObj;
             });
             currentLineGraphData.pain = painLineGraphData;
@@ -1884,10 +1884,7 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = bodyPart.pain === true ?
-                        bodyPart.value === 3 ? AppColors.zeplin.errorLight : bodyPart.value === 2 ? `${AppColors.zeplin.errorLight}80` : `${AppColors.zeplin.errorLight}40`
-                        :
-                        bodyPart.value === 3 ? AppColors.zeplin.warningLight : bodyPart.value === 2 ? `${AppColors.zeplin.warningLight}80` : `${AppColors.zeplin.warningLight}40`;
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
                     return updatedBodyPart;
                 }
                 return [];
@@ -1899,10 +1896,7 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = bodyPart.pain === true ?
-                        bodyPart.value === 3 ? AppColors.zeplin.errorLight : bodyPart.value === 2 ? `${AppColors.zeplin.errorLight}80` : `${AppColors.zeplin.errorLight}40`
-                        :
-                        bodyPart.value === 3 ? AppColors.zeplin.warningLight : bodyPart.value === 2 ? `${AppColors.zeplin.warningLight}80` : `${AppColors.zeplin.warningLight}40`;
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
                     return updatedBodyPart;
                 }
                 return [];
@@ -1912,6 +1906,23 @@ const PlanLogic = {
             filteredBackBodyParts,
             filteredFrontBodyParts,
         };
+    },
+
+    returnBodyOverlayColorString: (value, isPain) => {
+        return isPain === true ?
+            value === 3 ?
+                AppColors.bodyOverlay.painSevere
+                : value === 2 ?
+                    AppColors.bodyOverlay.painMod
+                    :
+                    AppColors.bodyOverlay.painMild
+            :
+            value === 3 ?
+                AppColors.bodyOverlay.sorenessSevere
+                : value === 2 ?
+                    AppColors.bodyOverlay.sorenessMod
+                    :
+                    AppColors.bodyOverlay.sorenessMild;
     },
 
     returnInsightColorString: color => {
