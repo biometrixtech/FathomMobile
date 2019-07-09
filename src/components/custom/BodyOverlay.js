@@ -16,8 +16,10 @@ import resolveAssetSource from 'resolveAssetSource';
 import _ from 'lodash';
 
 // Consts and Libs
-import { AppColors, MyPlan as MyPlanConstants, } from '../../constants';
+import { AppSizes, } from '../../constants';
 import { PlanLogic, } from '../../lib';
+
+const ADDITIONAL_MIDDLE_PADDING = AppSizes.paddingSml;
 
 /* Component ==================================================================== */
 class BodyOverlay extends Component {
@@ -38,11 +40,12 @@ class BodyOverlay extends Component {
         let frontImage =  require('../../../assets/images/body/body_overlay/body_full_front.png');
         let frontImageSource = resolveAssetSource(frontImage);
         const { remainingWidth, } = this.props;
-        let backImageRatio = ((remainingWidth / 2) / backImageSource.width);
-        let frontImageRatio = ((remainingWidth / 2) / frontImageSource.width);
+        let updatedRemainingWidth = (remainingWidth - ADDITIONAL_MIDDLE_PADDING);
+        let backImageRatio = ((updatedRemainingWidth / 2) / backImageSource.width);
+        let frontImageRatio = ((updatedRemainingWidth / 2) / frontImageSource.width);
         this.setState({
-            back:  { height: ((remainingWidth / 2) / backImageRatio), width: (remainingWidth / 2), },
-            front: { height: ((remainingWidth / 2) / frontImageRatio), width: (remainingWidth / 2), },
+            back:  { height: ((updatedRemainingWidth / 2) / backImageRatio), width: (updatedRemainingWidth / 2), },
+            front: { height: ((updatedRemainingWidth / 2) / frontImageRatio), width: (updatedRemainingWidth / 2), },
         });
     }
 
@@ -133,7 +136,7 @@ class BodyOverlay extends Component {
         let { filteredBackBodyParts, filteredFrontBodyParts, } = PlanLogic.handleBodyOverlayRenderLogic(bodyParts, this._getImageString);
         return (
             <View style={{flexDirection: 'row',}}>
-                <View>
+                <View style={{marginRight: ADDITIONAL_MIDDLE_PADDING,}}>
                     <RNImage
                         resizeMode={'contain'}
                         source={require('../../../assets/images/body/body_overlay/body_full_front.png')}
