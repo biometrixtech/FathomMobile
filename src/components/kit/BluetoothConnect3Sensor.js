@@ -52,7 +52,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
-const WIFI_PAGE_NUMBER = 17;
+const WIFI_PAGE_NUMBER = 16;
 
 /* Component ==================================================================== */
 class BluetoothConnect3Sensor extends Component {
@@ -316,11 +316,11 @@ class BluetoothConnect3Sensor extends Component {
     }
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [0, 1, 9, 12, 15, WIFI_PAGE_NUMBER];
+        const checkpointPages = [0, 1, 8, 11, 14, WIFI_PAGE_NUMBER];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         }
-        if(currentPage === 16) { // turn on BLE & connect to accessory
+        if(currentPage === 15) { // turn on BLE & connect to accessory
             if (Platform.OS === 'android') {
                 BleManager.enableBluetooth();
             }
@@ -466,7 +466,7 @@ class BluetoothConnect3Sensor extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Placement Tutorial - pages 1-8 */}
+                    {/* Placement Tutorial - pages 1-7 */}
                     <Placement
                         currentPage={pageIndex === 1}
                         nextBtn={this._renderNextPage}
@@ -475,13 +475,13 @@ class BluetoothConnect3Sensor extends Component {
                     />
                     <Placement
                         currentPage={pageIndex === 2}
+                        handleAlertPress={() => this._handleAlertPress()}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={1}
                     />
                     <Placement
                         currentPage={pageIndex === 3}
-                        handleAlertPress={() => this._handleAlertPress()}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={2}
@@ -510,28 +510,22 @@ class BluetoothConnect3Sensor extends Component {
                         onBack={this._renderPreviousPage}
                         page={6}
                     />
-                    <Placement
-                        currentPage={pageIndex === 8}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={7}
-                    />
 
-                    {/* Calibration - pages 9-11 */}
+                    {/* Calibration - pages 8-10 */}
                     <Calibration
-                        currentPage={pageIndex === 9}
+                        currentPage={pageIndex === 8}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={0}
                     />
                     <Calibration
-                        currentPage={pageIndex === 10}
+                        currentPage={pageIndex === 9}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={1}
                     />
                     <Calibration
-                        currentPage={pageIndex === 11}
+                        currentPage={pageIndex === 10}
                         handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
                         isVideoMuted={isVideoMuted}
                         nextBtn={this._renderNextPage}
@@ -539,39 +533,39 @@ class BluetoothConnect3Sensor extends Component {
                         page={2}
                     />
 
-                    {/* Session - pages 12-14 */}
+                    {/* Session - pages 11-13 */}
                     <Session
-                        currentPage={pageIndex === 12}
+                        currentPage={pageIndex === 11}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
                         page={0}
                     />
                     <Session
-                        currentPage={pageIndex === 13}
+                        currentPage={pageIndex === 12}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
                         page={1}
                     />
                     <Session
-                        currentPage={pageIndex === 14}
+                        currentPage={pageIndex === 13}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
                         page={2}
                     />
 
-                    {/* Connect - pages 15-18 */}
+                    {/* Connect - pages 14-17 */}
                     <Connect
-                        currentPage={pageIndex === 15}
+                        currentPage={pageIndex === 14}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
                     />
                     <Connect
-                        currentPage={pageIndex === 16}
+                        currentPage={pageIndex === 15}
                         isLoading={isConnectingToSensor}
                         isNextDisabled={bleState !== 'on' || isConnectingToSensor}
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
@@ -600,23 +594,23 @@ class BluetoothConnect3Sensor extends Component {
                         page={3}
                     />
                     <Connect
-                        currentPage={pageIndex === 18}
+                        currentPage={pageIndex === 17}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => Actions.pop()}
                         page={4}
                     />
 
-                    {/* Battery - page 19 */}
+                    {/* Battery - page 18 */}
                     <Battery
-                        currentPage={pageIndex === 19}
+                        currentPage={pageIndex === 18}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                     />
 
-                    {/* End - page 20 */}
+                    {/* End - page 19 */}
                     <Complete
-                        currentPage={pageIndex === 20}
+                        currentPage={pageIndex === 19}
                         nextBtn={() => Actions.pop()}
                         onBack={this._renderPreviousPage}
                     />

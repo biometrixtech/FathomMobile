@@ -37,15 +37,19 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const CustomTabBar = ({ navigation, plan, user, }) => {
     let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+    // making sure we don't do any any logic here while loading
+    if(dailyPlanObj && !dailyPlanObj.daily_readiness_survey_completed) {
+        return (null);
+    }
     let currentIndex = navigation.state.index;
     let currentRouteName = navigation.state.routes[currentIndex].routeName;
     let myPlanFocused = new RegExp('myPlan', 'g').test(currentRouteName);
     let trendsFocused = new RegExp('trends', 'g').test(currentRouteName);
     let settingsFocused = new RegExp('settings', 'g').test(currentRouteName);
-    return(
+    return (
         <View>
             <View style={[styles.container,]}>
-                <TouchableOpacity onPress={() => Actions.myPlan()} style={{flex: 1,}}>
+                <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.myPlan()} style={{flex: 1,}}>
                     <TabIcon
                         color={myPlanFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'run'}
@@ -59,7 +63,7 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
                         <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slateLight,}]}>{'Plan'}</Text>
                     }
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => Actions.trends()} style={{flex: 1,}}>
+                <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.trends()} style={{flex: 1,}}>
                     <TabIcon
                         color={trendsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'graph'}
@@ -73,7 +77,7 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
                         <Text robotoRegular style={[styles.text, {color: AppColors.zeplin.slateLight,}]}>{'Trends'}</Text>
                     }
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => Actions.settings()} style={{flex: 1,}}>
+                <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.settings()} style={{flex: 1,}}>
                     <TabIcon
                         color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
                         icon={'dehaze'}

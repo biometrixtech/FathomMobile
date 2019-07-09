@@ -293,7 +293,7 @@ class TrendChild extends PureComponent {
                         <View style={[AppStyles.containerCentered]}>
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.padding, width: AppSizes.screen.widthThird,}}
-                                containerStyle={[{width: AppSizes.screen.widthThird,}]}
+                                containerStyle={{width: AppSizes.screen.widthThird,}}
                                 onPress={() => AppUtil.pushToScene('myPlan')}
                                 raised={true}
                                 title={'My Plan'}

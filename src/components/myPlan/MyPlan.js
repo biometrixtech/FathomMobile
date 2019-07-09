@@ -56,8 +56,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { DeckCards, TabIcon, Text, } from '../custom';
-import { FathomModal, } from '../custom';
+import { DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
 import { Loading, } from '../general';
 

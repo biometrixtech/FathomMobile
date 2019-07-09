@@ -4,6 +4,7 @@
 
 import Alerts from './Alerts';
 import AnimatedProgressBar from './AnimatedProgressBar';
+import BodyOverlay from './BodyOverlay';
 import Button from './Button';
 import Card from './Card';
 import Checkbox from './Checkbox';
@@ -35,6 +36,7 @@ import WheelScrollPicker from './WheelScrollPicker';
 export {
     Alerts,
     AnimatedProgressBar,
+    BodyOverlay,
     Button,
     Card,
     Checkbox,

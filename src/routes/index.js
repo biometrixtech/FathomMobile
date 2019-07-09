@@ -65,6 +65,9 @@ import TrendsComponent from '../components/myPlan/Trends';
 import TrendChildContainer from '../containers/myPlan/TrendChild';
 import TrendChildComponent from '../components/myPlan/TrendChild';
 
+import InsightContainer from '../containers/myPlan/Insight';
+import InsightComponent from '../components/myPlan/Insight';
+
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
@@ -237,6 +240,13 @@ const Index = (
                 component={TrendChildContainer}
                 hideNavBar={true}
                 key={'trendChild'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={InsightComponent}
+                component={InsightContainer}
+                hideNavBar={true}
+                key={'insight'}
                 panHandlers={null}
             />
             <Scene
