@@ -136,21 +136,6 @@ class BodyOverlay extends Component {
                 <View>
                     <RNImage
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/body/body_overlay/body_full_back.png')}
-                        style={{height: back.height, width: back.width,}}
-                    />
-                    {_.map(filteredBackBodyParts, (bodyPart, i) =>
-                        <RNImage
-                            key={i}
-                            resizeMode={'contain'}
-                            source={bodyPart.imageSource}
-                            style={{height: back.height, position: 'absolute', tintColor: bodyPart.tintColor,  width: back.width,}}
-                        />
-                    )}
-                </View>
-                <View>
-                    <RNImage
-                        resizeMode={'contain'}
                         source={require('../../../assets/images/body/body_overlay/body_full_front.png')}
                         style={{height: front.height, width: front.width,}}
                     />
@@ -160,6 +145,21 @@ class BodyOverlay extends Component {
                             resizeMode={'contain'}
                             source={bodyPart.imageSource}
                             style={{height: front.height, position: 'absolute', tintColor: bodyPart.tintColor, width: front.width,}}
+                        />
+                    )}
+                </View>
+                <View>
+                    <RNImage
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/body/body_overlay/body_full_back.png')}
+                        style={{height: back.height, width: back.width,}}
+                    />
+                    {_.map(filteredBackBodyParts, (bodyPart, i) =>
+                        <RNImage
+                            key={i}
+                            resizeMode={'contain'}
+                            source={bodyPart.imageSource}
+                            style={{height: back.height, position: 'absolute', tintColor: bodyPart.tintColor,  width: back.width,}}
                         />
                     )}
                 </View>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -1822,7 +1823,10 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(6);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = d.pain_value && d.pain_value > 0 ? d.pain_value : null;
+                newObj.y = Platform.OS === 'ios' ?
+                    d.pain_value && d.pain_value > 0 ? d.pain_value : null
+                    :
+                    d.pain_value;
                 return newObj;
             });
             let sorenessLineGraphData = _.map(data, (d, i) => {
@@ -1830,7 +1834,10 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(5);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null;
+                newObj.y = Platform.OS === 'ios' ?
+                    d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null
+                    :
+                    d.soreness_value;
                 return newObj;
             });
             currentLineGraphData.pain = painLineGraphData;

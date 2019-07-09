@@ -9,7 +9,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         backgroundColor:  AppColors.white,
         borderRadius:     12,
         elevation:        2,
-        marginBottom:     AppSizes.iphoneXBottomBarPadding,
+        marginBottom:     Platform.OS === 'ios' ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingLrg,
         marginHorizontal: AppSizes.paddingMed,
         padding:          AppSizes.padding,
     },

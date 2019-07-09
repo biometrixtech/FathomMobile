@@ -200,7 +200,7 @@ class InsightsCharts extends PureComponent {
                             <V.VictoryLine
                                 data={currentLineGraphData.pain}
                                 interpolation={'monotoneX'}
-                                style={{ data: { stroke: d => d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                                style={{ data: { stroke: d => d && d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
                             />
                             <V.VictoryScatter
                                 data={currentLineGraphData.pain}
@@ -210,7 +210,7 @@ class InsightsCharts extends PureComponent {
                             <V.VictoryLine
                                 data={currentLineGraphData.soreness}
                                 interpolation={'monotoneX'}
-                                style={{ data: { stroke: d => d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
+                                style={{ data: { stroke: d => d && d[0] ? d[0].color : AppColors.zeplin.slateXLight, strokeLinecap: 'round', strokeWidth: 5, }, }}
                             />
                             <V.VictoryScatter
                                 data={currentLineGraphData.soreness}

@@ -311,7 +311,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                         </View>
                         <View style={{backgroundColor: AppColors.zeplin.superLight, borderBottomLeftRadius: 5, borderBottomRightRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}}>
                             <Text robotoRegular style={[styles.subtitleStyle,]}>
-                                {'Proper calibration ensures optimal data quality & precise Recovery recommendations.\n\nYou\'ll need to do this before every workout.'}
+                                {'Good posture during calibration ensures optimal data quality & recommendations.\n\nYou\'ll need to do this before every workout.\n\nOnce ready, grab your Fathom Pro Kit, locate the button then tap next to proceed.'}
                             </Text>
                         </View>
                     </View>
@@ -498,10 +498,10 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
         <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
-            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingVertical: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
+            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
         </View>
-        <View style={{flex: 1, justifyContent: 'flex-end',}}>
-            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', width: AppSizes.screen.widthFourFifths,}}>
+        <View style={{flex: 1,}}>
+            <View style={{alignSelf: 'center', flex: 1, width: AppSizes.screen.widthFourFifths,}}>
                 <Image
                     resizeMode={'contain'}
                     source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/end_tutorial.png'}}
