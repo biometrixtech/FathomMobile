@@ -127,6 +127,9 @@ initialize() {
             # iOS patches
             # none for now...
 
+            # both platform patches
+            # none for now...
+
             # libraray patches
             yes | cp ./custom/javascript/ActionButtonItem.js ./node_modules/react-native-action-button/ActionButtonItem.js
             yes | cp ./custom/javascript/AppIntroSlider.js ./node_modules/react-native-app-intro-slider/AppIntroSlider.js

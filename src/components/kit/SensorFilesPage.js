@@ -532,13 +532,13 @@ class SensorFilesPage extends Component {
                                 >
                                     <Placement
                                         currentPage={pageIndex === 0}
+                                        handleAlertPress={() => this._handleAlertPress()}
                                         nextBtn={this._renderNextPage}
                                         page={1}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 1}
-                                        handleAlertPress={() => this._handleAlertPress()}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
                                         page={2}

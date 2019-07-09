@@ -34,7 +34,11 @@ const styles = StyleSheet.create({
         paddingTop:  AppSizes.paddingSml,
     },
     pickerSelectAndroid: {
-        color: AppColors.white,
+        ...AppFonts.robotoRegular,
+        color:          AppColors.white,
+        fontSize:       AppFonts.scaleFont(20),
+        height:         50,
+        justifyContent: 'center',
     },
     pickerSelectIOS: {
         ...AppFonts.robotoRegular,
@@ -72,9 +76,7 @@ class UserAccountAbout extends Component {
         }
     }
 
-    _scrollToInput = reactNode => {
-        this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
-    }
+    _scrollToInput = reactNode => this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg))
 
     render = () => {
         const {
@@ -133,10 +135,11 @@ class UserAccountAbout extends Component {
                         }}
                         ref={ref => this.inputs.sex = ref}
                         style={{
-                            inputAndroid:  [styles.pickerSelectAndroid, AppStyles.onboardingInputStyle, user.biometric_data.sex.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
+                            inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, user.biometric_data.sex.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
                             inputIOS:      [styles.pickerSelectIOS, AppStyles.onboardingInputStyle, user.biometric_data.sex.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            viewContainer: [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {}],
+                            viewContainer: [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {paddingLeft: AppSizes.paddingXSml,},],
                         }}
+                        useNativeAndroidPickerStyle={false}
                         value={user.biometric_data.sex}
                     />
                 </View>
@@ -174,11 +177,11 @@ class UserAccountAbout extends Component {
                         }}
                         ref={ref => this.inputs.typical_weekly_sessions = ref}
                         style={{
-                            inputAndroid:     [AppStyles.onboardingInputStyle, surveyValues.typical_weekly_sessions.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            inputIOS:         [AppStyles.onboardingInputStyle, surveyValues.typical_weekly_sessions.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            placeholderColor: AppColors.white,
-                            viewContainer:    [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {},],
+                            inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, surveyValues.typical_weekly_sessions.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
+                            inputIOS:      [styles.pickerSelectIOS, AppStyles.onboardingInputStyle, surveyValues.typical_weekly_sessions.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
+                            viewContainer: [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {paddingLeft: AppSizes.paddingXSml,},],
                         }}
+                        useNativeAndroidPickerStyle={false}
                         value={surveyValues.typical_weekly_sessions}
                     />
                 </View>
@@ -200,11 +203,11 @@ class UserAccountAbout extends Component {
                         }}
                         ref={ref => this.inputs.wearable_devices = ref}
                         style={{
-                            inputAndroid:     [styles.pickerSelectAndroid, AppStyles.onboardingInputStyle, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            inputIOS:         [styles.pickerSelectIOS, AppStyles.onboardingInputStyle, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            placeholderColor: AppColors.white,
-                            viewContainer:    [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {}],
+                            inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
+                            inputIOS:      [styles.pickerSelectIOS, AppStyles.onboardingInputStyle, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
+                            viewContainer: [styles.androidViewContainer, Platform.OS === 'ios' ? {paddingLeft: AppSizes.paddingSml,} : {paddingLeft: AppSizes.paddingXSml,}],
                         }}
+                        useNativeAndroidPickerStyle={false}
                         value={surveyValues.wearable_devices}
                     />
                 </View>

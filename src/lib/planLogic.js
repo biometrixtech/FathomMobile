@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -7,6 +8,7 @@ import moment from 'moment';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
 import { Text, } from '../components/custom';
+import { SensorLogic, } from './';
 
 const PlanLogic = {
 
@@ -1520,20 +1522,34 @@ const PlanLogic = {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let currentResponseAlert = trends && trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let bodyResponse = trends && trends.body_response ? trends.body_response : [];
+        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
+        let workload = trends && trends.workload ? trends.workload : [];
+        let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
+        let currentWorkloadAlert = trends && trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
+        let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
         return {
+            biomechanics,
+            bodyResponse,
             currentBiomechanicsAlert,
+            currentBodyResponseAlert,
             currentResponseAlert,
             currentStressAlert,
+            currentWorkloadAlert,
             extraBottomPadding,
             isBiomechanicsLocked,
+            isBodyResponseLocked,
             isResponseLocked,
             isStressLocked,
+            isWorkloadLocked,
+            workload,
         };
     },
 
@@ -1671,6 +1687,282 @@ const PlanLogic = {
             lineChartColor: fillColor,
             updatedBarData: newBarData,
         };
+    },
+
+    /**
+      * Handle Workload Session Render Logic
+      * - Insights
+      */
+    // TODO: UNIT TEST ME
+    handleWorkloadSessionRenderLogic: session => {
+        let source = session.source;
+        let sessionName = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name);
+        let distance = session.distance;
+        let duration = source === 1 ?
+            `${moment(session.event_date.replace('Z', '')).format('hh:mma')}, ${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`
+            :
+            `${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`;
+        let rpe = _.filter(MyPlanConstants.postSessionFeel, scale => scale.value === session.RPE)[0] ?
+            _.filter(MyPlanConstants.postSessionFeel, scale => scale.value === session.RPE)[0].workoutLabel
+            :
+            '';
+        let trainingVolume = `${_.round(session.training_volume, 1)} Load Units`;
+        return {
+            distance,
+            duration,
+            imageSource: sessionName.imagePath,
+            rpe,
+            source,
+            sportTitle:  sessionName.label.toUpperCase(),
+            trainingVolume,
+        }
+    },
+
+    /**
+      * Handle Trends Title Render Logic
+      * - Trends & Insights
+      */
+    // TODO: UNIT TEST ME
+    handleTrendsTitleRenderLogic: (subtitleBoldedText, subtitleText) => {
+        let cleanedText = false;
+        if(subtitleBoldedText.length > 0 && subtitleText.length > 0) {
+            let textRegEx = new RegExp(subtitleBoldedText.join('|'), 'g');
+            let textMatchedArray = subtitleText.match(textRegEx);
+            let splitTextArray = _.split(subtitleText, textRegEx);
+            splitTextArray = _.remove(splitTextArray, o => o.length > 0);
+            if(!textMatchedArray) {
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+            } else {
+                if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
+                    cleanedText = (
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                            {splitTextArray[0]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
+                            {splitTextArray[1]}
+                        </Text>
+                    );
+                } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
+                    cleanedText = (
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                            {splitTextArray[0]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
+                            {splitTextArray[1]}
+                            <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[1]}</Text>
+                            {splitTextArray[2]}
+                        </Text>
+                    );
+                } else {
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                }
+            }
+        }
+        return cleanedText;
+    },
+
+    /**
+      * Handle Trend Render Logic
+      * - Trends & Insights
+      */
+    // TODO: UNIT TEST ME
+    handleTrendRenderLogic: currentAlert => {
+        if(!currentAlert || !currentAlert.status) {
+            return {
+                icon:          false,
+                iconType:      false,
+                subtitleColor: AppColors.zeplin.errorLight,
+                sportName:     false,
+            };
+        }
+        let subtitleColor = PlanLogic.returnInsightColorString(currentAlert.status.color);
+        let icon = currentAlert.status.icon;
+        let iconType = currentAlert.status.icon_type;
+        let sessionName = _.find(MyPlanConstants.teamSports, o => o.index === currentAlert.status.sport_name);
+        let imageSource = sessionName ? sessionName.imagePath : false;
+        let sportName =  sessionName ? sessionName.label.toUpperCase() : false;
+        return {
+            icon,
+            iconType,
+            imageSource,
+            subtitleColor,
+            sportName,
+        };
+    },
+
+    /**
+      * Handle Insights Charts Render Logic
+      * - InsightsCharts
+      */
+    // TODO: UNIT TEST ME
+    handleInsightsChartsRenderLogic: (currentAlert, data) => {
+        let barWidth = data.length === 14 ? AppSizes.paddingMed : AppSizes.padding;
+        let hasLeftAxis = (currentAlert.visualization_data && currentAlert.visualization_data.y_axis_1.length > 0);
+        let hasRightAxis = (currentAlert.visualization_data && currentAlert.visualization_data.y_axis_2.length > 0);
+        let updatedBarData = [];
+        let currentLineGraphData = { pain: [], soreness: [], };
+        if(currentAlert.visualization_type === 8 || currentAlert.visualization_type === 9) {
+            updatedBarData = _.map(data, (d, i) => {
+                let filteredSport = d.sessions.length === 1 ? _.filter(MyPlanConstants.teamSports, s => s.index === d.sessions[0].sport_name)[0] : false;
+                let hasMultipleSports = d.sessions.length > 1;
+                let newObj = {};
+                newObj.fillColor = PlanLogic.returnInsightColorString(currentAlert.status ? currentAlert.status.color : d.status.color);
+                newObj.filteredSport = filteredSport;
+                newObj.hasMultipleSports = hasMultipleSports;
+                newObj.key = i;
+                newObj.sessions = d.sessions;
+                newObj.x = d.day_of_week;
+                newObj.y = d.value;
+                return newObj;
+            });
+            updatedBarData = currentAlert.visualization_type === 8  && updatedBarData.length === 14 ?
+                _.slice(updatedBarData, 7, updatedBarData.length)
+                :
+                updatedBarData;
+        } else {
+            let painLineGraphData = _.map(data, (d, i) => {
+                let newObj = {};
+                newObj.color = PlanLogic.returnInsightColorString(6);
+                newObj.key = i;
+                newObj.x = d.day_of_week;
+                newObj.y = Platform.OS === 'ios' ?
+                    d.pain_value && d.pain_value > 0 ? d.pain_value : null
+                    :
+                    d.pain_value;
+                return newObj;
+            });
+            let sorenessLineGraphData = _.map(data, (d, i) => {
+                let newObj = {};
+                newObj.color = PlanLogic.returnInsightColorString(5);
+                newObj.key = i;
+                newObj.x = d.day_of_week;
+                newObj.y = Platform.OS === 'ios' ?
+                    d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null
+                    :
+                    d.soreness_value;
+                return newObj;
+            });
+            currentLineGraphData.pain = painLineGraphData;
+            currentLineGraphData.soreness = sorenessLineGraphData;
+        }
+        updatedBarData = updatedBarData.length > 7 ? _.slice(updatedBarData, 7, updatedBarData.length) : updatedBarData;
+        currentLineGraphData.pain = currentLineGraphData.pain.length > 7 ? _.slice(currentLineGraphData.pain, 7, currentLineGraphData.pain.length) : currentLineGraphData.pain;
+        currentLineGraphData.soreness = currentLineGraphData.soreness.length > 7 ? _.slice(currentLineGraphData.soreness, 7, currentLineGraphData.soreness.length) : currentLineGraphData.soreness;
+        return {
+            barWidth,
+            currentLineGraphData,
+            hasLeftAxis,
+            hasRightAxis,
+            updatedBarData,
+        };
+    },
+
+    /**
+      * Handle Insight Render Logic
+      * - Insight
+      */
+    // TODO: UNIT TEST ME
+    handleInsightRenderLogic: (currentAlert, currentDataIndex, insightType) => {
+        let insightTitle = insightType === 7 ? 'BODY RESPONSE' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
+        let showRightDateButton = currentDataIndex !== (currentAlert.data.length - 1);
+        let showLeftDateButton = currentDataIndex > 0 && currentDataIndex < 7;
+        let selectedDate = currentAlert.data[currentDataIndex] ? moment(currentAlert.data[currentDataIndex].date, 'YYYY-MM-DD').format('ddd. MMM Do') : '';
+        let sessions = currentAlert.data[currentDataIndex] ? currentAlert.data[currentDataIndex].sessions : [];
+        let cardTitle = insightType === 7 ? 'TISSUE REPORT' : insightType === 8 ? 'WORKOUT SUMMARY' : '';
+        return {
+            cardTitle,
+            insightTitle,
+            selectedDate,
+            sessions,
+            showLeftDateButton,
+            showRightDateButton,
+        };
+    },
+
+    /**
+      * Handle Body Overlay Render Logic
+      * - BodyOverlay
+      */
+    // TODO: UNIT TEST ME
+    handleBodyOverlayRenderLogic: (bodyParts, _getImageString) => {
+        let frontBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === true);
+        let backBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === false);
+        let filteredFrontBodyParts = _.flatten(
+            _.map(bodyParts, bodyPart => {
+                let filteredBodyPart = _.filter(frontBodyParts, o => o.index === bodyPart.body_part);
+                if(filteredBodyPart.length > 0) {
+                    let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
+                    updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
+                    return updatedBodyPart;
+                }
+                return [];
+            })
+        );
+        let filteredBackBodyParts = _.flatten(
+            _.map(bodyParts, bodyPart => {
+                let filteredBodyPart = _.filter(backBodyParts, o => o.index === bodyPart.body_part);
+                if(filteredBodyPart.length > 0) {
+                    let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
+                    updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
+                    return updatedBodyPart;
+                }
+                return [];
+            })
+        );
+        return {
+            filteredBackBodyParts,
+            filteredFrontBodyParts,
+        };
+    },
+
+    returnBodyOverlayColorString: (value, isPain) => {
+        return isPain === true ?
+            value === 3 ?
+                AppColors.bodyOverlay.painSevere
+                : value === 2 ?
+                    AppColors.bodyOverlay.painMod
+                    :
+                    AppColors.bodyOverlay.painMild
+            :
+            value === 3 ?
+                AppColors.bodyOverlay.sorenessSevere
+                : value === 2 ?
+                    AppColors.bodyOverlay.sorenessMod
+                    :
+                    AppColors.bodyOverlay.sorenessMild;
+    },
+
+    returnInsightColorString: color => {
+        return color === 1 ?
+            AppColors.zeplin.warwarningLight
+            : color === 2 ?
+                AppColors.zeplin.errorLight
+                : color === 3 ?
+                    AppColors.zeplin.slateXLight
+                    : color === 4 ?
+                        AppColors.zeplin.splashLight
+                        : color === 5 ?
+                            AppColors.zeplin.warningLight
+                            :
+                            AppColors.zeplin.errorLight;
+    },
+
+    returnStubBiomechanicsTrend: () => {
+        let biomechanics = {};
+        biomechanics.visualization_type = 9;
+        biomechanics.visualization_data = { plot_legends: [], y_axis_1: '', y_axis_2: '', };
+        let dataArray = [];
+        for (let i = 0; i < 14; i += 1) {
+            let dayOfWeek = moment().subtract((14 - i), 'days').format('ddd');
+            dataArray.push({
+                status:      {bolded_text: [], color: 4, icon: null, icon_type: null, sport_name: null, text: ''},
+                sessions:    [],
+                day_of_week: dayOfWeek,
+                value:       0,
+            });
+        }
+        biomechanics.data = dataArray;
+        return biomechanics;
     },
 
 };

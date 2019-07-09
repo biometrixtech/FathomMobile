@@ -20,28 +20,28 @@ import _ from 'lodash';
  */
 
 const bodyPartMapping = [
-    {index: 0, order: null, label: 'Head', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
-    {index: 1, order: 3, label: 'Shoulder', location: 'upper body', group: 'muscle', image: {0: 'Shoulder.svg', 1: 'L_Shoulder.svg', 2: 'R_Shoulder.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 2, order: 1, label: 'Pecs', location: 'upper body', group: 'muscle', image: {0: 'Pec.svg', 1: 'L_Pec.svg', 2: 'R_Pec.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 3, order: 2, label: 'Abdominals', location: 'upper body', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
-    {index: 4, order: 9, label: 'Hip', location: 'lower body', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 5, order: 10, label: 'Groin', location: 'lower body', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 6, order: 12, label: 'Quads', location: 'lower body', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 7, order: 15, label: 'Knee', location: 'lower body', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 8, order: 16, label: 'Shin', location: 'lower body', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 9, order: 18, label: 'Ankle', location: 'lower body', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 10, order: 19, label: 'Foot', location: 'lower body', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 11, order: 13, label: 'IT Band', location: 'lower body', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 12, order: 6, label: 'Lower Back', location: 'upper body', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
-    {index: 13, order: null, label: 'General', location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
-    {index: 14, order: 11, label: 'Glutes', location: 'lower body', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 15, order: 14, label: 'Hamstrings', location: 'lower body', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 16, order: 17, label: 'Calves', location: 'lower body', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 17, order: 20, label: 'Achilles', location: 'lower body', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 18, order: 4, label: 'Upper Back', location: 'upper body', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
-    {index: 19, order: 8, label: 'Elbow', location: 'upper body', group: 'joint', image: {0: 'Elbow.svg', 1: 'L_Elbow.svg', 2: 'R_Elbow.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 20, order: 7, label: 'Wrist', location: 'upper body', group: 'joint', image: {0: 'Wrist.svg', 1: 'L_Wrist.svg', 2: 'R_Wrist.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 21, order: 5, label: 'Lats', location: 'upper body', group: 'muscle', image: {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 0, order: null, label: 'Head', front: false, location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
+    {index: 1, order: 3, label: 'Shoulder', front: false, location: 'upper body', group: 'muscle', image: {0: 'Shoulder.svg', 1: 'L_Shoulder.svg', 2: 'R_Shoulder.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 2, order: 1, label: 'Pecs', front: true, location: 'upper body', group: 'muscle', image: {0: 'Pec.svg', 1: 'L_Pec.svg', 2: 'R_Pec.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 3, order: 2, label: 'Abdominals', front: true, location: 'upper body', group: 'muscle', image: {0: 'Abs.svg'}, bilateral: false, helping_verb: 'have'},
+    {index: 4, order: 9, label: 'Hip', front: true, location: 'lower body', group: 'joint', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 5, order: 10, label: 'Groin', front: true, location: 'lower body', group: 'muscle', image: {0: 'Groin.svg', 1: 'L_Groin.svg', 2: 'R_Groin.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 6, order: 12, label: 'Quads', front: true, location: 'lower body', group: 'muscle', image: {0: 'Quad.svg', 1: 'L_Quad.svg', 2: 'R_Quad.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 7, order: 15, label: 'Knee', front: true, location: 'lower body', group: 'joint', image: {0: 'Knee.svg', 1: 'L_Knee.svg', 2: 'R_Knee.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 8, order: 16, label: 'Shin', front: true, location: 'lower body', group: 'muscle', image: {0: 'Shin.svg', 1: 'L_Shin.svg', 2: 'R_Shin.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 9, order: 18, label: 'Ankle', front: true, location: 'lower body', group: 'joint', image: {0: 'Ankle.svg', 1: 'L_Ankle.svg', 2: 'R_Ankle.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 10, order: 19, label: 'Foot', front: true, location: 'lower body', group: 'joint', image: {0: 'Foot.svg', 1: 'L_Foot.svg', 2: 'R_Foot.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 11, order: 13, label: 'IT Band', front: true, location: 'lower body', group: 'muscle', image: {0: 'ITBand.svg', 1: 'L_ITBand.svg', 2: 'R_ITBand.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 12, order: 6, label: 'Lower Back', front: false, location: 'upper body', group: 'muscle', image: {0: 'LowBack.svg'}, bilateral: false, helping_verb: 'has'},
+    {index: 13, order: null, label: 'General', front: false, location: '', group: '', image: {}, bilateral: false, helping_verb: ''},
+    {index: 14, order: 11, label: 'Glutes', front: false, location: 'lower body', group: 'muscle', image: {0: 'Glute.svg', 1: 'L_Glute.svg', 2: 'R_Glute.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 15, order: 14, label: 'Hamstrings', front: false, location: 'lower body', group: 'muscle', image: {0: 'Hamstring.svg', 1: 'L_Hamstring.svg', 2: 'R_Hamstring.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 16, order: 17, label: 'Calves', front: false, location: 'lower body', group: 'muscle', image: {0: 'Calf.svg', 1: 'L_Calf.svg', 2: 'R_Calf.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 17, order: 20, label: 'Achilles', front: false, location: 'lower body', group: 'joint', image: {0: 'Achilles.svg', 1: 'L_Achilles.svg', 2: 'R_Achilles.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 18, order: 4, label: 'Upper Back', front: false, location: 'upper body', group: 'muscle', image: {0: 'UpperBackNeck.svg'}, bilateral: false, helping_verb: 'has'},
+    {index: 19, order: 8, label: 'Elbow', front: false, location: 'upper body', group: 'joint', image: {0: 'Elbow.svg', 1: 'L_Elbow.svg', 2: 'R_Elbow.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 20, order: 7, label: 'Wrist', front: true, location: 'upper body', group: 'joint', image: {0: 'Wrist.svg', 1: 'L_Wrist.svg', 2: 'R_Wrist.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 21, order: 5, label: 'Lats', front: false, location: 'upper body', group: 'muscle', image: {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'}, bilateral: true, helping_verb: 'has'},
 ];
 
 const overallReadiness = [
@@ -251,11 +251,11 @@ const warmUpExerciseListOrder = [
 ];
 
 const postSessionFeel = [
-    { index: 1, label: 'REST', subtitle: 'effortless, helps recovery', value: 1, },
-    { index: 2, label: 'EASY', subtitle: 'can hold a conversation', value: 3, },
-    { index: 3, label: 'MODERATE', subtitle: 'can speak a sentence at a time', value: 5, },
-    { index: 4, label: 'HIGH INTENSITY', subtitle: 'can only speak a few words', value: 7, },
-    { index: 5, label: 'MAXIMAL', subtitle: 'unable to talk', value: 10, },
+    { index: 1, label: 'REST', subtitle: 'effortless, helps recovery', value: 1, workoutLabel: 'Rest', },
+    { index: 2, label: 'EASY', subtitle: 'can hold a conversation', value: 3, workoutLabel: 'Easy', },
+    { index: 3, label: 'MODERATE', subtitle: 'can speak a sentence at a time', value: 5, workoutLabel: 'Moderate Intensity', },
+    { index: 4, label: 'HIGH INTENSITY', subtitle: 'can only speak a few words', value: 7, workoutLabel: 'High Intensity', },
+    { index: 5, label: 'MAXIMAL', subtitle: 'unable to talk', value: 10, workoutLabel: 'Maximal Intensity', },
 ];
 
 function cleanExerciseList(recoveryObj, planSelection = 1, goals, modality) {

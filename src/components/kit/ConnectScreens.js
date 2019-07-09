@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
 });
 
 /* Components =================================================================== */
-
 const TopNav = ({ darkColor, onBack, onClose, step, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
@@ -184,7 +183,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                             {content.subtitle}
                         </View>
-                        { page === 2 &&
+                        { page === 1 &&
                             <Text onPress={() => handleAlertPress()} robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}>{'What if my sensor LEDs are blinking blue?'}</Text>
                         }
                     </View>
@@ -312,7 +311,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                         </View>
                         <View style={{backgroundColor: AppColors.zeplin.superLight, borderBottomLeftRadius: 5, borderBottomRightRadius: 5, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}}>
                             <Text robotoRegular style={[styles.subtitleStyle,]}>
-                                {'Proper calibration ensures optimal data quality & precise Recovery recommendations.\n\nYou\'ll need to do this before every workout.'}
+                                {'Good posture during calibration ensures optimal data quality & recommendations.\n\nYou\'ll need to do this before every workout.\n\nOnce ready, grab your Fathom Pro Kit, locate the button then tap next to proceed.'}
                             </Text>
                         </View>
                     </View>
@@ -363,15 +362,8 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, ne
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
                         <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
                             {'(Workout started when '}
-                        </Text>
-                        <TabIcon
-                            color={AppColors.zeplin.slate}
-                            icon={'run'}
-                            size={20}
-                            type={'material-community'}
-                        />
-                        <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
-                            {' LED is solid green)'}
+                            <Text robotoBold>{'Running LED'}</Text>
+                            {' is solid green)'}
                         </Text>
                     </View>
                 }
@@ -506,10 +498,10 @@ const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
         <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
-            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingVertical: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
+            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
         </View>
-        <View style={{flex: 1, justifyContent: 'flex-end',}}>
-            <View style={{alignSelf: 'center', flex: 1, flexDirection: 'row', width: AppSizes.screen.widthFourFifths,}}>
+        <View style={{flex: 1,}}>
+            <View style={{alignSelf: 'center', flex: 1, width: AppSizes.screen.widthFourFifths,}}>
                 <Image
                     resizeMode={'contain'}
                     source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/end_tutorial.png'}}
