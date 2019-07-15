@@ -446,7 +446,10 @@ class MyPlan extends Component {
                     dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
                     isPrepareSessionsCompletionModalOpen: false,
                 },
-                () => this._scrollToFirstActiveActivityTab(),
+                () => {
+                    this._scrollToFirstActiveActivityTab();
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                },
             );
         }, 500);
     }
@@ -458,7 +461,10 @@ class MyPlan extends Component {
                     isTrainSessionsCompletionModalOpen: false,
                     postSession:                        _.cloneDeep(defaultPlanState.postSession),
                 },
-                () => this._scrollToFirstActiveActivityTab(),
+                () => {
+                    this._scrollToFirstActiveActivityTab();
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                },
             );
         }, 500);
     }
@@ -543,7 +549,9 @@ class MyPlan extends Component {
                         // do we need to open 3-Sensor banner
                         AppUtil._handle3SensorBanner(user, response[0]);
                         // handle Coach related items
-                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        if(!this.state.isPrepareSessionsCompletionModalOpen) {
+                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        }
                         // udpate RS first_time_experience
                         if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
                             this._handleUpdateFirstTimeExperience('rs_begin_page');
@@ -744,7 +752,9 @@ class MyPlan extends Component {
                 // scroll to first active activity tab
                 this._scrollToFirstActiveActivityTab();
                 // handle Coach related items
-                this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                if(!this.state.isTrainSessionsCompletionModalOpen) {
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                }
             })
             .catch(error => {
                 this.setState({ isPageCalculating: false, });
