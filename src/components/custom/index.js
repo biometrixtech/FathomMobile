@@ -21,6 +21,7 @@ import FormInput from './FormInput';
 import Indicator from './Indicator';
 import ListItem from './ListItem';
 import MultiSwitch from './MultiSwitch';
+import ParsedText from './ParsedText';
 import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
@@ -53,6 +54,7 @@ export {
     Indicator,
     ListItem,
     MultiSwitch,
+    ParsedText,
     ProgressBar,
     ProgressCircle,
     RadioButton,

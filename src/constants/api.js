@@ -5,7 +5,7 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_1';
+const plansAPIVersion = '/plans/4_2';
 const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_3';
 
@@ -19,8 +19,8 @@ export default {
     // The URL we're connecting to
     // hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
-    hostname: 'https://apis.test.fathomai.com', // test
-    // hostname: 'https://apis.dev.fathomai.com', // development
+    // hostname: 'https://apis.test.fathomai.com', // test
+    hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()

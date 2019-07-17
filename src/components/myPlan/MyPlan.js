@@ -919,6 +919,7 @@ class MyPlan extends Component {
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
             isReadinessSurveyCompleted,
+            newInsights,
             offDaySelected,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
@@ -926,7 +927,7 @@ class MyPlan extends Component {
             <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
 
                 <MyPlanNavBar
-                    cards={dailyPlanObj.insights}
+                    cards={newInsights}
                     expandNotifications={expandNotifications}
                     handleReadInsight={index => handleReadInsight(dailyPlanObj, (index - 1))}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
