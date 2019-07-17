@@ -70,6 +70,7 @@ class TrendChild extends PureComponent {
         const { trendContext, } = this.state;
         let {
             bodyParts,
+            bottomPadding,
             iconImage,
             parsedData,
             style,
@@ -81,6 +82,7 @@ class TrendChild extends PureComponent {
                 automaticallyAdjustContentInsets={false}
                 bounces={false}
                 contentContainerStyle={[style,]}
+                nestedScrollEnabled={true}
                 key={`trend-${props.key}`}
             >
 
@@ -169,7 +171,7 @@ class TrendChild extends PureComponent {
 
                 <Button
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
-                    containerStyle={{alignItems: 'center',}}
+                    containerStyle={{alignItems: 'center', marginBottom: bottomPadding,}}
                     onPress={() => AppUtil.pushToScene('myPlan')}
                     raised={true}
                     title={'Go to your plan'}

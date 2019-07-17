@@ -1618,14 +1618,13 @@ const PlanLogic = {
         default:
             iconImage = require('../../assets/images/standard/view1icon.png');
         }
-        const basePaddingBottom = Platform.OS === 'ios' ? (AppSizes.iphoneXBottomBarPadding + AppSizes.padding) : AppSizes.padding;
+        const basePaddingBottom = Platform.OS === 'ios' ? (AppSizes.iphoneXBottomBarPadding + AppSizes.padding + AppSizes.padding) : AppSizes.padding;
         const dotHeight = 10;
         const dotsWrapperHeight = 16;
         const libraryPaginationSize = selectedTrends.length > 1 ? (16 + (AppSizes.isIphoneX ? 34 : 0) + dotHeight + dotsWrapperHeight) : 0;
         const style = {
             backgroundColor: AppColors.white,
             flexGrow:        1,
-            paddingBottom:   (basePaddingBottom + libraryPaginationSize),
         };
         let parsedData = [];
         _.map(props.trend_data.bold_text, (prop, i) => {
@@ -1651,6 +1650,7 @@ const PlanLogic = {
         };
         return {
             bodyParts,
+            bottomPadding: (basePaddingBottom + libraryPaginationSize),
             iconImage,
             parsedData,
             style,
