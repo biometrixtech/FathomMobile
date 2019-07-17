@@ -231,7 +231,7 @@ class Trends extends PureComponent {
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             { !isBodyResponseLocked &&
-                                <Text robotoRegular style={[styles.cardTitle,]}>{'Body Response'}</Text>
+                                <Text robotoRegular style={[styles.cardTitle,]}>{'Pain & Soreness'}</Text>
                             }
                             <InsightsCharts
                                 currentAlert={bodyResponse}
@@ -241,7 +241,7 @@ class Trends extends PureComponent {
                             { isBodyResponseLocked &&
                                 <View style={[styles.lockedCardWrapper,]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Body Response'}</Text>
+                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Pain & Soreness'}</Text>
                                         <TabIcon
                                             color={AppColors.white}
                                             containerStyle={[{marginRight: AppSizes.paddingSml,}]}

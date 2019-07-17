@@ -113,11 +113,11 @@ const zeplin = {
 }
 
 const bodyOverlay = {
-    painMild:       '#FBE2DA',
-    painMod:        '#F6C5B6',
+    painMild:       '#F6C5B6',
+    painMod:        '#F2A892',
     painSevere:     zeplin.errorLight,
-    sorenessMild:   '#FCEDDD',
-    sorenessMod:    '#F8DBBA',
+    sorenessMild:   '#F8DBBA',
+    sorenessMod:    '#F4CA99',
     sorenessSevere: zeplin.warningLight,
 }
 

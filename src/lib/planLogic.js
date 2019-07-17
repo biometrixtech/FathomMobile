@@ -1948,7 +1948,7 @@ const PlanLogic = {
         let showLeftDateButton = currentDataIndex > 0 && currentDataIndex < 7;
         let selectedDate = currentAlert.data[currentDataIndex] ? moment(currentAlert.data[currentDataIndex].date, 'YYYY-MM-DD').format('ddd. MMM Do') : '';
         let sessions = currentAlert.data[currentDataIndex] ? currentAlert.data[currentDataIndex].sessions : [];
-        let cardTitle = insightType === 7 ? 'TISSUE REPORT' : insightType === 8 ? 'WORKOUT SUMMARY' : '';
+        let cardTitle = insightType === 7 ? 'DAILY SUMMARY' : insightType === 8 ? 'DAILY SUMMARY' : '';
         return {
             cardTitle,
             insightTitle,
