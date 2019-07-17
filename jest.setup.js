@@ -16,7 +16,7 @@ jest.mock('./src/store', () => {
         bluetoothOn:   false,
         systemStatus:  0,
     };
-    let initStore = { environment: 'DEV', };
+    let initStore = { environment: 'TEST', };
     let planStore = { dailyPlan: [], };
     let userStore = { id: '', };
     return {
