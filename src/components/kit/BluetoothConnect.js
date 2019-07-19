@@ -137,7 +137,7 @@ class BluetoothConnect extends Component {
             //     ) // 3. route to next page
             // )
             .catch(err => {
-                console.log('err',err)
+                console.log('err',err);
                 this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} )
             });
     }
@@ -168,6 +168,7 @@ class BluetoothConnect extends Component {
     _handleBLEPair = () => {
         this.bleManager.startDeviceScan(null, { allowDuplicates: false, scanMode: 2, }, this.handleDiscoverPeripheral);
         this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 60000);
+
     }
 
     _handleDisconnection = (device, callback, shouldExitKitSetup) => {
@@ -211,12 +212,15 @@ class BluetoothConnect extends Component {
 
     _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
         const { getSingleWifiConnection, } = this.props;
-        if(numberOfConnections === 0 && currentIndex > numberOfConnections) {
+        if(
+            (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
+            this.state.isWifiScanDone
+        ) {
             return this.setState({ isWifiScanDone: true, });
         }
         return getSingleWifiConnection(device, currentIndex)
             .then(res => {
-                console.log('res-_handleSingleWifiConnectionFetch',res);
+                console.log('res-_handleSingleWifiConnectionFetch',res,numberOfConnections,currentIndex);
                 let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
                 newAvailableNetworks.push(res);
                 newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
@@ -245,7 +249,7 @@ class BluetoothConnect extends Component {
     _handleStopScan = () => {
         clearInterval(this._timer);
         this.bleManager.stopDeviceScan();
-        return this._toggleSensorsConnectedAlert();
+        this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 2000);
     }
 
     _handleWifiNotInRange = () => {
@@ -380,6 +384,7 @@ class BluetoothConnect extends Component {
         let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
         this._timer = _.delay(() => {
             if(closestDevice.length > 0) {
+                console.log('TIME TO COMMECT');
                 let device = closestDevice[0];
                 return startConnection(device)
                     .then(response => {

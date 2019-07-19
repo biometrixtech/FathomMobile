@@ -204,7 +204,7 @@ class Trends extends PureComponent {
                                 </View>
                             }
                             { currentWorkloadAlertText &&
-                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
                                     { workloadIcon ?
                                         <TabIcon
                                             color={workloadSubtitleColor}
@@ -256,7 +256,7 @@ class Trends extends PureComponent {
                                 </View>
                             }
                             { currentBodyResponseAlertText &&
-                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
                                     { bodyResponseIcon ?
                                         <TabIcon
                                             color={bodyResponseSubtitleColor}

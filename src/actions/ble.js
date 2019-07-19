@@ -4,7 +4,6 @@
 // constants, libs, store, ...
 import { Actions, BLEConfig, } from '../constants';
 import { AppAPI, AppUtil, SensorLogic, } from '../lib';
-import { store } from '../store'; // TODO: REMOVE ME
 
 // import third-party libraries
 import _ from 'lodash';
@@ -48,36 +47,49 @@ const convertStringToByteArray = string => string.split('').map(char => char.cha
   */
 const convertBase64ToHex = string => {
     let hexString = new Buffer.from(string, 'base64').toString('hex');
+    console.log('hexString',hexString);
     return hexString.match(/.{1,2}/g).map(val => convertHex(val))
 };
 
+const unsignedToSignedInt = int => (int <<24 >>24);
+
 const sleeper = (ms = 500) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
-const read = (device, dataArray, is3Sensor = true) => {
+const read = (device, dataArray, is3Sensor = true, numberOfTries = 0) => {
     let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
     let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
-    console.log('hi from read #1');
+    console.log('hi from read #1', moment().format('H:m:s:SSS'));
     return device.readCharacteristicForService(serviceUUID, characteristicUUID)
         .then(data => {
             let dataValue = convertBase64ToHex(data.value);
-            console.log('hi from read #2',dataValue,convertBase64ToHex(dataArray),validateReadData(dataValue, convertBase64ToHex(dataArray)));
+            console.log(
+                'hi from read #2',
+                numberOfTries,
+                data.value,
+                dataArray,
+                dataValue,
+                convertBase64ToHex(dataArray),
+                validateReadData(dataValue, convertBase64ToHex(dataArray)),
+                moment().format('H:m:s:SSS')
+            );
             if(
                 (dataArray && validateReadData(dataValue, convertBase64ToHex(dataArray))) ||
-                !dataArray
+                !dataArray ||
+                numberOfTries === 5
             ) {
                 return dataValue;
             }
-            return read(device, dataArray, is3Sensor);
+            return read(device, dataArray, is3Sensor, (numberOfTries + 1));
         });
 };
 
 const write = (device, data, is3Sensor = true, transactionId) => {
     let serviceUUID = is3Sensor ? BLEConfig.serviceUUID3Sensor : BLEConfig.serviceUUID;
     let characteristicUUID = is3Sensor ? BLEConfig.characteristicUUID3Sensor : BLEConfig.characteristicUUID;
-    console.log('hi from write #1');
+    console.log('hi from write #1', moment().format('H:m:s:SSS'));
     return device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, data, transactionId)
         .then(() => {
-            console.log('hi from write #2');
+            console.log('hi from write #2', moment().format('H:m:s:SSS'));
             return read(device, data, is3Sensor);
         });
 };
@@ -126,7 +138,7 @@ const returnNetworkMapping = value => {
 
 const cleanSingleWifiArray = wifiArray => {
     return {
-        rssi:     wifiArray[5],
+        rssi:     unsignedToSignedInt(wifiArray[5]),
         security: returnNetworkMapping(wifiArray[4]),
         ssid:     convertByteArrayToString(_.slice(wifiArray, 6, wifiArray.length)),
     }
@@ -203,6 +215,7 @@ const startConnection = device => {
             return macAddress;
         })
         .then(macAddress => AppAPI.hardware.accessory.get({ wifiMacAddress: macAddress }))
+        // .then(() => '3C:A0:67:57:2C:12') // TODO: FIX ME PLS
         .then(response => Promise.resolve(response))
         .catch(error => Promise.reject(error));
 };
@@ -213,7 +226,7 @@ const getScannedWifiConnections = device => {
     const dataArray = new Buffer([commands.WRITE_WIFI_SCAN, convertHex('0x00')]).toString('base64');
     return dispatch => write(device, dataArray, true)
         .then(response => {
-            console.log('hi from getScannedWifiConnections #2');
+            console.log('hi from getScannedWifiConnections #2',response[4]);
             return Promise.resolve(response[4]);
         })
         .catch(error => Promise.reject(error));
@@ -230,12 +243,13 @@ const getSingleWifiConnection = (device, index) => {
                 return write(device, readLongDataArray, true)
                     .then(res => Promise.resolve(cleanSingleWifiArray(_.concat(singleWifiConnectionArray, res))));
             }
+            console.log('hi from getSingleWifiConnection #1',response);
             return Promise.resolve(cleanSingleWifiArray(response));
         })
         .catch(error => Promise.reject(error));
 };
 
-const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) => {
+const writeWifiDetailsToSensor = (device, ssid, password, securityByte) => {
     const ssidDataArray = convertStringToByteArray(ssid);
     const passwordDataArray = convertStringToByteArray(password ? password : '');
     let shortSlicedPswDataArray = _.slice(passwordDataArray, 0, 18);
@@ -255,7 +269,7 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
         return Promise.reject(SensorLogic.errorMessages().longPass);
     }
     // send commands
-    return await write(device, shortSsidDataArray) // 1. write short wifi
+    return dispatch => write(device, shortSsidDataArray) // 1. write short wifi
         .then(() => longSlicedSsidDataArray.length === 0 ? '' : write(device, longSsidDataArray)) // 2. check if long wifi -> write if needed
         .then(() => securityByte !== 0 ? write(device, shortPswDataArray) : '') // 3. write short psw
         .then(() => longSlicedPswDataArray.length === 0 ? '' : write(device, longPswDataArray)) // 4. check if long psw -> write if needed
@@ -268,7 +282,7 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
                 return sleeper(2000); // wait 2secs
             }
             return Promise.resolve(
-                store.dispatch({ // TODO: FIX
+                dispatch({
                     type: Actions.WIFI
                 })
             );
@@ -280,7 +294,7 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
                 return sleeper(2000); // wait 2secs
             }
             return Promise.resolve(
-                store.dispatch({ // TODO: FIX
+                dispatch({
                     type: Actions.WIFI
                 })
             );
@@ -292,12 +306,13 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
                 return sleeper(2000); // wait 2secs
             }
             return Promise.resolve(
-                store.dispatch({ // TODO: FIX
+                dispatch({
                     type: Actions.WIFI
                 })
             );
         })
-        .catch(err => Promise.reject(err));
+        .then(res => Promise.reject(SensorLogic.errorMessages().errorWifiConnection))
+        .catch(err => Promise.reject(SensorLogic.errorMessages().errorWifiConnection));
 };
 
 const exitKitSetup = device => {

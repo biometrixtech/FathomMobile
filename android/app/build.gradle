@@ -196,6 +196,7 @@ dependencies {
     implementation project(':lottie-react-native')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-android-location-services-dialog-box')
+    implementation project(':react-native-ble-plx')
     implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
     implementation project(':react-native-keep-awake')

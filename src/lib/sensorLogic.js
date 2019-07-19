@@ -35,6 +35,22 @@ const SensorLogic = {
         };
     },
 
+    toByteAndRssiToIcon: (rssi, toByte) => {
+        if(!rssi || !toByte) {
+            return 'wifi-strength-1';
+        }
+        let iconStr = _.inRange(rssi, 126, -50) ?
+        		'wifi-strength-4'
+            : _.inRange(rssi, -60, -50) ?
+            		'wifi-strength-3'
+            		: _.inRange(rssi, -70, -60) ?
+                		'wifi-strength-2'
+                    :
+                    'wifi-strength-1';
+        let toByteStr = toByte !== 0 ? '-lock' : '';
+    		return `${iconStr}${toByteStr}`;
+    },
+
     /**
       * Handles Sensor File Render Logic
       * - SensorFiles
@@ -162,7 +178,7 @@ const SensorLogic = {
       * - SensorFilesPage
       */
     handleSessionRenderLogic: session => {
-        let updateEndDateTimeString = moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma');
+        let updateEndDateTimeString = session && session.upload_end_date ? moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma') : moment().format('M/D, h:mma');
         let leftIconString = moment(session.event_date).format('M/D');
         let subtitle = session.status === 0 ?
             'Syncing your data! Do not remove from wifi.'

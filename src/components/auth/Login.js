@@ -313,6 +313,7 @@ class Login extends Component {
                             placeholder={'username'}
                             placeholderTextColor={AppColors.white}
                             returnKeyType={'next'}
+                            textContentType={'username'}
                             value={this.state.form_values.email}
                         />
                         <Spacer size={AppSizes.paddingMed} />
@@ -332,6 +333,7 @@ class Login extends Component {
                             placeholderTextColor={AppColors.white}
                             returnKeyType={'done'}
                             secureTextEntry={true}
+                            textContentType={'password'}
                             value={this.state.form_values.password}
                         />
                         <TouchableOpacity onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : AppUtil.pushToScene('forgotPassword')}>

@@ -98,8 +98,7 @@ class Start extends Component {
                         this.props.expires
                     ) {
                         // Actions.bluetoothConnect();
-                        this.hideSplash();
-                        // this.lo/gin();
+                        this.login();
                     } else {
                         // clear user reducer
                         if(store) {

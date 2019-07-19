@@ -97,7 +97,9 @@ const UTIL = {
     },
 
     getMaintenanceWindow: () => {
-        InitActions.getMaintenanceWindow(true);
+        InitActions.getMaintenanceWindow(true)
+            .then(res => console.log('res',res))
+            .catch(err => console.log('err',err));
     },
 
     handleScheduledMaintenanceAlert: (displayAlert, header, message) => {

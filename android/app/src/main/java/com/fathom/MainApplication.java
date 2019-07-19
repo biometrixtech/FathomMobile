@@ -13,6 +13,7 @@ import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
+import com.polidea.reactnativeble.BlePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;

@@ -637,22 +637,13 @@ const Connect = ({
                                     key={i}
                                     onPress={() => handleNetworkPress(network)}
                                     rightIcon={
-                                        <View style={{flexDirection: 'row',}}>
-                                            {network.security.toByte !== 0 &&
-                                                <TabIcon
-                                                    color={AppColors.zeplin.slateXLight}
-                                                    containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                                    icon={'lock'}
-                                                    size={24}
-                                                    type={'font-awesome'}
-                                                />
-                                            }
-                                            <TabIcon
-                                                color={AppColors.zeplin.slateXLight}
-                                                icon={'wifi'}
-                                                size={24}
-                                            />
-                                        </View>
+                                        <TabIcon
+                                            color={AppColors.zeplin.slateXLight}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={SensorLogic.toByteAndRssiToIcon(network.rssi, network.security.toByte)}
+                                            size={24}
+                                            type={'material-community'}
+                                        />
                                     }
                                     title={network.ssid}
                                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
