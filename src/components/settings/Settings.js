@@ -365,42 +365,6 @@ class Settings extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <SettingsNavBar />
-                { userHasSingleSensorSystem &&
-                    <View>
-                        <ListItem
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                            leftIcon={ this.state.isUnpairing ?
-                                <Animated.View
-                                    style={{transform: [{rotate: spin}],}}
-                                >
-                                    <TabIcon
-                                        color={AppColors.zeplin.splash}
-                                        icon={'loading'}
-                                        iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
-                                        size={ICON_SIZE}
-                                        type={'material-community'}
-                                    />
-                                </Animated.View>
-                                :
-                                {
-                                    color:     AppColors.zeplin.slate,
-                                    iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
-                                    name:      'bluetooth',
-                                    size:      ICON_SIZE,
-                                }
-                            }
-                            onPress={() => this.props.accessoryData.sensor_pid !== 'None' ? this._disconnectFromSingleSensor() : Actions.bluetoothConnect()}
-                            rightIcon={{
-                                color: AppColors.zeplin.slate,
-                                name:  'chevron-right',
-                                size:  ICON_SIZE,
-                            }}
-                            title={this.props.accessoryData.sensor_pid !== 'None' ? 'UNPAIR SENSOR' : 'PAIR WITH A NEW SENSOR'}
-                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                        />
-                        <Spacer isDivider />
-                    </View>
-                }
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
@@ -497,7 +461,7 @@ class Settings extends Component {
                                     />
                                 </View>
                             }
-                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect3Sensor()}
+                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
                             rightIcon={{
                                 color: AppColors.zeplin.slate,
                                 name:  'chevron-right',

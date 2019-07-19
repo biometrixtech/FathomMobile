@@ -197,7 +197,7 @@ class TrendChild extends PureComponent {
                     activeDotStyle={{backgroundColor: AppColors.zeplin.slate,}}
                     dotStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                     hidePagination={selectedTrends.length === 1 || selectedTrends.length === 0}
-                    paginationStyle={{backgroundColor: AppColors.red, bottom: 0, left: 0, width: AppSizes.screen.width,}}
+                    paginationStyle={{backgroundColor: AppColors.white, bottom: 0, left: 0, width: AppSizes.screen.width,}}
                     onSlideChange={index => this.setState({ currentCardIndex: index, })}
                     renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends)}
                     scrollEnabled={true}

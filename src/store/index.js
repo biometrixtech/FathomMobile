@@ -17,6 +17,7 @@ let store;
 // Redux Persist config
 const config = {
     key:       'root',
+    timeout:   0, // the code base checks for falsy, so 0 disables
     storage,
     whitelist: ['init', 'user', 'plan'],
 };

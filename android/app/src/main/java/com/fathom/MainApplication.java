@@ -13,7 +13,6 @@ import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
-import it.innove.BleManagerPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
@@ -45,12 +44,12 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                 new MainReactPackage(),
+                new BlePackage(),
                 new AsyncStoragePackage(),
                 new NetInfoPackage(),
                 new LottiePackage(),
                 new VectorIconsPackage(),
                 new LocationServicesDialogBoxPackage(),
-                new BleManagerPackage(),
                 new RNDeviceInfo(),
                 new RNCWebViewPackage(),
                 new KCKeepAwakePackage(),

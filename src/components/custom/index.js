@@ -10,7 +10,6 @@ import Card from './Card';
 import Checkbox from './Checkbox';
 import Coach from './Coach';
 import CoachesDashboardTabBar from './CoachesDashboardTabBar';
-import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
 import CustomTabBar from './CustomTabBar';
 import DeckCards from './DeckCards';
@@ -43,7 +42,6 @@ export {
     Checkbox,
     Coach,
     CoachesDashboardTabBar,
-    CustomMyPlanNavBar,
     CustomNavBar,
     CustomTabBar,
     DeckCards,

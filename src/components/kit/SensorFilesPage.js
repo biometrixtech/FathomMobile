@@ -20,7 +20,7 @@ import {
 import { Actions, } from 'react-native-router-flux';
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
-import BleManager from 'react-native-ble-manager';
+import { BleManager, } from 'react-native-ble-plx';
 import DialogInput from 'react-native-dialog-input';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
@@ -33,8 +33,8 @@ import { ListItem, Spacer, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
 
 // setup consts
-const BleManagerModule = NativeModules.BleManager;
-const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+// const BleManagerModule = NativeModules.BleManager;
+// const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 /* Component ==================================================================== */
 const TopNavBar = () => (
@@ -99,10 +99,10 @@ class SensorFilesPage extends Component {
     }
 
     componentDidMount = () => {
-        BleManager.start({ showAlert: false, });
-        BleManager.checkState();
-        this.handlerCheck = bleManagerEmitter.addListener('BleManagerDidUpdateState', args => this.handleBLEUpdateState(args));
-        this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+        // BleManager.start({ showAlert: false, });
+        // BleManager.checkState();
+        // this.handlerCheck = bleManagerEmitter.addListener('BleManagerDidUpdateState', args => this.handleBLEUpdateState(args));
+        // this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
     }
 
     componentWillMount = () => {
@@ -347,7 +347,7 @@ class SensorFilesPage extends Component {
         const { pageStep, } = this.props;
         if(currentPage === 0 && pageStep === 'connect') { // turn on BLE & connect to accessory
             if (Platform.OS === 'android') {
-                BleManager.enableBluetooth();
+                // BleManager.enableBluetooth();
             }
             if (Platform.OS === 'android' && Platform.Version >= 23) {
                 PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
