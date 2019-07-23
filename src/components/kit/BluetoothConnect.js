@@ -4,16 +4,11 @@
     <BluetoothConnect
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
-        deviceFound={deviceFound}
         exitKitSetup={exitKitSetup}
-        getScannedWifiConnections={getScannedWifiConnections}
         getSensorFiles={getSensorFiles}
-        getSingleWifiConnection={getSingleWifiConnection}
         network={network}
-        startConnection={startConnection}
         updateUser={updateUser}
         user={user}
-        writeWifiDetailsToSensor={writeWifiDetailsToSensor}
     />
  *
  */
@@ -30,15 +25,15 @@ import {
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, } from '../../constants';
 import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
-import { Loading, } from '../general';
-import { store, } from '../../store';
 import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, } from './ConnectScreens';
+import { Loading, } from '../general';
+import { ble, } from '../../actions';
+import { store, } from '../../store';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
-import { BleManager, Device, } from 'react-native-ble-plx';
 import DialogInput from 'react-native-dialog-input';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
@@ -66,7 +61,6 @@ class BluetoothConnect extends Component {
         };
         this._pages = {};
         this._timer = null;
-        this.bleManager = new BleManager();
     }
 
     componentDidMount = () => {
@@ -80,26 +74,18 @@ class BluetoothConnect extends Component {
 
     componentWillMount() {
         // monitor when the BLE state changes
-        this.bleManager.onStateChange(state => this.setState({ bleState: state, }), true);
+        ble.startMonitor(state => this.setState({ bleState: state, }));
     }
 
     componentWillUnmount = () => {
         this._pages = {};
-        this.bleManager.destroy();
+        ble.destoryInstance();
         clearInterval(this._timer);
-    }
-
-    handleDiscoverPeripheral = (error, device) => {
-        const { deviceFound, } = this.props;
-        return !error && device.isConnectable && device.name && device.name === 'fathomKit' ?
-            deviceFound(device).then(() => this._handleStopScan())
-            :
-            null;
     }
 
     _connectSensorToWifi = () => {
         Keyboard.dismiss();
-        const { assignKitIndividual, bluetooth, getSensorFiles, updateUser, user, writeWifiDetailsToSensor, } = this.props;
+        const { assignKitIndividual, bluetooth, getSensorFiles, updateUser, user, } = this.props;
         const { currentWifiConnection, } = this.state;
         // setup ble write variables
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
@@ -122,20 +108,19 @@ class BluetoothConnect extends Component {
         newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
         newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
         newUserObj.sensor_data.system_type = '3-sensor';
-        return writeWifiDetailsToSensor(device, ssid, password, securityByte) // 1. write details to sensor
-            .then(res => console.log('res',res))
-            // .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
-            // .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
-            // .then(() => assignKitIndividual({wifiMacAddress: macAddress,}, user)) // 3. PATCH hardware specific endpoint
-            // .then(() => getSensorFiles(newUserObj)) // 4. grab sensor files as they may have changed
-            // .then(() =>
-            //     this.setState(
-            //         { loading: false, },
-            //         () => {
-            //             this._timer = _.delay(() => this._renderNextPage(), 500)
-            //         }
-            //     ) // 3. route to next page
-            // )
+        return ble.writeWifiDetailsToSensor(device, ssid, password, securityByte) // 1. write details to sensor
+            .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
+            .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
+            .then(() => assignKitIndividual({wifiMacAddress: macAddress,}, user)) // 3. PATCH hardware specific endpoint
+            .then(() => getSensorFiles(newUserObj)) // 4. grab sensor files as they may have changed
+            .then(() =>
+                this.setState(
+                    { loading: false, },
+                    () => {
+                        this._timer = _.delay(() => this._renderNextPage(), 500)
+                    }
+                ) // 3. route to next page
+            )
             .catch(err => {
                 console.log('err',err);
                 this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} )
@@ -166,28 +151,53 @@ class BluetoothConnect extends Component {
     }
 
     _handleBLEPair = () => {
-        this.bleManager.startDeviceScan(null, { allowDuplicates: false, scanMode: 2, }, this.handleDiscoverPeripheral);
-        this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 60000);
+        ble.startDeviceScan((error, response) => {
+            clearTimeout(this._timer);
+            // TODO: FIX ME!
+            console.log('startDeviceScan',error,response)
+            // if(error) {
+            //     if (
+            //         this.props.bluetooth.accessoryData &&
+            //         !this.props.bluetooth.accessoryData.sensor_pid &&
+            //         !this.props.bluetooth.accessoryData.mobile_udid &&
+            //         !this.props.bluetooth.accessoryData.wifiMacAddress
+            //     ) {
+            //         this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+            //         // return this._handleDisconnection(device, () => this._renderPreviousPage());
+            //     }
+            //     return console.log(error); // TODO: ERROR HANDLING HERE?
+            // }
+            // if(!response.accessory.owner_id) {
+                return this._toggleAlertNotification();
+            // }
+            // return this._handleDisconnection(device, () => this._handleBLEPair());
+        });
+        this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(() => {}), 60000);
 
     }
 
     _handleDisconnection = (device, callback, shouldExitKitSetup) => {
         const { bluetooth, exitKitSetup, } = this.props;
-        if(shouldExitKitSetup) {
-            if(!device) {
-                device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+        this.setState(
+            { isConnectingToSensor: false, },
+            () => {
+                if(shouldExitKitSetup) {
+                    if(!device) {
+                        device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+                    }
+                    return exitKitSetup(device);
+                }
+                if(!device) {
+                    device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+                    if(!device && callback) {
+                        return callback();
+                    }
+                }
+                return device.cancelConnection()
+                    .then(() => callback && callback())
+                    .catch(err => console.log('err',err));
             }
-            return exitKitSetup(device);
-        }
-        if(!device) {
-            device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-            if(!device && callback) {
-                return callback();
-            }
-        }
-        return device.cancelConnection()
-            .then(() => callback && callback())
-            .catch(err => console.log('err',err));
+        );
     }
 
     _handleNetworkPress = network => {
@@ -211,16 +221,15 @@ class BluetoothConnect extends Component {
     }
 
     _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
-        const { getSingleWifiConnection, } = this.props;
         if(
             (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
             this.state.isWifiScanDone
         ) {
             return this.setState({ isWifiScanDone: true, });
         }
-        return getSingleWifiConnection(device, currentIndex)
+        return ble.getSingleWifiConnection(device, currentIndex)
             .then(res => {
-                console.log('res-_handleSingleWifiConnectionFetch',res,numberOfConnections,currentIndex);
+                // console.log('_handleSingleWifiConnectionFetch-res',res);
                 let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
                 newAvailableNetworks.push(res);
                 newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
@@ -237,6 +246,7 @@ class BluetoothConnect extends Component {
                 );
             })
             .catch(err => {
+                // console.log('_handleSingleWifiConnectionFetch-err',err);
                 if(err === 'TIMEDOUT') {
                     return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan()));
                 } else if(currentIndex === numberOfConnections) {
@@ -245,12 +255,6 @@ class BluetoothConnect extends Component {
                 return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
             });
     };
-
-    _handleStopScan = () => {
-        clearInterval(this._timer);
-        this.bleManager.stopDeviceScan();
-        this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 2000);
-    }
 
     _handleWifiNotInRange = () => {
         const { user, }= this.props;
@@ -277,27 +281,23 @@ class BluetoothConnect extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, } = this.props;
+        const { bluetooth, } = this.props;
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-        console.log('hi from _handleWifiScan');
-        return getScannedWifiConnections(device)
+        return ble.getScannedWifiConnections(device)
             .then(res => {
-                console.log('res-_handleWifiScan',res);
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
                 return this._handleSingleWifiConnectionFetch(device, res, 1);
             })
-            .catch(err => {
-                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(err === 'TIMEDOUT') {
-                        this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan())
-                    } else {
-                        AppUtil.handleAPIErrorAlert(err, 'Please Try Again!');
-                    }
-                });
-            });
+            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                if(err === 'TIMEDOUT') { // TODO: ERROR HANDLING!
+                    this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan())
+                } else {
+                    AppUtil.handleAPIErrorAlert(err, 'Please Try Again!');
+                }
+            }));
     }
 
     _onPageScrollEnd = currentPage => {
@@ -359,7 +359,7 @@ class BluetoothConnect extends Component {
         );
     }
 
-    _toggleAlertNotification = (sensorId, userId) => {
+    _toggleAlertNotification = () => {
         Alert.alert(
             '',
             'Did the LED turn green?',
@@ -378,38 +378,6 @@ class BluetoothConnect extends Component {
         );
     }
 
-    _toggleSensorsConnectedAlert = () => {
-        const { bluetooth, startConnection, user, } = this.props;
-        this.bleManager.stopDeviceScan();
-        let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
-        this._timer = _.delay(() => {
-            if(closestDevice.length > 0) {
-                console.log('TIME TO COMMECT');
-                let device = closestDevice[0];
-                return startConnection(device)
-                    .then(response => {
-                        if(!response.accessory.owner_id) {
-                            return this._toggleAlertNotification(device.id, user.id);
-                        }
-                        return this._handleDisconnection(device, () => this._handleBLEPair());
-                    })
-                    .catch(err => {
-                        if (
-                            this.props.bluetooth.accessoryData &&
-                            !this.props.bluetooth.accessoryData.sensor_pid &&
-                            !this.props.bluetooth.accessoryData.mobile_udid &&
-                            !this.props.bluetooth.accessoryData.wifiMacAddress
-                        ) {
-                            this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-                            return this._handleDisconnection(device, () => this._renderPreviousPage());
-                        }
-                        return console.log(err);
-                    });
-            }
-            return this._toggleTimedoutBringCloserAlert(() => {});
-        }, 2000);
-    }
-
     _toggleTimedoutBringCloserAlert = callback => {
         Alert.alert(
             '',
@@ -422,7 +390,7 @@ class BluetoothConnect extends Component {
                 },
                 {
                     text:    'Try Again',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => callback && callback()),
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => callback && callback())), // TODO: CONFIRM THIS LINE
                 },
             ],
             { cancelable: false, }
@@ -449,6 +417,7 @@ class BluetoothConnect extends Component {
     }
 
     render = () => {
+        // TODO: ADD EXIT KIT SETUP WHEN CLOSING SOME SCREENS
         const {
             availableNetworks,
             bleState,
@@ -657,18 +626,13 @@ class BluetoothConnect extends Component {
 }
 
 BluetoothConnect.propTypes = {
-    assignKitIndividual:       PropTypes.func.isRequired,
-    bluetooth:                 PropTypes.object.isRequired,
-    deviceFound:               PropTypes.func.isRequired,
-    exitKitSetup:              PropTypes.func.isRequired,
-    getScannedWifiConnections: PropTypes.func.isRequired,
-    getSensorFiles:            PropTypes.func.isRequired,
-    getSingleWifiConnection:   PropTypes.func.isRequired,
-    network:                   PropTypes.object.isRequired,
-    startConnection:           PropTypes.func.isRequired,
-    updateUser:                PropTypes.func.isRequired,
-    user:                      PropTypes.object.isRequired,
-    writeWifiDetailsToSensor:  PropTypes.func.isRequired,
+    assignKitIndividual: PropTypes.func.isRequired,
+    bluetooth:           PropTypes.object.isRequired,
+    exitKitSetup:        PropTypes.func.isRequired,
+    getSensorFiles:      PropTypes.func.isRequired,
+    network:             PropTypes.object.isRequired,
+    updateUser:          PropTypes.func.isRequired,
+    user:                PropTypes.object.isRequired,
 };
 
 BluetoothConnect.defaultProps = {};
