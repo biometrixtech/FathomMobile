@@ -453,6 +453,30 @@ const getSingleWifiConnection = async (device, index) => {
     });
 };
 
+const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value, device, transactionId) => {
+    let timeout = sleeper(2000);
+    let responseValidation = new Promise(async (resolve, reject) => {
+        const sleep = await sleeper(2000);
+        let readCharacteristic = await device.readCharacteristicForService(serviceUUID, characteristicUUID, transactionId);
+        console.log('validateWriteWifiDetailsResponse-1', readCharacteristic, writeBase64Value);
+        let responseHex = convertBase64ToHex(readCharacteristic.value);
+        let writeHex = convertBase64ToHex(writeBase64Value);
+        // const validateReadData = (response, dataArray) =>
+        //       (response[0] === 0 && response[2] === dataArray[0] && response[3] === 0);
+        let isValid = validateReadData(responseHex, writeHex);
+        console.log('validateWriteWifiDetailsResponse-2', responseHex, writeHex, isValid);
+        if(!isValid) {
+            return reject();
+        }
+        console.log('validateWriteWifiDetailsResponse-3', responseHex, writeHex, isValid);
+        return resolve();
+    });
+    return Promise
+        .all([responseValidation, timeout])
+        .then(res => console.log('validateWriteWifiDetailsResponse-res',res))
+        .catch(err => console.log('validateWriteWifiDetailsResponse-err',err));
+};
+
 const checkCharacteristicForChange = async (device, readConnectBase64, transactionId, startTime) => {
     return await new Promise(async (resolve, reject) => {
         const readConnectSleep = await sleeper(2000);
@@ -495,53 +519,64 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
     console.log('writeWifiDetailsToSensor-0');
     return await new Promise(async (resolve, reject) => {
         const shortSSIDCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, shortSsidBase64, 'short-ssid'); // 1. write short wifi
-        const shortSSIDSleep = await sleeper(2000);
+        const validateResponse = await validateWriteWifiDetailsResponse(shortSSIDCharacteristic, shortSsidBase64, device, 'short-ssid');
+        // const shortSSIDSleep = await sleeper(2000);
         if(longSlicedSsidDataArray.length > 0) { console.log('writeWifiDetailsToSensor-is LONG SSID');
             const longSSIDCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, longSsidBase64, 'long-ssid'); // 2. check if long wifi -> write if needed
-            const longSSIDSleep = await sleeper(2000);
+            const validateResponse2 = await validateWriteWifiDetailsResponse(longSSIDCharacteristic, longSsidBase64, device, 'long-ssid');
+            // const longSSIDSleep = await sleeper(2000);
         }
         if(securityByte > 0) { console.log('writeWifiDetailsToSensor-has PSW');
             const shortPswCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, shortPswBase64, 'long-password'); // 3. write short psw
-            const shortPswSleep = await sleeper(2000);
+            const validateResponse3 = await validateWriteWifiDetailsResponse(shortPswCharacteristic, shortPswBase64, device, 'long-password');
+            // const shortPswSleep = await sleeper(2000);
         }
         if(longSlicedPswDataArray.length > 0) { console.log('writeWifiDetailsToSensor-is LONG PSW');
             const longPswCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, longPswBase64, 'long-password'); // 4. check if long psw -> write if needed
-            const longPswSleep = await sleeper(2000);
+            const validateResponse4 = await validateWriteWifiDetailsResponse(longPswCharacteristic, longPswBase64, device, 'long-password');
+            // const longPswSleep = await sleeper(2000);
         }
-        let connectCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, connectBase64, 'connect-wifi'); // 5. write connect
-        let connectSleep = await sleeper(2000);
-        const readCharacteristic = await checkCharacteristicForChange(device, readConnectBase64, 'read-connect-wifi', moment());
+        const connectCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, connectBase64, 'connect-wifi'); // 5. write connect
+        const validateResponse4 = await validateWriteWifiDetailsResponse(connectCharacteristic, connectBase64, device, 'connect-wifi');
+        // let connectSleep = await sleeper(2000);
+        const readCharacteristic = await checkCharacteristicForChange(device, readConnectBase64, 'read-connect-wifi', moment())
+            .then(res => {
+                console.log('writeWifiDetailsToSensor-res',res);
+                return resolve(
+                    store.dispatch({
+                        type: Actions.WIFI
+                    })
+                );
+            })
+            .catch(err => {
+                console.log('writeWifiDetailsToSensor-err',err);
+                reject(err);
+            });
+    });
+};
+
+const exitKitSetup = async device => {
+    const disconnectBase64 = new Buffer([convertHex('0x02'), convertHex('0x01'), convertHex('0x01')]).toString('base64');
+    return await new Promise(async (resolve, reject) => {
+        const disconnectCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, disconnectBase64, 'exit-kit-setup');
         try {
-            return resolve(
-                store.dispatch({
-                    type: Actions.WIFI
-                })
-            );
-        } catch(err) {
-            console.log('writeWifiDetailsToSensor-err',err);
-            return reject(err); // TODO: ERROR HANDLING!
+            console.log('disconnectCharacteristic',disconnectCharacteristic);
+            return resolve(disconnectCharacteristic);
+        } catch(error) {
+            console.log('exitKitSetup-error',error);
+            return reject(error);
         }
     });
 };
 
-const exitKitSetup = device => {
-    const dataArray = new Buffer([convertHex('0x02'), convertHex('0x01'), convertHex('0x01')]).toString('base64');
-    return dispatch => write(device, dataArray)
-        .then(response => Promise.resolve(response))
-        .catch(error => Promise.reject(error));
-};
-
 export default {
     assignKitIndividual,
-    deviceFound,
+    destoryInstance,
     exitKitSetup,
     getScannedWifiConnections,
     getSensorFiles,
     getSingleWifiConnection,
-    startConnection,
-    writeWifiDetailsToSensor,
-
-    startMonitor,
-    destoryInstance,
     startDeviceScan,
+    startMonitor,
+    writeWifiDetailsToSensor,
 };

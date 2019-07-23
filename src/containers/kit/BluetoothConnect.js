@@ -12,7 +12,6 @@ const BluetoothConnect = ({
     Layout,
     assignKitIndividual,
     bluetooth,
-    exitKitSetup,
     getSensorFiles,
     network,
     updateUser,
@@ -21,7 +20,6 @@ const BluetoothConnect = ({
     <Layout
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
-        exitKitSetup={exitKitSetup}
         getSensorFiles={getSensorFiles}
         network={network}
         updateUser={updateUser}
@@ -33,7 +31,6 @@ BluetoothConnect.propTypes = {
     Layout:              PropTypes.func.isRequired,
     assignKitIndividual: PropTypes.func.isRequired,
     bluetooth:           PropTypes.shape({}).isRequired,
-    exitKitSetup:        PropTypes.func.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
     network:             PropTypes.object.isRequired,
     updateUser:          PropTypes.func.isRequired,
@@ -53,7 +50,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
     assignKitIndividual: BluetoothActions.assignKitIndividual,
-    exitKitSetup:        BluetoothActions.exitKitSetup,
     getSensorFiles:      BluetoothActions.getSensorFiles,
     updateUser:          UserActions.updateUser,
 };

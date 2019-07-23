@@ -85,6 +85,7 @@ jest.mock('NativeModules', () => {
             addListener: mockFn,
             checkState:  mockFn,
         },
+        bleManager: {},
     };
 });
 

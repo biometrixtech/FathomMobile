@@ -4,7 +4,6 @@
     <BluetoothConnect
         assignKitIndividual={assignKitIndividual}
         bluetooth={bluetooth}
-        exitKitSetup={exitKitSetup}
         getSensorFiles={getSensorFiles}
         network={network}
         updateUser={updateUser}
@@ -177,7 +176,7 @@ class BluetoothConnect extends Component {
     }
 
     _handleDisconnection = (device, callback, shouldExitKitSetup) => {
-        const { bluetooth, exitKitSetup, } = this.props;
+        const { bluetooth, } = this.props;
         this.setState(
             { isConnectingToSensor: false, },
             () => {
@@ -185,7 +184,9 @@ class BluetoothConnect extends Component {
                     if(!device) {
                         device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
                     }
-                    return exitKitSetup(device);
+                    return ble.exitKitSetup(device)
+                        .then(res => console.log('exitKitSetup-res',res))
+                        .catch(err => console.log('exitKitSetup-err',err));
                 }
                 if(!device) {
                     device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
@@ -325,7 +326,8 @@ class BluetoothConnect extends Component {
                 });
             }
         } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
-            this._timer = _.delay(() => this._handleWifiScan(), 2000);
+            this._timer = _.delay(() => this._handleDisconnection(false, () => {}, true), 2000);
+            // this._timer = _.delay(() => this._handleWifiScan(), 2000);
         } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
             this._timer = _.delay(() => this._handleDisconnection(false, () => {}, true), 2000);
         }
@@ -628,7 +630,6 @@ class BluetoothConnect extends Component {
 BluetoothConnect.propTypes = {
     assignKitIndividual: PropTypes.func.isRequired,
     bluetooth:           PropTypes.object.isRequired,
-    exitKitSetup:        PropTypes.func.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
     network:             PropTypes.object.isRequired,
     updateUser:          PropTypes.func.isRequired,
