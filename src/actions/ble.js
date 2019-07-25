@@ -259,8 +259,10 @@ const startMonitor = callback => {
 };
 
 const destroyInstance = () => {
-    bleManager.destroy();
-    bleManager = null;
+    if(bleManager) {
+        bleManager.destroy();
+        bleManager = null;
+    }
 };
 
 const startConnection = async (device, callback) => {
@@ -379,30 +381,27 @@ const getSingleWifiConnection = async (device, index) => {
         const readSingleWifiLongBase64 = new Buffer(readSingleWifiLongHex).toString('base64');
         const singleWifiShortTransactionId = `single-wifi-short-connection-${index}`;
         const singleWifiLongTransactionId = `single-wifi-long-connection-${index}`;
-        let shortWifiCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, readSingleWifiShortBase64, singleWifiShortTransactionId);
-        try {
-            let shortWifiSleep = await sleeper(1000);
-            let response = await shortWifiCharacteristic.read(singleWifiShortTransactionId);
-            // TODO: RE-READ IF ITEMS DONT MATCH/VALIDATION...???
-            let responseHex = convertBase64ToHex(response.value);
-            if(responseHex[1] > 18) {
-                const longWifiCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, readSingleWifiLongBase64, singleWifiLongTransactionId);
-                try {
-                    let longWifiSleep = await sleeper(1000);
-                    let longCharacteristic = await longWifiCharacteristic.read(singleWifiLongTransactionId);
-                    // TODO: RE-READ IF ITEMS DONT MATCH/VALIDATION...???
-                    let longResponseHex = convertBase64ToHex(longCharacteristic.value);
-                    return resolve(cleanSingleWifiArray(_.concat(responseHex.slice(4, responseHex.length), longResponseHex)));
-                } catch(error) {
-                    let errorObj = await handleError(error, device);
-                    return reject(errorObj);
+        let responseHex = [];
+        return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, readSingleWifiShortBase64, singleWifiShortTransactionId)
+            .then(async shortWifiCharacteristic => {
+                let shortWifiSleep = await sleeper(1000);
+                let response = await shortWifiCharacteristic.read(singleWifiShortTransactionId);
+                responseHex = convertBase64ToHex(response.value);
+                if(responseHex[1] > 18) {
+                    return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, readSingleWifiLongBase64, singleWifiLongTransactionId);
                 }
-            }
-            return resolve(cleanSingleWifiArray(responseHex.slice(4, responseHex.length)));
-        } catch(error) {
-            let errorObj = await handleError(error, device);
-            return reject(errorObj);
-        }
+                return resolve(cleanSingleWifiArray(responseHex.slice(4, responseHex.length)));
+            })
+            .then(async longWifiCharacteristic => {
+                let longWifiSleep = await sleeper(1000);
+                let longCharacteristic = await longWifiCharacteristic.read(singleWifiLongTransactionId);
+                let longResponseHex = convertBase64ToHex(longCharacteristic.value);
+                return resolve(cleanSingleWifiArray(_.concat(responseHex.slice(4, responseHex.length), longResponseHex)));
+            })
+            .catch(async error => {
+                let errorObj = await handleError(error, device);
+                return reject(errorObj);
+            });
     });
 };
 
