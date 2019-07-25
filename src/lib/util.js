@@ -182,9 +182,7 @@ const UTIL = {
                         :
                         {};
                     UTIL._handle3SensorBanner(userObj, dailyPlanObj);
-                    // TODO: REVERT ME BACK
                     UTIL.pushToScene('myPlan');
-                    // UTIL.pushToScene('bluetoothConnect');
                 }
             }
         }
