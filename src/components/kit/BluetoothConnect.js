@@ -1,4 +1,4 @@
-/**
+ble.destroyInstance/**
  * BluetoothConnect
  *
     <BluetoothConnect
@@ -78,7 +78,7 @@ class BluetoothConnect extends Component {
 
     componentWillUnmount = () => {
         this._pages = {};
-        ble.destoryInstance();
+        ble.destroyInstance();
         clearInterval(this._timer);
     }
 
@@ -115,14 +115,27 @@ class BluetoothConnect extends Component {
             .then(() =>
                 this.setState(
                     { loading: false, },
-                    () => {
-                        this._timer = _.delay(() => this._renderNextPage(), 500)
-                    }
+                    () => _.delay(() => this._renderNextPage(), 500),
                 ) // 3. route to next page
             )
             .catch(err => {
-                console.log('err',err);
-                this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} )
+                this.setState({ loading: false, }, () => _.delay(() => {
+                    if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                            if(isExit) {
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                            }
+                            this._renderPreviousPage(2);
+                        }, 500));
+                    } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
+                        AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
+                    } else {
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                        let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                        AppUtil.handleAPIErrorAlert(message, header);
+                    }
+                }, 500));
             });
     }
 
@@ -150,43 +163,59 @@ class BluetoothConnect extends Component {
     }
 
     _handleBLEPair = () => {
-        ble.startDeviceScan((error, response) => {
-            clearTimeout(this._timer);
-            // TODO: FIX ME!
-            console.log('startDeviceScan',error,response)
-            // if(error) {
-            //     if (
-            //         this.props.bluetooth.accessoryData &&
-            //         !this.props.bluetooth.accessoryData.sensor_pid &&
-            //         !this.props.bluetooth.accessoryData.mobile_udid &&
-            //         !this.props.bluetooth.accessoryData.wifiMacAddress
-            //     ) {
-            //         this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-            //         // return this._handleDisconnection(device, () => this._renderPreviousPage());
-            //     }
-            //     return console.log(error); // TODO: ERROR HANDLING HERE?
-            // }
-            // if(!response.accessory.owner_id) {
+        if(!this._timer) {
+            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, () =>
+                ble.startMonitor(state =>
+                    this.setState(
+                        { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                    )
+                )
+            ), 60000);
+        }
+        ble.startDeviceScan((error, response, device, state) => {
+            if(state) {
+                this.setState(
+                    { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                );
+            }
+            if(error) {
+                if (
+                    this.props.bluetooth.accessoryData &&
+                    !this.props.bluetooth.accessoryData.sensor_pid &&
+                    !this.props.bluetooth.accessoryData.mobile_udid &&
+                    !this.props.bluetooth.accessoryData.wifiMacAddress
+                ) {
+                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+                    return this._handleDisconnection(device, () => this._renderPreviousPage());
+                }
+                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+            }
+            if(!response.accessory.owner_id) {
+                clearTimeout(this._timer);
                 return this._toggleAlertNotification();
-            // }
-            // return this._handleDisconnection(device, () => this._handleBLEPair());
+            }
+            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
         });
-        this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(() => {}), 60000);
-
     }
 
-    _handleDisconnection = (device, callback, shouldExitKitSetup) => {
+    _handleDisconnection = (device, callback, shouldExitKitSetup, updateState = true) => {
         const { bluetooth, } = this.props;
         this.setState(
-            { isConnectingToSensor: false, },
+            { isConnectingToSensor: updateState ? false : true, },
             () => {
                 if(shouldExitKitSetup) {
                     if(!device) {
                         device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
                     }
                     return ble.exitKitSetup(device)
-                        .then(res => console.log('exitKitSetup-res',res))
-                        .catch(err => console.log('exitKitSetup-err',err));
+                        .then(res => callback && callback())
+                        .catch(err => {
+                            // TODO: THIS NEEDS TO BE FLUSHED OUT
+                            let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                            let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                            AppUtil.handleAPIErrorAlert(message, header);
+                            return callback && callback();
+                        });
                 }
                 if(!device) {
                     device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
@@ -196,7 +225,14 @@ class BluetoothConnect extends Component {
                 }
                 return device.cancelConnection()
                     .then(() => callback && callback())
-                    .catch(err => console.log('err',err));
+                    .catch(async err => {
+                        let errorObj = await ble.handleError(err, device);
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT PROBABLY
+                        let message = `reason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
+                        let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
+                        AppUtil.handleAPIErrorAlert(message, header);
+                        return callback && callback();
+                    });
             }
         );
     }
@@ -221,6 +257,18 @@ class BluetoothConnect extends Component {
         }
     }
 
+    _handleSyncOnBack = () => {
+        this.setState(
+            { isConnectingToSensor: false, },
+            () => {
+                clearTimeout(this._timer);
+                this._timer = null;
+                ble.destroyInstance();
+                _.delay(() => this._renderPreviousPage(), 500);
+            },
+        );
+    }
+
     _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
         if(
             (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
@@ -230,7 +278,6 @@ class BluetoothConnect extends Component {
         }
         return ble.getSingleWifiConnection(device, currentIndex)
             .then(res => {
-                // console.log('_handleSingleWifiConnectionFetch-res',res);
                 let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
                 newAvailableNetworks.push(res);
                 newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
@@ -247,9 +294,15 @@ class BluetoothConnect extends Component {
                 );
             })
             .catch(err => {
-                // console.log('_handleSingleWifiConnectionFetch-err',err);
-                if(err === 'TIMEDOUT') {
-                    return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan()));
+                if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                    this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                        if(isExit) {
+                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                        }
+                        this._renderPreviousPage();
+                    }, 500));
+                } else if(err.errorMapping.errorCode === -1) {
+                    return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
                 } else if(currentIndex === numberOfConnections) {
                     return this.setState({ isWifiScanDone: true, });
                 }
@@ -266,7 +319,7 @@ class BluetoothConnect extends Component {
                 {
                     text:    'I\'ll do it later',
                     onPress: () => {
-                        this._handleDisconnection(false, () => Actions.pop());
+                        this._handleDisconnection(false, () => Actions.pop(), true);
                         if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
                             this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                         }
@@ -292,13 +345,26 @@ class BluetoothConnect extends Component {
                 }
                 return this._handleSingleWifiConnectionFetch(device, res, 1);
             })
-            .catch(err => this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                if(err === 'TIMEDOUT') { // TODO: ERROR HANDLING!
-                    this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan())
-                } else {
-                    AppUtil.handleAPIErrorAlert(err, 'Please Try Again!');
-                }
-            }));
+            .catch(err => {
+                this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                    if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                            if(isExit) {
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                            }
+                            this._renderPreviousPage();
+                        }, 500));
+                    } else if(err.errorMapping.errorCode === -1) {
+                        // timedout
+                        AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
+                    } else {
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                        let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                        AppUtil.handleAPIErrorAlert(message, header);
+                    }
+                });
+            });
     }
 
     _onPageScrollEnd = currentPage => {
@@ -308,7 +374,7 @@ class BluetoothConnect extends Component {
         }
         if(currentPage === 15) { // turn on BLE & connect to accessory
             if (Platform.OS === 'android') {
-                this.bleManager.enable();
+                ble.enable(); // TODO: NEED TO TEST FOR ANDROID
             }
             if (Platform.OS === 'android' && Platform.Version >= 23) {
                 PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
@@ -326,10 +392,9 @@ class BluetoothConnect extends Component {
                 });
             }
         } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
-            this._timer = _.delay(() => this._handleDisconnection(false, () => {}, true), 2000);
-            // this._timer = _.delay(() => this._handleWifiScan(), 2000);
+            this._timer = _.delay(() => this._handleWifiScan(), 2000);
         } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
-            this._timer = _.delay(() => this._handleDisconnection(false, () => {}, true), 2000);
+            this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
         }
     }
 
@@ -339,8 +404,8 @@ class BluetoothConnect extends Component {
         this.setState({ pageIndex: nextPageIndex, });
     }
 
-    _renderPreviousPage = () => {
-        let nextPageIndex = (this.state.pageIndex - 1);
+    _renderPreviousPage = (numberOfPages = 1) => {
+        let nextPageIndex = (this.state.pageIndex - numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
     }
@@ -373,26 +438,31 @@ class BluetoothConnect extends Component {
                 },
                 {
                     text:    'Yes',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 1000)}),
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
                 },
             ],
             { cancelable: false, }
         );
     }
 
-    _toggleTimedoutBringCloserAlert = callback => {
+    _toggleTimedoutBringCloserAlert = (destroyInstance, callback) => {
+        if(destroyInstance) {
+            clearTimeout(this._timer);
+            this._timer = null;
+            ble.destoryInstance();
+        }
         Alert.alert(
             '',
             'We\'re not able to find your Kit. Try bringing your phone closer.',
             [
                 {
                     text:    'Exit Tutorial',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => Actions.pop())),
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {Actions.pop(); return callback ? callback(true) : null;})),
                     style:   'cancel',
                 },
                 {
                     text:    'Try Again',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => callback && callback())), // TODO: CONFIRM THIS LINE
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => callback && callback()),
                 },
             ],
             { cancelable: false, }
@@ -419,7 +489,6 @@ class BluetoothConnect extends Component {
     }
 
     render = () => {
-        // TODO: ADD EXIT KIT SETUP WHEN CLOSING SOME SCREENS
         const {
             availableNetworks,
             bleState,
@@ -548,13 +617,14 @@ class BluetoothConnect extends Component {
                     <Connect
                         currentPage={pageIndex === 15}
                         isLoading={isConnectingToSensor}
-                        isNextDisabled={bleState !== 'PoweredOn' || isConnectingToSensor}
+                        isNextDisabled={bleState !== 'PoweredOn'}
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
-                        onBack={this._renderPreviousPage}
+                        onBack={this._handleSyncOnBack}
                         onClose={() =>
-                            this._handleDisconnection(false, () =>
+                            this._handleDisconnection(false, () => {
+                                Actions.pop();
                                 this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)
-                            )
+                            })
                         }
                         page={1}
                     />
@@ -566,10 +636,12 @@ class BluetoothConnect extends Component {
                         handleWifiScan={() => this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
-                        onBack={() => this._handleDisconnection(false, () => this._renderPreviousPage())}
+                        onBack={() => this._handleDisconnection(false, () => this._renderPreviousPage(), true)}
                         onClose={() =>
-                            this._handleDisconnection(false, () =>
-                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false)
+                            this._handleDisconnection(
+                                false,
+                                () => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false),
+                                true
                             )
                         }
                         page={3}

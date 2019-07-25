@@ -189,17 +189,17 @@ iosBuild() {
             fi
             ;;
         2)
-            # yarn test
-            # testValue=$?
-            # if [ $testValue -ne 0 ]; then
-            #     echo "${red}Unit testing failed, not proceeding.${normal}"
-            # else
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
                 echo "Unit testing passed, proceeding.."
                 cd ios
                 xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 cd ..
-            # fi
+            fi
             ;;
         3)
             yarn test
@@ -243,11 +243,11 @@ androidBuild() {
             fi
             ;;
         2)
-            # yarn test
-            # testValue=$?
-            # if [ $testValue -ne 0 ]; then
-            #     echo "${red}Unit testing failed, not proceeding.${normal}"
-            # else
+            yarn test
+            testValue=$?
+            if [ $testValue -ne 0 ]; then
+                echo "${red}Unit testing failed, not proceeding.${normal}"
+            else
                 echo "Unit testing passed, proceeding.."
                 yarn bundle-android
                 rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
@@ -256,7 +256,7 @@ androidBuild() {
                 cd ..
                 echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
                 open android/app/build/outputs/apk/
-            # fi
+            fi
             ;;
         3)
             yarn test

@@ -97,8 +97,7 @@ class Start extends Component {
                         this.props.sessionToken &&
                         this.props.expires
                     ) {
-                        Actions.bluetoothConnect();
-                        // this.login();
+                        this.login();
                     } else {
                         // clear user reducer
                         if(store) {
