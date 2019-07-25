@@ -1,4 +1,4 @@
-ble.destroyInstance/**
+/**
  * BluetoothConnect
  *
     <BluetoothConnect
