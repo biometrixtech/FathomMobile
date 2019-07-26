@@ -36,7 +36,7 @@ const SensorLogic = {
     },
 
     toByteAndRssiToIcon: (rssi, toByte) => {
-        if(!rssi || !toByte) {
+        if(!rssi) {
             return 'wifi-strength-1';
         }
         let iconStr = _.inRange(rssi, 126, -50) ?
@@ -411,6 +411,8 @@ const SensorLogic = {
             },
         ];
     },
+
+    getMinRSSIDBM: () => -75,
 
 };
 

@@ -120,21 +120,22 @@ class BluetoothConnect extends Component {
             )
             .catch(err => {
                 this.setState({ loading: false, }, () => _.delay(() => {
-                    if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                    if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
                             if(isExit) {
                                 this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                             }
                             this._renderPreviousPage(2);
                         }, 500));
                     } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
-                        AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
-                    } else {
-                        // TODO: THIS NEEDS TO BE FLUSHED OUT
-                        let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                        let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                        AppUtil.handleAPIErrorAlert(message, header);
+                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
                     }
+                    // TODO: THIS NEEDS TO BE FLUSHED OUT
+                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    return AppUtil.handleAPIErrorAlert(message, header);
                 }, 500));
             });
     }
@@ -211,7 +212,7 @@ class BluetoothConnect extends Component {
                         .then(res => callback && callback())
                         .catch(err => {
                             // TODO: THIS NEEDS TO BE FLUSHED OUT
-                            let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                            let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
                             let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
                             AppUtil.handleAPIErrorAlert(message, header);
                             return callback && callback();
@@ -227,8 +228,8 @@ class BluetoothConnect extends Component {
                     .then(() => callback && callback())
                     .catch(async err => {
                         let errorObj = await ble.handleError(err, device);
-                        // TODO: THIS NEEDS TO BE FLUSHED OUT PROBABLY
-                        let message = `reason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
                         let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
                         AppUtil.handleAPIErrorAlert(message, header);
                         return callback && callback();
@@ -282,6 +283,7 @@ class BluetoothConnect extends Component {
                 newAvailableNetworks.push(res);
                 newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
                 newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
+                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.rssi > SensorLogic.getMinRSSIDBM());
                 return this.setState(
                     { availableNetworks: newAvailableNetworks, },
                     () => _.delay(() => {
@@ -294,8 +296,10 @@ class BluetoothConnect extends Component {
                 );
             })
             .catch(err => {
-                if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                    this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    return this._toggleWeakRSSIAlertNotification();
+                } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                    return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
                         if(isExit) {
                             this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                         }
@@ -347,8 +351,10 @@ class BluetoothConnect extends Component {
             })
             .catch(err => {
                 this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                    if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
                             if(isExit) {
                                 this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                             }
@@ -356,13 +362,12 @@ class BluetoothConnect extends Component {
                         }, 500));
                     } else if(err.errorMapping.errorCode === -1) {
                         // timedout
-                        AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
-                    } else {
-                        // TODO: THIS NEEDS TO BE FLUSHED OUT
-                        let message = `reason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                        let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                        AppUtil.handleAPIErrorAlert(message, header);
+                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
                     }
+                    // TODO: THIS NEEDS TO BE FLUSHED OUT
+                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    return AppUtil.handleAPIErrorAlert(message, header);
                 });
             });
     }
@@ -445,6 +450,20 @@ class BluetoothConnect extends Component {
                 { cancelable: false, }
             );
         }
+    }
+
+    _toggleWeakRSSIAlertNotification = () => {
+        Alert.alert(
+            '',
+            'Please bring your Kit closer to phone and try again.',
+            [
+                {
+                    text:  'Try Again',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
     }
 
     _toggleTimedoutBringCloserAlert = (destroyInstance, callback) => {
@@ -621,7 +640,7 @@ class BluetoothConnect extends Component {
                         isLoading={isConnectingToSensor}
                         isNextDisabled={bleState !== 'PoweredOn'}
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
-                        onBack={this._handleSyncOnBack}
+                        onBack={isConnectingToSensor ? null : () => this._handleSyncOnBack()}
                         onClose={() =>
                             this._handleDisconnection(false, () => {
                                 Actions.pop();

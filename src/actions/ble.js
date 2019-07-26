@@ -174,21 +174,25 @@ const handleError = async (error, device) => {
     };
     if(!bleManager || !device) {
         return {
-            isConnected:  false,
             errorMapping: errorMappingObj,
+            isConnected:  false,
+            rssi:         null,
         };
     }
     return bleManager.isDeviceConnected(device.id)
-        .then(isConnected => {
+        .then(async isConnected => {
+            const rssiCharacteristic = isConnected ? await device.readRSSI() : null;
             return {
+                errorMapping: {},
                 isConnected,
-                errorMapping: errorMappingObj,
+                rssi:         rssiCharacteristic.rssi,
             };
         })
         .catch(err => {
             return {
+                errorMapping: {},
                 isConnected:  false,
-                errorMapping: errorMappingObj,
+                rssi:         null,
             };
         });
 };
@@ -250,6 +254,19 @@ const deviceFound = data => {
 /**
   * 3-SENSOR SYSTEM FUNCTIONS
   */
+const checkRSSI = async (device, characteristic) => {
+    const rssiCharacteristic = await device.readRSSI();
+    try {
+        if(rssiCharacteristic.rssi > SensorLogic.getMinRSSIDBM()) {
+            return Promise.resolve(characteristic ? characteristic : device);
+        }
+        return Promise.reject({});
+    } catch(error) {
+        let errorObj = await handleError(error, device);
+        return Promise.reject(errorObj);
+    }
+};
+
 const enable = () => bleManager.enable();
 
 const startMonitor = callback => {
@@ -265,7 +282,7 @@ const destroyInstance = () => {
     }
 };
 
-const startConnection = async (device, callback) => {
+const startConnection = async (device) => {
     const macAddressWriteBase64 = new Buffer([commands.GET_MAC_ADDRESS, convertHex('0x00')]).toString('base64');
     const startConnectionTransactionId = 'start-connection';
     return await new Promise(async (resolve, reject) => {
@@ -333,6 +350,7 @@ const getScannedWifiConnections = device => {
     let transactionId = 'wifi-scan';
     return new Promise((resolve, reject) => {
         return device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, wifiScanBase64, transactionId)
+            .then(async characteristic => await checkRSSI(device, characteristic))
             .then(characteristic => {
                 let rejectionTimer = _.delay(async () => {
                     bleManager.cancelTransaction(transactionId);
@@ -383,6 +401,7 @@ const getSingleWifiConnection = async (device, index) => {
         const singleWifiLongTransactionId = `single-wifi-long-connection-${index}`;
         let responseHex = [];
         return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, readSingleWifiShortBase64, singleWifiShortTransactionId)
+            .then(async characteristic => await checkRSSI(device, characteristic))
             .then(async shortWifiCharacteristic => {
                 let shortWifiSleep = await sleeper(1000);
                 let response = await shortWifiCharacteristic.read(singleWifiShortTransactionId);
@@ -470,6 +489,7 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
             return reject(errorObj);
         }, 240000);
         return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, shortSsidBase64, 'short-ssid') // 1. write short wifi
+            .then(async characteristic => await checkRSSI(device, characteristic))
             .then(async shortSSIDCharacteristic => await validateWriteWifiDetailsResponse(shortSSIDCharacteristic, shortSsidBase64, device, 'short-ssid'))
             .then(async validateResponse => {
                 if(longSlicedSsidDataArray.length > 0) {
@@ -531,36 +551,6 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
                 return reject(errorObj);
             });
     });
-    /*return await new Promise(async (resolve, reject) => {
-        const shortSSIDCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, shortSsidBase64, 'short-ssid'); // 1. write short wifi
-        const validateResponse = await validateWriteWifiDetailsResponse(shortSSIDCharacteristic, shortSsidBase64, device, 'short-ssid');
-        const shortSSIDSleep = await sleeper(2000);
-        if(longSlicedSsidDataArray.length > 0) {
-            const longSSIDCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, longSsidBase64, 'long-ssid'); // 2. check if long wifi -> write if needed
-            const validateResponse2 = await validateWriteWifiDetailsResponse(longSSIDCharacteristic, longSsidBase64, device, 'long-ssid');
-            const longSSIDSleep = await sleeper(2000);
-        }
-        if(securityByte > 0) {
-            const shortPswCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, shortPswBase64, 'long-password'); // 3. write short psw
-            const validateResponse3 = await validateWriteWifiDetailsResponse(shortPswCharacteristic, shortPswBase64, device, 'long-password');
-            const shortPswSleep = await sleeper(2000);
-        }
-        if(longSlicedPswDataArray.length > 0) {
-            const longPswCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, longPswBase64, 'long-password'); // 4. check if long psw -> write if needed
-            const validateResponse4 = await validateWriteWifiDetailsResponse(longPswCharacteristic, longPswBase64, device, 'long-password');
-            const longPswSleep = await sleeper(2000);
-        }
-        const connectCharacteristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, connectBase64, 'connect-wifi'); // 5. write connect
-        const validateResponse4 = await validateWriteWifiDetailsResponse(connectCharacteristic, connectBase64, device, 'connect-wifi');
-        let connectSleep = await sleeper(2000);
-        const readCharacteristic = await checkCharacteristicForChange(device, readConnectBase64, 'read-connect-wifi', moment())
-            .then(res => resolve(
-                store.dispatch({
-                    type: Actions.WIFI
-                })
-            ))
-            .catch(async err => reject(err));
-    });*/
 };
 
 const exitKitSetup = async device => {
