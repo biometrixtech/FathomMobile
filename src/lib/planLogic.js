@@ -1582,6 +1582,7 @@ const PlanLogic = {
         });
         let trendContextState = [];
         _.map(selectedTrends, trend => trendContextState.push(trend.first_time));
+        // TODO: FILTER BY VISIBLE FOR selectedTrends
         return {
             selectedTrendCategory,
             selectedTrends,
@@ -1596,17 +1597,20 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleTrendChildItemRenderLogic: (props, selectedTrendCategory, selectedTrends, trendContext, styles) => {
         let bodyParts = [];
-        _.map(props.trend_data.visualization_data.plot_legends, plot => {
-            let newPlotSeries = props.trend_data.data[0][plot.series] ?
-                _.map(props.trend_data.data[0][plot.series], plotSeries => {
-                    let newObj = _.cloneDeep(plotSeries);
-                    newObj.color = plot.color;
-                    return newObj;
-                })
-                :
-                [];
-            bodyParts = _.concat(bodyParts, newPlotSeries);
-        });
+        console.log(props, props.trend_data);
+        if(props && props.trend_data) {
+            _.map(props.trend_data.visualization_data.plot_legends, plot => {
+                let newPlotSeries = props.trend_data.data[0][plot.series] ?
+                    _.map(props.trend_data.data[0][plot.series], plotSeries => {
+                        let newObj = _.cloneDeep(plotSeries);
+                        newObj.color = plot.color;
+                        return newObj;
+                    })
+                    :
+                    [];
+                bodyParts = _.concat(bodyParts, newPlotSeries);
+            });
+        }
         let iconImage = require('../../assets/images/standard/view1icon.png');
         switch (props.icon) {
         case 'view1icon.png':
@@ -1627,12 +1631,14 @@ const PlanLogic = {
             flexGrow:        1,
         };
         let parsedData = [];
-        _.map(props.trend_data.bold_text, (prop, i) => {
-            let newParsedData = {};
-            newParsedData.pattern = new RegExp(prop.text, 'i');
-            newParsedData.style = [AppStyles.robotoLight, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
-            parsedData.push(newParsedData);
-        });
+        if(props && props.trend_data) {
+            _.map(props.trend_data.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoLight, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
+                parsedData.push(newParsedData);
+            });
+        }
         let isCollapsed = trendContext[props.key];
         let animatedValue = new Animated.Value(!isCollapsed ? 1 : 0);
         Animated.timing(animatedValue, {

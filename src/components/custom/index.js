@@ -17,6 +17,7 @@ import FathomModal from './FathomModal';
 import FathomPicker from './FathomPicker';
 import FathomSlider from './FathomSlider';
 import FormInput from './FormInput';
+import InViewPort from './InViewPort';
 import Indicator from './Indicator';
 import ListItem from './ListItem';
 import MultiSwitch from './MultiSwitch';
@@ -49,6 +50,7 @@ export {
     FathomPicker,
     FathomSlider,
     FormInput,
+    InViewPort,
     Indicator,
     ListItem,
     MultiSwitch,

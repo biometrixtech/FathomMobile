@@ -14,7 +14,7 @@ import { Animated, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, Vi
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { BodyOverlay, Button, ParsedText, TabIcon, Text, } from '../custom';
+import { BodyOverlay, Button, FathomModal, InViewPort, ParsedText, TabIcon, Text, } from '../custom';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
@@ -22,6 +22,7 @@ import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Collapsible from 'react-native-collapsible';
+import LottieView from 'lottie-react-native';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -56,8 +57,24 @@ class TrendChild extends PureComponent {
         let { trendContextState, } = PlanLogic.handleTrendChildRenderLogic(insightType, plan);
         this.state  = {
             currentCardIndex: 0,
+            isLottieVisible:  [],
             trendContext:     trendContextState,
         };
+    }
+
+    _checkLottieVisibility = (index, isVisible) => {
+        let newIsLottieVisible = _.cloneDeep(this.state.isLottieVisible);
+        if(isVisible) {
+            if(!this.state.isLottieVisible[index]) {
+                newIsLottieVisible[index] = true;
+                this.setState({ isLottieVisible: newIsLottieVisible, });
+            }
+        } else {
+            if(this.state.isLottieVisible[index]) {
+                newIsLottieVisible[index] = false;
+                this.setState({ isLottieVisible: newIsLottieVisible, });
+            }
+        }
     }
 
     _toggleTrendContext = key => {
@@ -67,7 +84,7 @@ class TrendChild extends PureComponent {
     }
 
     _renderItem = (props, selectedTrendCategory, selectedTrends) => {
-        const { trendContext, } = this.state;
+        const { isLottieVisible, trendContext, } = this.state;
         let {
             bodyParts,
             bottomPadding,
@@ -76,6 +93,7 @@ class TrendChild extends PureComponent {
             style,
             trendContextProps,
         } = PlanLogic.handleTrendChildItemRenderLogic(props, selectedTrendCategory, selectedTrends, trendContext, styles);
+        // TODO: ADD FIRST TIME EXPERIENCE HERE
         // render item
         return (
             <ScrollView
@@ -105,8 +123,8 @@ class TrendChild extends PureComponent {
                 </View>
 
                 <View style={{paddingHorizontal: (AppSizes.padding * 2), paddingVertical: AppSizes.paddingMed,}}>
-                    <Text oswaldRegular style={{color: PlanLogic.returnBodyOverlayColorString(false, false, props.title_color), fontSize: AppFonts.scaleFont(24),}}>
-                        {_.toUpper(props.title)}
+                    <Text robotoBold style={{color: PlanLogic.returnBodyOverlayColorString(false, false, props.title_color), fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                        {props.title}
                     </Text>
                 </View>
 
@@ -124,6 +142,7 @@ class TrendChild extends PureComponent {
                     <Collapsible
                         collapsed={!trendContextProps.isCollapsed}
                     >
+                        {/* TODO: ADD VIDEO HERE */}
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(23),}}>
                             {props.text[1]}
                         </Text>
@@ -147,10 +166,10 @@ class TrendChild extends PureComponent {
                         remainingWidth={(AppSizes.screen.width - (AppSizes.padding * 4))}
                     />
                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
-                        {_.map(props.trend_data.visualization_data.plot_legends, (plot, i) =>
+                        {props && props.trend_data && _.map(props.trend_data.visualization_data.plot_legends, (plot, i) =>
                             <View
                                 key={i}
-                                style={[i !== props.trend_data.visualization_data.plot_legends.length ? {marginRight: AppSizes.paddingSml,} : {}, {flexDirection: 'row',}]}
+                                style={[props && props.trend_data && i !== props.trend_data.visualization_data.plot_legends.length ? {marginRight: AppSizes.paddingSml,} : {}, {flexDirection: 'row',}]}
                             >
                                 <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>
@@ -158,16 +177,33 @@ class TrendChild extends PureComponent {
                         )}
                     </View>
                     <View style={{backgroundColor: AppColors.zeplin.superLight, height: 2, marginVertical: AppSizes.padding,}} />
-                    <Text robotoBold style={[styles.cardTitle, {color: PlanLogic.returnBodyOverlayColorString(false, false, props.trend_data.title_color),}]}>
-                        {props.trend_data ? props.trend_data.title : ''}
+                    <Text robotoBold style={[styles.cardTitle, {color: PlanLogic.returnBodyOverlayColorString(false, false, props && props.trend_data ? props.trend_data.title_color : 0),}]}>
+                        {props && props.trend_data ? props.trend_data.title : ''}
                     </Text>
                     <ParsedText
                         parse={parsedData}
                         style={[AppStyles.robotoLight, styles.cardText,]}
                     >
-                        {props.trend_data ? props.trend_data.text : ''}
+                        {props && props.trend_data ? props.trend_data.text : ''}
                     </ParsedText>
                 </View>
+
+                <InViewPort
+                    onChange={isVisible => this._checkLottieVisibility(props.key, isVisible)}
+                    style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.padding,}}
+                >
+                    <LottieView
+                        autoPlay={isLottieVisible[props.key]}
+                        loop={false}
+                        progress={isLottieVisible[props.key] ? 1 : 0}
+                        source={require('../../../assets/animation/trends-child-cta.json')}
+                        style={{height: 40, width: 40,}}
+                    />
+                    <View style={{width: AppSizes.paddingMed,}} />
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, flexWrap: 'wrap', fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
+                        {'Your plan has been updated to help address these findings!'}
+                    </Text>
+                </InViewPort>
 
                 <Button
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
@@ -177,6 +213,12 @@ class TrendChild extends PureComponent {
                     title={'Go to your plan'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                 />
+
+                <FathomModal
+                    isVisible={false}
+                >
+                    <View />
+                </FathomModal>
 
             </ScrollView>
         );

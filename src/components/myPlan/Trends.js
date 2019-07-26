@@ -169,10 +169,28 @@ class Trends extends PureComponent {
                     </View>
 
                     <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>
-                        <Text oswaldRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28),}}>{'THIS WEEK'}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28),}}>{'This week'}</Text>
                         <Spacer size={AppSizes.paddingXSml} />
                         <Spacer isDivider />
                         <Spacer size={AppSizes.padding} />
+                        {/* TODO: LOGIC HERE TO DECIDE WHICH VIEW + ADD SWIPER CARDS TO FIRST VIEW
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/allcaughtup.png')}
+                                style={{height: 60, marginBottom: AppSizes.paddingSml, width: 60,}}
+                            />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'You’re all caught up! Come back later for updates to your Trends.'}</Text>
+                        </View>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/research.png')}
+                                style={{height: 60, marginRight: AppSizes.paddingSml, width: 60,}}
+                            />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'No Trends right now. We\'ll keep looking.'}</Text>
+                        </View>
+                        <Spacer size={AppSizes.paddingLrg} />*/}
                         <TouchableOpacity
                             activeOpacity={isWorkloadLocked ? 1 : 0.2}
                             onPress={isWorkloadLocked ? () => {} : () => AppUtil.pushToScene('insight', { insightType: 8, })}

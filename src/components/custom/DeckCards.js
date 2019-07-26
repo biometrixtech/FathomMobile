@@ -16,7 +16,7 @@
  *
  */
 import React, { Component, } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -210,7 +210,7 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { cards, layout, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
             allowNavigation,
@@ -275,15 +275,20 @@ class DeckCards extends Component {
             <View>
                 <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
                     { areAllSwiped && !infinite && showHide ?
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
-                                {'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/research.png')}
+                                style={{height: 50, marginBottom: AppSizes.paddingSml, width: 50,}}
+                            />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                                {'You\'re up to date for now! You can view your ongoing insights on your Trends Dashboard.'}
                             </Text>
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}
                                 containerStyle={{marginRight: AppSizes.paddingSml,}}
                                 onPress={() => AppUtil.pushToScene('trends')}
-                                title={'View Trends'}
+                                title={'Go to Dashboard'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                             />
                         </View>
@@ -305,9 +310,16 @@ class DeckCards extends Component {
                                 windowSize={3}
                             />
                             :
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, textAlign: 'center',}}>
-                                {'No alerts right now. We\'ll generate new insights as we learn about your body!'}
-                            </Text>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/research.png')}
+                                    style={{height: 50, marginBottom: AppSizes.paddingSml, width: 50,}}
+                                />
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                                    {'We\'re looking for meaningful insights in your body & training data!'}
+                                </Text>
+                            </View>
                     }
                 </View>
                 { showHide &&
