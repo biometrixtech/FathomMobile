@@ -583,7 +583,7 @@ const Connect = ({
                             <Button
                                 buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                                 containerStyle={{justifyContent: 'flex-end', width: '100%',}}
-                                disabled={isNextDisabled}
+                                disabled={isNextDisabled || isLoading}
                                 disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                                 disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                 loading={isLoading}

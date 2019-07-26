@@ -297,7 +297,7 @@ const startConnection = async (device, callback) => {
 };
 
 const handleDiscoveredPeripherals = async (error, device, callback, state) => {
-    return !error && device.isConnectable && device.name && device.name === 'fathomKit' ?
+    return !error && device.name && device.name === 'fathomKit' ?
         deviceFound(device)
             .then(() => {
                 bleManager.stopDeviceScan();

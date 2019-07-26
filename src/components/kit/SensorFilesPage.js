@@ -493,7 +493,6 @@ class SensorFilesPage extends Component {
                             <Connect
                                 currentPage={pageIndex === 2}
                                 nextBtn={() => Actions.pop()}
-                                onBack={this._renderPreviousPage}
                                 page={4}
                                 showTopNavStep={false}
                             />

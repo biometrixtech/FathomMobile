@@ -374,7 +374,7 @@ class BluetoothConnect extends Component {
         }
         if(currentPage === 15) { // turn on BLE & connect to accessory
             if (Platform.OS === 'android') {
-                ble.enable(); // TODO: NEED TO TEST FOR ANDROID
+                ble.enable();
             }
             if (Platform.OS === 'android' && Platform.Version >= 23) {
                 PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
@@ -427,29 +427,31 @@ class BluetoothConnect extends Component {
     }
 
     _toggleAlertNotification = () => {
-        Alert.alert(
-            '',
-            'Did the LED turn green?',
-            [
-                {
-                    text:    'No',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage())),
-                    style:   'cancel',
-                },
-                {
-                    text:    'Yes',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
-                },
-            ],
-            { cancelable: false, }
-        );
+        if(this.state.pageIndex === (WIFI_PAGE_NUMBER - 1)) {
+            Alert.alert(
+                '',
+                'Did the LED turn green?',
+                [
+                    {
+                        text:    'No',
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage())),
+                        style:   'cancel',
+                    },
+                    {
+                        text:    'Yes',
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
+                    },
+                ],
+                { cancelable: false, }
+            );
+        }
     }
 
     _toggleTimedoutBringCloserAlert = (destroyInstance, callback) => {
         if(destroyInstance) {
             clearTimeout(this._timer);
             this._timer = null;
-            ble.destoryInstance();
+            ble.destroyInstance();
         }
         Alert.alert(
             '',
@@ -649,7 +651,6 @@ class BluetoothConnect extends Component {
                     <Connect
                         currentPage={pageIndex === 17}
                         nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
                         onClose={() => Actions.pop()}
                         page={4}
                     />
