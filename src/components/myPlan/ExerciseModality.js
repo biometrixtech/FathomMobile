@@ -56,6 +56,7 @@ class ExerciseModality extends Component {
         this.state = {
             isExerciseCompletionModalOpen: false,
             isSelectedExerciseModalOpen:   false,
+            isSubmitting:                  false,
             priority:                      priorityIndex,
             selectedExercise:              {},
         };
@@ -179,6 +180,7 @@ class ExerciseModality extends Component {
         const {
             isExerciseCompletionModalOpen,
             isSelectedExerciseModalOpen,
+            isSubmitting,
             priority,
             selectedExercise,
         } = this.state;
@@ -257,7 +259,7 @@ class ExerciseModality extends Component {
                                     <MultiSwitch
                                         buttons={buttons}
                                         isDisabled={!firstExerciseFound}
-                                        onStatusChanged={selectedIndex => this.setState({ priority: selectedIndex, })}
+                                        onStatusChanged={selectedIndex => isSubmitting ? null : this.setState({ priority: selectedIndex, })}
                                         selectedIndex={priority}
                                     />
                                     <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingMed, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingXSml, width: (AppSizes.screen.width - AppSizes.paddingLrg),}}>
@@ -270,7 +272,7 @@ class ExerciseModality extends Component {
                                         <GoalPill
                                             isSelected={goal.isSelected}
                                             key={key}
-                                            onPress={() => this._toggleGoal(key)}
+                                            onPress={() => isSubmitting ? null : this._toggleGoal(key)}
                                             text={goal.text}
                                         />
                                     )}
@@ -285,7 +287,7 @@ class ExerciseModality extends Component {
                             <Button
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                                 containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}
-                                disabled={!firstExerciseFound}
+                                disabled={!firstExerciseFound || isSubmitting}
                                 disabledStyle={{backgroundColor: AppColors.zeplin.slateLight,}}
                                 disabledTitleStyle={{color: AppColors.white,}}
                                 onPress={() => this._toggleSelectedExercise(firstExerciseFound, !isSelectedExerciseModalOpen)}
@@ -306,11 +308,11 @@ class ExerciseModality extends Component {
                                                 completedExercises={completedExercises}
                                                 exercise={exercise}
                                                 goals={goals}
-                                                handleCompleteExercise={this._handleCompleteExercise}
+                                                handleCompleteExercise={isSubmitting ? () => null : () => this._handleCompleteExercise()}
                                                 isLastItem={i + 1 === exerciseList.totalLength}
                                                 key={exercise.library_id+i}
                                                 priority={priority}
-                                                toggleSelectedExercise={this._toggleSelectedExercise}
+                                                toggleSelectedExercise={isSubmitting ? () => null : () => this._toggleSelectedExercise()}
                                             />
                                         )}
                                     </View>
@@ -320,9 +322,10 @@ class ExerciseModality extends Component {
                             { exerciseList.totalLength > 0 ?
                                 <Button
                                     buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: buttonBackgroundColor, borderRadius: 0,}])}
+                                    disabled={isButtonDisabled || isSubmitting}
                                     disabledStyle={buttonDisabledStyle}
                                     disabledTitleStyle={{color: AppColors.white,}}
-                                    disabled={isButtonDisabled}
+                                    loading={isSubmitting}
                                     onPress={() => this.setState({ isExerciseCompletionModalOpen: true, })}
                                     title={buttonTitle}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
@@ -367,13 +370,13 @@ class ExerciseModality extends Component {
                         onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
                         onComplete={() => {
                             this.setState(
-                                { isExerciseCompletionModalOpen: false, },
+                                { isExerciseCompletionModalOpen: false, isSubmitting: true, },
                                 () => {
                                     let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
                                     let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
                                     patchActiveRecovery(newCompletedExercises, recoveryType)
                                         .then(res => Actions.pop())
-                                        .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
+                                        .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
                                 }
                             );
                         }}

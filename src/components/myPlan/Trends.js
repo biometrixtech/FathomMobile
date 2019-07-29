@@ -65,6 +65,15 @@ const styles = StyleSheet.create({
         top:             0,
         width:           '100%',
     },
+    trendCategoryIcon: {
+        backgroundColor: AppColors.zeplin.error,
+        borderRadius:    (AppSizes.padding / 2),
+        top:             -(AppSizes.padding / 2),
+        height:          AppSizes.padding,
+        position:        'absolute',
+        right:           -(AppSizes.padding / 2),
+        width:           AppSizes.padding,
+    },
     yAxis: {
         color:     AppColors.zeplin.slate,
         fontSize:  AppFonts.scaleFont(11),
@@ -137,6 +146,8 @@ class Trends extends PureComponent {
                 onPress={() => AppUtil.pushToScene('trendChild', { insightType: item.insight_type, })}
                 style={[styles.categoryCard, AppStyles.scaleButtonShadowEffect,]}
             >
+                {/* // TODO: ADD LOGIC FOR ICON BELOW */}
+                <View style={[styles.trendCategoryIcon,]} />
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.paddingSml,}}>{item.title}</Text>
                 <View style={{backgroundColor: `${AppColors.zeplin.splashLight}1A`, borderRadius: 12, flexDirection: 'row', marginVertical: AppSizes.paddingSml, padding: AppSizes.paddingSml,}}>
                     <SVGImage

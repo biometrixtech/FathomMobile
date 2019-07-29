@@ -66,7 +66,7 @@ class BodyModality extends Component {
             { isSubmitting: true, },
             () => patchBodyActiveRecovery(completedBodyParts, updatedModality)
                 .then(res => Actions.pop())
-                .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery),))
+                .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)))
         );
     }
 
