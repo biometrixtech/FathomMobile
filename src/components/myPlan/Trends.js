@@ -2,6 +2,7 @@
  * Trends
  *
     <Trends
+        clearPlanAlert={clearPlanAlert}
         plan={plan}
         updateUser={updateUser}
         user={user}
@@ -143,7 +144,10 @@ class Trends extends PureComponent {
         let bodyPart = PlanLogic.handleBodyModalityBodyPart(item.body_part);
         return (
             <TouchableOpacity
-                onPress={() => AppUtil.pushToScene('trendChild', { insightType: item.insight_type, })}
+                onPress={() => {
+                    AppUtil.pushToScene('trendChild', { insightType: item.insight_type, });
+                    this.props.clearPlanAlert(item.insight_type);
+                }}
                 style={[styles.categoryCard, AppStyles.scaleButtonShadowEffect,]}
             >
                 {/* // TODO: ADD LOGIC FOR ICON BELOW */}
@@ -518,9 +522,10 @@ class Trends extends PureComponent {
 }
 
 Trends.propTypes = {
-    plan:       PropTypes.object.isRequired,
-    updateUser: PropTypes.func.isRequired,
-    user:       PropTypes.object.isRequired,
+    clearPlanAlert: PropTypes.func.isRequired,
+    plan:           PropTypes.object.isRequired,
+    updateUser:     PropTypes.func.isRequired,
+    user:           PropTypes.object.isRequired,
 };
 
 Trends.defaultProps = {};

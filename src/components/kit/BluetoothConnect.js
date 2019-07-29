@@ -120,7 +120,7 @@ class BluetoothConnect extends Component {
             )
             .catch(err => {
                 this.setState({ loading: false, }, () => _.delay(() => {
-                    if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                         return this._toggleWeakRSSIAlertNotification();
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                         return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
@@ -296,7 +296,7 @@ class BluetoothConnect extends Component {
                 );
             })
             .catch(err => {
-                if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                     return this._toggleWeakRSSIAlertNotification();
                 } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                     return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
@@ -351,7 +351,7 @@ class BluetoothConnect extends Component {
             })
             .catch(err => {
                 this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                         return this._toggleWeakRSSIAlertNotification();
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                         return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {

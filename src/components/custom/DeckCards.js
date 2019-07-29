@@ -149,12 +149,13 @@ class DeckCards extends Component {
             enableVibrateFallback:       false,
             ignoreAndroidSystemSettings: false,
         };
+        let insightType = cards[index] && cards[index].insight_type ? cards[index].insight_type : 0;
         this.setState(
             { currentCardIndex: index, },
             () => {
                 let hapticFeedbackMethod = index === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
-                handleReadInsight(index);
+                handleReadInsight(insightType);
                 if(this.state.currentCardIndex === index && (!cards[index].title || cards[index].title === '')) {
                     this.setState({ areAllSwiped: true, });
                 }

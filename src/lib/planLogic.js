@@ -1586,7 +1586,12 @@ const PlanLogic = {
         selectedTrends = _.filter(selectedTrends, ['visible', true]);
         let dashboardTrendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories && dailyPlanObj.trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(dailyPlanObj.trends.dashboard.trend_categories) : [];
         let trendContextState = [];
-        _.map(selectedTrends, trend => trendContextState.push(trend.first_time));
+        _.map(selectedTrends, trend => {
+            let newObj = {};
+            newObj.isCollapsed = !trend.first_time_experience;
+            newObj.isVideoMuted = false;
+            trendContextState.push(newObj);
+        });
         return {
             dashboardTrendCategories,
             selectedTrendCategory,
@@ -1643,11 +1648,12 @@ const PlanLogic = {
                 parsedData.push(newParsedData);
             });
         }
-        let isCollapsed = trendContext[props.key];
-        let animatedValue = new Animated.Value(!isCollapsed ? 1 : 0);
+        let isCollapsed = trendContext[props.key].isCollapsed;
+        let isVideoMuted = trendContext[props.key].isVideoMuted;
+        let animatedValue = new Animated.Value(isCollapsed ? 1 : 0);
         Animated.timing(animatedValue, {
             duration: 300,
-            toValue:  !isCollapsed ? 0 : 1,
+            toValue:  isCollapsed ? 0 : 1,
         }).start();
         const interpolateRotation = animatedValue.interpolate({
             inputRange:  [0, 1],
@@ -1657,6 +1663,7 @@ const PlanLogic = {
         let trendContextProps = {
             animatedStyle,
             isCollapsed,
+            isVideoMuted,
         };
         let trendCategory = _.find(dashboardTrendCategories, ['insight_type', selectedTrendCategory.insight_type]);
         let trendCategoryTitle = trendCategory ? trendCategory.title : '';

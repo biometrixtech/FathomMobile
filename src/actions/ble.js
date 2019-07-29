@@ -285,6 +285,7 @@ const destroyInstance = () => {
 const startConnection = async (device) => {
     const macAddressWriteBase64 = new Buffer([commands.GET_MAC_ADDRESS, convertHex('0x00')]).toString('base64');
     const startConnectionTransactionId = 'start-connection';
+    // TODO: implement .then(async characteristic => await checkRSSI(device, characteristic))
     return await new Promise(async (resolve, reject) => {
         return device.connect()
             .then(connectedDevice => connectedDevice.discoverAllServicesAndCharacteristics())
@@ -482,6 +483,7 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
     } else if(securityByte !== 0 && passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
         return Promise.reject(SensorLogic.errorMessages().longPass);
     }
+    // TODO: monitor to see if disconnected - kick user out
     // send commands
     return await new Promise(async (resolve, reject) => {
         let rejectionTimer = _.delay(async () => {

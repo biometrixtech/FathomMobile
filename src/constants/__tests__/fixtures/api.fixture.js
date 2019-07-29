@@ -49,6 +49,7 @@ export default {
         ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST
         ['body_active_recovery',  `${plansAPIVersion}/active_recovery/body_part_modalities`], // POST/PATCH
+        ['clear_plan_alert',      `${plansAPIVersion}/trends/plan_alerts/clear`], // POST
         ['clear_user_data',       `${plansAPIVersion}/misc/clear_user_data`], // POST
         ['coach_dashboard',       `${plansAPIVersion}/coach/{userId}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength`], // POST/PATCH

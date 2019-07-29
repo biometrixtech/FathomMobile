@@ -95,6 +95,19 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
 };
 
 /**
+  * Clear My Plan Alert
+  */
+const clearPlanAlert = insightType => {
+    let myPlanObj = {
+        event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
+        insight_type: insightType,
+    };
+    return dispatch => AppAPI.clear_plan_alert.post(false, myPlanObj)
+        .then(response => Promise.resolve(response))
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+}
+
+/**
   * Clear My Plan Data
   */
 const clearMyPlanData = () => {
@@ -666,6 +679,7 @@ export default {
     clearCompletedFSExercises,
     clearHealthKitWorkouts,
     clearMyPlanData,
+    clearPlanAlert,
     getCoachesDashboardData,
     getMobilize,
     getMyPlan,

@@ -929,7 +929,7 @@ class MyPlan extends Component {
                 <MyPlanNavBar
                     cards={newInsights}
                     expandNotifications={expandNotifications}
-                    handleReadInsight={index => handleReadInsight(dailyPlanObj, (index - 1))}
+                    handleReadInsight={insightType => handleReadInsight(insightType)}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />

@@ -23,6 +23,7 @@ import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Collapsible from 'react-native-collapsible';
 import LottieView from 'lottie-react-native';
+import Video from 'react-native-video';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -60,6 +61,11 @@ class TrendChild extends PureComponent {
             isLottieVisible:  [],
             trendContext:     trendContextState,
         };
+        this._videos = [];
+    }
+
+    componentWillUnmount = () => {
+        this._videos = [];
     }
 
     _checkLottieVisibility = (index, isVisible) => {
@@ -77,9 +83,12 @@ class TrendChild extends PureComponent {
         }
     }
 
-    _toggleTrendContext = key => {
+    _toggleTrendContext = (key, value) => {
         let newTrendContext = _.cloneDeep(this.state.trendContext);
-        newTrendContext[key] = !newTrendContext[key];
+        newTrendContext[key][value] = !newTrendContext[key][value];
+        if(!newTrendContext[key][value]) {
+            this._videos[key].seek(0);
+        }
         this.setState({ trendContext: newTrendContext, });
     }
 
@@ -95,6 +104,7 @@ class TrendChild extends PureComponent {
             trendContextProps,
         } = PlanLogic.handleTrendChildItemRenderLogic(props, selectedTrendCategory, selectedTrends, dashboardTrendCategories, trendContext, styles);
         // TODO: ADD FIRST TIME EXPERIENCE HERE
+        // TODO: UPDATE VIDEO URL
         // render item
         return (
             <ScrollView
@@ -143,9 +153,28 @@ class TrendChild extends PureComponent {
                         </Text>
                     </View>
                     <Collapsible
-                        collapsed={!trendContextProps.isCollapsed}
+                        collapsed={trendContextProps.isCollapsed}
                     >
-                        {/* TODO: ADD VIDEO HERE */}
+                        <View>
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
+                                icon={trendContextProps.isVideoMuted ? 'volume-off' : 'volume-up'}
+                                onPress={() => this._toggleTrendContext(props.key, 'isVideoMuted')}
+                                size={20}
+                            />
+                            <Video
+                                muted={trendContextProps.isVideoMuted}
+                                paused={trendContextProps.isCollapsed}
+                                ref={ref => {
+                                    this._videos[props.key] = ref;
+                                }}
+                                repeat={true}
+                                resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
+                                style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                            />
+                        </View>
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(23),}}>
                             {props.text[1]}
                         </Text>
@@ -155,7 +184,7 @@ class TrendChild extends PureComponent {
                             <TabIcon
                                 color={AppColors.zeplin.slateLight}
                                 icon={'chevron-down'}
-                                onPress={() => this._toggleTrendContext(props.key)}
+                                onPress={() => this._toggleTrendContext(props.key, 'isCollapsed')}
                                 size={30}
                                 type={'material-community'}
                             />
