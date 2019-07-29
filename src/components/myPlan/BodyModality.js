@@ -38,6 +38,7 @@ class BodyModality extends Component {
             isCompleted:      false,
             isPaused:         false,
             isStarted:        false,
+            isSubmitting:     false,
             showInstructions: true,
         };
         this._animatedValue = new Animated.Value(0);
@@ -61,9 +62,12 @@ class BodyModality extends Component {
             let newBodyParts = _.cloneDeep(plan.dailyPlan[0][updatedModality].body_parts);
             completedBodyParts = _.filter(newBodyParts, ['active', true]);
         }
-        patchBodyActiveRecovery(completedBodyParts, updatedModality)
-            .then(res => Actions.pop())
-            .catch(() => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery));
+        this.setState(
+            { isSubmitting: true, },
+            () => patchBodyActiveRecovery(completedBodyParts, updatedModality)
+                .then(res => Actions.pop())
+                .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery),))
+        );
     }
 
     _hideSlideUpPanel = () => this._panel.hide()
@@ -135,7 +139,7 @@ class BodyModality extends Component {
     }
 
     render = () => {
-        const { countdownTime, isCompleted, isPaused, isStarted, showInstructions, } = this.state;
+        const { countdownTime, isCompleted, isPaused, isStarted, isSubmitting, showInstructions, } = this.state;
         let { handleBodyPartClick, modality, plan, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
@@ -433,6 +437,10 @@ class BodyModality extends Component {
                         <Button
                             buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0,}])}
                             containerStyle={{flex: 1, justifyContent: 'flex-end',}}
+                            disabled={isSubmitting}
+                            disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                            disabledTitleStyle={{color: AppColors.white,}}
+                            loading={isSubmitting}
                             onPress={() => this._completeBodyPartModality()}
                             title={`Complete ${_.chain(pageTitle).toLower().startCase()}`}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}

@@ -83,7 +83,7 @@ class TrendChild extends PureComponent {
         this.setState({ trendContext: newTrendContext, });
     }
 
-    _renderItem = (props, selectedTrendCategory, selectedTrends) => {
+    _renderItem = (props, selectedTrendCategory, selectedTrends, dashboardTrendCategories) => {
         const { isLottieVisible, trendContext, } = this.state;
         let {
             bodyParts,
@@ -91,8 +91,9 @@ class TrendChild extends PureComponent {
             iconImage,
             parsedData,
             style,
+            trendCategoryTitle,
             trendContextProps,
-        } = PlanLogic.handleTrendChildItemRenderLogic(props, selectedTrendCategory, selectedTrends, trendContext, styles);
+        } = PlanLogic.handleTrendChildItemRenderLogic(props, selectedTrendCategory, selectedTrends, dashboardTrendCategories, trendContext, styles);
         // TODO: ADD FIRST TIME EXPERIENCE HERE
         // render item
         return (
@@ -118,7 +119,9 @@ class TrendChild extends PureComponent {
                             />
                         </TouchableOpacity>
                     </View>
-                    <View style={{flex: 8,}} />
+                    <View style={{flex: 8,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{trendCategoryTitle}</Text>
+                    </View>
                     <View style={{flex: 1,}} />
                 </View>
 
@@ -227,6 +230,7 @@ class TrendChild extends PureComponent {
     render = () => {
         const { insightType, plan, } = this.props;
         let {
+            dashboardTrendCategories,
             selectedTrendCategory,
             selectedTrends,
         } = PlanLogic.handleTrendChildRenderLogic(insightType, plan);
@@ -241,7 +245,7 @@ class TrendChild extends PureComponent {
                     hidePagination={selectedTrends.length === 1 || selectedTrends.length === 0}
                     paginationStyle={{backgroundColor: AppColors.white, bottom: 0, left: 0, width: AppSizes.screen.width,}}
                     onSlideChange={index => this.setState({ currentCardIndex: index, })}
-                    renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends)}
+                    renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends, dashboardTrendCategories)}
                     scrollEnabled={true}
                     slides={selectedTrends}
                     showDoneButton={false}

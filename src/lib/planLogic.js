@@ -1548,6 +1548,8 @@ const PlanLogic = {
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
         let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
+        let trendCategories = trends && trends.dashboard && trends.dashboard.trend_categories && trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(trends.dashboard.trend_categories) : [];
+        trendCategories.push({});
         return {
             biomechanics,
             bodyResponse,
@@ -1562,6 +1564,7 @@ const PlanLogic = {
             isResponseLocked,
             isStressLocked,
             isWorkloadLocked,
+            trendCategories,
             workload,
         };
     },
@@ -1580,10 +1583,12 @@ const PlanLogic = {
             newTrend.key = i.toString();
             return newTrend;
         });
+        selectedTrends = _.filter(selectedTrends, ['visible', true]);
+        let dashboardTrendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories && dailyPlanObj.trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(dailyPlanObj.trends.dashboard.trend_categories) : [];
         let trendContextState = [];
         _.map(selectedTrends, trend => trendContextState.push(trend.first_time));
-        // TODO: FILTER BY VISIBLE FOR selectedTrends
         return {
+            dashboardTrendCategories,
             selectedTrendCategory,
             selectedTrends,
             trendContextState,
@@ -1595,9 +1600,8 @@ const PlanLogic = {
       * - TrendChild
       */
     // TODO: UNIT TEST ME
-    handleTrendChildItemRenderLogic: (props, selectedTrendCategory, selectedTrends, trendContext, styles) => {
+    handleTrendChildItemRenderLogic: (props, selectedTrendCategory, selectedTrends, dashboardTrendCategories, trendContext, styles) => {
         let bodyParts = [];
-        console.log(props, props.trend_data);
         if(props && props.trend_data) {
             _.map(props.trend_data.visualization_data.plot_legends, plot => {
                 let newPlotSeries = props.trend_data.data[0][plot.series] ?
@@ -1654,12 +1658,15 @@ const PlanLogic = {
             animatedStyle,
             isCollapsed,
         };
+        let trendCategory = _.find(dashboardTrendCategories, ['insight_type', selectedTrendCategory.insight_type]);
+        let trendCategoryTitle = trendCategory ? trendCategory.title : '';
         return {
             bodyParts,
             bottomPadding: (basePaddingBottom + libraryPaginationSize),
             iconImage,
             parsedData,
             style,
+            trendCategoryTitle,
             trendContextProps,
         };
     },
