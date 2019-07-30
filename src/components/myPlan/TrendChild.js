@@ -2,6 +2,8 @@
  * TrendChild
  *
     <TrendChild
+        clearFTECategory={clearFTECategory}
+        clearFTEView={clearFTEView}
         insightType={insightType}
         plan={plan}
         triggerType={triggerType}
@@ -14,7 +16,7 @@ import { Animated, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, Vi
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { BodyOverlay, Button, FathomModal, InViewPort, ParsedText, TabIcon, Text, } from '../custom';
+import { BodyOverlay, Button, FathomModal, InViewPort, ParsedText, Spacer, TabIcon, Text, } from '../custom';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
@@ -83,6 +85,21 @@ class TrendChild extends PureComponent {
         }
     }
 
+    _handleFTEClick = (insightType, visualizationType, isCategory, props, callback) => {
+        const { clearFTECategory, clearFTEView, plan, } = this.props;
+        let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
+        if(isCategory) {
+            newDailyPlan.trends.trend_categories[0].first_time_experience = false;
+            clearFTECategory(newDailyPlan, insightType);
+        } else if(!isCategory && newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience) {
+            newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience = false;
+            clearFTEView(newDailyPlan, insightType, visualizationType);
+        }
+        if(callback) {
+            callback();
+        }
+    }
+
     _toggleTrendContext = (key, value) => {
         let newTrendContext = _.cloneDeep(this.state.trendContext);
         newTrendContext[key][value] = !newTrendContext[key][value];
@@ -103,9 +120,6 @@ class TrendChild extends PureComponent {
             trendCategoryTitle,
             trendContextProps,
         } = PlanLogic.handleTrendChildItemRenderLogic(props, selectedTrendCategory, selectedTrends, dashboardTrendCategories, trendContext, styles);
-        // TODO: ADD FIRST TIME EXPERIENCE HERE
-        // TODO: UPDATE VIDEO URL
-        // render item
         return (
             <ScrollView
                 automaticallyAdjustContentInsets={false}
@@ -165,13 +179,11 @@ class TrendChild extends PureComponent {
                             />
                             <Video
                                 muted={trendContextProps.isVideoMuted}
-                                paused={trendContextProps.isCollapsed}
-                                ref={ref => {
-                                    this._videos[props.key] = ref;
-                                }}
+                                paused={selectedTrendCategory.first_time_experience ? true : trendContextProps.isCollapsed}
+                                ref={ref => {this._videos[props.key] = ref;}}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
+                                source={{uri: props.video_url}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
@@ -184,7 +196,7 @@ class TrendChild extends PureComponent {
                             <TabIcon
                                 color={AppColors.zeplin.slateLight}
                                 icon={'chevron-down'}
-                                onPress={() => this._toggleTrendContext(props.key, 'isCollapsed')}
+                                onPress={() => this._handleFTEClick(selectedTrendCategory.insight_type, props.visualization_type, false, props, () => this._toggleTrendContext(props.key, 'isCollapsed'))}
                                 size={30}
                                 type={'material-community'}
                             />
@@ -246,12 +258,6 @@ class TrendChild extends PureComponent {
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                 />
 
-                <FathomModal
-                    isVisible={false}
-                >
-                    <View />
-                </FathomModal>
-
             </ScrollView>
         );
     }
@@ -283,15 +289,59 @@ class TrendChild extends PureComponent {
                     showSkipButton={false}
                 />
 
+                <FathomModal
+                    isVisible={selectedTrendCategory[0].first_time_experience}
+                >
+                    <View style={{backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{'Tissue Related Insights'}</Text>
+                        <Spacer size={AppSizes.padding} />
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We monitor your data for signs imbalances in  muscle activation, range of motion and more.\n\nThese imbalances can create inefficiency in speed & power production and even  increase soft tissue injury risk.\n\nWe\'re looking to find and fix two types of body-part specific imbalances:'}</Text>
+                        <Spacer size={AppSizes.padding} />
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                            <View style={{alignItems: 'center', marginRight: AppSizes.paddingSml,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/view1icon.png')}
+                                    style={{height: 50, width: 50,}}
+                                />
+                                <Spacer size={AppSizes.paddingXSml} />
+                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{'Tissue Under\n& Over Activity'}</Text>
+                            </View>
+                            <View style={{alignItems: 'center',}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/view3icon.png')}
+                                    style={{height: 50, width: 50,}}
+                                />
+                                <Spacer size={AppSizes.paddingXSml} />
+                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{'Functional\nLimitations'}</Text>
+                            </View>
+                        </View>
+                        <Spacer size={AppSizes.padding} />
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Tap "continue" to see your unique findings.'}</Text>
+                        <Spacer size={AppSizes.paddingLrg} />
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
+                            containerStyle={{alignItems: 'center',}}
+                            onPress={() => this._handleFTEClick(selectedTrendCategory[0].insight_type, false, true)}
+                            raised={true}
+                            title={'Continue'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(23),}}
+                        />
+                    </View>
+                </FathomModal>
+
             </View>
         );
     }
 }
 
 TrendChild.propTypes = {
-    insightType: PropTypes.number.isRequired,
-    plan:        PropTypes.object.isRequired,
-    triggerType: PropTypes.number,
+    clearFTECategory: PropTypes.func.isRequired,
+    clearFTEView:     PropTypes.func.isRequired,
+    insightType:      PropTypes.number.isRequired,
+    plan:             PropTypes.object.isRequired,
+    triggerType:      PropTypes.number,
 };
 
 TrendChild.defaultProps = {

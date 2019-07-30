@@ -1534,14 +1534,14 @@ const PlanLogic = {
     handleTrendsRenderLogic: (plan, os) => {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends && trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let currentStressAlert = trends && trends.stress && trends.stress.alerts && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
+        let currentResponseAlert = trends && trends.response && trends.response.alerts && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
-        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
+        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
         let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
-        let currentWorkloadAlert = trends && trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
+        let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;

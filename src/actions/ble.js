@@ -255,19 +255,37 @@ const deviceFound = data => {
   * 3-SENSOR SYSTEM FUNCTIONS
   */
 const checkRSSI = async (device, characteristic) => {
-    const rssiCharacteristic = await device.readRSSI();
-    try {
-        if(rssiCharacteristic.rssi > SensorLogic.getMinRSSIDBM()) {
-            return Promise.resolve(characteristic ? characteristic : device);
-        }
-        return Promise.reject({});
-    } catch(error) {
-        let errorObj = await handleError(error, device);
-        return Promise.reject(errorObj);
-    }
+    return await device.readRSSI()
+        .then(async rssiCharacteristic => {
+            if(rssiCharacteristic.rssi > SensorLogic.getMinRSSIDBM()) {
+                return Promise.resolve(characteristic ? characteristic : device);
+            }
+            return Promise.reject({});
+        })
+        .catch(async error => {
+            let errorObj = await handleError(error, device);
+            return Promise.reject(errorObj);
+        });
 };
 
-const enable = () => bleManager.enable();
+const enable = () => {
+    // NOTE: ANDROID ONLY FUNCTION
+    if(bleManager) {
+        return bleManager.enable()
+            .then(res => res)
+            .catch(async err => {
+                let errorObj = await handleError(err);
+                return errorObj;
+            });
+    }
+    bleManager = new BleManager();
+    return bleManager.enable()
+        .then(res => res)
+        .catch(async err => {
+            let errorObj = await handleError(err);
+            return errorObj;
+        });
+};
 
 const startMonitor = callback => {
     // NOTE: CAN ADD SUBSCRIPTION HERE IF NEEDED
@@ -285,7 +303,6 @@ const destroyInstance = () => {
 const startConnection = async (device) => {
     const macAddressWriteBase64 = new Buffer([commands.GET_MAC_ADDRESS, convertHex('0x00')]).toString('base64');
     const startConnectionTransactionId = 'start-connection';
-    // TODO: implement .then(async characteristic => await checkRSSI(device, characteristic))
     return await new Promise(async (resolve, reject) => {
         return device.connect()
             .then(connectedDevice => connectedDevice.discoverAllServicesAndCharacteristics())
@@ -416,6 +433,10 @@ const getSingleWifiConnection = async (device, index) => {
                 let longWifiSleep = await sleeper(1000);
                 let longCharacteristic = await longWifiCharacteristic.read(singleWifiLongTransactionId);
                 let longResponseHex = convertBase64ToHex(longCharacteristic.value);
+                if(convertByteArrayToString(longResponseHex) === '\\' || convertByteArrayToString(longResponseHex) ==='/') {
+                    let errorObj = await handleError({}, device);
+                    return reject(errorObj);
+                }
                 return resolve(cleanSingleWifiArray(_.concat(responseHex.slice(4, responseHex.length), longResponseHex)));
             })
             .catch(async error => {
@@ -429,18 +450,17 @@ const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value
     let timeout = sleeper(1000);
     let responseValidation = new Promise(async (resolve, reject) => {
         const sleep = await sleeper(1000);
-        let readCharacteristic = await device.readCharacteristicForService(serviceUUID, characteristicUUID, transactionId);
-        try {
-            let responseHex = convertBase64ToHex(readCharacteristic.value);
-            let writeHex = convertBase64ToHex(writeBase64Value);
-            let isValid = validateReadData(responseHex, writeHex);
-            if(!isValid) {
-                return reject({});
-            }
-            return resolve();
-        } catch(error) {
-            return reject(error);
-        }
+        return await device.readCharacteristicForService(serviceUUID, characteristicUUID, transactionId)
+            .then(readCharacteristic => {
+                let responseHex = convertBase64ToHex(readCharacteristic.value);
+                let writeHex = convertBase64ToHex(writeBase64Value);
+                let isValid = validateReadData(responseHex, writeHex);
+                if(!isValid) {
+                    return reject({});
+                }
+                return resolve();
+            })
+            .catch(error => reject(error));
     });
     return Promise
         .all([responseValidation, timeout])
@@ -450,18 +470,17 @@ const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value
 
 const checkCharacteristicForChange = async (device, readConnectBase64, transactionId, startTime) => {
     const readConnectSleep = await sleeper(1000);
-    const readConnectCharacteristic = await write(device, readConnectBase64, transactionId);
-    try {
-        let timeDiff = moment().diff(startTime, 'seconds');
-        if(readConnectCharacteristic[4] !== 1 && timeDiff <= 10) {
-            return checkCharacteristicForChange(device, readConnectBase64, transactionId, startTime);
-        } else if(readConnectCharacteristic[4] !== 1 && timeDiff >= 10) {
-            return Promise.reject({});
-        }
-        return Promise.resolve(readConnectCharacteristic);
-    } catch(error) {
-        return Promise.reject(error);
-    }
+    return await write(device, readConnectBase64, transactionId)
+        .then(readConnectCharacteristic => {
+            let timeDiff = moment().diff(startTime, 'seconds');
+            if(readConnectCharacteristic[4] !== 1 && timeDiff <= 10) {
+                return checkCharacteristicForChange(device, readConnectBase64, transactionId, startTime);
+            } else if(readConnectCharacteristic[4] !== 1 && timeDiff >= 10) {
+                return Promise.reject({});
+            }
+            return Promise.resolve(readConnectCharacteristic);
+        })
+        .catch(error => Promise.reject(error));
 };
 
 const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) => {
@@ -483,7 +502,6 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
     } else if(securityByte !== 0 && passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
         return Promise.reject(SensorLogic.errorMessages().longPass);
     }
-    // TODO: monitor to see if disconnected - kick user out
     // send commands
     return await new Promise(async (resolve, reject) => {
         let rejectionTimer = _.delay(async () => {

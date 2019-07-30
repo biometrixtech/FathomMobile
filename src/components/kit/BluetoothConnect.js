@@ -58,6 +58,7 @@ class BluetoothConnect extends Component {
             loading:               false,
             pageIndex:             updatedPageIndex,
         };
+        this._isMounted = false;
         this._pages = {};
         this._timer = null;
     }
@@ -69,9 +70,10 @@ class BluetoothConnect extends Component {
         if(!this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}0`)) {
             this._updateUserCheckpoint(0);
         }
+        this._isMounted = true;
     }
 
-    componentWillMount() {
+    componentWillMount = () => {
         // monitor when the BLE state changes
         ble.startMonitor(state => this.setState({ bleState: state, }));
     }
@@ -80,6 +82,7 @@ class BluetoothConnect extends Component {
         this._pages = {};
         ble.destroyInstance();
         clearInterval(this._timer);
+        this._isMounted = false;
     }
 
     _connectSensorToWifi = () => {
@@ -174,6 +177,9 @@ class BluetoothConnect extends Component {
             ), 60000);
         }
         ble.startDeviceScan((error, response, device, state) => {
+            if(!this._isMounted) {
+                return '';
+            }
             if(state) {
                 this.setState(
                     { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
@@ -201,7 +207,10 @@ class BluetoothConnect extends Component {
 
     _handleDisconnection = (device, callback, shouldExitKitSetup, updateState = true) => {
         const { bluetooth, } = this.props;
-        this.setState(
+        if(!this._isMounted) {
+            return '';
+        }
+        return this.setState(
             { isConnectingToSensor: updateState ? false : true, },
             () => {
                 if(shouldExitKitSetup) {
@@ -271,6 +280,9 @@ class BluetoothConnect extends Component {
     }
 
     _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
+        if(!this._isMounted) {
+            return '';
+        }
         if(
             (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
             this.state.isWifiScanDone
@@ -284,6 +296,9 @@ class BluetoothConnect extends Component {
                 newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
                 newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
                 newAvailableNetworks = _.filter(newAvailableNetworks, o => o.rssi > SensorLogic.getMinRSSIDBM());
+                if(!this._isMounted) {
+                    return '';
+                }
                 return this.setState(
                     { availableNetworks: newAvailableNetworks, },
                     () => _.delay(() => {
@@ -296,6 +311,9 @@ class BluetoothConnect extends Component {
                 );
             })
             .catch(err => {
+                if(!this._isMounted) {
+                    return '';
+                }
                 if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                     return this._toggleWeakRSSIAlertNotification();
                 } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
@@ -340,17 +358,26 @@ class BluetoothConnect extends Component {
 
     _handleWifiScan = () => {
         const { bluetooth, } = this.props;
+        if(!this._isMounted) {
+            return '';
+        }
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
         return ble.getScannedWifiConnections(device)
             .then(res => {
+                if(!this._isMounted) {
+                    return '';
+                }
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
                 return this._handleSingleWifiConnectionFetch(device, res, 1);
             })
             .catch(err => {
-                this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                if(!this._isMounted) {
+                    return '';
+                }
+                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
                     if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                         return this._toggleWeakRSSIAlertNotification();
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
@@ -386,13 +413,12 @@ class BluetoothConnect extends Component {
                     if (result) {
                         console.log('Permission is OK');
                     } else {
-                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
-                            if(res) {
-                                console.log('User accept');
-                            } else {
-                                console.log('User refuse');
-                            }
-                        });
+                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+                            .then(res =>
+                                this.setState({
+                                    bleState: res === 'granted' ? 'PoweredOn' : res,
+                                })
+                            );
                     }
                 });
             }

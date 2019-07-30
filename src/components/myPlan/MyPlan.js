@@ -261,7 +261,7 @@ const MyPlanNavBar = ({
                     isVisible={expandNotifications}
                     layout={'tinder'}
                     shrinkNumberOfLines={true}
-                    unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+                    unreadNotificationsCount={cards.length}
                 />
             }
         </Collapsible>
