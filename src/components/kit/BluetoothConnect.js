@@ -341,10 +341,13 @@ class BluetoothConnect extends Component {
                 {
                     text:    'I\'ll do it later',
                     onPress: () => {
-                        this._handleDisconnection(false, () => Actions.pop(), true);
-                        if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
-                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                        }
+                        this._handleDisconnection(false, () => {
+                            if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                            } else {
+                                Actions.pop();
+                            }
+                        }, true);
                     },
                 },
                 {
@@ -668,10 +671,7 @@ class BluetoothConnect extends Component {
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
                         onBack={isConnectingToSensor ? null : () => this._handleSyncOnBack()}
                         onClose={() =>
-                            this._handleDisconnection(false, () => {
-                                Actions.pop();
-                                this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)
-                            })
+                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true))
                         }
                         page={1}
                     />
