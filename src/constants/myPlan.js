@@ -683,9 +683,9 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
 };
 
 const exerciseListButtonStyles = (completedExercises, modality, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? 'Mobilize Complete' : 'Check Boxes to Complete Mobilize';
+    let buttonTitle = completedExercises.length > 0 ? 'Complete Mobilize' : 'Check Boxes to Complete Mobilize';
     if(modality === 'coolDown') {
-        buttonTitle = completedExercises.length > 0 ? 'Active Recovery Complete' : 'Check Boxes to Complete Active Recovery';
+        buttonTitle = completedExercises.length > 0 ? 'Complete Active Recovery' : 'Check Boxes to Complete Active Recovery';
     }
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
