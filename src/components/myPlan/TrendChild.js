@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     cardTitle: {
         color:        AppColors.zeplin.slate,
         flex:         1,
-        fontSize:     AppFonts.scaleFont(15),
-        marginBottom: AppSizes.paddingSml,
+        fontSize:     AppFonts.scaleFont(16),
+        marginBottom: AppSizes.paddingXSml,
     },
 });
 
@@ -103,9 +103,9 @@ class TrendChild extends PureComponent {
     _toggleTrendContext = (key, value) => {
         let newTrendContext = _.cloneDeep(this.state.trendContext);
         newTrendContext[key][value] = !newTrendContext[key][value];
-        if(!newTrendContext[key][value]) {
-            this._videos[key].seek(0);
-        }
+        // if(!newTrendContext[key][value]) {
+        //     this._videos[key].seek(0);
+        // }
         this.setState({ trendContext: newTrendContext, });
     }
 
@@ -170,16 +170,29 @@ class TrendChild extends PureComponent {
                         collapsed={trendContextProps.isCollapsed}
                     >
                         <View>
-                            <TabIcon
-                                color={AppColors.zeplin.slateLight}
-                                containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
-                                icon={trendContextProps.isVideoMuted ? 'volume-off' : 'volume-up'}
-                                onPress={() => this._toggleTrendContext(props.key, 'isVideoMuted')}
-                                size={20}
-                            />
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => this._toggleTrendContext(props.key, 'isPaused')}
+                                style={{
+                                    backgroundColor: trendContextProps.isPaused ? `${AppColors.zeplin.slate}CC` : AppColors.transparent,
+                                    height:          '100%',
+                                    position:        'absolute',
+                                    width:           '100%',
+                                    zIndex:          100,
+                                }}
+                            >
+                                { trendContextProps.isPaused &&
+                                    <TabIcon
+                                        color={AppColors.white}
+                                        containerStyle={[{height: '100%', justifyContent: 'center',}]}
+                                        icon={'play-arrow'}
+                                        size={50}
+                                    />
+                                }
+                            </TouchableOpacity>
                             <Video
                                 muted={trendContextProps.isVideoMuted}
-                                paused={selectedTrendCategory.first_time_experience ? true : trendContextProps.isCollapsed}
+                                paused={trendContextProps.isPaused}
                                 ref={ref => {this._videos[props.key] = ref;}}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
@@ -221,7 +234,7 @@ class TrendChild extends PureComponent {
                         )}
                     </View>
                     <View style={{backgroundColor: AppColors.zeplin.superLight, height: 2, marginVertical: AppSizes.padding,}} />
-                    <Text robotoBold style={[styles.cardTitle, {color: PlanLogic.returnBodyOverlayColorString(false, false, props && props.trend_data ? props.trend_data.title_color : 0),}]}>
+                    <Text robotoLight style={[styles.cardTitle,]}>
                         {props && props.trend_data ? props.trend_data.title : ''}
                     </Text>
                     <ParsedText
@@ -234,16 +247,17 @@ class TrendChild extends PureComponent {
 
                 <InViewPort
                     onChange={isVisible => this._checkLottieVisibility(props.key, isVisible)}
-                    style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.padding,}}
+                    style={{alignItems: 'center', marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.padding,}}
                 >
                     <LottieView
                         autoPlay={isLottieVisible[props.key]}
                         loop={false}
                         progress={isLottieVisible[props.key] ? 1 : 0}
                         source={require('../../../assets/animation/trends-child-cta.json')}
+                        speed={3}
                         style={{height: 40, width: 40,}}
                     />
-                    <View style={{width: AppSizes.paddingMed,}} />
+                    <Spacer size={AppSizes.paddingMed} />
                     <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, flexWrap: 'wrap', fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
                         {'Your plan has been updated to help address these findings!'}
                     </Text>
@@ -266,6 +280,8 @@ class TrendChild extends PureComponent {
         const { insightType, plan, } = this.props;
         let {
             dashboardTrendCategories,
+            fteModalData,
+            isFTECategoryModalOpen,
             selectedTrendCategory,
             selectedTrends,
         } = PlanLogic.handleTrendChildRenderLogic(insightType, plan);
@@ -290,35 +306,41 @@ class TrendChild extends PureComponent {
                 />
 
                 <FathomModal
-                    isVisible={selectedTrendCategory[0].first_time_experience}
+                    isVisible={isFTECategoryModalOpen}
                 >
-                    <View style={{backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{'Tissue Related Insights'}</Text>
+                    <View style={{backgroundColor: AppColors.white, borderRadius: 12, marginHorizontal: AppSizes.padding, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25), textAlign: 'center',}}>{fteModalData.title}</Text>
                         <Spacer size={AppSizes.padding} />
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We monitor your data for signs imbalances in  muscle activation, range of motion and more.\n\nThese imbalances can create inefficiency in speed & power production and even  increase soft tissue injury risk.\n\nWe\'re looking to find and fix two types of body-part specific imbalances:'}</Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{fteModalData.body}</Text>
                         <Spacer size={AppSizes.padding} />
                         <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                            <View style={{alignItems: 'center', marginRight: AppSizes.paddingSml,}}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/view1icon.png')}
-                                    style={{height: 50, width: 50,}}
-                                />
-                                <Spacer size={AppSizes.paddingXSml} />
-                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{'Tissue Under\n& Over Activity'}</Text>
-                            </View>
-                            <View style={{alignItems: 'center',}}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/view3icon.png')}
-                                    style={{height: 50, width: 50,}}
-                                />
-                                <Spacer size={AppSizes.paddingXSml} />
-                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{'Functional\nLimitations'}</Text>
-                            </View>
+                            {_.map(fteModalData.categories, (category, index) => {
+                                let imageSource = false;
+                                switch (category.image) {
+                                case 'view1icon.png':
+                                    imageSource = require('../../../assets/images/standard/view1icon.png');
+                                    break;
+                                case 'view3icon.png':
+                                    imageSource = require('../../../assets/images/standard/view3icon.png');
+                                    break;
+                                default:
+                                    imageSource = require('../../../assets/images/standard/view1icon.png');
+                                }
+                                return (
+                                    <View key={index} style={[{alignItems: 'center',}, index % 2 === 0 ? {marginRight: AppSizes.paddingSml,} : {}]}>
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={imageSource}
+                                            style={{height: 50, width: 50,}}
+                                        />
+                                        <Spacer size={AppSizes.paddingXSml} />
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'center',}}>{category.title}</Text>
+                                    </View>
+                                );
+                            })}
                         </View>
                         <Spacer size={AppSizes.padding} />
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Tap "continue" to see your unique findings.'}</Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{fteModalData.subtext}</Text>
                         <Spacer size={AppSizes.paddingLrg} />
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}

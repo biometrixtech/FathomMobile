@@ -214,7 +214,7 @@ class BodyModality extends Component {
                                         {pageTitle}
                                     </MagicMove.Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
-                                    <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
+                                    <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 12, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
                                     </View>
                                     <Spacer size={AppSizes.padding} />
@@ -300,7 +300,7 @@ class BodyModality extends Component {
                                         </View>
                                     </View>
                                 }
-                                <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 10, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}]}>
+                                <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 12, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed,}]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
                                         <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>{`HOW-TO ${modality === 'cwi' ? 'CWB' : _.upperCase(modality)} EFFECTIVELY`}</Text>
                                         <TouchableOpacity

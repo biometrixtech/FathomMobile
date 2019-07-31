@@ -334,7 +334,7 @@ class SVGImage extends Component {
                 alignItems:     'center',
                 borderColor:    this.props.isBlue ? AppColors.zeplin.splashLight : this.props.selected ? AppColors.zeplin.yellow : AppColors.white,
                 borderRadius:   AppSizes.screen.widthQuarter + 5,
-                borderWidth:    Platform.OS === 'ios' ? 5 : 6,
+                borderWidth:    this.props.isBlue ? 2 : Platform.OS === 'ios' ? 5 : 6,
                 height:         this.props.style.height ? this.props.style.height : (AppSizes.screen.widthQuarter + 5),
                 justifyContent: 'center',
                 overflow:       'hidden',

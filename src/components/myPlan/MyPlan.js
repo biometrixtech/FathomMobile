@@ -108,7 +108,7 @@ const ActivityTab = ({
 }) => (
     <View onLayout={onLayout ? event => onLayout(event) : null} style={{marginBottom: AppSizes.paddingMed,}}>
         { completed || locked ?
-            <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 10, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
+            <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 12, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
                 <View style={{flexDirection: 'row',}}>
                     { completed ?
                         <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
@@ -149,28 +149,28 @@ const ActivityTab = ({
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onPress}
-                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 12,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
                 {/*<MagicMove.Image
                     disabled={true}
                     id={`${id}.image`}
                     resizeMode={'contain'}
                     source={backgroundImage}
-                    style={[StyleSheet.absoluteFill, {borderRadius: 10, height: 'auto', width: 'auto',}]}
+                    style={[StyleSheet.absoluteFill, {borderRadius: 12, height: 'auto', width: 'auto',}]}
                     useNativeDriver={false}
                 />*/}
                 <ImageBackground
-                    imageStyle={{borderRadius: 10,}}
+                    imageStyle={{borderRadius: 12,}}
                     resizeMode={'cover'}
                     source={backgroundImage}
-                    style={{backgroundColor: AppColors.white, borderRadius: 10, height: 'auto', width: 'auto',}}
+                    style={{backgroundColor: AppColors.white, borderRadius: 12, height: 'auto', width: 'auto',}}
                 >
                     <LinearGradient
                         colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.3)']}
                         end={{x: 1.0, y: 1.0}}
                         onPress={onPress}
                         start={{x: 0.1, y: 0.1}}
-                        style={[{alignItems: 'flex-start', borderRadius: 10, padding: AppSizes.paddingMed,}]}
+                        style={[{alignItems: 'flex-start', borderRadius: 12, padding: AppSizes.paddingMed,}]}
                     >
                         <TabIcon
                             color={AppColors.white}
@@ -1052,7 +1052,7 @@ class MyPlan extends Component {
                                 color={AppColors.zeplin.superLight}
                                 key={key}
                                 noMargin
-                                style={{alignSelf: 'center', borderRadius: 10, flex: 1,}}
+                                style={{alignSelf: 'center', borderRadius: 12, flex: 1,}}
                                 textSize={150}
                             />
                         </View>
@@ -1089,7 +1089,7 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'OFF DAY'}
                                 useNativeFeedback={false}
@@ -1107,7 +1107,7 @@ class MyPlan extends Component {
                             hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                             textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'LOG TRAINING'}
                             useNativeFeedback={false}
@@ -1125,7 +1125,7 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'ADD MOBILIZE'}
                                 useNativeFeedback={false}

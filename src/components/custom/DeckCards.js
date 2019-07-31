@@ -211,7 +211,7 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { cards, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, handleReadInsight, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
             allowNavigation,
@@ -232,7 +232,10 @@ class DeckCards extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={shouldNavigate && allowNavigation ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
+                onPress={shouldNavigate && allowNavigation ? () => {
+                    AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, });
+                    handleReadInsight(insightType);
+                } : () => {}}
                 style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>

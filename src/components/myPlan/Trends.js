@@ -22,7 +22,6 @@ import { store } from '../../store';
 
 // import third-party libraries
 import _ from 'lodash';
-import Carousel from 'react-native-snap-carousel';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -44,9 +43,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.padding,
     },
     categoryCard: {
+        alignSelf:       'flex-start',
         backgroundColor: AppColors.white,
         borderRadius:    12,
         padding:         AppSizes.paddingMed,
+        width:           AppSizes.screen.widthTwoThirds,
     },
     lockedCardText: {
         color:             AppColors.white,
@@ -128,10 +129,10 @@ class Trends extends PureComponent {
             });
     }
 
-    _renderItem = ({index, item,}, numberOfItems) => {
-        if((index + 1) === numberOfItems) {
+    _renderItem = item => {
+        /*if((index + 1) === numberOfItems) {
             return (
-                <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.splashLight, borderRadius: 12, flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                     <Image
                         resizeMode={'contain'}
                         source={require('../../../assets/images/standard/allcaughtup.png')}
@@ -140,8 +141,10 @@ class Trends extends PureComponent {
                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{'You’re all caught up! Come back later for updates to your Trends.'}</Text>
                 </View>
             );
-        }
-        let bodyPart = PlanLogic.handleBodyModalityBodyPart(item.body_part);
+        }*/
+        let newBodyPart = _.cloneDeep(item.body_part);
+        newBodyPart.side = newBodyPart.side ? newBodyPart.side : 0;
+        let bodyPart = PlanLogic.handleBodyModalityBodyPart(newBodyPart);
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -150,23 +153,23 @@ class Trends extends PureComponent {
                 }}
                 style={[styles.categoryCard, AppStyles.scaleButtonShadowEffect,]}
             >
-                {/* // TODO: ADD LOGIC FOR ICON BELOW */}
-                <View style={[styles.trendCategoryIcon,]} />
+                { item.unread_alerts &&
+                    <View style={[styles.trendCategoryIcon,]} />
+                }
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.paddingSml,}}>{item.title}</Text>
-                <View style={{backgroundColor: `${AppColors.zeplin.splashLight}1A`, borderRadius: 12, flexDirection: 'row', marginVertical: AppSizes.paddingSml, padding: AppSizes.paddingSml,}}>
+                <View style={{backgroundColor: `${AppColors.zeplin.splashLight}1A`, borderRadius: 12, flexDirection: 'row', marginTop: AppSizes.paddingSml, padding: AppSizes.paddingSml,}}>
                     <SVGImage
                         image={bodyPart.bodyImage}
                         isBlue={true}
                         selected={true}
                         style={{height: 50, width: 50,}}
                     />
-                    <View style={{justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>
-                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11),}}>{item.text}</Text>
+                    <View style={{flex: 1, justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(12),}}>{item.text}</Text>
                         <Spacer size={AppSizes.paddingXSml} />
                         <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(14),}}>{item.body_part_text}</Text>
                     </View>
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginHorizontal: AppSizes.paddingSml,}}>{item.footer}</Text>
             </TouchableOpacity>
         );
     }
@@ -246,19 +249,7 @@ class Trends extends PureComponent {
                                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'No Trends right now. We\'ll keep looking.'}</Text>
                                 </View>
                                 :
-                                <Carousel
-                                    contentContainerCustomStyle={{paddingVertical: AppSizes.paddingSml,}}
-                                    data={trendCategories}
-                                    initialNumToRender={trendCategories.length}
-                                    itemWidth={AppSizes.screen.widthFourFifths}
-                                    lockScrollWhileSnapping={true}
-                                    maxToRenderPerBatch={3}
-                                    ref={c => {this._carousel = c;}}
-                                    removeClippedSubviews={true}
-                                    renderItem={obj => this._renderItem(obj, trendCategories.length)}
-                                    sliderWidth={AppSizes.screen.width}
-                                    windowSize={3}
-                                />
+                                this._renderItem(trendCategories[0])
                             }
                         </View>
                         <Spacer size={AppSizes.paddingLrg} />

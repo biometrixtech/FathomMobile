@@ -380,8 +380,8 @@ class Settings extends Component {
                         name:  'chevron-right',
                         size:  ICON_SIZE,
                     }}
-                    title={'JOIN A TEAM'}
-                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    title={'Join a team'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 {
@@ -415,8 +415,8 @@ class Settings extends Component {
                                     name:  'chevron-right',
                                     size:  ICON_SIZE,
                                 }}
-                                title={'RESET ACCOUNT DATA'}
-                                titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                                title={'Reset account data'}
+                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                             />
                             <Spacer isDivider />
                         </View>
@@ -442,8 +442,8 @@ class Settings extends Component {
                                     value={this.props.user.health_enabled}
                                 />
                             }
-                            title={'APPLE HEALTH'}
-                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            title={'Apple Health'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
@@ -461,14 +461,16 @@ class Settings extends Component {
                                     />
                                 </View>
                             }
-                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
+                            // TODO: REVERT ME
+                            onPress={!has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
                             rightIcon={{
                                 color: AppColors.zeplin.slate,
                                 name:  'chevron-right',
                                 size:  ICON_SIZE,
                             }}
-                            title={has3SensorConnected ? 'MANAGE FATHOM PRO KIT' : 'SET UP FATHOM PRO KIT'}
-                            titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            // TODO: REVERT ME
+                            title={!has3SensorConnected ? 'Manage Fathom PRO Kit' : 'Set up Fathom PRO Kit'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
                     </View>
@@ -487,8 +489,8 @@ class Settings extends Component {
                         name:  'chevron-right',
                         size:  ICON_SIZE,
                     }}
-                    title={'TERMS & PRIVACY'}
-                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    title={'Terms & Privacy'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <ListItem
@@ -519,8 +521,8 @@ class Settings extends Component {
                         name:  'chevron-right',
                         size:  ICON_SIZE,
                     }}
-                    title={'LOGOUT'}
-                    titleStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    title={'Logout'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
                 <Toast

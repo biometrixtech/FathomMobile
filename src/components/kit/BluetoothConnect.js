@@ -185,23 +185,24 @@ class BluetoothConnect extends Component {
                     { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
                 );
             }
-            if(error) {
-                if (
-                    this.props.bluetooth.accessoryData &&
-                    !this.props.bluetooth.accessoryData.sensor_pid &&
-                    !this.props.bluetooth.accessoryData.mobile_udid &&
-                    !this.props.bluetooth.accessoryData.wifiMacAddress
-                ) {
-                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-                    return this._handleDisconnection(device, () => this._renderPreviousPage());
-                }
-                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
-            }
-            if(!response.accessory.owner_id) {
+            // TODO: REVERT ME
+            // if(error) {
+            //     if (
+            //         this.props.bluetooth.accessoryData &&
+            //         !this.props.bluetooth.accessoryData.sensor_pid &&
+            //         !this.props.bluetooth.accessoryData.mobile_udid &&
+            //         !this.props.bluetooth.accessoryData.wifiMacAddress
+            //     ) {
+            //         this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+            //         return this._handleDisconnection(device, () => this._renderPreviousPage());
+            //     }
+            //     return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+            // }
+            // if(!response.accessory.owner_id) {
                 clearTimeout(this._timer);
                 return this._toggleAlertNotification();
-            }
-            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+            // }
+            // return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
         });
     }
 

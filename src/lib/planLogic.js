@@ -1589,11 +1589,21 @@ const PlanLogic = {
         _.map(selectedTrends, trend => {
             let newObj = {};
             newObj.isCollapsed = !trend.first_time_experience;
+            newObj.isPaused = true;
             newObj.isVideoMuted = false;
             trendContextState.push(newObj);
         });
+        let isFTECategoryModalOpen = (selectedTrendCategory && selectedTrendCategory[0] && selectedTrendCategory[0].first_time_experience && selectedTrendCategory[0].first_time_experience_modal) ? true : false;
+        let fteModalData = {
+            body:       isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.body : '',
+            categories: isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.categories : [],
+            title:      isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.title : '',
+            subtext:    isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.subtext : '',
+        };
         return {
             dashboardTrendCategories,
+            fteModalData,
+            isFTECategoryModalOpen,
             selectedTrendCategory,
             selectedTrends,
             trendContextState,
@@ -1649,6 +1659,7 @@ const PlanLogic = {
             });
         }
         let isCollapsed = trendContext[props.key].isCollapsed;
+        let isPaused = trendContext[props.key].isPaused;
         let isVideoMuted = trendContext[props.key].isVideoMuted;
         let animatedValue = new Animated.Value(isCollapsed ? 1 : 0);
         Animated.timing(animatedValue, {
@@ -1663,6 +1674,7 @@ const PlanLogic = {
         let trendContextProps = {
             animatedStyle,
             isCollapsed,
+            isPaused,
             isVideoMuted,
         };
         let trendCategory = _.find(dashboardTrendCategories, ['insight_type', selectedTrendCategory.insight_type]);
