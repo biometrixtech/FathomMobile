@@ -278,7 +278,18 @@ class SensorFiles extends Component {
                     />
                     <Spacer isDivider />
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11), paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}>{`Hardware ID: ${sensorData.sensor_pid}`}</Text>
+                <Text
+                    robotoLight
+                    style={{
+                        color:         AppColors.zeplin.slate,
+                        fontSize:      AppFonts.scaleFont(11),
+                        paddingBottom: AppSizes.isIphoneX ? (AppSizes.iphoneXBottomBarPadding + AppSizes.paddingSml) : AppSizes.paddingMed,
+                        paddingTop:    AppSizes.paddingMed,
+                        textAlign:     'center',
+                    }}
+                >
+                    {`Hardware ID: ${sensorData.sensor_pid}`}
+                </Text>
             </View>
         );
     }

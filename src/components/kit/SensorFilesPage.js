@@ -30,11 +30,8 @@ import { AppUtil, SensorLogic, } from '../../lib';
 import { Battery, Calibration, Connect, Placement, Session, } from './ConnectScreens';
 import { Loading, } from '../general';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
+import { ble, } from '../../actions';
 import { store, } from '../../store';
-
-// setup consts
-// const BleManagerModule = NativeModules.BleManager;
-// const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 /* Component ==================================================================== */
 const TopNavBar = () => (
@@ -59,22 +56,12 @@ class SensorFilesPage extends Component {
     static componentName = 'SensorFilesPage';
 
     static propTypes = {
-        assignKitIndividual:       PropTypes.func.isRequired,
-        bluetooth:                 PropTypes.shape({}).isRequired,
-        deviceFound:               PropTypes.func.isRequired,
-        getAccessoryKey:           PropTypes.func.isRequired,
-        getBLEMacAddress:          PropTypes.func.isRequired,
-        getScannedWifiConnections: PropTypes.func.isRequired,
-        getSensorFiles:            PropTypes.func.isRequired,
-        getSingleWifiConnection:   PropTypes.func.isRequired,
-        pageStep:                  PropTypes.string.isRequired,
-        startDisconnection:        PropTypes.func.isRequired,
-        startScan:                 PropTypes.func.isRequired,
-        stopConnect:               PropTypes.func.isRequired,
-        stopScan:                  PropTypes.func.isRequired,
-        updateUser:                PropTypes.func.isRequired,
-        user:                      PropTypes.shape({}).isRequired,
-        writeWifiDetailsToSensor:  PropTypes.func.isRequired,
+        assignKitIndividual: PropTypes.func.isRequired,
+        bluetooth:           PropTypes.shape({}).isRequired,
+        getSensorFiles:      PropTypes.func.isRequired,
+        pageStep:            PropTypes.string.isRequired,
+        updateUser:          PropTypes.func.isRequired,
+        user:                PropTypes.shape({}).isRequired,
     }
 
     static defaultProps = {}
@@ -92,30 +79,47 @@ class SensorFilesPage extends Component {
             loading:               false,
             pageIndex:             0,
         };
+        this._isMounted = false;
         this._pages = {};
         this._timer = null;
-        this.handleBLEUpdateState = this.handleBLEUpdateState.bind(this);
-        this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
     }
 
     componentDidMount = () => {
-        // BleManager.start({ showAlert: false, });
-        // BleManager.checkState();
-        // this.handlerCheck = bleManagerEmitter.addListener('BleManagerDidUpdateState', args => this.handleBLEUpdateState(args));
-        // this.handlerDiscover = bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+        this._isMounted = true;
+        if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') { // turn on BLE & connect to accessory
+            if (Platform.OS === 'android') {
+                ble.enable();
+            }
+            if (Platform.OS === 'android' && Platform.Version >= 23) {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
+                    if (result) {
+                        console.log('Permission is OK');
+                    } else {
+                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+                            .then(res =>
+                                this.setState({
+                                    bleState: res === 'granted' ? 'PoweredOn' : res,
+                                })
+                            );
+                    }
+                });
+            }
+        }
     }
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
+        // monitor when the BLE state changes
+        ble.startMonitor(state => this.setState({ bleState: state, }));
     }
 
     componentWillUnmount = () => {
         this._pages = {};
+        ble.destroyInstance();
         clearInterval(this._timer);
-        this.handlerCheck.remove();
-        this.handlerDiscover.remove();
+        this._isMounted = false;
         if (Platform.OS === 'android') {
             BackHandler.removeEventListener('hardwareBackPress');
         }
@@ -125,78 +129,56 @@ class SensorFilesPage extends Component {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
     }
 
-    handleBLEUpdateState = args => this.setState({ bleState: args.state, })
-
-    handleDiscoverPeripheral = data => {
-        const { deviceFound, } = this.props;
-        if (data.advertising && data.advertising.kCBAdvDataLocalName) {
-            data.name = data.advertising.kCBAdvDataLocalName;
-        }
-        return data.name && data.name === 'fathomKit' && this.props.bluetooth.devicesFound.length === 0 ? deviceFound(data).then(() => this._handleStopScan()) : null; // 3-sensor solution
-        // return data.name && /fathomS[*]_/i.test(data.name) ? deviceFound(data) : null; // 1-sensor solution
-    }
-
-    _connect = data => {
-        const { getAccessoryKey, getBLEMacAddress, startDisconnection, user, } = this.props;
-        return getBLEMacAddress(data.id)
-            .then(macAddress => getAccessoryKey(macAddress))
-            .then(response => {
-                if(
-                    !response.accessory.owner_id ||
-                    (response.accessory.owner_id && response.accessory.owner_id !== user.id)
-                ) {
-                    return startDisconnection(data.id, true).then(() => this._handleBLEPair());
-                }
-                return this._toggleAlertNotification(data.id, user.id);
-            })
-            .catch(err => {
-                if (
-                    this.props.bluetooth.accessoryData &&
-                    !this.props.bluetooth.accessoryData.sensor_pid &&
-                    !this.props.bluetooth.accessoryData.mobile_udid &&
-                    !this.props.bluetooth.accessoryData.wifiMacAddress
-                ) {
-                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-                    return this._handleDisconnection(() => this._renderPreviousPage());
-                }
-                return console.log(err);
-            });
-    }
-
     _connectSensorToWifi = () => {
         Keyboard.dismiss();
-        const { assignKitIndividual, bluetooth, getSensorFiles, startDisconnection, updateUser, user, writeWifiDetailsToSensor, } = this.props;
+        const { assignKitIndividual, bluetooth, getSensorFiles, updateUser, user, } = this.props;
         const { currentWifiConnection, } = this.state;
-        let sensorId = bluetooth.accessoryData.sensor_pid;
+        // setup ble write variables
+        let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
         let ssid = currentWifiConnection.ssid;
         let password = currentWifiConnection.password;
         let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
-        return writeWifiDetailsToSensor(sensorId, ssid, password, securityByte)
-            .then(res => {
-                // setup variables
-                let newUserPayloadObj = {};
-                newUserPayloadObj.sensor_data = {};
-                newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                newUserPayloadObj.sensor_data.system_type = '3-sensor';
-                let newUserNetworksPayloadObj = {};
-                newUserNetworksPayloadObj['@sensor_data'] = {};
-                newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
-                let newUserObj = _.cloneDeep(user);
-                newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
-                newUserObj.sensor_data.system_type = '3-sensor';
-                // send commands
-                return updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
-                    .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
-                    .then(() => assignKitIndividual({wifiMacAddress: bluetooth.accessoryData.wifiMacAddress,}, user)) // 2. PATCH hardware specific endpoint
-                    .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
-                    .then(() => startDisconnection(sensorId, true)) // 4. disconnect from sensor
-                    .then(() => this.setState({ loading: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)} )) // 5. route to next page
-                    .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
-            })
-            .catch(err => this.setState({ loading: false, }, () => {this._timer = _.delay(() => AppUtil.handleAPIErrorAlert(err), 500)} ));
+        let macAddress = bluetooth.accessoryData.wifiMacAddress;
+        // setup user variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.sensor_data = {};
+        newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+        newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+        newUserPayloadObj.sensor_data.system_type = '3-sensor';
+        let newUserNetworksPayloadObj = {};
+        newUserNetworksPayloadObj['@sensor_data'] = {};
+        newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
+        let newUserObj = _.cloneDeep(user);
+        newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+        newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+        newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+        newUserObj.sensor_data.system_type = '3-sensor';
+        return ble.writeWifiDetailsToSensor(device, ssid, password, securityByte) // 1. write details to sensor
+            .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
+            .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
+            .then(() => assignKitIndividual({wifiMacAddress: macAddress,}, user)) // 3. PATCH hardware specific endpoint
+            .then(() => getSensorFiles(newUserObj)) // 4. grab sensor files as they may have changed
+            .then(() =>
+                this.setState(
+                    { loading: false, },
+                    () => _.delay(() => this._renderNextPage(), 500),
+                ) // 3. route to next page
+            )
+            .catch(err => {
+                this.setState({ loading: false, }, () => _.delay(() => {
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
+                    } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
+                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
+                    }
+                    // TODO: THIS NEEDS TO BE FLUSHED OUT
+                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    return AppUtil.handleAPIErrorAlert(message, header);
+                }, 500));
+            });
     }
 
     _handleAlertPress = () => {
@@ -214,20 +196,93 @@ class SensorFilesPage extends Component {
     }
 
     _handleBLEPair = () => {
-        const { startScan, } = this.props;
-        startScan(60);
-        this._timer = _.delay(() => this._toggleSensorsConnectedAlert(), 60000);
+        if(!this._timer) {
+            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, () =>
+                ble.startMonitor(state =>
+                    this.setState(
+                        { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                    )
+                )
+            ), 60000);
+        }
+        ble.startDeviceScan((error, response, device, state) => {
+            if(!this._isMounted) {
+                return '';
+            }
+            if(state) {
+                this.setState(
+                    { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                );
+            }
+            if(error) {
+                if (
+                    this.props.bluetooth.accessoryData &&
+                    !this.props.bluetooth.accessoryData.sensor_pid &&
+                    !this.props.bluetooth.accessoryData.mobile_udid &&
+                    !this.props.bluetooth.accessoryData.wifiMacAddress
+                ) {
+                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+                    return this._handleDisconnection(device, () => this._renderPreviousPage());
+                }
+                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+            }
+            if(!response.accessory.owner_id) {
+                clearTimeout(this._timer);
+                return this._toggleAlertNotification();
+            }
+            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+        });
     }
 
-    _handleDisconnection = callback => {
-        const { bluetooth, startDisconnection, } = this.props;
-        if(bluetooth.accessoryData && bluetooth.accessoryData.sensor_pid && bluetooth.accessoryData.mobile_udid) {
-            startDisconnection(bluetooth.accessoryData.sensor_pid, true)
-                .then(() => callback())
-                .catch(() => callback());
-        } else {
-            callback();
+    _handleDisconnection = (device, callback, shouldExitKitSetup, updateState = true) => {
+        const { bluetooth, } = this.props;
+        if(!this._isMounted) {
+            return '';
         }
+        return this.setState(
+            { isConnectingToSensor: updateState ? false : true, },
+            () => {
+                if(shouldExitKitSetup) {
+                    if(!device) {
+                        device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+                        if(!device) {
+                            return callback && callback();
+                        }
+                    }
+                    return ble.exitKitSetup(device)
+                        .then(res => callback && callback())
+                        .catch(err => {
+                            if(!this._isMounted) {
+                                return '';
+                            }
+                            // TODO: THIS NEEDS TO BE FLUSHED OUT
+                            let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                            let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                            AppUtil.handleAPIErrorAlert(message, header);
+                            return callback && callback();
+                        });
+                }
+                if(!device) {
+                    device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+                    if(!device && callback) {
+                        return callback();
+                    }
+                }
+                return device.cancelConnection()
+                    .then(() => callback && callback())
+                    .catch(async err => {
+                        if(!this._isMounted) {
+                            return '';
+                        }
+                        let errorObj = await ble.handleError(err, device);
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
+                        let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
+                        AppUtil.handleAPIErrorAlert(message, header);
+                        return callback && callback();
+                    });
+            }
+        );
     }
 
     _handleNetworkPress = network => {
@@ -250,59 +305,65 @@ class SensorFilesPage extends Component {
         }
     }
 
-    _handleNotInRange = () => {
-        Alert.alert(
-            '',
-            'IF WIFI LED BLINKING RED:\nYour Kit is not finding the configured wifi network. Move within wifi range.\n\nIF WIFI LED OFF:\n1. Come within range of the Wifi network configured on your Kit\n\n2. Click the button to wake your Kit\n\n3. Wait for the Wifi LED to respond\n\nIf the Wifi LED is still off, this may mean you don\'t have any files to sync.\nIf the Battery LED is red or off, you\'ll need to charge your Kit. Let it charge while in wifi to sync automatically.  ',
-            [
-                {
-                    text:  'OK',
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: false, }
+    _handleSyncOnBack = () => {
+        this.setState(
+            { isConnectingToSensor: false, },
+            () => {
+                clearTimeout(this._timer);
+                this._timer = null;
+                ble.destroyInstance();
+                _.delay(() => this._renderPreviousPage(), 500);
+            },
         );
     }
 
-    _handleSingleWifiConnectionFetch = (sensorId, numberOfConnections, currentIndex) => {
-        const { getSingleWifiConnection, } = this.props;
-        if(numberOfConnections === 0 && currentIndex > numberOfConnections) {
-            this.setState({ isWifiScanDone: true, });
-        } else {
-            getSingleWifiConnection(sensorId, currentIndex)
-                .then(res => {
-                    let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                    newAvailableNetworks.push(res);
-                    newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
-                    newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
-                    return this.setState(
-                        { availableNetworks: newAvailableNetworks, },
-                        () => _.delay(() => {
-                            if(currentIndex === numberOfConnections) {
-                                this.setState({ isWifiScanDone: true, });
-                            } else {
-                                this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1))
-                            }
-                        }, 750),
-                    );
-                })
-                .catch(err => {
-                    if(err === 'TIMEDOUT') {
-                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan()));
-                    } else if(currentIndex === numberOfConnections) {
-                        return this.setState({ isWifiScanDone: true, });
-                    }
-                    return this._handleSingleWifiConnectionFetch(sensorId, numberOfConnections, (currentIndex + 1));
-                });
+    _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
+        if(!this._isMounted) {
+            return '';
         }
+        if(
+            (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
+            this.state.isWifiScanDone
+        ) {
+            return this.setState({ isWifiScanDone: true, });
+        }
+        return ble.getSingleWifiConnection(device, currentIndex)
+            .then(res => {
+                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
+                newAvailableNetworks.push(res);
+                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
+                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
+                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.rssi > SensorLogic.getMinRSSIDBM());
+                if(!this._isMounted) {
+                    return '';
+                }
+                return this.setState(
+                    { availableNetworks: newAvailableNetworks, },
+                    () => _.delay(() => {
+                        if(currentIndex === numberOfConnections) {
+                            this.setState({ isWifiScanDone: true, });
+                        } else {
+                            this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1))
+                        }
+                    }, 750),
+                );
+            })
+            .catch(err => {
+                if(!this._isMounted) {
+                    return '';
+                }
+                if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    return this._toggleWeakRSSIAlertNotification();
+                } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                    return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
+                } else if(err.errorMapping.errorCode === -1) {
+                    return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
+                } else if(currentIndex === numberOfConnections) {
+                    return this.setState({ isWifiScanDone: true, });
+                }
+                return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
+            });
     };
-
-    _handleStopScan = () => {
-        const { stopScan, } = this.props;
-        clearInterval(this._timer);
-        return stopScan()
-            .then(() => this._toggleSensorsConnectedAlert());
-    }
 
     _handleWifiNotInRange = () => {
         Alert.alert(
@@ -311,7 +372,9 @@ class SensorFilesPage extends Component {
             [
                 {
                     text:    'I\'ll do it later',
-                    onPress: () => this._handleDisconnection(() => Actions.pop()),
+                    onPress: () => {
+                        this._handleDisconnection(false, () => Actions.pop(), true);
+                    },
                 },
                 {
                     text:  'Configure Now',
@@ -323,49 +386,49 @@ class SensorFilesPage extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, getScannedWifiConnections, } = this.props;
+        const { bluetooth, } = this.props;
+        if(!this._isMounted) {
+            return '';
+        }
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
-        return getScannedWifiConnections(bluetooth.accessoryData.sensor_pid)
+        let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+        return ble.getScannedWifiConnections(device)
             .then(res => {
+                if(!this._isMounted) {
+                    return '';
+                }
                 if(res === 0) {
                     this.setState({ availableNetworks: [], isWifiScanDone: true, });
                 }
-                return this._handleSingleWifiConnectionFetch(bluetooth.accessoryData.sensor_pid, res, 1);
+                return this._handleSingleWifiConnectionFetch(device, res, 1);
             })
             .catch(err => {
+                if(!this._isMounted) {
+                    return '';
+                }
                 return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(err === 'TIMEDOUT') {
-                        this._toggleTimedoutBringCloserAlert(() => this._handleWifiScan())
-                    } else {
-                        AppUtil.handleAPIErrorAlert(err, 'Please Try Again!');
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
+                    } else if(err.errorMapping.errorCode === -1) {
+                        // timedout
+                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
                     }
+                    // TODO: THIS NEEDS TO BE FLUSHED OUT
+                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    return AppUtil.handleAPIErrorAlert(message, header);
                 });
             });
     }
 
     _onPageScrollEnd = currentPage => {
         const { pageStep, } = this.props;
-        if(currentPage === 0 && pageStep === 'connect') { // turn on BLE & connect to accessory
-            if (Platform.OS === 'android') {
-                // BleManager.enableBluetooth();
-            }
-            if (Platform.OS === 'android' && Platform.Version >= 23) {
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-                    if (result) {
-                        console.log('Permission is OK');
-                    } else {
-                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(res => {
-                            if(res) {
-                                console.log('User accept');
-                            } else {
-                                console.log('User refuse');
-                            }
-                        });
-                    }
-                });
-            }
-        } else if(currentPage === 1 && pageStep === 'connect') { // wifi list, start scan
+        if(currentPage === 1 && pageStep === 'connect') { // wifi list, start scan
             this._timer = _.delay(() => this._handleWifiScan(), 2000);
+        } else if(currentPage === 2 && pageStep === 'connect') { // after we've successfully completed our actions, exit kit setup
+            this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
         }
     }
 
@@ -375,8 +438,8 @@ class SensorFilesPage extends Component {
         this.setState({ pageIndex: nextPageIndex, });
     }
 
-    _renderPreviousPage = () => {
-        let nextPageIndex = (this.state.pageIndex - 1);
+    _renderPreviousPage = (numberOfPages = 1) => {
+        let nextPageIndex = (this.state.pageIndex - numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
     }
@@ -397,42 +460,55 @@ class SensorFilesPage extends Component {
         );
     }
 
-    _toggleAlertNotification = (sensorId, userId) => {
+    _toggleAlertNotification = () => {
+        if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') {
+            Alert.alert(
+                '',
+                'Did the LED turn green?',
+                [
+                    {
+                        text:    'No',
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage())),
+                        style:   'cancel',
+                    },
+                    {
+                        text:    'Yes',
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
+                    },
+                ],
+                { cancelable: false, }
+            );
+        }
+    }
+
+    _toggleWeakRSSIAlertNotification = () => {
+        // TODO: CONFIRM MESSAGE WITH BIZ TEAM
         Alert.alert(
             '',
-            'Did the LED turn green?',
+            'Please bring your Kit closer to phone and try again.',
             [
                 {
-                    text:    'No',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(() => this._renderPreviousPage())),
-                    style:   'cancel',
-                },
-                {
-                    text:    'Yes',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 1000)}),
+                    text:  'Try Again',
+                    style: 'cancel',
                 },
             ],
             { cancelable: false, }
         );
     }
 
-    _toggleSensorsConnectedAlert = () => {
-        const { bluetooth, } = this.props;
-        let closestDevice = _.orderBy(bluetooth.devicesFound, ['rssi'], ['desc']);
-        if(closestDevice.length > 0) {
-            return this._connect(closestDevice[0]);
+    _toggleTimedoutBringCloserAlert = (destroyInstance, callback) => {
+        if(destroyInstance) {
+            clearTimeout(this._timer);
+            this._timer = null;
+            ble.destroyInstance();
         }
-        return this._toggleTimedoutBringCloserAlert(() => {});
-    }
-
-    _toggleTimedoutBringCloserAlert = callback => {
         Alert.alert(
             '',
             'We\'re not able to find your Kit. Try bringing your phone closer.',
             [
                 {
                     text:    'Exit Tutorial',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(() => Actions.pop())),
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => callback && callback(true))),
                     style:   'cancel',
                 },
                 {
@@ -471,9 +547,9 @@ class SensorFilesPage extends Component {
                             <Connect
                                 currentPage={pageIndex === 0}
                                 isLoading={isConnectingToSensor}
-                                isNextDisabled={bleState !== 'on' || isConnectingToSensor}
+                                isNextDisabled={bleState !== 'PoweredOn'}
                                 nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
-                                onClose={() => this._handleDisconnection(() => Actions.pop())}
+                                onClose={() => this._handleDisconnection(false, () => Actions.pop(), true)}
                                 page={1}
                                 showTopNavStep={false}
                             />
@@ -485,8 +561,14 @@ class SensorFilesPage extends Component {
                                 handleWifiScan={() => this._handleWifiScan()}
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
-                                onBack={() => this._handleDisconnection(() => this._renderPreviousPage())}
-                                onClose={() => this._handleDisconnection(() => Actions.pop())}
+                                onBack={() => {
+                                    this._handleDisconnection(false, () => {}, true);
+                                    this._renderPreviousPage();
+                                }}
+                                onClose={() => {
+                                    this._handleDisconnection(false, () => {}, true);
+                                    Actions.pop();
+                                }}
                                 page={3}
                                 showTopNavStep={false}
                             />

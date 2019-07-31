@@ -185,24 +185,23 @@ class BluetoothConnect extends Component {
                     { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
                 );
             }
-            // TODO: REVERT ME
-            // if(error) {
-            //     if (
-            //         this.props.bluetooth.accessoryData &&
-            //         !this.props.bluetooth.accessoryData.sensor_pid &&
-            //         !this.props.bluetooth.accessoryData.mobile_udid &&
-            //         !this.props.bluetooth.accessoryData.wifiMacAddress
-            //     ) {
-            //         this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-            //         return this._handleDisconnection(device, () => this._renderPreviousPage());
-            //     }
-            //     return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
-            // }
-            // if(!response.accessory.owner_id) {
+            if(error) {
+                if (
+                    this.props.bluetooth.accessoryData &&
+                    !this.props.bluetooth.accessoryData.sensor_pid &&
+                    !this.props.bluetooth.accessoryData.mobile_udid &&
+                    !this.props.bluetooth.accessoryData.wifiMacAddress
+                ) {
+                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
+                    return this._handleDisconnection(device, () => this._renderPreviousPage());
+                }
+                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+            }
+            if(!response.accessory.owner_id) {
                 clearTimeout(this._timer);
                 return this._toggleAlertNotification();
-            // }
-            // return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+            }
+            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
         });
     }
 
@@ -221,6 +220,9 @@ class BluetoothConnect extends Component {
                     return ble.exitKitSetup(device)
                         .then(res => callback && callback())
                         .catch(err => {
+                            if(!this._isMounted) {
+                                return '';
+                            }
                             // TODO: THIS NEEDS TO BE FLUSHED OUT
                             let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
                             let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
@@ -237,6 +239,9 @@ class BluetoothConnect extends Component {
                 return device.cancelConnection()
                     .then(() => callback && callback())
                     .catch(async err => {
+                        if(!this._isMounted) {
+                            return '';
+                        }
                         let errorObj = await ble.handleError(err, device);
                         // TODO: THIS NEEDS TO BE FLUSHED OUT
                         let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
@@ -334,7 +339,6 @@ class BluetoothConnect extends Component {
     };
 
     _handleWifiNotInRange = () => {
-        const { user, }= this.props;
         Alert.alert(
             '',
             'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
@@ -343,7 +347,7 @@ class BluetoothConnect extends Component {
                     text:    'I\'ll do it later',
                     onPress: () => {
                         this._handleDisconnection(false, () => {
-                            if(user && user.sensor_data && (!user.sensor_data.mobile_udid || !user.sensor_data.sensor_pid)) {
+                            if(this.props.user && this.props.user.sensor_data && (!this.props.user.sensor_data.mobile_udid || !this.props.user.sensor_data.sensor_pid)) {
                                 this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                             } else {
                                 Actions.pop();
@@ -483,6 +487,7 @@ class BluetoothConnect extends Component {
     }
 
     _toggleWeakRSSIAlertNotification = () => {
+        // TODO: CONFIRM MESSAGE WITH BIZ TEAM
         Alert.alert(
             '',
             'Please bring your Kit closer to phone and try again.',
@@ -508,7 +513,7 @@ class BluetoothConnect extends Component {
             [
                 {
                     text:    'Exit Tutorial',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {Actions.pop(); return callback ? callback(true) : null;})),
+                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => callback && callback(true))),
                     style:   'cancel',
                 },
                 {
@@ -684,14 +689,14 @@ class BluetoothConnect extends Component {
                         handleWifiScan={() => this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
-                        onBack={() => this._handleDisconnection(false, () => this._renderPreviousPage(), true)}
-                        onClose={() =>
-                            this._handleDisconnection(
-                                false,
-                                () => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false),
-                                true
-                            )
-                        }
+                        onBack={() => {
+                            this._handleDisconnection(false, () => {}, true);
+                            this._renderPreviousPage();
+                        }}
+                        onClose={() =>{
+                            this._handleDisconnection(false, () => {}, true);
+                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                        }}
                         page={3}
                     />
                     <Connect
