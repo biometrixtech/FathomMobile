@@ -320,21 +320,23 @@ class BluetoothConnect extends Component {
                 if(!this._isMounted) {
                     return '';
                 }
-                if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                    return this._toggleWeakRSSIAlertNotification();
-                } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                    return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
-                        if(isExit) {
-                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                        }
-                        this._renderPreviousPage();
-                    }, 500));
-                } else if(err.errorMapping.errorCode === -1) {
-                    return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
-                } else if(currentIndex === numberOfConnections) {
-                    return this.setState({ isWifiScanDone: true, });
-                }
-                return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
+                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
+                            if(isExit) {
+                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
+                            }
+                            this._renderPreviousPage();
+                        }, 500));
+                    } else if(err.errorMapping.errorCode === -1) {
+                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
+                    } else if(currentIndex === numberOfConnections) {
+                        return this.setState({ isWifiScanDone: true, });
+                    }
+                    return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
+                });
             });
     };
 

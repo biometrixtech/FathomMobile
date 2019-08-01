@@ -245,9 +245,9 @@ const MyPlanNavBar = ({
                     iconStyle={[{color: AppColors.zeplin.slate,}]}
                     size={26}
                 />
-                {_.filter(cards, ['read', false]).length > 0 &&
+                { cards.length > 0 &&
                     <View style={[styles.unreadNotificationsWrapper,]}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cards.length}</Text>
                     </View>
                 }
             </TouchableOpacity>

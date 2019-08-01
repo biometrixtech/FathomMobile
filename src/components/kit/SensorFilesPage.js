@@ -222,15 +222,18 @@ class SensorFilesPage extends Component {
                     !this.props.bluetooth.accessoryData.wifiMacAddress
                 ) {
                     this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-                    return this._handleDisconnection(device, () => this._renderPreviousPage());
+                    return this._handleDisconnection(device, () => this._renderPreviousPage(), false, true);
                 }
                 return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
             }
-            if(!response.accessory.owner_id) {
-                clearTimeout(this._timer);
-                return this._toggleAlertNotification();
+            if(
+                !response.accessory.owner_id ||
+                (response.accessory.owner_id && response.accessory.owner_id !== this.props.user.id)
+            ) {
+                return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
             }
-            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+            clearTimeout(this._timer);
+            return this._toggleAlertNotification();
         });
     }
 
@@ -352,16 +355,18 @@ class SensorFilesPage extends Component {
                 if(!this._isMounted) {
                     return '';
                 }
-                if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                    return this._toggleWeakRSSIAlertNotification();
-                } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                    return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
-                } else if(err.errorMapping.errorCode === -1) {
-                    return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
-                } else if(currentIndex === numberOfConnections) {
-                    return this.setState({ isWifiScanDone: true, });
-                }
-                return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
+                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
+                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                        return this._toggleWeakRSSIAlertNotification();
+                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
+                    } else if(err.errorMapping.errorCode === -1) {
+                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
+                    } else if(currentIndex === numberOfConnections) {
+                        return this.setState({ isWifiScanDone: true, });
+                    }
+                    return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
+                });
             });
     };
 

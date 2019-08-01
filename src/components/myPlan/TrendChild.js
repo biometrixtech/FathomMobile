@@ -162,7 +162,7 @@ class TrendChild extends PureComponent {
                             source={iconImage}
                             style={{height: 40, marginRight: AppSizes.paddingSml, width: 40,}}
                         />
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(23),}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(23),}}>
                             {props.text[0]}
                         </Text>
                     </View>
