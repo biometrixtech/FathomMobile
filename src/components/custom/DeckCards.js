@@ -149,7 +149,7 @@ class DeckCards extends Component {
             enableVibrateFallback:       false,
             ignoreAndroidSystemSettings: false,
         };
-        let insightType = cards[index] && cards[index].insight_type ? cards[index].insight_type : 0;
+        let insightType = cards[(index - 1)] && cards[(index - 1)].category ? cards[(index - 1)].category : 0;
         this.setState(
             { currentCardIndex: index, },
             () => {
@@ -166,7 +166,7 @@ class DeckCards extends Component {
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
-        let insightType = card && card.insight_type ? card.insight_type : 0;
+        let insightType = card && card.category ? card.category : 0;
         let triggerType = card && card.trigger_type ? card.trigger_type : 0;
         let daysDiff = card && card.start_date_time ? moment().diff(card.start_date_time, 'days') : 0;
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
@@ -282,7 +282,7 @@ class DeckCards extends Component {
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                             <Image
                                 resizeMode={'contain'}
-                                source={require('../../../assets/images/standard/research.png')}
+                                source={require('../../../assets/images/standard/allcaughtup.png')}
                                 style={{height: 50, marginBottom: AppSizes.paddingSml, width: 50,}}
                             />
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
