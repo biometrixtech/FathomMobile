@@ -239,7 +239,7 @@ class Trends extends PureComponent {
                         <Spacer size={AppSizes.padding} />
 
                         <View style={{alignItems: 'center', flex: 1,}}>
-                            {trendCategories.length === 1 ?
+                            { trendCategories.length === 1 ?
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                                     <Image
                                         resizeMode={'contain'}

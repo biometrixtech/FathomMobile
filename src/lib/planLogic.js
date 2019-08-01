@@ -1448,6 +1448,7 @@ const PlanLogic = {
                 });
             });
         }
+        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
         return {
             activeAfterModalities,
             activeBeforeModalities,
@@ -1458,6 +1459,7 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            trendDashboardCategories,
             triggerStep,
         };
     },
@@ -1654,7 +1656,7 @@ const PlanLogic = {
             _.map(props.trend_data.bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                newParsedData.style = [AppStyles.robotoLight, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
+                newParsedData.style = [AppStyles.robotoBold, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
                 parsedData.push(newParsedData);
             });
         }

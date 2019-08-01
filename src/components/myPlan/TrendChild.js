@@ -16,7 +16,7 @@ import { Animated, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, Vi
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { BodyOverlay, Button, FathomModal, InViewPort, ParsedText, Spacer, TabIcon, Text, } from '../custom';
+import { BodyOverlay, Button, FathomModal, ParsedText, Spacer, TabIcon, Text, } from '../custom';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
@@ -24,7 +24,6 @@ import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Collapsible from 'react-native-collapsible';
-import LottieView from 'lottie-react-native';
 import Video from 'react-native-video';
 
 /* Styles ==================================================================== */
@@ -60,7 +59,6 @@ class TrendChild extends PureComponent {
         let { trendContextState, } = PlanLogic.handleTrendChildRenderLogic(insightType, plan);
         this.state  = {
             currentCardIndex: 0,
-            isLottieVisible:  [],
             trendContext:     trendContextState,
         };
         this._videos = [];
@@ -68,21 +66,6 @@ class TrendChild extends PureComponent {
 
     componentWillUnmount = () => {
         this._videos = [];
-    }
-
-    _checkLottieVisibility = (index, isVisible) => {
-        let newIsLottieVisible = _.cloneDeep(this.state.isLottieVisible);
-        if(isVisible) {
-            if(!this.state.isLottieVisible[index]) {
-                newIsLottieVisible[index] = true;
-                this.setState({ isLottieVisible: newIsLottieVisible, });
-            }
-        } else {
-            if(this.state.isLottieVisible[index]) {
-                newIsLottieVisible[index] = false;
-                this.setState({ isLottieVisible: newIsLottieVisible, });
-            }
-        }
     }
 
     _handleFTEClick = (insightType, visualizationType, isCategory, props, callback) => {
@@ -100,17 +83,20 @@ class TrendChild extends PureComponent {
         }
     }
 
-    _toggleTrendContext = (key, value) => {
+    _toggleTrendContext = (key, value, callback) => {
         let newTrendContext = _.cloneDeep(this.state.trendContext);
         newTrendContext[key][value] = !newTrendContext[key][value];
         // if(!newTrendContext[key][value]) {
         //     this._videos[key].seek(0);
         // }
-        this.setState({ trendContext: newTrendContext, });
+        this.setState(
+            { trendContext: newTrendContext, },
+            () => callback && callback(),
+        );
     }
 
     _renderItem = (props, selectedTrendCategory, selectedTrends, dashboardTrendCategories) => {
-        const { isLottieVisible, trendContext, } = this.state;
+        const { trendContext, } = this.state;
         let {
             bodyParts,
             bottomPadding,
@@ -156,7 +142,7 @@ class TrendChild extends PureComponent {
                 </View>
 
                 <View style={[styles.card, {paddingBottom: AppSizes.paddingSml,}]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
+                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
                         <Image
                             resizeMode={'contain'}
                             source={iconImage}
@@ -169,7 +155,7 @@ class TrendChild extends PureComponent {
                     <Collapsible
                         collapsed={trendContextProps.isCollapsed}
                     >
-                        <View>
+                        <View style={{marginVertical: AppSizes.paddingSml,}}>
                             <TouchableOpacity
                                 activeOpacity={1}
                                 onPress={() => this._toggleTrendContext(props.key, 'isPaused')}
@@ -197,24 +183,38 @@ class TrendChild extends PureComponent {
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                                 source={{uri: props.video_url}}
-                                style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                                style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightFifth,}]}
                             />
                         </View>
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), lineHeight: AppFonts.scaleFont(23),}}>
                             {props.text[1]}
                         </Text>
                     </Collapsible>
-                    <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
-                        <Animated.View style={[trendContextProps.animatedStyle,]}>
-                            <TabIcon
-                                color={AppColors.zeplin.slateLight}
-                                icon={'chevron-down'}
-                                onPress={() => this._handleFTEClick(selectedTrendCategory.insight_type, props.visualization_type, false, props, () => this._toggleTrendContext(props.key, 'isCollapsed'))}
-                                size={30}
-                                type={'material-community'}
-                            />
-                        </Animated.View>
-                    </View>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => this._handleFTEClick(
+                            selectedTrendCategory.insight_type,
+                            props.visualization_type,
+                            false,
+                            props,
+                            () => this._toggleTrendContext(
+                                props.key,
+                                'isCollapsed',
+                                () => !trendContextProps.isCollapsed && !trendContextProps.isPaused ?
+                                    this._toggleTrendContext(props.key, 'isPaused')
+                                    :
+                                    null,
+                            ),
+                        )}
+                        style={{alignItems: 'flex-end',}}
+                    >
+                        <TabIcon
+                            color={AppColors.zeplin.slateLight}
+                            icon={trendContextProps.isCollapsed ? 'chevron-down' : 'chevron-up'}
+                            size={30}
+                            type={'material-community'}
+                        />
+                    </TouchableOpacity>
                 </View>
 
                 <View style={[styles.card, {marginTop: AppSizes.padding, marginBottom: AppSizes.paddingLrg,}]}>
@@ -245,23 +245,17 @@ class TrendChild extends PureComponent {
                     </ParsedText>
                 </View>
 
-                <InViewPort
-                    onChange={isVisible => this._checkLottieVisibility(props.key, isVisible)}
-                    style={{alignItems: 'center', marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.padding,}}
-                >
-                    <LottieView
-                        autoPlay={isLottieVisible[props.key]}
-                        loop={false}
-                        progress={isLottieVisible[props.key] ? 1 : 0}
-                        source={require('../../../assets/animation/trends-child-cta.json')}
-                        speed={3}
-                        style={{height: 40, width: 40,}}
+                <View style={{alignItems: 'center', marginBottom: AppSizes.paddingLrg, marginHorizontal: AppSizes.padding,}}>
+                    <Image
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/standard/planupdated.png')}
+                        style={{height: 75, width: 75,}}
                     />
                     <Spacer size={AppSizes.paddingMed} />
                     <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 1, flexWrap: 'wrap', fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
                         {'Your plan has been updated to help address these findings!'}
                     </Text>
-                </InViewPort>
+                </View>
 
                 <Button
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
@@ -294,7 +288,7 @@ class TrendChild extends PureComponent {
                     activeDotStyle={{backgroundColor: AppColors.zeplin.slate,}}
                     dotStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                     hidePagination={selectedTrends.length === 1 || selectedTrends.length === 0}
-                    paginationStyle={{backgroundColor: AppColors.white, bottom: 0, left: 0, width: AppSizes.screen.width,}}
+                    paginationStyle={[AppSizes.isIphoneX ? {paddingBottom: AppSizes.paddingSml,} : {}, {backgroundColor: AppColors.white, bottom: 0, left: 0, width: AppSizes.screen.width,}]}
                     onSlideChange={index => this.setState({ currentCardIndex: index, })}
                     renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends, dashboardTrendCategories)}
                     scrollEnabled={true}

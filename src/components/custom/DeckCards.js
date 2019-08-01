@@ -3,6 +3,7 @@
  *
      <DeckCards
          cards={TEMP_CARDS}
+         categories={categories}
          handleReadInsight={index => handleReadInsight(index)}
          hideDeck={() => onRight()}
          infinite={true}
@@ -26,11 +27,11 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AppUtil, } from '../../lib';
 
 // Components
-import { Button, TabIcon, Text, } from '../custom';
+import { Button, ParsedText, TabIcon, Text, } from '../custom';
 
 const CONTAINER_HEIGHT = 150;
 const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(15) + (AppSizes.paddingXSml * 2));
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
+        ...AppStyles.robotoLight,
         color:    AppColors.zeplin.slate,
         fontSize: AppFonts.scaleFont(13),
     },
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
 class DeckCards extends Component {
     static propTypes = {
         cards:                    PropTypes.array.isRequired,
+        categories:               PropTypes.array.isRequired,
         handleReadInsight:        PropTypes.func.isRequired,
         hideDeck:                 PropTypes.func,
         infinite:                 PropTypes.bool,
@@ -170,34 +173,22 @@ class DeckCards extends Component {
         let triggerType = card && card.trigger_type ? card.trigger_type : 0;
         let daysDiff = card && card.start_date_time ? moment().diff(card.start_date_time, 'days') : 0;
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
-        let textRegEx = card && card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
-        let textMatchedArray = card && card.text ? card.text.match(textRegEx) : [];
-        let splitTextArray = card && card.text ? _.split(card.text, textRegEx) : [];
-        let cardTextArray = [];
-        if(textMatchedArray) {
-            _.map(splitTextArray, (text, key) => {
-                if(text && text.length > 0) {
-                    cardTextArray.push(
-                        <Text key={key} robotoLight>
-                            {text}
-                            <Text robotoBold>{textMatchedArray[key]}</Text>
-                        </Text>
-                    );
-                }
+        let parsedData = [];
+        if(card && card.text) {
+            _.map(card.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold,];
+                parsedData.push(newParsedData);
             });
-        } else {
-            cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
-        }
-        if(card && card.goal_targeted && card.goal_targeted.length === 0) {
-            cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
         let showUnreadNotificationsBadge = currentCardIndex === index && unreadNotificationsCount > 0;
         let allowNavigation = triggerType !== 25 && triggerType < 200;
         return {
             allowNavigation,
-            cardTextArray,
             dateText,
             insightType,
+            parsedData,
             showUnreadNotificationsBadge,
             triggerType,
         };
@@ -215,9 +206,9 @@ class DeckCards extends Component {
         const { currentCardIndex, } = this.state;
         const {
             allowNavigation,
-            cardTextArray,
             dateText,
             insightType,
+            parsedData,
             // showUnreadNotificationsBadge,
             triggerType,
         } = this._handleRenderCardLogic(card, index);
@@ -257,12 +248,13 @@ class DeckCards extends Component {
                         <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
                     }
                 </View>
-                <Text
-                    numberOfLines={shrinkNumberOfLines ? 3 : 10}
-                    style={[styles.text,]}
+                <ParsedText
+                    childrenProps={{numberOfLines: shrinkNumberOfLines ? 3 : 10,}}
+                    parse={parsedData}
+                    style={[AppStyles.robotoLight, styles.text,]}
                 >
-                    {cardTextArray}
-                </Text>
+                    {card ? card.text : ''}
+                </ParsedText>
                 {/* showUnreadNotificationsBadge &&
                     <View style={[styles.unreadNotificationsWrapper,]}>
                         <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
@@ -273,12 +265,12 @@ class DeckCards extends Component {
     }
 
     render = () => {
-        const { cards, hideDeck, infinite, showHide, } = this.props;
+        const { cards, categories, hideDeck, infinite, showHide, } = this.props;
         const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
                 <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
-                    { areAllSwiped && !infinite && showHide ?
+                    { (areAllSwiped && !infinite && showHide) || categories.length > 0 ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                             <Image
                                 resizeMode={'contain'}

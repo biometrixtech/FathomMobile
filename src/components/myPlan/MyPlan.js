@@ -203,6 +203,7 @@ const ActivityTab = ({
 
 const MyPlanNavBar = ({
     cards = [],
+    categories,
     handleReadInsight,
     expandNotifications,
     onRight,
@@ -256,6 +257,7 @@ const MyPlanNavBar = ({
             { expandNotifications &&
                 <DeckCards
                     cards={cards.length === 0 ? cards : _.concat(cards, {})}
+                    categories={categories}
                     handleReadInsight={index => handleReadInsight(index)}
                     hideDeck={() => onRight()}
                     isVisible={expandNotifications}
@@ -921,6 +923,7 @@ class MyPlan extends Component {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
@@ -928,6 +931,7 @@ class MyPlan extends Component {
 
                 <MyPlanNavBar
                     cards={newInsights}
+                    categories={trendDashboardCategories}
                     expandNotifications={expandNotifications}
                     handleReadInsight={insightType => handleReadInsight(insightType)}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
