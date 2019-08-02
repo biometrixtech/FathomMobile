@@ -113,10 +113,12 @@ class GoalPill extends Component {
 GoalPill.propTypes = {
     isSelected: PropTypes.bool.isRequired,
     onPress:    PropTypes.func.isRequired,
-    text:       PropTypes.string.isRequired,
+    text:       PropTypes.string,
 };
 
-GoalPill.defaultProps = {};
+GoalPill.defaultProps = {
+    text: '',
+};
 
 GoalPill.componentName = 'GoalPill';
 

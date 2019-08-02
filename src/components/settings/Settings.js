@@ -9,6 +9,7 @@ import { ActivityIndicator, Animated, Alert, BackHandler, Easing, Image, Platfor
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
 import AppleHealthKit from 'rn-apple-healthkit';
+import DeviceInfo from 'react-native-device-info';
 import Toast, { DURATION, } from 'react-native-easy-toast';
 
 // Consts and Libs
@@ -388,6 +389,12 @@ class Settings extends Component {
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
+                <View style={{justifyContent: 'flex-end', flex: 1,}}>
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                        {`Version ${Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion()}`}
+                    </Text>
+                    <Spacer size={AppSizes.padding} />
+                </View>
                 <Toast
                     position={'bottom'}
                     ref={'toast'}

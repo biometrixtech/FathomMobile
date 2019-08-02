@@ -312,7 +312,7 @@ class ExerciseModality extends Component {
                                                 isLastItem={i + 1 === exerciseList.totalLength}
                                                 key={exercise.library_id+i}
                                                 priority={priority}
-                                                toggleSelectedExercise={isSubmitting ? () => null : () => this._toggleSelectedExercise()}
+                                                toggleSelectedExercise={isSubmitting ? () => null : (selectedExerciseObj, isModalOpen) => this._toggleSelectedExercise(selectedExerciseObj, isModalOpen)}
                                             />
                                         )}
                                     </View>

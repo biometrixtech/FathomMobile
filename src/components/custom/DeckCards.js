@@ -202,7 +202,7 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { cards, handleReadInsight, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, handleReadInsight, hideDeck, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
             allowNavigation,
@@ -224,6 +224,7 @@ class DeckCards extends Component {
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
                 onPress={shouldNavigate && allowNavigation ? () => {
+                    hideDeck();
                     AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, });
                     handleReadInsight(insightType);
                 } : () => {}}
@@ -269,7 +270,7 @@ class DeckCards extends Component {
         const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
-                <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
+                <View style={[(areAllSwiped && !infinite && showHide) || (!infinite && showHide && categories.length > 0 && cards.length === 0) ? containerStyle : {}]}>
                     { (areAllSwiped && !infinite && showHide) || (!infinite && showHide && categories.length > 0 && cards.length === 0) ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                             <Image
@@ -283,7 +284,7 @@ class DeckCards extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}
                                 containerStyle={{marginRight: AppSizes.paddingSml,}}
-                                onPress={() => AppUtil.pushToScene('trends')}
+                                onPress={() => {hideDeck(); AppUtil.pushToScene('trends');}}
                                 title={'Go to Dashboard'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                             />
