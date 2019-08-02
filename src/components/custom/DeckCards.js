@@ -270,7 +270,7 @@ class DeckCards extends Component {
         return (
             <View>
                 <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
-                    { (areAllSwiped && !infinite && showHide) || categories.length > 0 ?
+                    { (areAllSwiped && !infinite && showHide) || (!infinite && showHide && categories.length > 0 && cards.length === 0) ?
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
                             <Image
                                 resizeMode={'contain'}

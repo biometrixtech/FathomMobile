@@ -308,7 +308,7 @@ class ExerciseModality extends Component {
                                                 completedExercises={completedExercises}
                                                 exercise={exercise}
                                                 goals={goals}
-                                                handleCompleteExercise={isSubmitting ? () => null : () => this._handleCompleteExercise()}
+                                                handleCompleteExercise={isSubmitting ? () => null : (exerciseId, setNumber) => this._handleCompleteExercise(exerciseId, setNumber)}
                                                 isLastItem={i + 1 === exerciseList.totalLength}
                                                 key={exercise.library_id+i}
                                                 priority={priority}

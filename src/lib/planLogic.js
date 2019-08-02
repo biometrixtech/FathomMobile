@@ -1046,6 +1046,7 @@ const PlanLogic = {
       */
     handleCompletedExercises: completedExercises => {
         let newCompletedExercises = _.cloneDeep(completedExercises);
+        newCompletedExercises = _.filter(newCompletedExercises);
         newCompletedExercises = _.map(newCompletedExercises, exId => {
             let newExerciseId = _.cloneDeep(exId);
             newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
@@ -1590,7 +1591,7 @@ const PlanLogic = {
         let trendContextState = [];
         _.map(selectedTrends, trend => {
             let newObj = {};
-            newObj.isCollapsed = !trend.first_time_experience;
+            newObj.isCollapsed = true;
             newObj.isPaused = true;
             newObj.isVideoMuted = false;
             trendContextState.push(newObj);
@@ -1847,11 +1848,11 @@ const PlanLogic = {
             let splitTextArray = _.split(subtitleText, textRegEx);
             splitTextArray = _.remove(splitTextArray, o => o.length > 0);
             if(!textMatchedArray) {
-                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
             } else {
                 if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1859,7 +1860,7 @@ const PlanLogic = {
                     );
                 } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1868,7 +1869,7 @@ const PlanLogic = {
                         </Text>
                     );
                 } else {
-                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
                 }
             }
         }
