@@ -123,7 +123,9 @@ class BluetoothConnect extends Component {
             )
             .catch(err => {
                 this.setState({ loading: false, }, () => _.delay(() => {
-                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    if(err.errorMapping.errorCode === -2) {
+                        return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
+                    } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                         return this._toggleWeakRSSIAlertNotification();
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                         return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {

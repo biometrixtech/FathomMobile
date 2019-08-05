@@ -498,9 +498,11 @@ const writeWifiDetailsToSensor = async (device, ssid, password, securityByte) =>
     let readConnectBase64 = new Buffer([commands.READ_WIFI_CONNECT, convertHex('0x00')]).toString('base64');
     // check if ssid & password are out of scope of ble
     if(ssidDataArray && (ssidDataArray.length === 0 || ssidDataArray.length > 32)) {
-        return Promise.reject(SensorLogic.errorMessages().longSSID);
+        let errorObj = await handleError({errorCode: -2, message: SensorLogic.errorMessages().longSSID,});
+        return Promise.reject(errorObj);
     } else if(securityByte !== 0 && passwordDataArray && (passwordDataArray.length === 0 || passwordDataArray.length > 32)) {
-        return Promise.reject(SensorLogic.errorMessages().longPass);
+        let errorObj = await handleError({errorCode: -2, message: SensorLogic.errorMessages().longPass,});
+        return Promise.reject(errorObj);
     }
     // send commands
     return await new Promise(async (resolve, reject) => {

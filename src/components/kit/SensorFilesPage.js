@@ -166,7 +166,9 @@ class SensorFilesPage extends Component {
             )
             .catch(err => {
                 this.setState({ loading: false, }, () => _.delay(() => {
-                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                    if(err.errorMapping.errorCode === -2) {
+                        return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
+                    } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
                         return this._toggleWeakRSSIAlertNotification();
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                         return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
@@ -473,7 +475,7 @@ class SensorFilesPage extends Component {
                 [
                     {
                         text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage())),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {})),
                         style:   'cancel',
                     },
                     {
@@ -561,9 +563,9 @@ class SensorFilesPage extends Component {
                             <Connect
                                 availableNetworks={availableNetworks}
                                 currentPage={pageIndex === 1}
-                                handleNetworkPress={network => this._handleNetworkPress(network)}
-                                handleNotInRange={() => this._handleWifiNotInRange()}
-                                handleWifiScan={() => this._handleWifiScan()}
+                                handleNetworkPress={network => isDialogVisible ? {} : this._handleNetworkPress(network)}
+                                handleNotInRange={() => isDialogVisible ? {} : this._handleWifiNotInRange()}
+                                handleWifiScan={() => isDialogVisible ? {} : this._handleWifiScan()}
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
                                 onBack={() => {
@@ -722,7 +724,7 @@ class SensorFilesPage extends Component {
                         dialogStyle={{marginBottom: 100,}}
                         isDialogVisible={isDialogVisible}
                         message={`"${currentWifiConnection ? currentWifiConnection.ssid : ''}"`}
-                        modalStyle={{backdropColor: AppColors.zeplin.darkNavy, backdropOpacity: 0.8,}}
+                        modalStyle={{backgroundColor: `${AppColors.zeplin.darkNavy}CC`,}}
                         submitInput={inputText => this._submitPasswordInput(inputText)}
                         submitText={'Save'}
                         title={'Connect to Network'}
