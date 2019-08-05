@@ -261,7 +261,7 @@ class TrendChild extends PureComponent {
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
                     containerStyle={{alignItems: 'center', marginBottom: bottomPadding,}}
                     onPress={() => AppUtil.pushToScene('myPlan')}
-                    raised={true}
+                    raised={Platform.OS === 'ios'}
                     title={'Go to your plan'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                 />
@@ -340,7 +340,7 @@ class TrendChild extends PureComponent {
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml,}}
                             containerStyle={{alignItems: 'center',}}
                             onPress={() => this._handleFTEClick(selectedTrendCategory[0].insight_type, false, true)}
-                            raised={true}
+                            raised={Platform.OS === 'ios'}
                             title={'Continue'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(23),}}
                         />
