@@ -42,6 +42,8 @@ const bodyPartMapping = [
     {index: 19, order: 8, label: 'Elbow', front: false, location: 'upper body', group: 'joint', image: {0: 'Elbow.svg', 1: 'L_Elbow.svg', 2: 'R_Elbow.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 20, order: 7, label: 'Wrist', front: true, location: 'upper body', group: 'joint', image: {0: 'Wrist.svg', 1: 'L_Wrist.svg', 2: 'R_Wrist.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 21, order: 5, label: 'Lats', front: false, location: 'upper body', group: 'muscle', image: {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 22, order: null, label: 'Biceps', front: true, location: 'upper body', group: 'muscle', image: {0: 'Bicep.svg', 1: 'L_Bicep.svg', 2: 'R_Bicep.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 23, order: null, label: 'Triceps', front: false, location: 'upper body', group: 'muscle', image: {0: 'Tricep.svg', 1: 'L_Tricep.svg', 2: 'R_Tricep.svg'}, bilateral: true, helping_verb: 'has'},
 ];
 
 const overallReadiness = [

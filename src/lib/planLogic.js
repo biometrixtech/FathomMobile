@@ -1880,7 +1880,6 @@ const PlanLogic = {
       * Handle Trend Render Logic
       * - Trends & Insights
       */
-    // TODO: UNIT TEST ME
     handleTrendRenderLogic: currentAlert => {
         if(!currentAlert || !currentAlert.status) {
             return {

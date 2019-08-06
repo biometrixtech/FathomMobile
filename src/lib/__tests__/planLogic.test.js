@@ -1,4 +1,5 @@
 /* global it expect jest */
+/* global it expect describe */
 /* global it expect beforeAll */
 import 'react-native';
 
@@ -10,7 +11,7 @@ import moment from 'moment';
 import { PlanLogic, } from '../';
 
 // Consts and Libs
-import { AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
+import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
 
 // mock async-storage
 beforeAll(() => {
@@ -1162,63 +1163,155 @@ const helperFunctions = {
 //     let expectedResult = {};
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
 
-it('Add Title To Active Modality - NO OBJ', () => {
-    expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+describe('Handle Trend Render Logic', () => {
+    it('No Current Alert', () => {
+        let expectedResult = {
+            icon:          false,
+            iconType:      false,
+            subtitleColor: AppColors.zeplin.errorLight,
+            sportName:     false,
+        };
+        expect(PlanLogic.handleTrendRenderLogic()).toEqual(expectedResult);
+    });
+    it('Has Icon', () => {
+        let currentAlert = {
+            status: {
+                color:      5,
+                icon:       'md-body',
+                icon_type:  'ionicon',
+                sport_name: null,
+            },
+        };
+        let expectedResult = {
+            icon:          'md-body',
+            iconType:      'ionicon',
+            imageSource:   false,
+            subtitleColor: AppColors.zeplin.warningLight,
+            sportName:     false,
+        };
+        expect(PlanLogic.handleTrendRenderLogic(currentAlert)).toEqual(expectedResult);
+    });
+    it('Has Sport', () => {
+        let currentAlert = {
+            status: {
+                color:      1,
+                icon:       false,
+                icon_type:  false,
+                sport_name: 45,
+            },
+        };
+        let expectedResult = {
+            icon:          false,
+            iconType:      false,
+            imageSource:   require('../../../assets/images/sports_images/icons8-swimming-200.png'),
+            subtitleColor: AppColors.zeplin.warningLight,
+            sportName:     'SWIMMING',
+        };
+        expect(PlanLogic.handleTrendRenderLogic(currentAlert)).toEqual(expectedResult);
+    });
 });
 
-it('Add Title To Active Modality - MOBILIZE', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/mobilize.png'),
-        completed:       false,
-        isBodyModality:  false,
-        modality:        'prepare',
-        timing:          ['0 min, ', 'within 4 hrs of training'],
-        title:           'MOBILIZE',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+describe('Body Overlay Color String', () => {
+    it('Only Color - Triggers PlanLogic.returnInsightColorString()', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(false, false, 4)).toEqual(AppColors.zeplin.splashLight);
+    });
+    it('Not Pain & Mild', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(1, false, false)).toEqual(AppColors.bodyOverlay.sorenessMild);
+    });
+    it('Not Pain & Mod', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(2, false, false)).toEqual(AppColors.bodyOverlay.sorenessMod);
+    });
+    it('Not Pain & Severe', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(3, false, false)).toEqual(AppColors.bodyOverlay.sorenessSevere);
+    });
+    it('Not Pain & No Value', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(0, false, false)).toEqual(AppColors.bodyOverlay.sorenessMild);
+    });
+    it('Pain & Mild', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(1, true, false)).toEqual(AppColors.bodyOverlay.painMild);
+    });
+    it('Pain & Mod', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(2, true, false)).toEqual(AppColors.bodyOverlay.painMod);
+    });
+    it('Pain & Severe', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(3, true, false)).toEqual(AppColors.bodyOverlay.painSevere);
+    });
+    it('Pain & No Value', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(0, true, false)).toEqual(AppColors.bodyOverlay.painMild);
+    });
 });
 
-it('Add Title To Active Modality - ACTIVE RECOVERY', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
-        completed:       false,
-        isBodyModality:  false,
-        modality:        'coolDown',
-        timing:          ['0 min, ', 'within 6 hrs of training'],
-        title:           'ACTIVE RECOVERY',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+describe('Insight Color String', () => {
+    it('No Color', () => {
+        expect(PlanLogic.returnInsightColorString()).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 1', () => {
+        expect(PlanLogic.returnInsightColorString(1)).toEqual(AppColors.zeplin.warningLight);
+    });
+    it('Index 2', () => {
+        expect(PlanLogic.returnInsightColorString(2)).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 3', () => {
+        expect(PlanLogic.returnInsightColorString(3)).toEqual(AppColors.zeplin.slateXLight);
+    });
+    it('Index 4', () => {
+        expect(PlanLogic.returnInsightColorString(4)).toEqual(AppColors.zeplin.splashLight);
+    });
+    it('Index 5', () => {
+        expect(PlanLogic.returnInsightColorString(5)).toEqual(AppColors.zeplin.warningLight);
+    });
+    it('Index 6', () => {
+        expect(PlanLogic.returnInsightColorString(6)).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 7', () => {
+        expect(PlanLogic.returnInsightColorString(7)).toEqual(AppColors.zeplin.splashXLight);
+    });
 });
 
-it('Add Title To Active Modality - CWI', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/cwi.png'),
-        completed:       false,
-        isBodyModality:  true,
-        modality:        'cwi',
-        timing:          ['0 min, ', 'after all training is completed'],
-        title:           'COLD WATER BATH',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+describe('Add Title To Active Modality', () => {
+    it('NO OBJ', () => {
+        expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+    });
+    it('MOBILIZE', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/mobilize.png'),
+            completed:       false,
+            isBodyModality:  false,
+            modality:        'prepare',
+            timing:          ['0 min, ', 'within 4 hrs of training'],
+            title:           'MOBILIZE',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+    });
+    it('ACTIVE RECOVERY', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
+            completed:       false,
+            isBodyModality:  false,
+            modality:        'coolDown',
+            timing:          ['0 min, ', 'within 6 hrs of training'],
+            title:           'ACTIVE RECOVERY',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+    });
+    it('CWI', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/cwi.png'),
+            completed:       false,
+            isBodyModality:  true,
+            modality:        'cwi',
+            timing:          ['0 min, ', 'after all training is completed'],
+            title:           'COLD WATER BATH',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+    });
 });
 
 it('Exercises Render Logic - PREPARE', () => {
