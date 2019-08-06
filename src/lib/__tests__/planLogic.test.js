@@ -1159,10 +1159,87 @@ const helperFunctions = {
 //     let expectedResult = {};
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
+
+describe('Handle Body Part Overlay Render Logic', () => {
+    it('Only Front', () => {
+        let absObj = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+        absObj.tintColor = AppColors.zeplin.splashLight;
+        absObj.front = true;
+        absObj.order = 2;
+        absObj.imageSource = require('../../../assets/images/body/body_overlay/Abs.png');
+        let expectedResult = {
+            filteredBackBodyParts:  [],
+            filteredFrontBodyParts: [absObj],
+        };
+        let bodyParts = [{body_part_location: 3, side: 0, color: 4}];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts, () => require('../../../assets/images/body/body_overlay/Abs.png'))).toEqual(expectedResult);
+    });
+    it('No Body Parts', () => {
+        let expectedResult = {
+            filteredBackBodyParts:  [],
+            filteredFrontBodyParts: [],
+        };
+        let bodyParts = [];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts)).toEqual(expectedResult);
+    });
+    it('A Couple in Front & Back', () => {
+        let absObj = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+        absObj.tintColor = AppColors.zeplin.splashLight;
+        absObj.front = true;
+        absObj.order = 2;
+        absObj.imageSource = require('../../../assets/images/body/body_overlay/Abs.png');
+        let lowBackObj = {
+            bilateral:    false,
+            front:        false,
+            group:        'muscle',
+            helping_verb: 'has',
+            image:        {0: 'LowBack.svg'},
+            imageSource:  require('../../../assets/images/body/body_overlay/LowBack.png'),
+            index:        12,
+            label:        'Lower Back',
+            location:     'upper body',
+            order:        6,
+            tintColor:    AppColors.zeplin.warningLight,
+        };
+        let stubLatsObj = {
+            bilateral:    true,
+            front:        false,
+            group:        'muscle',
+            helping_verb: 'has',
+            image:        {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'},
+            imageSource:  '',
+            index:        21,
+            label:        'Lats',
+            location:     'upper body',
+            order:        5,
+            tintColor:    AppColors.zeplin.splashXLight,
+        };
+        let leftLatObj = _.cloneDeep(stubLatsObj);
+        leftLatObj.imageSource = require('../../../assets/images/body/body_overlay/L_Lats.png');
+        let rightLatObj = _.cloneDeep(stubLatsObj);
+        rightLatObj.imageSource = require('../../../assets/images/body/body_overlay/R_Lats.png')
+        let expectedResult = {
+            filteredBackBodyParts:  [lowBackObj, leftLatObj, rightLatObj],
+            filteredFrontBodyParts: [absObj],
+        };
+        let bodyParts = [
+            {body_part_location: 12, side: 0, color: 5},
+            {body_part: 3, side: 0, color: 4},
+            {body_part_location: 21, side: 1, color: 7},
+            {body_part: 21, side: 2, color: 7},
+        ];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts, imageStr =>
+            imageStr === 'Abs.svg' ?
+                require('../../../assets/images/body/body_overlay/Abs.png')
+                : imageStr === 'LowBack.svg' ?
+                    require('../../../assets/images/body/body_overlay/LowBack.png')
+                    : imageStr === 'R_Lats.svg' ?
+                        require('../../../assets/images/body/body_overlay/R_Lats.png')
+                        :
+                        require('../../../assets/images/body/body_overlay/L_Lats.png')
+        )).toEqual(expectedResult);
+    });
+});
 
 describe('Handle Trend Render Logic', () => {
     it('No Current Alert', () => {

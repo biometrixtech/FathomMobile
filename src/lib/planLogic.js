@@ -1997,7 +1997,6 @@ const PlanLogic = {
       * Handle Body Overlay Render Logic
       * - BodyOverlay
       */
-    // TODO: UNIT TEST ME
     handleBodyOverlayRenderLogic: (bodyParts, _getImageString) => {
         let frontBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === true);
         let backBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === false);
