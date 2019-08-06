@@ -141,12 +141,12 @@ class TrendChild extends PureComponent {
                     </Text>
                 </View>
 
-                <View style={[styles.card, {paddingBottom: AppSizes.paddingSml,}]}>
+                <View style={[styles.card,]}>
                     <View style={{alignItems: 'center', flexDirection: 'row',}}>
                         <Image
                             resizeMode={'contain'}
                             source={iconImage}
-                            style={{height: 40, marginRight: AppSizes.paddingSml, width: 40,}}
+                            style={{alignSelf: 'flex-start', height: 40, marginRight: AppSizes.paddingSml, width: 40,}}
                         />
                         <Text
                             numberOfLines={trendContextProps.isCollapsed ? 2 : 0}
@@ -155,6 +155,33 @@ class TrendChild extends PureComponent {
                         >
                             {props.text[0]}
                         </Text>
+                        { trendContextProps.isCollapsed &&
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => this._handleFTEClick(
+                                    selectedTrendCategory.insight_type,
+                                    props.visualization_type,
+                                    false,
+                                    props,
+                                    () => this._toggleTrendContext(
+                                        props.key,
+                                        'isCollapsed',
+                                        () => !trendContextProps.isCollapsed && !trendContextProps.isPaused ?
+                                            this._toggleTrendContext(props.key, 'isPaused')
+                                            :
+                                            null,
+                                    ),
+                                )}
+                                style={{alignItems: 'flex-end',}}
+                            >
+                                <TabIcon
+                                    color={AppColors.zeplin.slateLight}
+                                    icon={trendContextProps.isCollapsed ? 'chevron-down' : 'chevron-up'}
+                                    size={30}
+                                    type={'material-community'}
+                                />
+                            </TouchableOpacity>
+                        }
                     </View>
                     <Collapsible
                         collapsed={trendContextProps.isCollapsed}
@@ -194,31 +221,33 @@ class TrendChild extends PureComponent {
                             {props.text[1]}
                         </Text>
                     </Collapsible>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => this._handleFTEClick(
-                            selectedTrendCategory.insight_type,
-                            props.visualization_type,
-                            false,
-                            props,
-                            () => this._toggleTrendContext(
-                                props.key,
-                                'isCollapsed',
-                                () => !trendContextProps.isCollapsed && !trendContextProps.isPaused ?
-                                    this._toggleTrendContext(props.key, 'isPaused')
-                                    :
-                                    null,
-                            ),
-                        )}
-                        style={{alignItems: 'flex-end',}}
-                    >
-                        <TabIcon
-                            color={AppColors.zeplin.slateLight}
-                            icon={trendContextProps.isCollapsed ? 'chevron-down' : 'chevron-up'}
-                            size={30}
-                            type={'material-community'}
-                        />
-                    </TouchableOpacity>
+                    { !trendContextProps.isCollapsed &&
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => this._handleFTEClick(
+                                selectedTrendCategory.insight_type,
+                                props.visualization_type,
+                                false,
+                                props,
+                                () => this._toggleTrendContext(
+                                    props.key,
+                                    'isCollapsed',
+                                    () => !trendContextProps.isCollapsed && !trendContextProps.isPaused ?
+                                        this._toggleTrendContext(props.key, 'isPaused')
+                                        :
+                                        null,
+                                ),
+                            )}
+                            style={{alignItems: 'flex-end',}}
+                        >
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                icon={trendContextProps.isCollapsed ? 'chevron-down' : 'chevron-up'}
+                                size={30}
+                                type={'material-community'}
+                            />
+                        </TouchableOpacity>
+                    }
                 </View>
 
                 <View style={[styles.card, {marginTop: AppSizes.padding, marginBottom: AppSizes.paddingLrg,}]}>

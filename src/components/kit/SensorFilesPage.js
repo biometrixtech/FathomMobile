@@ -165,7 +165,7 @@ class SensorFilesPage extends Component {
                 ) // 3. route to next page
             )
             .catch(err => {
-                this.setState({ loading: false, }, () => _.delay(() => {
+                this.setState({ isSubmittingDetails: false, loading: false, }, () => _.delay(() => {
                     if(err.errorMapping.errorCode === -2) {
                         return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
                     } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
@@ -301,7 +301,7 @@ class SensorFilesPage extends Component {
                 () => {
                     this._timer = _.delay(() => {
                         this.setState(
-                            { loading: true, },
+                            { isSubmittingDetails: true, loading: true, },
                             () => this._connectSensorToWifi(),
                         );
                     }, 500);
@@ -459,7 +459,7 @@ class SensorFilesPage extends Component {
             () => {
                 this._timer = _.delay(() => {
                     this.setState(
-                        { loading: true, },
+                        { isSubmittingDetails: true, loading: true, },
                         () => this._connectSensorToWifi(),
                     );
                 }, 500);
@@ -535,6 +535,7 @@ class SensorFilesPage extends Component {
             currentWifiConnection,
             isConnectingToSensor,
             isDialogVisible,
+            isSubmittingDetails,
             isVideoMuted,
             isWifiScanDone,
             pageIndex,
@@ -563,9 +564,9 @@ class SensorFilesPage extends Component {
                             <Connect
                                 availableNetworks={availableNetworks}
                                 currentPage={pageIndex === 1}
-                                handleNetworkPress={network => isDialogVisible ? {} : this._handleNetworkPress(network)}
-                                handleNotInRange={() => isDialogVisible ? {} : this._handleWifiNotInRange()}
-                                handleWifiScan={() => isDialogVisible ? {} : this._handleWifiScan()}
+                                handleNetworkPress={network => isDialogVisible || isSubmittingDetails ? {} : this._handleNetworkPress(network)}
+                                handleNotInRange={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiNotInRange()}
+                                handleWifiScan={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiScan()}
                                 isWifiScanDone={isWifiScanDone}
                                 nextBtn={this._renderNextPage}
                                 onBack={() => {

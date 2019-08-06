@@ -53,6 +53,7 @@ class BluetoothConnect extends Component {
             currentWifiConnection: false,
             isConnectingToSensor:  false,
             isDialogVisible:       false,
+            isSubmittingDetails:   false,
             isVideoMuted:          false,
             isWifiScanDone:        false,
             loading:               false,
@@ -122,7 +123,7 @@ class BluetoothConnect extends Component {
                 ) // 3. route to next page
             )
             .catch(err => {
-                this.setState({ loading: false, }, () => _.delay(() => {
+                this.setState({ isSubmittingDetails: false, loading: false, }, () => _.delay(() => {
                     if(err.errorMapping.errorCode === -2) {
                         return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
                     } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
@@ -266,7 +267,7 @@ class BluetoothConnect extends Component {
                 () => {
                     this._timer = _.delay(() => {
                         this.setState(
-                            { loading: true, },
+                            { isSubmittingDetails: true, loading: true, },
                             () => this._connectSensorToWifi(),
                         );
                     }, 500);
@@ -461,7 +462,7 @@ class BluetoothConnect extends Component {
             () => {
                 this._timer = _.delay(() => {
                     this.setState(
-                        { loading: true, },
+                        { isSubmittingDetails: true, loading: true, },
                         () => this._connectSensorToWifi(),
                     );
                 }, 500);
@@ -556,6 +557,7 @@ class BluetoothConnect extends Component {
             pageIndex,
             isConnectingToSensor,
             isDialogVisible,
+            isSubmittingDetails,
             isVideoMuted,
             isWifiScanDone,
         } = this.state;
@@ -688,9 +690,9 @@ class BluetoothConnect extends Component {
                     <Connect
                         availableNetworks={availableNetworks}
                         currentPage={pageIndex === WIFI_PAGE_NUMBER}
-                        handleNetworkPress={network => this._handleNetworkPress(network)}
-                        handleNotInRange={() => this._handleWifiNotInRange()}
-                        handleWifiScan={() => this._handleWifiScan()}
+                        handleNetworkPress={network => isDialogVisible || isSubmittingDetails ? {} : this._handleNetworkPress(network)}
+                        handleNotInRange={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiNotInRange()}
+                        handleWifiScan={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
                         onBack={() => {
