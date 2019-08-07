@@ -125,6 +125,14 @@ class BodyOverlay extends Component {
                 require('../../../assets/images/body/body_overlay/L_Pec.png')
             : image === 'R_Pec.svg' ?
                 require('../../../assets/images/body/body_overlay/R_Pec.png')
+            : image === 'R_Bicep.svg' ?
+                require('../../../assets/images/body/body_overlay/R_Bicep.png')
+            : image === 'L_Bicep.svg' ?
+                require('../../../assets/images/body/body_overlay/L_Bicep.png')
+            : image === 'R_Tricep.svg' ?
+                require('../../../assets/images/body/body_overlay/R_Tricep.png')
+            : image === 'L_Tricep.svg' ?
+                require('../../../assets/images/body/body_overlay/L_Tricep.png')
             :
                 require('../../../assets/images/body/body_overlay/Abs.png');
         return imageName;

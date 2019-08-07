@@ -18,8 +18,6 @@ import { ble, init, user as userActions, } from '../../actions';
 const Settings = ({
     Layout,
     accessoryData,
-    deleteUserSensorData,
-    deleteAllSingleSensorPractices,
     logout,
     network,
     user,
@@ -28,8 +26,6 @@ const Settings = ({
 }) => (
     <Layout
         accessoryData={accessoryData}
-        deleteUserSensorData={deleteUserSensorData}
-        deleteAllSingleSensorPractices={deleteAllSingleSensorPractices}
         logout={logout}
         network={network}
         user={user}
@@ -39,15 +35,13 @@ const Settings = ({
 );
 
 Settings.propTypes = {
-    Layout:                         PropTypes.func.isRequired,
-    accessoryData:                  PropTypes.object.isRequired,
-    deleteUserSensorData:           PropTypes.func.isRequired,
-    deleteAllSingleSensorPractices: PropTypes.func.isRequired,
-    logout:                         PropTypes.func.isRequired,
-    network:                        PropTypes.object.isRequired,
-    user:                           PropTypes.object.isRequired,
-    updateUser:                     PropTypes.func.isRequired,
-    userJoinAccount:                PropTypes.func.isRequired,
+    Layout:          PropTypes.func.isRequired,
+    accessoryData:   PropTypes.object.isRequired,
+    logout:          PropTypes.func.isRequired,
+    network:         PropTypes.object.isRequired,
+    user:            PropTypes.object.isRequired,
+    updateUser:      PropTypes.func.isRequired,
+    userJoinAccount: PropTypes.func.isRequired,
 };
 
 Settings.defaultProps = {
@@ -60,11 +54,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    deleteUserSensorData:           ble.deleteUserSensorData,
-    deleteAllSingleSensorPractices: ble.deleteAllSingleSensorPractices,
-    logout:                         init.logout,
-    updateUser:                     userActions.updateUser,
-    userJoinAccount:                userActions.userJoinAccount,
+    logout:          init.logout,
+    updateUser:      userActions.updateUser,
+    userJoinAccount: userActions.userJoinAccount,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

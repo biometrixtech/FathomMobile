@@ -4,17 +4,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
+
+// Actions
+import { user as UserActions, } from '../../actions';
+
 const SensorFiles = ({
     Layout,
+    updateUser,
     user,
 }) => (
     <Layout
+        updateUser={updateUser}
         user={user}
     />
 );
 
 SensorFiles.propTypes = {
-    user: PropTypes.shape({}).isRequired,
+    updateUser: PropTypes.func.isRequired,
+    user:       PropTypes.shape({}).isRequired,
 };
 
 SensorFiles.defaultProps = {
@@ -26,6 +33,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+    updateUser: UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SensorFiles);

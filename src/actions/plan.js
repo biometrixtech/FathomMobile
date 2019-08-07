@@ -95,6 +95,72 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
 };
 
 /**
+  * Clear My Plan Alert
+  */
+const clearPlanAlert = insightType => {
+    let myPlanObj = {
+        event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
+        insight_type: insightType,
+    };
+    return dispatch => AppAPI.clear_plan_alert.post(false, myPlanObj)
+        .then(response => {
+            dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: response.daily_plans,
+            });
+            return Promise.resolve(response);
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+};
+
+/**
+  * Clear FTE for Category
+  */
+const clearFTECategory = (newPlan, insightType) => {
+    let myPlanObj = {
+        event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
+        insight_type: insightType,
+    };
+    store.dispatch({
+        type: Actions.GET_MY_PLAN,
+        data: [newPlan],
+    });
+    return AppAPI.clear_fte_category.post(false, myPlanObj)
+        .then(response => {
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: response.daily_plans,
+            });
+            return Promise.resolve(response);
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+};
+
+/**
+  * Clear FTE for View
+  */
+const clearFTEView = (newPlan, insightType, visualizationType) => {
+    let myPlanObj = {
+        event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
+        insight_type:       insightType,
+        visualization_type: visualizationType,
+    };
+    store.dispatch({
+        type: Actions.GET_MY_PLAN,
+        data: [newPlan],
+    });
+    return AppAPI.clear_fte_view.post(false, myPlanObj)
+        .then(response => {
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: response.daily_plans,
+            });
+            return Promise.resolve(response);
+        })
+        .catch(err => Promise.reject(AppAPI.handleError(err)));
+};
+
+/**
   * Clear My Plan Data
   */
 const clearMyPlanData = () => {
@@ -374,7 +440,7 @@ const noSessions = () => {
     });
     return dispatch => AppAPI.no_sessions.post(false, bodyObj)
         .then(data => {
-            store.dispatch({
+            dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: data.daily_plans,
             });
@@ -664,8 +730,11 @@ export default {
     clearCompletedCoolDownExercises,
     clearCompletedExercises,
     clearCompletedFSExercises,
+    clearFTECategory,
+    clearFTEView,
     clearHealthKitWorkouts,
     clearMyPlanData,
+    clearPlanAlert,
     getCoachesDashboardData,
     getMobilize,
     getMyPlan,

@@ -3,6 +3,7 @@
  *
      <DeckCards
          cards={TEMP_CARDS}
+         categories={categories}
          handleReadInsight={index => handleReadInsight(index)}
          hideDeck={() => onRight()}
          infinite={true}
@@ -16,7 +17,7 @@
  *
  */
 import React, { Component, } from 'react';
-import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import PropTypes from 'prop-types';
 
 // import third-party libraries
@@ -26,11 +27,11 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AppUtil, } from '../../lib';
 
 // Components
-import { Button, TabIcon, Text, } from '../custom';
+import { Button, ParsedText, TabIcon, Text, } from '../custom';
 
 const CONTAINER_HEIGHT = 150;
 const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(15) + (AppSizes.paddingXSml * 2));
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
+        ...AppStyles.robotoLight,
         color:    AppColors.zeplin.slate,
         fontSize: AppFonts.scaleFont(13),
     },
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
 class DeckCards extends Component {
     static propTypes = {
         cards:                    PropTypes.array.isRequired,
+        categories:               PropTypes.array.isRequired,
         handleReadInsight:        PropTypes.func.isRequired,
         hideDeck:                 PropTypes.func,
         infinite:                 PropTypes.bool,
@@ -149,12 +152,13 @@ class DeckCards extends Component {
             enableVibrateFallback:       false,
             ignoreAndroidSystemSettings: false,
         };
+        let insightType = cards[(index - 1)] && cards[(index - 1)].category ? cards[(index - 1)].category : 0;
         this.setState(
             { currentCardIndex: index, },
             () => {
                 let hapticFeedbackMethod = index === cards.length ? 'notificationWarning' : 'impactMedium';
                 ReactNativeHapticFeedback.trigger(hapticFeedbackMethod, options);
-                handleReadInsight(index);
+                handleReadInsight(insightType);
                 if(this.state.currentCardIndex === index && (!cards[index].title || cards[index].title === '')) {
                     this.setState({ areAllSwiped: true, });
                 }
@@ -165,38 +169,26 @@ class DeckCards extends Component {
     _handleRenderCardLogic = (card, index) => {
         const { unreadNotificationsCount, } = this.props;
         const { currentCardIndex, } = this.state;
-        let insightType = card && card.insight_type ? card.insight_type : 0;
+        let insightType = card && card.category ? card.category : 0;
         let triggerType = card && card.trigger_type ? card.trigger_type : 0;
         let daysDiff = card && card.start_date_time ? moment().diff(card.start_date_time, 'days') : 0;
         let dateText = daysDiff === 0 ? 'today' : `${daysDiff} ${daysDiff === 1 ? 'day' : 'days'} ago`;
-        let textRegEx = card && card.goal_targeted ? new RegExp(card.goal_targeted.join('|'), 'g') : new RegExp('', 'g');
-        let textMatchedArray = card && card.text ? card.text.match(textRegEx) : [];
-        let splitTextArray = card && card.text ? _.split(card.text, textRegEx) : [];
-        let cardTextArray = [];
-        if(textMatchedArray) {
-            _.map(splitTextArray, (text, key) => {
-                if(text && text.length > 0) {
-                    cardTextArray.push(
-                        <Text key={key} robotoLight>
-                            {text}
-                            <Text robotoBold>{textMatchedArray[key]}</Text>
-                        </Text>
-                    );
-                }
+        let parsedData = [];
+        if(card && card.text) {
+            _.map(card.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold,];
+                parsedData.push(newParsedData);
             });
-        } else {
-            cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
-        }
-        if(card && card.goal_targeted && card.goal_targeted.length === 0) {
-            cardTextArray = [<Text key={0} robotoLight style={[styles.text,]}>{card.text}</Text>];
         }
         let showUnreadNotificationsBadge = currentCardIndex === index && unreadNotificationsCount > 0;
         let allowNavigation = triggerType !== 25 && triggerType < 200;
         return {
             allowNavigation,
-            cardTextArray,
             dateText,
             insightType,
+            parsedData,
             showUnreadNotificationsBadge,
             triggerType,
         };
@@ -210,13 +202,13 @@ class DeckCards extends Component {
     }
 
     _renderCard = (card, index) => {
-        const { cards, layout, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
+        const { cards, handleReadInsight, hideDeck, shouldNavigate, showDate, shrinkNumberOfLines, } = this.props;
         const { currentCardIndex, } = this.state;
         const {
             allowNavigation,
-            cardTextArray,
             dateText,
             insightType,
+            parsedData,
             // showUnreadNotificationsBadge,
             triggerType,
         } = this._handleRenderCardLogic(card, index);
@@ -231,7 +223,11 @@ class DeckCards extends Component {
             <TouchableOpacity
                 activeOpacity={1}
                 onLayout={ev => this._onLayoutOfCard(ev.nativeEvent.layout.height, index)}
-                onPress={shouldNavigate && allowNavigation ? () => AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, }) : () => {}}
+                onPress={shouldNavigate && allowNavigation ? () => {
+                    hideDeck();
+                    AppUtil.pushToScene('trendChild', { insightType: insightType, triggerType: triggerType, });
+                    handleReadInsight(insightType);
+                } : () => {}}
                 style={[styles.card, extraStyles,]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -253,12 +249,13 @@ class DeckCards extends Component {
                         <Text robotoRegular style={[styles.date,]}>{dateText}</Text>
                     }
                 </View>
-                <Text
-                    numberOfLines={shrinkNumberOfLines ? 3 : 10}
-                    style={[styles.text,]}
+                <ParsedText
+                    childrenProps={{numberOfLines: shrinkNumberOfLines ? 3 : 10,}}
+                    parse={parsedData}
+                    style={[AppStyles.robotoLight, styles.text,]}
                 >
-                    {cardTextArray}
-                </Text>
+                    {card ? card.text : ''}
+                </ParsedText>
                 {/* showUnreadNotificationsBadge &&
                     <View style={[styles.unreadNotificationsWrapper,]}>
                         <Text robotoRegular style={[styles.unreadNotificationsText,]}>{unreadNotificationsCount}</Text>
@@ -269,21 +266,26 @@ class DeckCards extends Component {
     }
 
     render = () => {
-        const { cards, hideDeck, infinite, showHide, } = this.props;
+        const { cards, categories, hideDeck, infinite, showHide, } = this.props;
         const { areAllSwiped, containerStyle, currentCardIndex, } = this.state;
         return (
             <View>
-                <View style={[areAllSwiped && !infinite && showHide ? containerStyle : {}]}>
-                    { areAllSwiped && !infinite && showHide ?
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
-                                {'You\'re up to date for now! We\'ll generate more insights as we learn about your body.'}
+                <View style={[(areAllSwiped && !infinite && showHide) || (!infinite && showHide && categories.length > 0 && cards.length === 0) ? containerStyle : {}]}>
+                    { (areAllSwiped && !infinite && showHide) || (!infinite && showHide && categories.length > 0 && cards.length === 0) ?
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/allcaughtup.png')}
+                                style={{height: 50, marginBottom: AppSizes.paddingSml, width: 50,}}
+                            />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                                {'You\'re up to date for now! You can view your ongoing insights on your Trends Dashboard.'}
                             </Text>
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, marginTop: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}
                                 containerStyle={{marginRight: AppSizes.paddingSml,}}
-                                onPress={() => AppUtil.pushToScene('trends')}
-                                title={'View Trends'}
+                                onPress={() => {hideDeck(); AppUtil.pushToScene('trends');}}
+                                title={'Go to Dashboard'}
                                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                             />
                         </View>
@@ -305,9 +307,16 @@ class DeckCards extends Component {
                                 windowSize={3}
                             />
                             :
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding, textAlign: 'center',}}>
-                                {'No alerts right now. We\'ll generate new insights as we learn about your body!'}
-                            </Text>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/research.png')}
+                                    style={{height: 50, marginBottom: AppSizes.paddingSml, width: 50,}}
+                                />
+                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                                    {'We\'re looking for meaningful insights in your body & training data!'}
+                                </Text>
+                            </View>
                     }
                 </View>
                 { showHide &&

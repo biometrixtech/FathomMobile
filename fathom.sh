@@ -111,7 +111,7 @@ initialize() {
             # android build tools and gradle patches
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-fabric/android/build.gradle
             sed -i '' 's/compile(/implementation(/g' ./node_modules/react-native-fabric/android/build.gradle
-            sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
+            # sed -i '' 's/compile /implementation /g' ./node_modules/react-native-ble-manager/android/build.gradle
             sed -i '' 's/compile /implementation /g' ./node_modules/react-native-android-location-services-dialog-box/android/build.gradle
             sed -i '' 's/Math.floor(/Math.round(/g' ./node_modules/react-native-pages/src/components/pages/index.js
             sed -i '' 's/import android.support.v4.view.ViewCompat;/import androidx.core.view.ViewCompat;/g' ./node_modules/lottie-react-native/src/android/src/main/java/com/airbnb/android/react/lottie/LottieAnimationViewManager.java

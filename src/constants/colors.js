@@ -102,6 +102,7 @@ const zeplin = {
     splash:       '#40A8B4',
     splashDark:   '#288994',
     splashLight:  '#70BEC7',
+    splashXLight: '#B7DEE3',
     success:      '#4EC1A6',
     successLight: '#71CDB7',
     superLight:   '#F5F5F5',
@@ -112,11 +113,11 @@ const zeplin = {
 }
 
 const bodyOverlay = {
-    painMild:       '#FBE2DA',
-    painMod:        '#F6C5B6',
+    painMild:       '#F6C5B6',
+    painMod:        '#F2A892',
     painSevere:     zeplin.errorLight,
-    sorenessMild:   '#FCEDDD',
-    sorenessMod:    '#F8DBBA',
+    sorenessMild:   '#F8DBBA',
+    sorenessMod:    '#F4CA99',
     sorenessSevere: zeplin.warningLight,
 }
 
