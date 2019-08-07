@@ -108,7 +108,7 @@ const ActivityTab = ({
 }) => (
     <View onLayout={onLayout ? event => onLayout(event) : null} style={{marginBottom: AppSizes.paddingMed,}}>
         { completed || locked ?
-            <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 10, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
+            <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 12, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
                 <View style={{flexDirection: 'row',}}>
                     { completed ?
                         <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
@@ -149,28 +149,28 @@ const ActivityTab = ({
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onPress}
-                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 10,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
+                style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 12,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
                 {/*<MagicMove.Image
                     disabled={true}
                     id={`${id}.image`}
                     resizeMode={'contain'}
                     source={backgroundImage}
-                    style={[StyleSheet.absoluteFill, {borderRadius: 10, height: 'auto', width: 'auto',}]}
+                    style={[StyleSheet.absoluteFill, {borderRadius: 12, height: 'auto', width: 'auto',}]}
                     useNativeDriver={false}
                 />*/}
                 <ImageBackground
-                    imageStyle={{borderRadius: 10,}}
+                    imageStyle={{borderRadius: 12,}}
                     resizeMode={'cover'}
                     source={backgroundImage}
-                    style={{backgroundColor: AppColors.white, borderRadius: 10, height: 'auto', width: 'auto',}}
+                    style={{backgroundColor: AppColors.white, borderRadius: 12, height: 'auto', width: 'auto',}}
                 >
                     <LinearGradient
                         colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.3)']}
                         end={{x: 1.0, y: 1.0}}
                         onPress={onPress}
                         start={{x: 0.1, y: 0.1}}
-                        style={[{alignItems: 'flex-start', borderRadius: 10, padding: AppSizes.paddingMed,}]}
+                        style={[{alignItems: 'flex-start', borderRadius: 12, padding: AppSizes.paddingMed,}]}
                     >
                         <TabIcon
                             color={AppColors.white}
@@ -203,6 +203,7 @@ const ActivityTab = ({
 
 const MyPlanNavBar = ({
     cards = [],
+    categories,
     handleReadInsight,
     expandNotifications,
     onRight,
@@ -245,9 +246,9 @@ const MyPlanNavBar = ({
                     iconStyle={[{color: AppColors.zeplin.slate,}]}
                     size={26}
                 />
-                {_.filter(cards, ['read', false]).length > 0 &&
+                { cards.length > 0 &&
                     <View style={[styles.unreadNotificationsWrapper,]}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{_.filter(cards, ['read', false]).length}</Text>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cards.length}</Text>
                     </View>
                 }
             </TouchableOpacity>
@@ -256,12 +257,13 @@ const MyPlanNavBar = ({
             { expandNotifications &&
                 <DeckCards
                     cards={cards.length === 0 ? cards : _.concat(cards, {})}
+                    categories={categories}
                     handleReadInsight={index => handleReadInsight(index)}
                     hideDeck={() => onRight()}
                     isVisible={expandNotifications}
                     layout={'tinder'}
                     shrinkNumberOfLines={true}
-                    unreadNotificationsCount={_.filter(cards, ['read', false]).length}
+                    unreadNotificationsCount={cards.length}
                 />
             }
         </Collapsible>
@@ -446,7 +448,10 @@ class MyPlan extends Component {
                     dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
                     isPrepareSessionsCompletionModalOpen: false,
                 },
-                () => this._scrollToFirstActiveActivityTab(),
+                () => {
+                    this._scrollToFirstActiveActivityTab();
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                },
             );
         }, 500);
     }
@@ -458,7 +463,10 @@ class MyPlan extends Component {
                     isTrainSessionsCompletionModalOpen: false,
                     postSession:                        _.cloneDeep(defaultPlanState.postSession),
                 },
-                () => this._scrollToFirstActiveActivityTab(),
+                () => {
+                    this._scrollToFirstActiveActivityTab();
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                },
             );
         }, 500);
     }
@@ -543,7 +551,9 @@ class MyPlan extends Component {
                         // do we need to open 3-Sensor banner
                         AppUtil._handle3SensorBanner(user, response[0]);
                         // handle Coach related items
-                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        if(!this.state.isPrepareSessionsCompletionModalOpen) {
+                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        }
                         // udpate RS first_time_experience
                         if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
                             this._handleUpdateFirstTimeExperience('rs_begin_page');
@@ -744,7 +754,9 @@ class MyPlan extends Component {
                 // scroll to first active activity tab
                 this._scrollToFirstActiveActivityTab();
                 // handle Coach related items
-                this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                if(!this.state.isTrainSessionsCompletionModalOpen) {
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                }
             })
             .catch(error => {
                 this.setState({ isPageCalculating: false, });
@@ -909,16 +921,19 @@ class MyPlan extends Component {
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
             isReadinessSurveyCompleted,
+            newInsights,
             offDaySelected,
+            trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
             <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
 
                 <MyPlanNavBar
-                    cards={dailyPlanObj.insights}
+                    cards={newInsights}
+                    categories={trendDashboardCategories}
                     expandNotifications={expandNotifications}
-                    handleReadInsight={index => handleReadInsight(dailyPlanObj, (index - 1))}
+                    handleReadInsight={insightType => handleReadInsight(insightType)}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />
@@ -1041,7 +1056,7 @@ class MyPlan extends Component {
                                 color={AppColors.zeplin.superLight}
                                 key={key}
                                 noMargin
-                                style={{alignSelf: 'center', borderRadius: 10, flex: 1,}}
+                                style={{alignSelf: 'center', borderRadius: 12, flex: 1,}}
                                 textSize={150}
                             />
                         </View>
@@ -1078,7 +1093,7 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'OFF DAY'}
                                 useNativeFeedback={false}
@@ -1096,7 +1111,7 @@ class MyPlan extends Component {
                             hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                             textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'LOG TRAINING'}
                             useNativeFeedback={false}
@@ -1114,7 +1129,7 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 10, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
                                 textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'ADD MOBILIZE'}
                                 useNativeFeedback={false}

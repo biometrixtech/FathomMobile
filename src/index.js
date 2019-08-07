@@ -249,7 +249,7 @@ class Root extends Component {
                         containerStyle={{backgroundColor: AppColors.zeplin.error,}}
                         messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
                         messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => data.action === 'tap' ? AppUtil.pushToScene('bluetoothConnect3Sensor') : {}}
+                        onClose={data => data.action === 'tap' ? AppUtil.pushToScene('bluetoothConnect') : {}}
                         panResponderEnabled={false}
                         ref={ref => AlertHelper.setCancelableDropDown(ref)}
                         renderCancel={props => this._renderDropdownImage(props, 'cancel', () => AlertHelper.closeCancelableDropDown())}
@@ -265,7 +265,7 @@ class Root extends Component {
                         containerStyle={{backgroundColor: AppColors.zeplin.error,}}
                         messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
                         messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => AppUtil.pushToScene('bluetoothConnect3Sensor')}
+                        onClose={data => AppUtil.pushToScene('bluetoothConnect')}
                         panResponderEnabled={false}
                         ref={ref => AlertHelper.setDropDown(ref)}
                         titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}

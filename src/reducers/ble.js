@@ -36,8 +36,7 @@ export default function bleReducer(state = initialState, action) {
                 ...state.accessoryData,
                 ...action.data
             },
-            devicesFound: [],
-            indicator:    false
+            indicator: false
         });
     case Actions.CHANGE_STATE:
         return Object.assign({}, state, {
@@ -120,7 +119,7 @@ export default function bleReducer(state = initialState, action) {
         return Object.assign({}, state, {
             accessoryData: {
                 ...state.accessoryData,
-                wifiConnected: action.data === 0 ? true : false
+                wifiConnected: true,
             }
         });
     case Actions.GET_OWNER_FLAG:

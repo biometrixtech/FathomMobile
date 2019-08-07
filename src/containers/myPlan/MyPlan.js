@@ -96,7 +96,7 @@ const mapDispatchToProps = {
     getMobilize:                     PlanActions.getMobilize,
     getMyPlan:                       PlanActions.getMyPlan,
     getSoreBodyParts:                PlanActions.getSoreBodyParts,
-    handleReadInsight:               PlanActions.handleReadInsight,
+    handleReadInsight:               PlanActions.clearPlanAlert,
     noSessions:                      PlanActions.noSessions,
     postReadinessSurvey:             PlanActions.postReadinessSurvey,
     postSessionSurvey:               PlanActions.postSessionSurvey,

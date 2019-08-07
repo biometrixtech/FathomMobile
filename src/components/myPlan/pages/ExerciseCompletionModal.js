@@ -57,6 +57,7 @@ class ExerciseCompletionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isSubmitting:     false,
             progressCounters: {},
         };
         this.animation = [];
@@ -107,7 +108,10 @@ class ExerciseCompletionModal extends Component {
         _.map(completionModalExerciseList, (exerciseGroup, group) => {
             newProgressCounters[group] = 0;
             this.setState(
-                { progressCounters: newProgressCounters, },
+                {
+                    isSubmitting:     true,
+                    progressCounters: newProgressCounters,
+                },
                 () => {
                     if(this.animation[group] && this.animation[group].reset) { this.animation[group].reset(); }
                     if((_.indexOf(Object.keys(completionModalExerciseList), group) + 1) === Object.keys(completionModalExerciseList).length) {
@@ -128,7 +132,7 @@ class ExerciseCompletionModal extends Component {
             onComplete,
             user,
         } = this.props;
-        const { progressCounters, } = this.state;
+        const { isSubmitting, progressCounters, } = this.state;
         const isCompleted = completedExercises.length === exerciseList.totalLength;
         const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(exerciseList, completedExercises, this.props.isFS);
         let sessionIconWidth = ((modalWidth / 3) - 5);
@@ -208,7 +212,7 @@ class ExerciseCompletionModal extends Component {
                                 <Button
                                     buttonStyle={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
                                     containerStyle={{marginLeft: 0, marginRight: 0,}}
-                                    onPress={() => this._closeModal(() => onClose())}
+                                    onPress={isSubmitting ? () => {} : () => this._closeModal(() => onClose())}
                                     title={'Finish what I started'}
                                     titleStyle={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                 />
@@ -219,7 +223,7 @@ class ExerciseCompletionModal extends Component {
                             <Button
                                 buttonStyle={{alignSelf: 'center', backgroundColor: isCompleted ? AppColors.zeplin.yellow : AppColors.transparent, borderColor: isCompleted ? AppColors.transparent : AppColors.zeplin.yellow, width: (modalWidth - (AppSizes.padding * 2)),}}
                                 containerStyle={{marginLeft: 0, marginRight: 0,}}
-                                onPress={() => this._closeModal(() => onComplete())}
+                                onPress={isSubmitting ? () => {} : () => this._closeModal(() => onComplete())}
                                 title={'Complete'}
                                 titleStyle={{color: isCompleted ? AppColors.white : AppColors.zeplin.yellow, flex: 1, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}
                                 type={isCompleted ? 'solid' : 'outline'}

@@ -129,8 +129,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 33
-        versionName "3.2.0"
+        versionCode 34
+        versionName "3.3.0"
     }
     configurations.all {
         resolutionStrategy {
@@ -196,7 +196,7 @@ dependencies {
     implementation project(':lottie-react-native')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-android-location-services-dialog-box')
-    implementation project(':react-native-ble-manager')
+    implementation project(':react-native-ble-plx')
     implementation project(':react-native-device-info')
     implementation project(':react-native-webview')
     implementation project(':react-native-keep-awake')

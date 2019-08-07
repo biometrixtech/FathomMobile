@@ -17,13 +17,13 @@ Installed React-Native libraries that we're utilizing
 | [Async Storage](https://github.com/react-native-community/react-native-async-storage) | An asynchronous, persistent, key-value storage system for React-Native. | Utils |
 | [App Intro Slider](https://github.com/Jacse/react-native-app-intro-slider) | Easy-to-use yet very configurable app introduction slider/swiper | Tutorials |
 | [Apple HealthKit](https://github.com/mazenchami/rn-apple-healthkit) | A React-Native bridge module for interacting with Apple HealthKit data. Forked from [RN-Apple-HealthKit](https://github.com/terrillo/rn-apple-healthkit) & [RN-Apple-HealthKit AFGhazy](https://github.com/AFGhazy/rn-apple-healthkit). | Start, Login, On-boarding, Settings |
-| [BLE Manager](https://github.com/innoveit/react-native-ble-manager) | React-Native BLE communication module. | Pair with sensor and sync data |
+| [BLE](https://github.com/Polidea/react-native-ble-plx) | React-Native BLE Library. | Pair with sensor and sync data |
 | [Accordion](https://github.com/oblador/react-native-collapsible) | Animated collapsible component for React-Native, good for accordions, toggles etc | 1. Athlete Compliance Modal<br/>2. User Account (Account Information & About You sections) |
 | [Animatable](https://github.com/oblador/react-native-animatable) | Standard set of easy to use animations and declarative transitions for React-Native. | SoreBodyPart |
 | [Dash](https://github.com/obipawan/react-native-dash) | A super simple <Dash /> component for react-native to draw customizable dashed lines. | FathomCharts |
 | [Date Picker](https://github.com/xgfe/react-native-datepicker) | React-Native datePicker component for both Android and IOS, using DatePickerAndroid, TimePickerAndroid and DatePickerIOS | On-boarding User Account About (Date of Birth) |
 | [Deck Swiper](https://github.com/alexbrillant/react-native-deck-swiper) | Tinder like React-Native deck swiper | MyPlan.js for notifications |
-| [Dialog Input](https://github.com/joseestrella89/react-native-dialog-input/) | Modal with input for React-Native | BluetoothConnect3Sensor.js for wifi password |
+| [Dialog Input](https://github.com/joseestrella89/react-native-dialog-input/) | Modal with input for React-Native | BluetoothConnect.js for wifi password |
 | [Dropdown Alert](https://github.com/testshallpass/react-native-dropdownalert) | A simple alert to notify users about new chat messages, something went wrong or everything is ok. | When we lose internet connection |
 | [Easy Toast](https://github.com/crazycodeboy/react-native-easy-toast) | A React-Native module to show toast like android, it works on iOS and Android. | Toast message to user (mainly internal) |
 | [Easter Egg](https://github.com/FuYaoDe/react-native-egg) | Implementation simple gestures detection achieve trigger easter egg, You can also use it as a gesture switch. | (INTERNAL) Toggle environment |

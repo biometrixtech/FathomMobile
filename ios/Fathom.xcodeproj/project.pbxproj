@@ -36,13 +36,14 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* FathomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* FathomTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
+		721F02F622DFB442001FDD13 /* libBleClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 721F02B422DFB437001FDD13 /* libBleClient.a */; };
 		723539C02260DC37003049A5 /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 723539B42260DC22003049A5 /* libRNCNetInfo.a */; };
 		72A486922285C0B900C351EE /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A4868A2285C0A700C351EE /* libRNReactNativeHapticFeedback.a */; };
+		72C80D7A22DFAC0400F64903 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C80D7922DFAC0400F64903 /* File.swift */; };
 		72F02F0E22552EC500943040 /* libLottie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0722552EA400943040 /* libLottie.a */; };
 		72F02F0F22552EC500943040 /* libLottieReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0D22552EB000943040 /* libLottieReactNative.a */; };
 		72F02F1022552ED000943040 /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0122552EA400943040 /* Lottie.framework */; };
 		72F02F1122552ED000943040 /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0122552EA400943040 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		72F02F1B225531AB00943040 /* libBleManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F1A2255319C00943040 /* libBleManager.a */; };
 		72F02F252255323600943040 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F222255321500943040 /* libRNDeviceInfo.a */; };
 		72F02F2C2255357F00943040 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F2B2255357000943040 /* libRNCWebView.a */; };
 		72F02F352255361300943040 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F342255361300943040 /* CoreData.framework */; };
@@ -338,6 +339,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		721F02B322DFB437001FDD13 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D73F06E81D48E17B00AD5963;
+			remoteInfo = BleClient;
+		};
 		723539B32260DC22003049A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */;
@@ -428,13 +436,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 62CA59B71E3C173B002D7188;
 			remoteInfo = Lottie_iOS;
-		};
-		72F02F192255319C00943040 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 72F02F152255319B00943040 /* BleManager.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = BleManager;
 		};
 		72F02F212255321500943040 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -658,11 +659,13 @@
 		2D02E4901E0B4A5D006451C7 /* Fathom-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Fathom-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleClient.xcodeproj; path = "../node_modules/react-native-ble-plx/ios/BleClient.xcodeproj"; sourceTree = "<group>"; };
 		723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCNetInfo.xcodeproj; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; };
 		72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNReactNativeHapticFeedback.xcodeproj; path = "../node_modules/react-native-haptic-feedback/ios/RNReactNativeHapticFeedback.xcodeproj"; sourceTree = "<group>"; };
+		72C80D7922DFAC0400F64903 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		72C80D7B22DFAC2000F64903 /* Fathom-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Fathom-Bridging-Header.h"; sourceTree = "<group>"; };
 		72F02EF922552EA400943040 /* Lottie.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
 		72F02F0822552EB000943040 /* LottieReactNative.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LottieReactNative.xcodeproj; path = "../node_modules/lottie-react-native/src/ios/LottieReactNative.xcodeproj"; sourceTree = "<group>"; };
-		72F02F152255319B00943040 /* BleManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleManager.xcodeproj; path = "../node_modules/react-native-ble-manager/ios/BleManager.xcodeproj"; sourceTree = "<group>"; };
 		72F02F1C2255321500943040 /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		72F02F262255356F00943040 /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCWebView.xcodeproj; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; };
 		72F02F342255361300943040 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -748,6 +751,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				721F02F622DFB442001FDD13 /* libBleClient.a in Frameworks */,
 				72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */,
 				72A486922285C0B900C351EE /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				72FA2CE22278D75B00282A2C /* libRNMagicMove.a in Frameworks */,
@@ -771,7 +775,6 @@
 				72F02F2C2255357F00943040 /* libRNCWebView.a in Frameworks */,
 				72F02FE022553F3000943040 /* HealthKit.framework in Frameworks */,
 				72F02F252255323600943040 /* libRNDeviceInfo.a in Frameworks */,
-				72F02F1B225531AB00943040 /* libBleManager.a in Frameworks */,
 				72F02F0E22552EC500943040 /* libLottie.a in Frameworks */,
 				72F02F0F22552EC500943040 /* libLottieReactNative.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
@@ -961,6 +964,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		721F02AE22DFB437001FDD13 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				721F02B422DFB437001FDD13 /* libBleClient.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		723539792260DC21003049A5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -968,6 +979,13 @@
 				723539B62260DC22003049A5 /* libRNCNetInfo-tvOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7268C05622DFA37C0058486F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		72A4864A2285C0A600C351EE /* Products */ = {
@@ -993,14 +1011,6 @@
 			isa = PBXGroup;
 			children = (
 				72F02F0D22552EB000943040 /* libLottieReactNative.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		72F02F162255319B00943040 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				72F02F1A2255319C00943040 /* libBleManager.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1194,6 +1204,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */,
 				72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */,
 				72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */,
 				72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */,
@@ -1211,7 +1222,6 @@
 				72F02F3C2255367500943040 /* KCKeepAwake.xcodeproj */,
 				72F02F262255356F00943040 /* RNCWebView.xcodeproj */,
 				72F02F1C2255321500943040 /* RNDeviceInfo.xcodeproj */,
-				72F02F152255319B00943040 /* BleManager.xcodeproj */,
 				72F02F0822552EB000943040 /* LottieReactNative.xcodeproj */,
 				72F02EF922552EA400943040 /* Lottie.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -1242,6 +1252,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				72C80D7922DFAC0400F64903 /* File.swift */,
+				72C80D7B22DFAC2000F64903 /* Fathom-Bridging-Header.h */,
 				72F030122255433100943040 /* Crashlytics.framework */,
 				72F030132255433200943040 /* Fabric.framework */,
 				72F02FE122553F9F00943040 /* Fonts */,
@@ -1250,6 +1262,7 @@
 				00E356EF1AD99517003FC87E /* FathomTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				7268C05622DFA37C0058486F /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1360,7 +1373,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 940;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -1369,6 +1382,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = FFKN7TF2BB;
+						LastSwiftMigration = 1020;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.AccessWiFi = {
@@ -1417,8 +1431,8 @@
 					ProjectRef = 72F02F43225537BE00943040 /* ART.xcodeproj */;
 				},
 				{
-					ProductGroup = 72F02F162255319B00943040 /* Products */;
-					ProjectRef = 72F02F152255319B00943040 /* BleManager.xcodeproj */;
+					ProductGroup = 721F02AE22DFB437001FDD13 /* Products */;
+					ProjectRef = 721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */;
 				},
 				{
 					ProductGroup = 72F02FCB22553D8B00943040 /* Products */;
@@ -1762,6 +1776,13 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		721F02B422DFB437001FDD13 /* libBleClient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBleClient.a;
+			remoteRef = 721F02B322DFB437001FDD13 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		723539B42260DC22003049A5 /* libRNCNetInfo.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1844,13 +1865,6 @@
 			fileType = archive.ar;
 			path = libLottieReactNative.a;
 			remoteRef = 72F02F0C22552EB000943040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		72F02F1A2255319C00943040 /* libBleManager.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libBleManager.a;
-			remoteRef = 72F02F192255319C00943040 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		72F02F222255321500943040 /* libRNDeviceInfo.a */ = {
@@ -2175,6 +2189,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				72C80D7A22DFAC0400F64903 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2232,14 +2247,17 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FathomTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2253,11 +2271,14 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FathomTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2272,6 +2293,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -2295,6 +2317,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Dev Provisioning Profile";
+				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -2303,6 +2328,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
@@ -2327,6 +2353,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom App Store Provisioning Profile";
+				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -2343,8 +2371,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2369,8 +2399,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2394,8 +2426,10 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2419,8 +2453,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2484,6 +2520,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Fathom/Fathom.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
@@ -2507,6 +2544,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.fathom.fathomai;
 				PRODUCT_NAME = Fathom;
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
+				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging;
@@ -2514,11 +2553,14 @@
 		725FDDDF22563D7A006B3BAD /* Staging */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FathomTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2541,8 +2583,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2566,8 +2610,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Fathom-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",

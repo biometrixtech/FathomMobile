@@ -1,4 +1,5 @@
 /* global it expect jest */
+/* global it expect describe */
 /* global it expect beforeAll */
 import 'react-native';
 
@@ -10,7 +11,7 @@ import moment from 'moment';
 import { PlanLogic, } from '../';
 
 // Consts and Libs
-import { AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
+import { AppColors, AppSizes, MyPlan as MyPlanConstants, } from '../../constants';
 
 // mock async-storage
 beforeAll(() => {
@@ -1154,71 +1155,295 @@ const helperFunctions = {
 //     let expectedResult = {};
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
 
-it('Add Title To Active Modality - NO OBJ', () => {
-    expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+describe('Handle Insight Render Logic', () => {
+    it('Workouts - Without Sessions', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'WORKOUTS',
+            selectedDate:        'Sun. Aug 4th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: true,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {date: '2019-08-04',}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 5, 8)).toEqual(expectedResult);
+    });
+    it('Workouts - With Sessions', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'WORKOUTS',
+            selectedDate:        'Sun. Aug 4th',
+            sessions:            [{}, {}, {}],
+            showLeftDateButton:  true,
+            showRightDateButton: true,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {date: '2019-08-04', sessions: [{}, {}, {}]}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 5, 8)).toEqual(expectedResult);
+    });
+    it('Pain & Soreness', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'BODY RESPONSE',
+            selectedDate:        'Mon. Aug 5th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: false,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 6, 7)).toEqual(expectedResult);
+    });
+    it('Biomechanics', () => {
+        let expectedResult = {
+            cardTitle:           '',
+            insightTitle:        'BIOMECHANICS',
+            selectedDate:        'Mon. Aug 5th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: false,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 6, 9)).toEqual(expectedResult);
+    });
 });
 
-it('Add Title To Active Modality - MOBILIZE', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/mobilize.png'),
-        completed:       false,
-        isBodyModality:  false,
-        modality:        'prepare',
-        timing:          ['0 min, ', 'within 4 hrs of training'],
-        title:           'MOBILIZE',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+describe('Handle Body Part Overlay Render Logic', () => {
+    it('Only Front', () => {
+        let absObj = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+        absObj.tintColor = AppColors.zeplin.splashLight;
+        absObj.front = true;
+        absObj.order = 2;
+        absObj.imageSource = require('../../../assets/images/body/body_overlay/Abs.png');
+        let expectedResult = {
+            filteredBackBodyParts:  [],
+            filteredFrontBodyParts: [absObj],
+        };
+        let bodyParts = [{body_part_location: 3, side: 0, color: 4}];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts, () => require('../../../assets/images/body/body_overlay/Abs.png'))).toEqual(expectedResult);
+    });
+    it('No Body Parts', () => {
+        let expectedResult = {
+            filteredBackBodyParts:  [],
+            filteredFrontBodyParts: [],
+        };
+        let bodyParts = [];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts)).toEqual(expectedResult);
+    });
+    it('A Couple in Front & Back', () => {
+        let absObj = helperFunctions.getAreaOfSorenessNonBilateralAreaClicked();
+        absObj.tintColor = AppColors.zeplin.splashLight;
+        absObj.front = true;
+        absObj.order = 2;
+        absObj.imageSource = require('../../../assets/images/body/body_overlay/Abs.png');
+        let lowBackObj = {
+            bilateral:    false,
+            front:        false,
+            group:        'muscle',
+            helping_verb: 'has',
+            image:        {0: 'LowBack.svg'},
+            imageSource:  require('../../../assets/images/body/body_overlay/LowBack.png'),
+            index:        12,
+            label:        'Lower Back',
+            location:     'upper body',
+            order:        6,
+            tintColor:    AppColors.zeplin.warningLight,
+        };
+        let stubLatsObj = {
+            bilateral:    true,
+            front:        false,
+            group:        'muscle',
+            helping_verb: 'has',
+            image:        {0: 'Lats.svg', 1: 'L_Lats.svg', 2: 'R_Lats.svg'},
+            imageSource:  '',
+            index:        21,
+            label:        'Lats',
+            location:     'upper body',
+            order:        5,
+            tintColor:    AppColors.zeplin.splashXLight,
+        };
+        let leftLatObj = _.cloneDeep(stubLatsObj);
+        leftLatObj.imageSource = require('../../../assets/images/body/body_overlay/L_Lats.png');
+        let rightLatObj = _.cloneDeep(stubLatsObj);
+        rightLatObj.imageSource = require('../../../assets/images/body/body_overlay/R_Lats.png')
+        let expectedResult = {
+            filteredBackBodyParts:  [lowBackObj, leftLatObj, rightLatObj],
+            filteredFrontBodyParts: [absObj],
+        };
+        let bodyParts = [
+            {body_part_location: 12, side: 0, color: 5},
+            {body_part: 3, side: 0, color: 4},
+            {body_part_location: 21, side: 1, color: 7},
+            {body_part: 21, side: 2, color: 7},
+        ];
+        expect(PlanLogic.handleBodyOverlayRenderLogic(bodyParts, imageStr =>
+            imageStr === 'Abs.svg' ?
+                require('../../../assets/images/body/body_overlay/Abs.png')
+                : imageStr === 'LowBack.svg' ?
+                    require('../../../assets/images/body/body_overlay/LowBack.png')
+                    : imageStr === 'R_Lats.svg' ?
+                        require('../../../assets/images/body/body_overlay/R_Lats.png')
+                        :
+                        require('../../../assets/images/body/body_overlay/L_Lats.png')
+        )).toEqual(expectedResult);
+    });
 });
 
-it('Add Title To Active Modality - ACTIVE RECOVERY', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
-        completed:       false,
-        isBodyModality:  false,
-        modality:        'coolDown',
-        timing:          ['0 min, ', 'within 6 hrs of training'],
-        title:           'ACTIVE RECOVERY',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+describe('Handle Trend Render Logic', () => {
+    it('No Current Alert', () => {
+        let expectedResult = {
+            icon:          false,
+            iconType:      false,
+            subtitleColor: AppColors.zeplin.errorLight,
+            sportName:     false,
+        };
+        expect(PlanLogic.handleTrendRenderLogic()).toEqual(expectedResult);
+    });
+    it('Has Icon', () => {
+        let currentAlert = {
+            status: {
+                color:      5,
+                icon:       'md-body',
+                icon_type:  'ionicon',
+                sport_name: null,
+            },
+        };
+        let expectedResult = {
+            icon:          'md-body',
+            iconType:      'ionicon',
+            imageSource:   false,
+            subtitleColor: AppColors.zeplin.warningLight,
+            sportName:     false,
+        };
+        expect(PlanLogic.handleTrendRenderLogic(currentAlert)).toEqual(expectedResult);
+    });
+    it('Has Sport', () => {
+        let currentAlert = {
+            status: {
+                color:      1,
+                icon:       false,
+                icon_type:  false,
+                sport_name: 45,
+            },
+        };
+        let expectedResult = {
+            icon:          false,
+            iconType:      false,
+            imageSource:   require('../../../assets/images/sports_images/icons8-swimming-200.png'),
+            subtitleColor: AppColors.zeplin.warningLight,
+            sportName:     'SWIMMING',
+        };
+        expect(PlanLogic.handleTrendRenderLogic(currentAlert)).toEqual(expectedResult);
+    });
 });
 
-it('Add Title To Active Modality - CWI', () => {
-    let dailyPlanObj = [{active: true, completed: false,}];
-    let expectedResult = [{
-        active:          true,
-        backgroundImage: require('../../../assets/images/standard/cwi.png'),
-        completed:       false,
-        isBodyModality:  true,
-        modality:        'cwi',
-        timing:          ['0 min, ', 'after all training is completed'],
-        title:           'COLD WATER BATH',
-    }];
-    expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+describe('Body Overlay Color String', () => {
+    it('Only Color - Triggers PlanLogic.returnInsightColorString()', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(false, false, 4)).toEqual(AppColors.zeplin.splashLight);
+    });
+    it('Not Pain & Mild', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(1, false, false)).toEqual(AppColors.bodyOverlay.sorenessMild);
+    });
+    it('Not Pain & Mod', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(2, false, false)).toEqual(AppColors.bodyOverlay.sorenessMod);
+    });
+    it('Not Pain & Severe', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(3, false, false)).toEqual(AppColors.bodyOverlay.sorenessSevere);
+    });
+    it('Not Pain & No Value', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(0, false, false)).toEqual(AppColors.bodyOverlay.sorenessMild);
+    });
+    it('Pain & Mild', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(1, true, false)).toEqual(AppColors.bodyOverlay.painMild);
+    });
+    it('Pain & Mod', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(2, true, false)).toEqual(AppColors.bodyOverlay.painMod);
+    });
+    it('Pain & Severe', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(3, true, false)).toEqual(AppColors.bodyOverlay.painSevere);
+    });
+    it('Pain & No Value', () => {
+        expect(PlanLogic.returnBodyOverlayColorString(0, true, false)).toEqual(AppColors.bodyOverlay.painMild);
+    });
+});
+
+describe('Insight Color String', () => {
+    it('No Color', () => {
+        expect(PlanLogic.returnInsightColorString()).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 1', () => {
+        expect(PlanLogic.returnInsightColorString(1)).toEqual(AppColors.zeplin.warningLight);
+    });
+    it('Index 2', () => {
+        expect(PlanLogic.returnInsightColorString(2)).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 3', () => {
+        expect(PlanLogic.returnInsightColorString(3)).toEqual(AppColors.zeplin.slateXLight);
+    });
+    it('Index 4', () => {
+        expect(PlanLogic.returnInsightColorString(4)).toEqual(AppColors.zeplin.splashLight);
+    });
+    it('Index 5', () => {
+        expect(PlanLogic.returnInsightColorString(5)).toEqual(AppColors.zeplin.warningLight);
+    });
+    it('Index 6', () => {
+        expect(PlanLogic.returnInsightColorString(6)).toEqual(AppColors.zeplin.errorLight);
+    });
+    it('Index 7', () => {
+        expect(PlanLogic.returnInsightColorString(7)).toEqual(AppColors.zeplin.splashXLight);
+    });
+});
+
+describe('Add Title To Active Modality', () => {
+    it('NO OBJ', () => {
+        expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
+    });
+    it('MOBILIZE', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/mobilize.png'),
+            completed:       false,
+            isBodyModality:  false,
+            modality:        'prepare',
+            timing:          ['0 min, ', 'within 4 hrs of training'],
+            title:           'MOBILIZE',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
+    });
+    it('ACTIVE RECOVERY', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/active_recovery.png'),
+            completed:       false,
+            isBodyModality:  false,
+            modality:        'coolDown',
+            timing:          ['0 min, ', 'within 6 hrs of training'],
+            title:           'ACTIVE RECOVERY',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
+    });
+    it('CWI', () => {
+        let dailyPlanObj = [{active: true, completed: false,}];
+        let expectedResult = [{
+            active:          true,
+            backgroundImage: require('../../../assets/images/standard/cwi.png'),
+            completed:       false,
+            isBodyModality:  true,
+            modality:        'cwi',
+            timing:          ['0 min, ', 'after all training is completed'],
+            title:           'COLD WATER BATH',
+        }];
+        expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'COLD WATER BATH', 'after all training is completed', false, 'cwi', require('../../../assets/images/standard/cwi.png'))).toEqual(expectedResult);
+    });
 });
 
 it('Exercises Render Logic - PREPARE', () => {

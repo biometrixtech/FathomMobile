@@ -97,7 +97,9 @@ const UTIL = {
     },
 
     getMaintenanceWindow: () => {
-        InitActions.getMaintenanceWindow(true);
+        InitActions.getMaintenanceWindow(true)
+            .then(res => console.log('res',res))
+            .catch(err => console.log('err',err));
     },
 
     handleScheduledMaintenanceAlert: (displayAlert, header, message) => {
@@ -392,15 +394,15 @@ const UTIL = {
                 if(syncDate) {
                     // 1- syncDate - today3AM (workout/hr)
                     apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, syncDate, today3AM, AppleHealthKit));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM, true, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, syncDate, today3AM, true, AppleHealthKit)); // resolving empty
                     // 2- lastSync - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, lastSync, now, true, AppleHealthKit)); // resolving empty
                 } else {
                     // 1- daysAgo - today3AM (workout/hr)
                     apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, daysAgo, today3AM, AppleHealthKit));
-                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM, true, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, daysAgo, today3AM, true, AppleHealthKit)); // resolving empty
                     // 2- daysAgo - now (sleep)
-                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now, AppleHealthKit));
+                    apiPromisesArray.push(UTIL._getSleepSamples(appleHealthKitPerms, daysAgo, now, true, AppleHealthKit)); // resolving empty
                 }
                 // return function
                 return UTIL._handleReturnedPromises(userObj, syncDate ? syncDate : daysAgo, apiPromisesArray, true)
@@ -424,7 +426,7 @@ const UTIL = {
                 // combine promises and trigger next step
                 // 1- today3AM - now (workout/hr)
                 apiPromisesArray.push(UTIL._getWorkoutSamples(appleHealthKitPerms, today3AM, now, AppleHealthKit));
-                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now, AppleHealthKit));
+                apiPromisesArray.push(UTIL._getHeartRateSamples(appleHealthKitPerms, today3AM, now, true, AppleHealthKit)); // resolving empty
                 apiPromisesArray.push(UTIL._getSleepSamples(false, false, false, true, AppleHealthKit)); // resolving empty
                 // return function
                 return UTIL._handleReturnedPromises(userObj, null, apiPromisesArray, false)
@@ -521,7 +523,6 @@ const UTIL = {
             _.map(filteredWorkouts, (workout, index) => {
                 let newWorkout = {};
                 filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
-                // TODO: filteredHeartRateValues DOESN'T SEEM TO WORK
                 let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
                 let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
                 newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;

@@ -2,13 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
+import { plan as PlanActions, } from '../../actions';
+
 const TrendChild = ({
     Layout,
+    clearFTECategory,
+    clearFTEView,
     insightType,
     plan,
     triggerType,
 }) => (
     <Layout
+        clearFTECategory={clearFTECategory}
+        clearFTEView={clearFTEView}
         insightType={insightType}
         plan={plan}
         triggerType={triggerType}
@@ -16,10 +22,12 @@ const TrendChild = ({
 );
 
 TrendChild.propTypes = {
-    Layout:      PropTypes.func.isRequired,
-    insightType: PropTypes.number.isRequired,
-    plan:        PropTypes.object.isRequired,
-    triggerType: PropTypes.number,
+    Layout:           PropTypes.func.isRequired,
+    clearFTECategory: PropTypes.func.isRequired,
+    clearFTEView:     PropTypes.func.isRequired,
+    insightType:      PropTypes.number.isRequired,
+    plan:             PropTypes.object.isRequired,
+    triggerType:      PropTypes.number,
 };
 
 TrendChild.defaultProps = {
@@ -27,9 +35,11 @@ TrendChild.defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    insightType: props.insightType,
-    plan:        state.plan,
-    triggerType: props.triggerType,
+    clearFTECategory: PlanActions.clearFTECategory,
+    clearFTEView:     PlanActions.clearFTEView,
+    insightType:      props.insightType,
+    plan:             state.plan,
+    triggerType:      props.triggerType,
 });
 
 const mapDispatchToProps = {};

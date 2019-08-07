@@ -1,12 +1,12 @@
 import React from 'react';
-import { Platform, } from 'react-native';
+import { Animated, Platform, } from 'react-native';
 
 // import third-party libraries
 import _ from 'lodash';
 import moment from 'moment';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../constants';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../constants';
 import { Text, } from '../components/custom';
 import { SensorLogic, } from './';
 
@@ -1046,6 +1046,7 @@ const PlanLogic = {
       */
     handleCompletedExercises: completedExercises => {
         let newCompletedExercises = _.cloneDeep(completedExercises);
+        newCompletedExercises = _.filter(newCompletedExercises);
         newCompletedExercises = _.map(newCompletedExercises, exId => {
             let newExerciseId = _.cloneDeep(exId);
             newExerciseId = newExerciseId.substring(0, newExerciseId.indexOf('-'));
@@ -1436,6 +1437,19 @@ const PlanLogic = {
         if(indexOfLockedBeforeModality !== -1 && indexOfActiveAfterModality !== -1) {
             beforeCompletedLockedModalities = _.filter(beforeCompletedLockedModalities, (o, key) => key !== indexOfLockedBeforeModality);
         }
+        let newInsights = [];
+        if(dailyPlanObj.trends) {
+            _.map(dailyPlanObj.trends.trend_categories, (alert, i) => {
+                _.map(alert.plan_alerts, planAlert => {
+                    if(alert.insight_type === planAlert.category) {
+                        let newPlanAlert = _.cloneDeep(planAlert);
+                        newPlanAlert.insight_type = planAlert.category;
+                        newInsights.push(newPlanAlert);
+                    }
+                });
+            });
+        }
+        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
         return {
             activeAfterModalities,
             activeBeforeModalities,
@@ -1444,7 +1458,9 @@ const PlanLogic = {
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
             isReadinessSurveyCompleted,
+            newInsights,
             offDaySelected,
+            trendDashboardCategories,
             triggerStep,
         };
     },
@@ -1521,20 +1537,22 @@ const PlanLogic = {
     handleTrendsRenderLogic: (plan, os) => {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentStressAlert = trends && trends.stress && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends && trends.response && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
+        let currentStressAlert = trends && trends.stress && trends.stress.alerts && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
+        let currentResponseAlert = trends && trends.response && trends.response.alerts && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
+        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
-        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
+        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
         let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
-        let currentWorkloadAlert = trends && trends.workload && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
+        let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
         let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
         let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
+        let trendCategories = trends && trends.dashboard && trends.dashboard.trend_categories && trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(trends.dashboard.trend_categories) : [];
+        trendCategories.push({});
         return {
             biomechanics,
             bodyResponse,
@@ -1549,7 +1567,49 @@ const PlanLogic = {
             isResponseLocked,
             isStressLocked,
             isWorkloadLocked,
+            trendCategories,
             workload,
+        };
+    },
+
+    /**
+      * Handle Trend Child Render Logic
+      * - TrendChild
+      */
+    // TODO: UNIT TEST ME
+    handleTrendChildRenderLogic: (insightType, plan) => {
+        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
+        let selectedTrendCategory = _.filter(trendCategories, ['insight_type', insightType]);
+        let selectedTrends = _.map(selectedTrendCategory[0].trends, (trend, i) => {
+            let newTrend = _.cloneDeep(trend);
+            newTrend.key = i.toString();
+            return newTrend;
+        });
+        selectedTrends = _.filter(selectedTrends, ['visible', true]);
+        let dashboardTrendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories && dailyPlanObj.trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(dailyPlanObj.trends.dashboard.trend_categories) : [];
+        let trendContextState = [];
+        _.map(selectedTrends, trend => {
+            let newObj = {};
+            newObj.isCollapsed = true;
+            newObj.isPaused = true;
+            newObj.isVideoMuted = false;
+            trendContextState.push(newObj);
+        });
+        let isFTECategoryModalOpen = (selectedTrendCategory && selectedTrendCategory[0] && selectedTrendCategory[0].first_time_experience && selectedTrendCategory[0].first_time_experience_modal) ? true : false;
+        let fteModalData = {
+            body:       isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.body : '',
+            categories: isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.categories : [],
+            title:      isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.title : '',
+            subtext:    isFTECategoryModalOpen ? selectedTrendCategory[0].first_time_experience_modal.subtext : '',
+        };
+        return {
+            dashboardTrendCategories,
+            fteModalData,
+            isFTECategoryModalOpen,
+            selectedTrendCategory,
+            selectedTrends,
+            trendContextState,
         };
     },
 
@@ -1558,21 +1618,78 @@ const PlanLogic = {
       * - TrendChild
       */
     // TODO: UNIT TEST ME
-    handleTrendChildRenderLogic: (currentCardIndex, insightType, plan) => {
-        const insightTitle = insightType === 0 ? 'stress' : insightType === 1 ? 'response' : 'biomechanics';
-        let startSliceValue = insightType === 0 || insightType === 1 ? 7 : 0;
-        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let insightDetails = trends[insightTitle] ? trends[insightTitle] : { alerts: [], cta: [], goals: [], };
-        let updatedAlerts = _.cloneDeep(insightDetails.alerts);
-        updatedAlerts = _.filter(updatedAlerts, o => !(o.trigger_type === 25 || o.trigger_type >= 200));
-        insightDetails.alerts = updatedAlerts;
-        let currentAlert = insightDetails.alerts[currentCardIndex];
+    handleTrendChildItemRenderLogic: (props, selectedTrendCategory, selectedTrends, dashboardTrendCategories, trendContext, styles) => {
+        let bodyParts = [];
+        if(props && props.trend_data) {
+            _.map(props.trend_data.visualization_data.plot_legends, plot => {
+                let newPlotSeries = props.trend_data.data[0][plot.series] ?
+                    _.map(props.trend_data.data[0][plot.series], plotSeries => {
+                        let newObj = _.cloneDeep(plotSeries);
+                        newObj.color = plot.color;
+                        return newObj;
+                    })
+                    :
+                    [];
+                bodyParts = _.concat(bodyParts, newPlotSeries);
+            });
+        }
+        let iconImage = require('../../assets/images/standard/view1icon.png');
+        switch (props.icon) {
+        case 'view1icon.png':
+            iconImage = require('../../assets/images/standard/view1icon.png');
+            break;
+        case 'view3icon.png':
+            iconImage = iconImage = require('../../assets/images/standard/view3icon.png');
+            break;
+        default:
+            iconImage = require('../../assets/images/standard/view1icon.png');
+        }
+        const basePaddingBottom = Platform.OS === 'ios' ? (AppSizes.iphoneXBottomBarPadding + AppSizes.padding + AppSizes.padding) : AppSizes.padding;
+        const dotHeight = 10;
+        const dotsWrapperHeight = 16;
+        const libraryPaginationSize = selectedTrends.length > 1 ? (16 + (AppSizes.isIphoneX ? 34 : 20) + dotHeight + dotsWrapperHeight) : 0;
+        const style = {
+            backgroundColor: AppColors.white,
+            flexGrow:        1,
+        };
+        let parsedData = [];
+        if(props && props.trend_data) {
+            _.map(props.trend_data.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
+                parsedData.push(newParsedData);
+            });
+        }
+        let isCollapsed = trendContext[props.key].isCollapsed;
+        let isPaused = trendContext[props.key].isPaused;
+        let isVideoMuted = trendContext[props.key].isVideoMuted;
+        let animatedValue = new Animated.Value(isCollapsed ? 1 : 0);
+        Animated.timing(animatedValue, {
+            duration: 300,
+            toValue:  isCollapsed ? 0 : 1,
+        }).start();
+        const interpolateRotation = animatedValue.interpolate({
+            inputRange:  [0, 1],
+            outputRange: ['0deg', '180deg'],
+        });
+        const animatedStyle = {transform: [{rotate: interpolateRotation,}]};
+        let trendContextProps = {
+            animatedStyle,
+            isCollapsed,
+            isPaused,
+            isVideoMuted,
+        };
+        let trendCategory = _.find(dashboardTrendCategories, ['insight_type', selectedTrendCategory.insight_type]);
+        let trendCategoryTitle = trendCategory ? trendCategory.title : '';
         return {
-            currentAlert,
-            insightDetails,
-            insightTitle,
-            startSliceValue,
+            bodyParts,
+            bottomPadding: (basePaddingBottom + libraryPaginationSize),
+            iconImage,
+            parsedData,
+            style,
+            trendCategoryTitle,
+            trendContextProps,
         };
     },
 
@@ -1731,11 +1848,11 @@ const PlanLogic = {
             let splitTextArray = _.split(subtitleText, textRegEx);
             splitTextArray = _.remove(splitTextArray, o => o.length > 0);
             if(!textMatchedArray) {
-                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
             } else {
                 if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1743,7 +1860,7 @@ const PlanLogic = {
                     );
                 } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1752,7 +1869,7 @@ const PlanLogic = {
                         </Text>
                     );
                 } else {
-                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
                 }
             }
         }
@@ -1763,7 +1880,6 @@ const PlanLogic = {
       * Handle Trend Render Logic
       * - Trends & Insights
       */
-    // TODO: UNIT TEST ME
     handleTrendRenderLogic: currentAlert => {
         if(!currentAlert || !currentAlert.status) {
             return {
@@ -1859,14 +1975,13 @@ const PlanLogic = {
       * Handle Insight Render Logic
       * - Insight
       */
-    // TODO: UNIT TEST ME
     handleInsightRenderLogic: (currentAlert, currentDataIndex, insightType) => {
         let insightTitle = insightType === 7 ? 'BODY RESPONSE' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
         let showRightDateButton = currentDataIndex !== (currentAlert.data.length - 1);
         let showLeftDateButton = currentDataIndex > 0 && currentDataIndex < 7;
         let selectedDate = currentAlert.data[currentDataIndex] ? moment(currentAlert.data[currentDataIndex].date, 'YYYY-MM-DD').format('ddd. MMM Do') : '';
         let sessions = currentAlert.data[currentDataIndex] ? currentAlert.data[currentDataIndex].sessions : [];
-        let cardTitle = insightType === 7 ? 'TISSUE REPORT' : insightType === 8 ? 'WORKOUT SUMMARY' : '';
+        let cardTitle = insightType === 7 ? 'DAILY SUMMARY' : insightType === 8 ? 'DAILY SUMMARY' : '';
         return {
             cardTitle,
             insightTitle,
@@ -1881,17 +1996,16 @@ const PlanLogic = {
       * Handle Body Overlay Render Logic
       * - BodyOverlay
       */
-    // TODO: UNIT TEST ME
     handleBodyOverlayRenderLogic: (bodyParts, _getImageString) => {
         let frontBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === true);
         let backBodyParts = _.filter(MyPlanConstants.bodyPartMapping, o => o.front === false);
         let filteredFrontBodyParts = _.flatten(
             _.map(bodyParts, bodyPart => {
-                let filteredBodyPart = _.filter(frontBodyParts, o => o.index === bodyPart.body_part);
+                let filteredBodyPart = _.filter(frontBodyParts, o => bodyPart.body_part ? o.index === bodyPart.body_part : o.index === bodyPart.body_part_location);
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
                     return updatedBodyPart;
                 }
                 return [];
@@ -1899,11 +2013,11 @@ const PlanLogic = {
         );
         let filteredBackBodyParts = _.flatten(
             _.map(bodyParts, bodyPart => {
-                let filteredBodyPart = _.filter(backBodyParts, o => o.index === bodyPart.body_part);
+                let filteredBodyPart = _.filter(backBodyParts, o => bodyPart.body_part ? o.index === bodyPart.body_part : o.index === bodyPart.body_part_location);
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
                     return updatedBodyPart;
                 }
                 return [];
@@ -1915,7 +2029,10 @@ const PlanLogic = {
         };
     },
 
-    returnBodyOverlayColorString: (value, isPain) => {
+    returnBodyOverlayColorString: (value, isPain, color) => {
+        if(color) {
+            return PlanLogic.returnInsightColorString(color);
+        }
         return isPain === true ?
             value === 3 ?
                 AppColors.bodyOverlay.painSevere
@@ -1934,7 +2051,7 @@ const PlanLogic = {
 
     returnInsightColorString: color => {
         return color === 1 ?
-            AppColors.zeplin.warwarningLight
+            AppColors.zeplin.warningLight
             : color === 2 ?
                 AppColors.zeplin.errorLight
                 : color === 3 ?
@@ -1943,8 +2060,12 @@ const PlanLogic = {
                         AppColors.zeplin.splashLight
                         : color === 5 ?
                             AppColors.zeplin.warningLight
-                            :
-                            AppColors.zeplin.errorLight;
+                            : color === 6 ?
+                                AppColors.zeplin.errorLight
+                                : color === 7 ?
+                                    AppColors.zeplin.splashXLight
+                                    :
+                                    AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
