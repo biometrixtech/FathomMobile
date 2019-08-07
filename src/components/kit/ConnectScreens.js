@@ -123,9 +123,9 @@ const TopNav = ({ darkColor, onBack, onClose, step, }) => {
     );
 };
 
-const CVP = ({ nextBtn, }) => (
+const CVP = ({ nextBtn, onClose, }) => (
     <View style={{flex: 1,}}>
-        <TopNav darkColor={true} onBack={null} step={false} />
+        <TopNav darkColor={true} onBack={null} onClose={onClose} step={false} />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
             <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(22), marginHorizontal: AppSizes.padding, textAlign: 'center',}}>
                 {'FATHOM PRO KIT:\nTHE WORLD\'S MOST ADVANCED BIOMECHANICS TRACKING SYSTEM'}
@@ -152,12 +152,12 @@ const CVP = ({ nextBtn, }) => (
     </View>
 );
 
-const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showTopNavStep = true, }) => {
+const Placement = ({ currentPage, handleAlertPress, onBack, onClose, nextBtn, page, showTopNavStep = true, }) => {
     let content = SensorLogic.getPlacementContent(styles)[page];
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
-                <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 1 : false} />
+                <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 1 : false} />
                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                     {content.title}
                 </View>
@@ -270,14 +270,14 @@ const Placement = ({ currentPage, handleAlertPress, onBack, nextBtn, page, showT
     );
 };
 
-const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, nextBtn, page, showTopNavStep = true, }) => {
+const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, onBack, onClose, nextBtn, page, showTopNavStep = true, }) => {
     if(page === 0) {
         return (
             <ImageBackground
                 source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_calibration.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
-                <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 2 : false} />
+                <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 2 : false} />
                 <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <LinearGradient
                         colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
@@ -493,9 +493,9 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
+const Complete = ({ currentPage, onBack, onClose, nextBtn, showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
-        <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 4 : false} />
+        <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
             <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>

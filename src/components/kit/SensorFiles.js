@@ -12,8 +12,9 @@ import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
+import { FathomModal, ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { AppUtil, SensorLogic, } from '../../lib';
+import SensorBackUpTutorial from './SensorBackUpTutorial';
 
 const ICON_SIZE = 24;
 
@@ -38,16 +39,20 @@ const TopNavBar = () => (
 
 class SensorFiles extends Component {
     static componentName = 'SensorFiles';
+
     static propTypes = {
-        user: PropTypes.object.isRequired,
+        updateUser: PropTypes.func.isRequired,
+        user:       PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
 
     constructor(props) {
         super(props);
+        const { user, } = this.props;
         this.state = {
-            isTooltipOpen: false,
+            isTooltipOpen:       false,
+            isTutorialModalOpen: !user.first_time_experience.includes('3Sensor-Onboarding-Tutorial-User-Complete'),
         };
     }
 
@@ -65,6 +70,23 @@ class SensorFiles extends Component {
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
         AppUtil.getNetworkStatus(prevProps, this.props.network, Actions);
+    }
+
+    _handleBackUpTutorialOnClose = () => {
+        const { updateUser, user, } = this.props;
+        // update state to close modal
+        this.setState(
+            { isTutorialModalOpen: false, },
+            () => {
+                // setup variables
+                let newUserPayloadObj = {};
+                newUserPayloadObj.first_time_experience = ['3Sensor-Onboarding-Tutorial-User-Complete'];
+                // update user object
+                updateUser(newUserPayloadObj, user.id)
+                    .then(res => console.log('res',res))
+                    .catch(err => console.log('err',err));
+            },
+        );
     }
 
     _handleWifiClicked = sensorNetwork => {
@@ -87,7 +109,7 @@ class SensorFiles extends Component {
 
     render = () => {
         const { user, } = this.props;
-        const { isTooltipOpen, } = this.state;
+        const { isTooltipOpen, isTutorialModalOpen, } = this.state;
         let sensorData = user.sensor_data;
         const {
             batteryIconProps,
@@ -290,6 +312,10 @@ class SensorFiles extends Component {
                 >
                     {`Hardware ID: ${sensorData.sensor_pid}`}
                 </Text>
+                <SensorBackUpTutorial
+                    handleOnClose={this._handleBackUpTutorialOnClose}
+                    isVisible={isTutorialModalOpen}
+                />
             </View>
         );
     }

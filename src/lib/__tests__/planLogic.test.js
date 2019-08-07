@@ -1155,10 +1155,65 @@ const helperFunctions = {
 //     let expectedResult = {};
 //     expect(PlanLogic.()).toEqual(expectedResult);
 // });
-// it('', () => {
-//     let expectedResult = {};
-//     expect(PlanLogic.()).toEqual(expectedResult);
-// });
+
+describe('Handle Insight Render Logic', () => {
+    it('Workouts - Without Sessions', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'WORKOUTS',
+            selectedDate:        'Sun. Aug 4th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: true,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {date: '2019-08-04',}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 5, 8)).toEqual(expectedResult);
+    });
+    it('Workouts - With Sessions', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'WORKOUTS',
+            selectedDate:        'Sun. Aug 4th',
+            sessions:            [{}, {}, {}],
+            showLeftDateButton:  true,
+            showRightDateButton: true,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {date: '2019-08-04', sessions: [{}, {}, {}]}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 5, 8)).toEqual(expectedResult);
+    });
+    it('Pain & Soreness', () => {
+        let expectedResult = {
+            cardTitle:           'DAILY SUMMARY',
+            insightTitle:        'BODY RESPONSE',
+            selectedDate:        'Mon. Aug 5th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: false,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 6, 7)).toEqual(expectedResult);
+    });
+    it('Biomechanics', () => {
+        let expectedResult = {
+            cardTitle:           '',
+            insightTitle:        'BIOMECHANICS',
+            selectedDate:        'Mon. Aug 5th',
+            sessions:            undefined,
+            showLeftDateButton:  true,
+            showRightDateButton: false,
+        };
+        let currentAlert = {
+            data: [{}, {}, {}, {}, {}, {}, {date: '2019-08-05',}],
+        };
+        expect(PlanLogic.handleInsightRenderLogic(currentAlert, 6, 9)).toEqual(expectedResult);
+    });
+});
 
 describe('Handle Body Part Overlay Render Logic', () => {
     it('Only Front', () => {

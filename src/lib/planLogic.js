@@ -1975,7 +1975,6 @@ const PlanLogic = {
       * Handle Insight Render Logic
       * - Insight
       */
-    // TODO: UNIT TEST ME
     handleInsightRenderLogic: (currentAlert, currentDataIndex, insightType) => {
         let insightTitle = insightType === 7 ? 'BODY RESPONSE' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
         let showRightDateButton = currentDataIndex !== (currentAlert.data.length - 1);

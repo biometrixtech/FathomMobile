@@ -190,6 +190,18 @@ class SVGImage extends Component {
                     require('../../../assets/images/body/blue_L_Pec.png')
                 : image === 'R_Pec.svg' ?
                     require('../../../assets/images/body/blue_R_Pec.png')
+                : image === 'Bicep.svg' ?
+                    require('../../../assets/images/body/blue_Bicep.png')
+                : image === 'R_Bicep.svg' ?
+                    require('../../../assets/images/body/blue_R_Bicep.png')
+                : image === 'L_Bicep.svg' ?
+                    require('../../../assets/images/body/blue_L_Bicep.png')
+                : image === 'Tricep.svg' ?
+                    require('../../../assets/images/body/blue_Tricep.png')
+                : image === 'R_Tricep.svg' ?
+                    require('../../../assets/images/body/blue_R_Tricep.png')
+                : image === 'L_Tricep.svg' ?
+                    require('../../../assets/images/body/blue_L_Tricep.png')
                 :
                     require('../../../assets/images/body/blue_Abs.png');
             return imageName;
