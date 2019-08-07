@@ -107,7 +107,6 @@ class BluetoothConnect extends Component {
         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
         let newUserObj = _.cloneDeep(user);
         newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}18`);
-        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Tutorial-User-Complete`);
         newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
         newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
         newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
@@ -120,7 +119,10 @@ class BluetoothConnect extends Component {
             .then(() =>
                 this.setState(
                     { loading: false, },
-                    () => _.delay(() => this._renderNextPage(), 500),
+                    () => _.delay(() => {
+                        this._renderNextPage();
+                        this._updateUserCheckpoint('Tutorial-User-Complete');
+                    }, 500),
                 ) // 3. route to next page
             )
             .catch(err => {
