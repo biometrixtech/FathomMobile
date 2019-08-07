@@ -66,7 +66,6 @@ export default {
         ['post_sensor_data',      `${plansAPIVersion}/session/sensor_data`], // POST
         ['post_session_survey',   `${plansAPIVersion}/session`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
-        ['clear_plan_alert',      `${plansAPIVersion}/trends/plan_alerts/clear`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
         // systems test routes
