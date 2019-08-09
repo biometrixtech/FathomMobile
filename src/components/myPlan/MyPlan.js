@@ -541,7 +541,7 @@ class MyPlan extends Component {
             },
         );
         postReadinessSurvey(newDailyReadiness)
-            .then(response => {
+            .then(response => { console.log('_handleDailyReadinessSurveySubmit-response',response);
                 this.setState(
                     { isPageCalculating: false, },
                     () => {
@@ -561,7 +561,7 @@ class MyPlan extends Component {
                     }
                 );
             })
-            .catch(error => {
+            .catch(error => { console.log('_handleDailyReadinessSurveySubmit-error',error);
                 this.setState(
                     { isPageCalculating: false, },
                     () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),

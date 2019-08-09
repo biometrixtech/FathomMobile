@@ -182,7 +182,9 @@ const UTIL = {
                         :
                         {};
                     UTIL._handle3SensorBanner(userObj, dailyPlanObj);
-                    UTIL.pushToScene('myPlan');
+                    // UTIL.pushToScene('myPlan');
+                    // TODO: REVERT ME
+                    UTIL.pushToScene('biomechanics');
                 }
             }
         }

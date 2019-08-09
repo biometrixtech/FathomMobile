@@ -65,6 +65,12 @@ import TrendChildComponent from '../components/myPlan/TrendChild';
 import InsightContainer from '../containers/myPlan/Insight';
 import InsightComponent from '../components/myPlan/Insight';
 
+import BiomechanicsContainer from '../containers/myPlan/Biomechanics';
+import BiomechanicsComponent from '../components/myPlan/Biomechanics';
+
+import BiomechanicsSummaryContainer from '../containers/myPlan/BiomechanicsSummary';
+import BiomechanicsSummaryComponent from '../components/myPlan/BiomechanicsSummary';
+
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
@@ -244,6 +250,20 @@ const Index = (
                 component={InsightContainer}
                 hideNavBar={true}
                 key={'insight'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={BiomechanicsComponent}
+                component={BiomechanicsContainer}
+                hideNavBar={true}
+                key={'biomechanics'}
+                panHandlers={null}
+            />
+            <Scene
+                Layout={BiomechanicsSummaryComponent}
+                component={BiomechanicsSummaryContainer}
+                hideNavBar={true}
+                key={'biomechanicsSummary'}
                 panHandlers={null}
             />
             <Scene

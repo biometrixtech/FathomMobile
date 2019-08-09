@@ -2029,6 +2029,59 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Handle Biomechanics Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsRenderLogic: (plan, currentIndex) => {
+        let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
+        let biomechanicsSummary = dailyPlan ? dailyPlan.trends.biomechanics_summary : {};
+        let selectedSession = biomechanicsSummary.sessions[currentIndex];
+        let sessionSportName = selectedSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedSession.duration / 3600);
+        let updatedTime = selectedSession.duration - sessionHours * 3600;
+        let sessionMinutes = _.floor(updatedTime / 60);
+        let sessionSeconds = updatedTime - sessionMinutes * 60;
+        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.start_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+        let pieData = selectedSession.asymmetry.apt.summary_data;
+        let chartData = selectedSession.asymmetry.apt.detail_data;
+        let updatedChartData = _.map(chartData, (data, index) => {
+            let newDataObjLeft = {};
+            newDataObjLeft.x = data.x;
+            newDataObjLeft.y = data.y1;
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 9 : 4);
+            let newDataObjRight = {};
+            newDataObjRight.x = data.x;
+            newDataObjRight.y = data.y2;
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 1);
+            return [newDataObjLeft, newDataObjRight];
+        });
+        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
+        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
+        let leftPieWidth = (pieLeftWrapperWidth - 35);
+        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
+        let rightPieWidth = pieLeftWrapperWidth;
+        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        return {
+            leftPieInnerRadius,
+            leftPieWidth,
+            pieData,
+            pieLeftWrapperWidth,
+            pieRightWrapperWidth,
+            rightPieInnerRadius,
+            rightPieWidth,
+            selectedSession,
+            sessionDuration,
+            sessionSportName,
+            sessionStartTimeDuration,
+            sessions:         biomechanicsSummary.sessions,
+            updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
     returnBodyOverlayColorString: (value, isPain, color) => {
         if(color) {
             return PlanLogic.returnInsightColorString(color);
@@ -2064,8 +2117,12 @@ const PlanLogic = {
                                 AppColors.zeplin.errorLight
                                 : color === 7 ?
                                     AppColors.zeplin.splashXLight
-                                    :
-                                    AppColors.zeplin.errorLight;
+                                    : color === 8 ?
+                                        `${AppColors.zeplin.warningLight}${PlanLogic.returnHexOpacity(0.3)}`
+                                        : color === 9 ?
+                                            `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.3)}`
+                                            :
+                                            AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
@@ -2084,6 +2141,12 @@ const PlanLogic = {
         }
         biomechanics.data = dataArray;
         return biomechanics;
+    },
+
+    returnHexOpacity: (opacity = 1) => {
+        let alpha = Math.round(opacity * 255);
+        let hex = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
+        return hex;
     },
 
 };
