@@ -96,6 +96,7 @@ const zeplin = {
     error:        '#EA6F4A',
     errorLight:   '#EE8B6E',
     navy:         '#081832',
+    purpleLight:  '#CBB9D8',
     slate:        '#757D8A',
     slateLight:   '#ADB1B7',
     slateXLight:  '#E2E4E6',

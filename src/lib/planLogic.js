@@ -1543,10 +1543,10 @@ const PlanLogic = {
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
         let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
-        let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
+        let biomechanics = trends && trends.biomechanics_summary ? trends.biomechanics_summary : [];
         let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isBiomechanicsLocked = trends && trends.biomechanics_summary && trends.biomechanics_summary.sessions.length === 0;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
@@ -2035,6 +2035,25 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleBiomechanicsRenderLogic: (plan, currentIndex) => {
+        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
+        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
+        let leftPieWidth = (pieLeftWrapperWidth - 35);
+        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
+        let rightPieWidth = pieLeftWrapperWidth;
+        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        if(currentIndex === -1) {
+            return {
+                leftPieInnerRadius,
+                leftPieWidth,
+                pieData:         { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
+                pieLeftWrapperWidth,
+                pieRightWrapperWidth,
+                rightPieInnerRadius,
+                rightPieWidth,
+                selectedSession: {},
+            };
+        }
         let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
         let biomechanicsSummary = dailyPlan ? dailyPlan.trends.biomechanics_summary : {};
         let selectedSession = biomechanicsSummary.sessions[currentIndex];
@@ -2055,16 +2074,9 @@ const PlanLogic = {
             let newDataObjRight = {};
             newDataObjRight.x = data.x;
             newDataObjRight.y = data.y2;
-            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 1);
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 10);
             return [newDataObjLeft, newDataObjRight];
         });
-        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
-        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
-        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
-        let leftPieWidth = (pieLeftWrapperWidth - 35);
-        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
-        let rightPieWidth = pieLeftWrapperWidth;
-        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
         return {
             leftPieInnerRadius,
             leftPieWidth,
@@ -2118,11 +2130,15 @@ const PlanLogic = {
                                 : color === 7 ?
                                     AppColors.zeplin.splashXLight
                                     : color === 8 ?
-                                        `${AppColors.zeplin.warningLight}${PlanLogic.returnHexOpacity(0.3)}`
+                                        `${AppColors.zeplin.purpleLight}${PlanLogic.returnHexOpacity(0.3)}`
                                         : color === 9 ?
                                             `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.3)}`
-                                            :
-                                            AppColors.zeplin.errorLight;
+                                            : color === 10 ?
+                                                AppColors.zeplin.purpleLight
+                                                : color === 11 ?
+                                                    AppColors.zeplin.slateLight
+                                                    :
+                                                    AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {

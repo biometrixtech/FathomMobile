@@ -50,7 +50,7 @@ import Placeholder, { Line, Media, } from 'rn-placeholder';
 import moment from 'moment';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
@@ -541,7 +541,7 @@ class MyPlan extends Component {
             },
         );
         postReadinessSurvey(newDailyReadiness)
-            .then(response => { console.log('_handleDailyReadinessSurveySubmit-response',response);
+            .then(response => {
                 this.setState(
                     { isPageCalculating: false, },
                     () => {
@@ -561,7 +561,7 @@ class MyPlan extends Component {
                     }
                 );
             })
-            .catch(error => { console.log('_handleDailyReadinessSurveySubmit-error',error);
+            .catch(error => {
                 this.setState(
                     { isPageCalculating: false, },
                     () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),
