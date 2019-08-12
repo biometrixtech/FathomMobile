@@ -226,7 +226,7 @@ class Trends extends PureComponent {
                     :
                     11;
             sessionSport = selectedSession && _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name);
-            biomechanicsAlertText = `${selectedSession.asymmetry.apt.summary_percentage}% ${selectedSession.asymmetry.apt.summary_text}`;
+            biomechanicsAlertText = `${selectedSession.asymmetry.apt.summary_percentage === '' ? '' : `${selectedSession.asymmetry.apt.summary_percentage}%`} ${selectedSession.asymmetry.apt.summary_text}`;
             let boldedText = selectedSession.asymmetry.apt.summary_bold_text;
             boldedText.push({color: null, text: `${selectedSession.asymmetry.apt.summary_percentage}% more`});
             _.map(boldedText, (prop, i) => {
@@ -386,9 +386,9 @@ class Trends extends PureComponent {
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             { !isBiomechanicsLocked &&
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
                                     <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Biomechanics'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{moment(selectedSession.start_date_time).format('M/D, h:mma')}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.start_date_time).format('M/D, h:mma')}</Text>
                                 </View>
                             }
                             <BiomechanicsCharts

@@ -248,7 +248,7 @@ class Biomechanics extends PureComponent {
 
                     <View style={{flexDirection: 'row', marginHorizontal: AppSizes.paddingMed, marginVertical: AppSizes.padding,}}>
                         <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { step: 3, title: 'Effects of Asymmetry', })}
+                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 3, title: 'Effects of Asymmetry', })}
                             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginRight: AppSizes.paddingSml, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
                         >
                             <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Effects of Asymmetry'}</Text>
@@ -259,14 +259,14 @@ class Biomechanics extends PureComponent {
                             />
                             <TabIcon
                                 color={AppColors.zeplin.slateXLight}
-                                containerStyle={[{alignSelf: 'flex-end',}]}
+                                containerStyle={[{bottom: AppSizes.paddingMed, position: 'absolute', right: AppSizes.paddingMed,}]}
                                 icon={'chevron-right'}
                                 size={20}
                                 type={'material-community'}
                             />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { step: 4, title: 'Searching for Insights', })}
+                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 4, title: 'Searching for Insights', })}
                             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
                         >
                             <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Searching for Insights'}</Text>
@@ -279,7 +279,7 @@ class Biomechanics extends PureComponent {
                             </View>
                             <TabIcon
                                 color={AppColors.zeplin.slateXLight}
-                                containerStyle={[{alignSelf: 'flex-end',}]}
+                                containerStyle={[{bottom: AppSizes.paddingMed, position: 'absolute', right: AppSizes.paddingMed,}]}
                                 icon={'chevron-right'}
                                 size={20}
                                 type={'material-community'}

@@ -164,7 +164,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                         {step === 1 ? selectedSession.asymmetry.apt.summary_take_away_text : selectedSession.asymmetry.apt.detail_text}
                     </ParsedText>
                     :
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18),}}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
                         { step === 3 ?
                             'Chronically anterior pelvic asymmetric  may correlate with imbalances in these muscle groups.'
                             : step === 4 ?
@@ -175,7 +175,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                     </Text>
                 }
                 <Spacer size={AppSizes.padding} />
-                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>
+                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                     { step === 1 ?
                         'How It’s Measured:'
                         : step === 2 ?
@@ -188,7 +188,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                                     null
                     }
                 </Text>
-                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                     { step === 1 ?
                         'Arch your lower back. Now tuck your tailbone. That is the range of anterior pelvic tilt. We measure this range of motion while left foot is in contact with the ground and compare that to  right foot ground contacts to identify asymmetry. We\'ll try to identify and correct the imbalances at the source to avoid the potential effects.\n\nFor best results, remember to consistently place your "hip sensor" in the center of your spine and low- on your sacrum, just above the tailbone.'
                         : step === 2 ?

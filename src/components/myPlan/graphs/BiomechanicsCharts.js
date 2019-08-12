@@ -76,10 +76,11 @@ class BiomechanicsCharts extends PureComponent {
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{'00:00'}</Text>
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{sessionDuration}</Text>
                             </View>
-                            <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(8),}}>{'left'}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(10),}}>{'left'}</Text>
                         </View>
                         <V.VictoryChart
                             domain={{ y: [10, -10], }}
+                            height={((AppSizes.screen.width - (AppSizes.paddingMed * 2)) * 0.5)}
                             padding={{bottom: AppSizes.paddingSml, left: AppSizes.paddingLrg, right: AppSizes.paddingSml, top: AppSizes.paddingSml,}}
                             width={(AppSizes.screen.width - (AppSizes.paddingMed * 2))}
                         >
@@ -93,7 +94,12 @@ class BiomechanicsCharts extends PureComponent {
                                     tickLabels: { ...AppFonts.robotoLight, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(6), },
                                 }}
                                 tickCount={20}
-                                tickFormat={t => t < 0 ? (t * -1) : t}
+                                tickFormat={t =>
+                                    t % 2 === 0 ?
+                                        t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                        :
+                                        ''
+                                }
                             />
                             {/* X-Axis */}
                             <V.VictoryAxis
@@ -110,7 +116,7 @@ class BiomechanicsCharts extends PureComponent {
                             />
                         </V.VictoryChart>
                         <View style={{marginBottom: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(8),}}>{'right'}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
                         </View>
                         <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
                             {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
@@ -175,68 +181,64 @@ class BiomechanicsCharts extends PureComponent {
                                 />
                             </View>
                         </ImageBackground>
-                        <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
-                            { showDetails ?
-                                <View>
-                                    { showTitle &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
-                                    }
-                                    <Spacer size={AppSizes.paddingXSml} />
-                                    { selectedSession.asymmetry.apt.summary_side === 0 ?
-                                        <Image
-                                            resizeMode={'contain'}
-                                            source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                            style={{alignSelf: 'center', height: 50, tintColor: AppColors.zeplin.successLight, width: 50,}}
-                                        />
-                                        :
-                                        <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(38),}}>{`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}</Text>
-                                    }
-                                    <Spacer size={AppSizes.paddingXSml} />
-                                    <ParsedText
-                                        parse={parsedSummaryData}
-                                        style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
-                                    >
-                                        {selectedSession.asymmetry.apt.summary_text}
-                                    </ParsedText>
-                                </View>
-                                :
-                                <View />
-                            }
-                            <View>
-                                <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
-                                    <View
-                                        style={{
-                                            backgroundColor: AppColors.zeplin.purpleLight,
-                                            borderRadius:    (10 / 2),
-                                            height:          10,
-                                            marginRight:     AppSizes.paddingSml,
-                                            width:           10,
-                                        }}
-                                    />
-                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'Left side ROM'}</Text>
-                                </View>
-                                <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    <View
-                                        style={{
-                                            backgroundColor: AppColors.zeplin.splashLight,
-                                            borderRadius:    (10 / 2),
-                                            height:          10,
-                                            marginRight:     AppSizes.paddingSml,
-                                            width:           10,
-                                        }}
-                                    />
-                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'Right side ROM'}</Text>
-                                </View>
-                                { showTitle &&
-                                    <TabIcon
-                                        color={AppColors.zeplin.slateXLight}
-                                        containerStyle={[{alignSelf: 'flex-end',}]}
-                                        icon={'chevron-right'}
-                                        size={20}
-                                        type={'material-community'}
-                                    />
+                        <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
+                            <View style={{justifyContent: 'space-between',}}>
+                                { showDetails ?
+                                    <View>
+                                        { showTitle &&
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
+                                        }
+                                        { _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                            null
+                                            :
+                                            <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(38),}}>{`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}</Text>
+                                        }
+                                        <ParsedText
+                                            parse={parsedSummaryData}
+                                            style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
+                                        >
+                                            {selectedSession.asymmetry.apt.summary_text}
+                                        </ParsedText>
+                                    </View>
+                                    :
+                                    <View />
                                 }
+                                <View>
+                                    <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
+                                        <View
+                                            style={{
+                                                backgroundColor: AppColors.zeplin.purpleLight,
+                                                borderRadius:    (10 / 2),
+                                                height:          10,
+                                                marginRight:     AppSizes.paddingSml,
+                                                width:           10,
+                                            }}
+                                        />
+                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Left side ROM'}</Text>
+                                    </View>
+                                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                        <View
+                                            style={{
+                                                backgroundColor: AppColors.zeplin.splashLight,
+                                                borderRadius:    (10 / 2),
+                                                height:          10,
+                                                marginRight:     AppSizes.paddingSml,
+                                                width:           10,
+                                            }}
+                                        />
+                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Right side ROM'}</Text>
+                                    </View>
+                                </View>
                             </View>
+                            { showTitle &&
+                                <TabIcon
+                                    color={AppColors.zeplin.slateXLight}
+                                    containerStyle={[{alignSelf: 'flex-end',}]}
+                                    icon={'chevron-right'}
+                                    size={20}
+                                    type={'material-community'}
+                                />
+                            }
                         </View>
                     </View>
                 }
