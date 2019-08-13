@@ -89,7 +89,6 @@ Components installed once for usage but not currently being used
 | Feature | Summary |
 | --- | --- |
 | [Calendar Strip](https://github.com/BugiDev/react-native-calendar-strip) | Easy to use and visually stunning calendar component for React-Native. |
-| [Magic Move](https://github.com/IjzerenHein/react-native-magic-move) | Create magical move transitions between scenes in React-Native. Also installed [React Navigation Magic Move](https://github.com/IjzerenHein/react-navigation-magic-move) - Bindings for using react-navigation with react-native-magic-move |
 | [Modal Dropdown](https://github.com/sohobloo/react-native-modal-dropdown) | A React-Native dropdown/picker/selector component for both Android & iOS. |
 | [Progress](https://github.com/oblador/react-native-progress) | Progress indicators and spinners for React-Native using ReactART. |
 | [Remote SVG](https://github.com/seekshiva/react-native-remote-svg) | Image component that supports SVG filetype in [React-Native](https://facebook.github.io/react-native/). |

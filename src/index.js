@@ -2,21 +2,20 @@ import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { Provider, } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { Image, Platform, PushNotificationIOS, StatusBar, StyleSheet, View, } from 'react-native';
+import { Image, Platform, StatusBar, StyleSheet, View, } from 'react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 // import components
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
 import { AlertHelper, AppUtil, } from './lib';
 import { Spacer, TabIcon, Text, } from './components/custom';
-import { store } from './store';
+// import { store } from './store';
 import Routes from './routes';
 
 // import third-party libraries
-import 'react-native-magic-move';
 import { Router, Stack, } from 'react-native-router-flux';
-import { NetworkMonitor } from 'react-native-redux-connectivity';
+import { NetworkMonitor, } from 'react-native-redux-connectivity';
 import * as Fabric from 'react-native-fabric';
-import * as MagicMove from 'react-native-magic-move';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
@@ -91,7 +90,7 @@ class Root extends Component {
         //   in div (created by App)
         //   in App
         // logComponentStackToMyService(info.componentStack);
-        const userId = store.getState().user.id;
+        const userId = this.props.tore.getState().user.id;
         this.setState({ hasError: true, });
         Crashlytics.setUserIdentifier(userId);
         if(Platform.OS === 'ios') {
@@ -209,73 +208,70 @@ class Root extends Component {
             );
         }
         return(
-            <MagicMove.Provider disabled={true}>
-                <View style={{flex: 1,}}>
-                    <StatusBar backgroundColor={AppColors.transparent} barStyle={'dark-content'} />
-                    <Provider store={this.props.store}>
-                        <PersistGate
-                            loading={null}
-                            persistor={this.props.persistor}
+            <View style={{flex: 1,}}>
+                <Provider store={this.props.store}>
+                    <PersistGate
+                        loading={null}
+                        persistor={this.props.persistor}
+                    >
+                        <Router
+                            closeDropdownAlert={this._closeDropdownAlert}
+                            showDropdownAlert={this._showDropdownAlert}
                         >
-                            <Router
-                                closeDropdownAlert={this._closeDropdownAlert}
-                                showDropdownAlert={this._showDropdownAlert}
-                            >
-                                <Stack key={'root'}>
-                                    {Routes}
-                                </Stack>
-                            </Router>
-                        </PersistGate>
-                    </Provider>
-                    <DropdownAlert
-                        closeInterval={0}
-                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
-                        defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
-                        defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
-                        messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
-                        messageTextProps={{allowFontScaling: false,}}
-                        onCancel={data => {}}
-                        onClose={data => {}}
-                        ref={ref => {this._dropdown = ref;}}
-                        renderCancel={props => this._renderDropdownImage(props, 'cancel', () => this._dropdown.close())}
-                        renderImage={props => this._renderDropdownImage(props, 'left')}
-                        showCancel={true}
-                        translucent={Platform.OS === 'ios' ? false : true}
-                        updateStatusBar={Platform.OS === 'ios' ? true : false}
-                        useNativeDriver={true}
-                    />
-                    <DropdownAlert
-                        closeInterval={0}
-                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
-                        messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
-                        messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => data.action === 'tap' ? AppUtil.pushToScene('bluetoothConnect') : {}}
-                        panResponderEnabled={false}
-                        ref={ref => AlertHelper.setCancelableDropDown(ref)}
-                        renderCancel={props => this._renderDropdownImage(props, 'cancel', () => AlertHelper.closeCancelableDropDown())}
-                        showCancel={true}
-                        titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
-                        titleTextProps={{allowFontScaling: false,}}
-                        translucent={Platform.OS === 'ios' ? false : true}
-                        updateStatusBar={Platform.OS === 'ios' ? true : false}
-                        useNativeDriver={true}
-                    />
-                    <DropdownAlert
-                        closeInterval={0}
-                        containerStyle={{backgroundColor: AppColors.zeplin.error,}}
-                        messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
-                        messageTextProps={{allowFontScaling: false,}}
-                        onClose={data => AppUtil.pushToScene('bluetoothConnect')}
-                        panResponderEnabled={false}
-                        ref={ref => AlertHelper.setDropDown(ref)}
-                        titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
-                        titleTextProps={{allowFontScaling: false,}}
-                        translucent={Platform.OS === 'ios' ? false : true}
-                        updateStatusBar={Platform.OS === 'ios' ? true : false}
-                        useNativeDriver={true}
-                    />
-                </View>
-            </MagicMove.Provider>
+                            <Stack key={'root'}>
+                                {Routes}
+                            </Stack>
+                        </Router>
+                    </PersistGate>
+                </Provider>
+                <DropdownAlert
+                    closeInterval={0}
+                    containerStyle={{backgroundColor: AppColors.zeplin.error,}}
+                    defaultContainer={{flexDirection: 'row', padding: AppSizes.paddingSml, paddingTop: AppSizes.statusBarHeight,}}
+                    defaultTextContainer={{flex: 1, padding: AppSizes.paddingSml,}}
+                    messageStyle={{...AppStyles.oswaldRegular, color: AppColors.white,}}
+                    messageTextProps={{allowFontScaling: false,}}
+                    onCancel={data => {}}
+                    onClose={data => {}}
+                    ref={ref => {this._dropdown = ref;}}
+                    renderCancel={props => this._renderDropdownImage(props, 'cancel', () => this._dropdown.close())}
+                    renderImage={props => this._renderDropdownImage(props, 'left')}
+                    showCancel={true}
+                    translucent={Platform.OS === 'ios' ? false : true}
+                    updateStatusBar={Platform.OS === 'ios' ? true : false}
+                    useNativeDriver={true}
+                />
+                <DropdownAlert
+                    closeInterval={0}
+                    containerStyle={{backgroundColor: AppColors.zeplin.error,}}
+                    messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                    messageTextProps={{allowFontScaling: false,}}
+                    onClose={data => data.action === 'tap' ? AppUtil.pushToScene('bluetoothConnect') : {}}
+                    panResponderEnabled={false}
+                    ref={ref => AlertHelper.setCancelableDropDown(ref)}
+                    renderCancel={props => this._renderDropdownImage(props, 'cancel', () => AlertHelper.closeCancelableDropDown())}
+                    showCancel={true}
+                    titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                    titleTextProps={{allowFontScaling: false,}}
+                    translucent={Platform.OS === 'ios' ? false : true}
+                    updateStatusBar={Platform.OS === 'ios' ? true : false}
+                    useNativeDriver={true}
+                />
+                <DropdownAlert
+                    closeInterval={0}
+                    containerStyle={{backgroundColor: AppColors.zeplin.error,}}
+                    messageStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                    messageTextProps={{allowFontScaling: false,}}
+                    onClose={data => AppUtil.pushToScene('bluetoothConnect')}
+                    panResponderEnabled={false}
+                    ref={ref => AlertHelper.setDropDown(ref)}
+                    titleStyle={{...AppStyles.robotoBold, color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                    titleTextProps={{allowFontScaling: false,}}
+                    translucent={Platform.OS === 'ios' ? false : true}
+                    updateStatusBar={Platform.OS === 'ios' ? true : false}
+                    useNativeDriver={true}
+                />
+            </View>
         );
     }
 }

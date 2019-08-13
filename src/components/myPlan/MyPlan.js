@@ -40,7 +40,6 @@ import PropTypes from 'prop-types';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import ActionButton from 'react-native-action-button';
 import Collapsible from 'react-native-collapsible';
@@ -151,14 +150,6 @@ const ActivityTab = ({
                 onPress={onPress}
                 style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 12,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
-                {/*<MagicMove.Image
-                    disabled={true}
-                    id={`${id}.image`}
-                    resizeMode={'contain'}
-                    source={backgroundImage}
-                    style={[StyleSheet.absoluteFill, {borderRadius: 12, height: 'auto', width: 'auto',}]}
-                    useNativeDriver={false}
-                />*/}
                 <ImageBackground
                     imageStyle={{borderRadius: 12,}}
                     resizeMode={'cover'}
@@ -179,15 +170,9 @@ const ActivityTab = ({
                             type={'material-community'}
                         />
                         <View style={{marginTop: AppSizes.paddingLrg,}}>
-                            <MagicMove.Text
-                                allowFontScaling={false}
-                                disabled={true}
-                                id={`${id}.title`}
-                                style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(26),}]}
-                                useNativeDriver={false}
-                            >
+                            <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(26),}}>
                                 {title}
-                            </MagicMove.Text>
+                            </Text>
                             <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
                             <Text numberOfLines={1} robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>
                                 {timing[0]}
@@ -927,7 +912,7 @@ class MyPlan extends Component {
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
-            <MagicMove.Scene debug={false} disabled={true} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
                 <MyPlanNavBar
                     cards={newInsights}
@@ -1257,7 +1242,7 @@ class MyPlan extends Component {
                     </View>
                 </FathomModal>
 
-            </MagicMove.Scene>
+            </View>
         );
     }
 }

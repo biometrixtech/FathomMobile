@@ -57,7 +57,6 @@
 		72F02FA32255399000943040 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02FA22255398800943040 /* libSplashScreen.a */; };
 		72F02FC922553D7200943040 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02FC622553D5D00943040 /* libRCTVideo.a */; };
 		72F02FD322553DA300943040 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02FD022553D8B00943040 /* libBVLinearGradient.a */; };
-		72F02FDD22553EFF00943040 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02FDA22553EF600943040 /* libRCTPushNotification.a */; };
 		72F02FE022553F3000943040 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02FDF22553F3000943040 /* HealthKit.framework */; };
 		72F02FF122553F9F00943040 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F02FE222553F9F00943040 /* Octicons.ttf */; };
 		72F02FF222553F9F00943040 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F02FE322553F9F00943040 /* Feather.ttf */; };
@@ -107,7 +106,7 @@
 		72F030EA22554C9100943040 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F030D022554C9000943040 /* Roboto-BoldItalic.ttf */; };
 		72F030EB22554C9100943040 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F030D122554C9100943040 /* Roboto-Light.ttf */; };
 		72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F24352228C8741008C6B93 /* libRNSVG.a */; };
-		72FA2CE22278D75B00282A2C /* libRNMagicMove.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72FA2CDA2278D74400282A2C /* libRNMagicMove.a */; };
+		72F439CA23034719006AE13F /* libRNCPushNotificationIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F439C92303470A006AE13F /* libRNCPushNotificationIOS.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
@@ -521,20 +520,6 @@
 			remoteGlobalIDString = 64AA15081EF7F30100718508;
 			remoteInfo = "BVLinearGradient-tvOS";
 		};
-		72F02FD922553EF600943040 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 72F02FD422553EF600943040 /* RCTPushNotification.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RCTPushNotification;
-		};
-		72F02FDB22553EF600943040 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 72F02FD422553EF600943040 /* RCTPushNotification.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
-			remoteInfo = "RCTPushNotification-tvOS";
-		};
 		72F03005225540B400943040 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 72F03000225540B400943040 /* RNVectorIcons.xcodeproj */;
@@ -591,12 +576,12 @@
 			remoteGlobalIDString = 94DDAC5C1F3D024300EED511;
 			remoteInfo = "RNSVG-tvOS";
 		};
-		72FA2CD92278D74400282A2C /* PBXContainerItemProxy */ = {
+		72F439C82303470A006AE13F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */;
+			containerPortal = 72F439C42303470A006AE13F /* PushNotificationIOS.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNMagicMove;
+			remoteGlobalIDString = 9B97F66B220DEC6000B61540;
+			remoteInfo = RNCPushNotificationIOS;
 		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -679,7 +664,6 @@
 		72F02F9D2255398800943040 /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		72F02FC022553D5D00943040 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
 		72F02FCA22553D8B00943040 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
-		72F02FD422553EF600943040 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		72F02FDE22553F2900943040 /* Fathom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Fathom.entitlements; path = Fathom/Fathom.entitlements; sourceTree = "<group>"; };
 		72F02FDF22553F3000943040 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		72F02FE222553F9F00943040 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
@@ -730,7 +714,7 @@
 		72F030D022554C9000943040 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BoldItalic.ttf"; path = "../../../assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		72F030D122554C9100943040 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "../../../assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
 		72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
-		72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMagicMove.xcodeproj; path = "../node_modules/react-native-magic-move/ios/RNMagicMove.xcodeproj"; sourceTree = "<group>"; };
+		72F439C42303470A006AE13F /* PushNotificationIOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PushNotificationIOS.xcodeproj; path = "../node_modules/@react-native-community/push-notification-ios/ios/PushNotificationIOS.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
@@ -751,16 +735,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72F439CA23034719006AE13F /* libRNCPushNotificationIOS.a in Frameworks */,
 				721F02F622DFB442001FDD13 /* libBleClient.a in Frameworks */,
 				72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */,
 				72A486922285C0B900C351EE /* libRNReactNativeHapticFeedback.a in Frameworks */,
-				72FA2CE22278D75B00282A2C /* libRNMagicMove.a in Frameworks */,
 				723539C02260DC37003049A5 /* libRNCNetInfo.a in Frameworks */,
 				72F03083225549E100943040 /* libRNCAsyncStorage.a in Frameworks */,
 				72F03060225543EA00943040 /* libSMXCrashlytics.a in Frameworks */,
 				72F03010225540F000943040 /* libRCTAppleHealthKit.a in Frameworks */,
 				72F03009225540C400943040 /* libRNVectorIcons.a in Frameworks */,
-				72F02FDD22553EFF00943040 /* libRCTPushNotification.a in Frameworks */,
 				72F02FD322553DA300943040 /* libBVLinearGradient.a in Frameworks */,
 				72F02FC922553D7200943040 /* libRCTVideo.a in Frameworks */,
 				72F02FA32255399000943040 /* libSplashScreen.a in Frameworks */,
@@ -1083,15 +1066,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		72F02FD522553EF600943040 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				72F02FDA22553EF600943040 /* libRCTPushNotification.a */,
-				72F02FDC22553EF600943040 /* libRCTPushNotification-tvOS.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		72F02FE122553F9F00943040 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1184,10 +1158,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		72FA2C9B2278D74400282A2C /* Products */ = {
+		72F439C52303470A006AE13F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				72FA2CDA2278D74400282A2C /* libRNMagicMove.a */,
+				72F439C92303470A006AE13F /* libRNCPushNotificationIOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1204,16 +1178,15 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				72F439C42303470A006AE13F /* PushNotificationIOS.xcodeproj */,
 				721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */,
 				72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */,
 				72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */,
-				72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */,
 				723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */,
 				72F0307D225549D000943040 /* RNCAsyncStorage.xcodeproj */,
 				72F03057225543DB00943040 /* SMXCrashlytics.xcodeproj */,
 				72F0300A225540E600943040 /* RCTAppleHealthKit.xcodeproj */,
 				72F03000225540B400943040 /* RNVectorIcons.xcodeproj */,
-				72F02FD422553EF600943040 /* RCTPushNotification.xcodeproj */,
 				72F02FCA22553D8B00943040 /* BVLinearGradient.xcodeproj */,
 				72F02FC022553D5D00943040 /* RCTVideo.xcodeproj */,
 				72F02F9D2255398800943040 /* SplashScreen.xcodeproj */,
@@ -1451,6 +1424,10 @@
 					ProjectRef = 72F02F0822552EB000943040 /* LottieReactNative.xcodeproj */;
 				},
 				{
+					ProductGroup = 72F439C52303470A006AE13F /* Products */;
+					ProjectRef = 72F439C42303470A006AE13F /* PushNotificationIOS.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
@@ -1481,10 +1458,6 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
-				},
-				{
-					ProductGroup = 72F02FD522553EF600943040 /* Products */;
-					ProjectRef = 72F02FD422553EF600943040 /* RCTPushNotification.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -1525,10 +1498,6 @@
 				{
 					ProductGroup = 72F02F1D2255321500943040 /* Products */;
 					ProjectRef = 72F02F1C2255321500943040 /* RNDeviceInfo.xcodeproj */;
-				},
-				{
-					ProductGroup = 72FA2C9B2278D74400282A2C /* Products */;
-					ProjectRef = 72FA2C9A2278D74400282A2C /* RNMagicMove.xcodeproj */;
 				},
 				{
 					ProductGroup = 72A4864A2285C0A600C351EE /* Products */;
@@ -1951,20 +1920,6 @@
 			remoteRef = 72F02FD122553D8B00943040 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		72F02FDA22553EF600943040 /* libRCTPushNotification.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTPushNotification.a;
-			remoteRef = 72F02FD922553EF600943040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		72F02FDC22553EF600943040 /* libRCTPushNotification-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libRCTPushNotification-tvOS.a";
-			remoteRef = 72F02FDB22553EF600943040 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		72F03006225540B400943040 /* libRNVectorIcons.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2021,11 +1976,11 @@
 			remoteRef = 72F24353228C8741008C6B93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		72FA2CDA2278D74400282A2C /* libRNMagicMove.a */ = {
+		72F439C92303470A006AE13F /* libRNCPushNotificationIOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libRNMagicMove.a;
-			remoteRef = 72FA2CD92278D74400282A2C /* PBXContainerItemProxy */;
+			path = libRNCPushNotificationIOS.a;
+			remoteRef = 72F439C82303470A006AE13F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
@@ -2304,7 +2259,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-splash-screen/ios";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/push-notification-ios/ios",
+				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2339,7 +2297,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-splash-screen/ios";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/push-notification-ios/ios",
+				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -2531,7 +2492,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-splash-screen/ios";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/push-notification-ios/ios",
+				);
 				INFOPLIST_FILE = Fathom/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
