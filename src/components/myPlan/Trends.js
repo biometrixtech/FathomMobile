@@ -388,7 +388,7 @@ class Trends extends PureComponent {
                             { !isBiomechanicsLocked &&
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
                                     <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Biomechanics'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.start_date_time).format('M/D, h:mma')}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.event_date_time).format('M/D, h:mma')}</Text>
                                 </View>
                             }
                             <BiomechanicsCharts

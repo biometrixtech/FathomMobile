@@ -135,10 +135,10 @@ class Biomechanics extends PureComponent {
                                 >
                                     <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(circleSize),]}>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
-                                            {moment(session.start_date_time).format('M/D')}
+                                            {moment(session.event_date_time).format('M/D')}
                                         </Text>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
-                                            {moment(session.start_date_time).format('h:mma')}
+                                            {moment(session.event_date_time).format('h:mma')}
                                         </Text>
                                     </View>
                                     { index === currentIndex ?
@@ -149,9 +149,10 @@ class Biomechanics extends PureComponent {
                                     { sessionColor &&
                                         <Badge
                                             containerStyle={{
-                                                left:     0,
-                                                position: 'absolute',
-                                                top:      0,
+                                                left:      0,
+                                                position:  'absolute',
+                                                top:       0,
+                                                elevation: 5,
                                             }}
                                             badgeStyle={{
                                                 backgroundColor: PlanLogic.returnInsightColorString(sessionColor),
@@ -251,7 +252,7 @@ class Biomechanics extends PureComponent {
                             onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 3, title: 'Effects of Asymmetry', })}
                             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginRight: AppSizes.paddingSml, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
                         >
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Effects of Asymmetry'}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Effects of Asymmetry'}</Text>
                             <Image
                                 resizeMode={'contain'}
                                 source={require('../../../assets/images/standard/effectsasymmetry.png')}
@@ -269,7 +270,7 @@ class Biomechanics extends PureComponent {
                             onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 4, title: 'Searching for Insights', })}
                             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
                         >
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Searching for Insights'}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Searching for Insights'}</Text>
                             <View style={{alignItems: 'center', alignSelf: 'center', height: 125, justifyContent: 'center', marginTop: AppSizes.padding, width: 125,}}>
                                 <Image
                                     resizeMode={'contain'}

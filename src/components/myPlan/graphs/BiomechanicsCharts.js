@@ -79,7 +79,7 @@ class BiomechanicsCharts extends PureComponent {
                             <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(10),}}>{'left'}</Text>
                         </View>
                         <V.VictoryChart
-                            domain={{ y: [10, -10], }}
+                            domain={{ y: [-10, 10], }}
                             height={((AppSizes.screen.width - (AppSizes.paddingMed * 2)) * 0.5)}
                             padding={{bottom: AppSizes.paddingSml, left: AppSizes.paddingLrg, right: AppSizes.paddingSml, top: AppSizes.paddingSml,}}
                             width={(AppSizes.screen.width - (AppSizes.paddingMed * 2))}

@@ -2062,7 +2062,7 @@ const PlanLogic = {
         let updatedTime = selectedSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = updatedTime - sessionMinutes * 60;
-        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.start_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedSession.asymmetry.apt.summary_data;
         let chartData = selectedSession.asymmetry.apt.detail_data;
@@ -2070,11 +2070,11 @@ const PlanLogic = {
             let newDataObjLeft = {};
             newDataObjLeft.x = data.x;
             newDataObjLeft.y = data.y1;
-            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 9 : 4);
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 10 : 8);
             let newDataObjRight = {};
             newDataObjRight.x = data.x;
             newDataObjRight.y = data.y2;
-            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 10);
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
             return [newDataObjLeft, newDataObjRight];
         });
         return {
@@ -2137,8 +2137,10 @@ const PlanLogic = {
                                                 AppColors.zeplin.purpleLight
                                                 : color === 11 ?
                                                     AppColors.zeplin.slateLight
-                                                    :
-                                                    AppColors.zeplin.errorLight;
+                                                    : color === 12 ?
+                                                        AppColors.zeplin.slate
+                                                        :
+                                                        AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
