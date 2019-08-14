@@ -9,7 +9,6 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Actions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from './constants';
 import { AlertHelper, AppUtil, } from './lib';
 import { Spacer, TabIcon, Text, } from './components/custom';
-// import { store } from './store';
 import Routes from './routes';
 
 // import third-party libraries
@@ -90,7 +89,7 @@ class Root extends Component {
         //   in div (created by App)
         //   in App
         // logComponentStackToMyService(info.componentStack);
-        const userId = this.props.tore.getState().user.id;
+        const userId = this.props.store.getState().user.id;
         this.setState({ hasError: true, });
         Crashlytics.setUserIdentifier(userId);
         if(Platform.OS === 'ios') {
