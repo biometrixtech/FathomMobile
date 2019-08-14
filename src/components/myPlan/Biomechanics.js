@@ -125,7 +125,7 @@ class Biomechanics extends PureComponent {
                                 : session.asymmetry.body_side === 2 ?
                                     4
                                     :
-                                    null;
+                                    13;
                             return (
                                 <TouchableOpacity
                                     activeOpacity={1}

@@ -2094,6 +2094,95 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Handle Biomechanics Charts Render Logic
+      * - BiomechanicsCharts
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView) => {
+        const PIE_CHART_TOTAL = 60;
+        let newPieData = _.cloneDeep(pieData);
+        const emptyPieData = [
+            {color: AppColors.transparent, x: 0, y: 0,},
+            {color: AppColors.transparent, x: 0, y: 0,},
+        ];
+        let largerPieData = emptyPieData;
+        let smallerPieData = emptyPieData;
+        let rotateDeg = '0deg';
+        if(isRichDataView) {
+            return {
+                largerPieData,
+                rotateDeg,
+                smallerPieData,
+            };
+        }
+        const isLeftDataEmpty = newPieData.left_y === 0;
+        const isRightDataEmpty = newPieData.right_y === 0;
+        if(!isLeftDataEmpty && !isRightDataEmpty) {
+            if(_.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL, true);
+                smallerPieData = emptyPieData;
+                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            } else if(newPieData.left_y > newPieData.right_y) {
+                let ratio = (newPieData.left_y / newPieData.right_y);
+                newPieData.right_y = 5;
+                newPieData.left_y  = (5 * ratio);
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
+                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
+                rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
+            } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                let ratio = (newPieData.right_y / newPieData.left_y);
+                newPieData.left_y = 5;
+                newPieData.right_y = (5 * ratio);
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
+                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
+                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            }
+        }
+        let parsedSummaryData = [];
+        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
+            _.map(selectedSession.asymmetry.apt.summary_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
+                    10
+                    : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
+                        4
+                        :
+                        null;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedSummaryData.push(newParsedData);
+            });
+        }
+        return {
+            largerPieData,
+            parsedSummaryData,
+            rotateDeg,
+            smallerPieData,
+        };
+    },
+
+    returnPieChartCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
+        let color = isSymmetry ?
+            AppColors.zeplin.successLight
+            :
+            isLeft ?
+                AppColors.zeplin.purpleLight
+                :
+                AppColors.zeplin.splashLight;
+        if(y < otherY) {
+            return [
+                {color: AppColors.transparent, x: 0, y: ((otherY - y) / 2),},
+                {color: color, x: 1, y: y,},
+                {color: AppColors.transparent, x: 2, y: (total - (y + ((otherY - y) / 2))),},
+            ];
+        }
+        return [
+            {color: color, x: 0, y: y,},
+            {color: AppColors.transparent, x: 1, y: (total - y),},
+        ];
+    },
+
     returnBodyOverlayColorString: (value, isPain, color) => {
         if(color) {
             return PlanLogic.returnInsightColorString(color);
@@ -2139,8 +2228,10 @@ const PlanLogic = {
                                                     AppColors.zeplin.slateLight
                                                     : color === 12 ?
                                                         AppColors.zeplin.slate
-                                                        :
-                                                        AppColors.zeplin.errorLight;
+                                                        : color === 13 ?
+                                                            AppColors.zeplin.successLight
+                                                            :
+                                                            AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {

@@ -17,12 +17,12 @@ import { Image, ImageBackground, View, } from 'react-native';
 // import third-party libraries
 import * as V from 'victory-native';
 import _ from 'lodash';
-//
-// // Consts and Libs
+
+// Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { PlanLogic, } from '../../../lib';
-//
-// // Components
+
+// Components
 import { ParsedText, Spacer, TabIcon, Text, } from '../../custom';
 
 /* Component ==================================================================== */
@@ -48,21 +48,12 @@ class BiomechanicsCharts extends PureComponent {
 
     render = () => {
         const { chartData, isRichDataView, pieDetails, sessionDuration, selectedSession, showDetails, showTitle, } = this.props;
-        let parsedSummaryData = [];
-        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
-            _.map(selectedSession.asymmetry.apt.summary_bold_text, (prop, i) => {
-                let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
-                    10
-                    : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
-                        4
-                        :
-                        null;
-                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
-                parsedSummaryData.push(newParsedData);
-            });
-        }
+        let {
+            largerPieData,
+            parsedSummaryData,
+            rotateDeg,
+            smallerPieData,
+        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView);
         return (
             <View pointerEvents={'none'}>
 
@@ -118,11 +109,14 @@ class BiomechanicsCharts extends PureComponent {
                         <View style={{marginBottom: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
                             <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
                         </View>
-                        <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
                             {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
                                 <View
                                     key={i}
-                                    style={{flexDirection: 'row', marginBottom: i !== (selectedSession.asymmetry.apt.detail_legend.length - 1) ? AppSizes.paddingSml : 0,}}
+                                    style={[
+                                        i % 2 === 0 ? {marginRight: AppSizes.padding,} : {},
+                                        {alignItems: 'center', flexDirection: 'row', justifyContent: 'center',},
+                                    ]}
                                 >
                                     {_.map(legend.color, (color, index) =>
                                         <View
@@ -136,7 +130,7 @@ class BiomechanicsCharts extends PureComponent {
                                             }}
                                         />
                                     )}
-                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{legend.text}</Text>
+                                    <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{legend.text}</Text>
                                 </View>
                             ))}
                         </View>
@@ -148,37 +142,31 @@ class BiomechanicsCharts extends PureComponent {
                             source={require('../../../../assets/images/standard/apt_notilt.png')}
                             style={{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}}
                         >
-                            <V.VictoryPie
-                                cornerRadius={7}
-                                data={[
-                                    {markTransparent: true, x: 0, y: pieDetails.pieData.right_y === 0 ? 0 : 1.5,},
-                                    {markTransparent: false, x: pieDetails.pieData.right_y === 0 ? 0 : 1, y: pieDetails.pieData.right_y,},
-                                ]}
-                                height={pieDetails.pieLeftWrapperWidth}
-                                innerRadius={pieDetails.rightPieInnerRadius}
-                                labels={d => ''}
-                                startAngle={pieDetails.pieData.right_start_angle}
-                                style={{
-                                    data: { fill: d => d.markTransparent ? AppColors.zeplin.splashLight : AppColors.transparent, },
-                                }}
-                                width={pieDetails.rightPieWidth}
-                            />
-                            <View style={{alignSelf: 'center', position: 'absolute', width: pieDetails.leftPieWidth,}}>
+                            <View style={{transform: [{rotate: rotateDeg,}]}}>
                                 <V.VictoryPie
                                     cornerRadius={7}
-                                    data={[
-                                        {markTransparent: true, x: 0, y: pieDetails.pieData.left_y === 0 ? 0 : 1,},
-                                        {markTransparent: false, x: pieDetails.pieData.left_y === 0 ? 0 : 1, y: pieDetails.pieData.left_y,},
-                                    ]}
+                                    data={largerPieData}
                                     height={pieDetails.pieLeftWrapperWidth}
-                                    innerRadius={pieDetails.leftPieInnerRadius}
+                                    innerRadius={pieDetails.rightPieInnerRadius}
                                     labels={d => ''}
-                                    startAngle={pieDetails.pieData.left_start_angle}
                                     style={{
-                                        data: { fill: d => d.markTransparent ? AppColors.zeplin.purpleLight : AppColors.transparent, },
+                                        data: { fill: d => d.color},
                                     }}
-                                    width={pieDetails.leftPieWidth}
+                                    width={pieDetails.rightPieWidth}
                                 />
+                                <View style={{alignSelf: 'center', position: 'absolute', width: pieDetails.rightPieWidth,}}>
+                                    <V.VictoryPie
+                                        cornerRadius={7}
+                                        data={smallerPieData}
+                                        height={pieDetails.pieLeftWrapperWidth}
+                                        innerRadius={pieDetails.rightPieInnerRadius}
+                                        labels={d => ''}
+                                        style={{
+                                            data: { fill: d => d.color},
+                                        }}
+                                        width={pieDetails.rightPieWidth}
+                                    />
+                                </View>
                             </View>
                         </ImageBackground>
                         <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
@@ -189,7 +177,11 @@ class BiomechanicsCharts extends PureComponent {
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
                                         }
                                         { _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
-                                            null
+                                            <Image
+                                                resizeMode={'contain'}
+                                                source={require('../../../../assets/images/standard/allcaughtup.png')}
+                                                style={{height: 60, tintColor: AppColors.zeplin.successLight, width: 60,}}
+                                            />
                                             :
                                             <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(38),}}>{`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}</Text>
                                         }
@@ -203,32 +195,49 @@ class BiomechanicsCharts extends PureComponent {
                                     :
                                     <View />
                                 }
-                                <View>
-                                    <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
-                                        <View
-                                            style={{
-                                                backgroundColor: AppColors.zeplin.purpleLight,
-                                                borderRadius:    (10 / 2),
-                                                height:          10,
-                                                marginRight:     AppSizes.paddingSml,
-                                                width:           10,
-                                            }}
-                                        />
-                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Left side ROM'}</Text>
+                                { _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                    <View>
+                                        <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
+                                            <View
+                                                style={{
+                                                    backgroundColor: AppColors.zeplin.successLight,
+                                                    borderRadius:    (10 / 2),
+                                                    height:          10,
+                                                    marginRight:     AppSizes.paddingSml,
+                                                    width:           10,
+                                                }}
+                                            />
+                                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Left & Right Symmetry'}</Text>
+                                        </View>
                                     </View>
-                                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                        <View
-                                            style={{
-                                                backgroundColor: AppColors.zeplin.splashLight,
-                                                borderRadius:    (10 / 2),
-                                                height:          10,
-                                                marginRight:     AppSizes.paddingSml,
-                                                width:           10,
-                                            }}
-                                        />
-                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Right side ROM'}</Text>
+                                    :
+                                    <View>
+                                        <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
+                                            <View
+                                                style={{
+                                                    backgroundColor: AppColors.zeplin.purpleLight,
+                                                    borderRadius:    (10 / 2),
+                                                    height:          10,
+                                                    marginRight:     AppSizes.paddingSml,
+                                                    width:           10,
+                                                }}
+                                            />
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Left side ROM'}</Text>
+                                        </View>
+                                        <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                            <View
+                                                style={{
+                                                    backgroundColor: AppColors.zeplin.splashLight,
+                                                    borderRadius:    (10 / 2),
+                                                    height:          10,
+                                                    marginRight:     AppSizes.paddingSml,
+                                                    width:           10,
+                                                }}
+                                            />
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Right side ROM'}</Text>
+                                        </View>
                                     </View>
-                                </View>
+                                }
                             </View>
                             { showTitle &&
                                 <TabIcon

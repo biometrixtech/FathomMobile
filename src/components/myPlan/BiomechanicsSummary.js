@@ -54,7 +54,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                 : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.summary_side.detail_bold_side) === 2 ?
                     4
                     :
-                    12;
+                    13;
             newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
             parsedData.push(newParsedData);
         });
