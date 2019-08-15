@@ -29,6 +29,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
     let {
         leftPieInnerRadius,
         leftPieWidth,
+        parsedData,
         pieData,
         pieLeftWrapperWidth,
         pieRightWrapperWidth,
@@ -37,28 +38,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
         selectedSession,
         sessionDuration,
         updatedChartData,
-    } = PlanLogic.handleBiomechanicsRenderLogic(plan, currentIndex);
-    let parsedData = [];
-    if(
-        selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt &&
-        (
-            (step === 1 && selectedSession.asymmetry.apt.summary_take_away_text) ||
-            (step === 2 && selectedSession.asymmetry.apt.detail_text)
-        )
-    ) {
-        _.map(step === 1 ? selectedSession.asymmetry.apt.summary_take_away_bold_text : selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
-            let newParsedData = {};
-            newParsedData.pattern = new RegExp(prop.text, 'i');
-            let sessionColor = _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.summary_side.detail_bold_side) === 1 ?
-                10
-                : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.summary_side.detail_bold_side) === 2 ?
-                    4
-                    :
-                    13;
-            newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
-            parsedData.push(newParsedData);
-        });
-    }
+    } = PlanLogic.handleBiomechanicsRenderLogic(plan, currentIndex, step);
     return (
         <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -200,7 +180,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                         </Text>
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                             { step === 1 ?
-                                'Arch your lower back. Now tuck your tailbone. That is the range of anterior pelvic tilt. We measure this range of motion while left foot is in contact with the ground and compare that to right foot ground contacts to identify asymmetry. We\'ll try to identify and correct the imbalances at the source to avoid the potential effects.\n\nFor best results, remember to consistently place your "hip sensor" in the center of your spine and low- on your sacrum, just above the tailbone.'
+                                'The range of anterior pelvic tilt is measured by the motion of your hips when you arch your lower back. We measure this range of motion while left foot is in contact with the ground and compare that to right foot ground contacts to identify asymmetry. We\'ll try to identify and correct the imbalances at the source to avoid the potential effects.\n\nFor best results, remember to consistently place your "hip sensor" in the center of your spine and on your sacrum, just above the tailbone.'
                                 : step === 2 ?
                                     'Anterior pelvic motion asymmetry can be caused by uneven terrain or by imbalance in the lats, hip flexors, and a nearly a dozen other muscles.\n\nChronic asymmetry is likely driven by imbalances like over-activity, tightness, under-activity, and weakness in these muscles which can lead to skeletal misalignments. This has sweeping influence on other muscular structures affecting performance and increasing overuse injury risk.\n\nCombined with other movement data, training data, soreness, pain, and more we try to identify your body part imbalances and the best corrective exercise to efficiently address them.'
                                     : step === 3 ?

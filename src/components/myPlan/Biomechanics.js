@@ -55,7 +55,7 @@ class Biomechanics extends PureComponent {
         this.setState(
             {
                 isRichDataView: !this.state.isRichDataView,
-                loading:        !doWeHaveRichData,
+                loading:        !doWeHaveRichData && !this.state.isRichDataView,
             },
             () => {
                 if(this.state.isRichDataView && !doWeHaveRichData) {
@@ -213,15 +213,6 @@ class Biomechanics extends PureComponent {
                                     selectedSession={selectedSession}
                                     showTitle={true}
                                 />
-                                <View style={{marginBottom: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml,}}>
-                                    <TabIcon
-                                        color={AppColors.zeplin.slateXLight}
-                                        containerStyle={[{alignSelf: 'flex-end',}]}
-                                        icon={'chevron-right'}
-                                        size={20}
-                                        type={'material-community'}
-                                    />
-                                </View>
                             </TouchableOpacity>
                         </View>
                         :

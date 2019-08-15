@@ -1848,11 +1848,11 @@ const PlanLogic = {
             let splitTextArray = _.split(subtitleText, textRegEx);
             splitTextArray = _.remove(splitTextArray, o => o.length > 0);
             if(!textMatchedArray) {
-                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
             } else {
                 if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1860,7 +1860,7 @@ const PlanLogic = {
                     );
                 } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1869,7 +1869,7 @@ const PlanLogic = {
                         </Text>
                     );
                 } else {
-                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
                 }
             }
         }
@@ -2034,7 +2034,7 @@ const PlanLogic = {
       * - Biomechanics
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsRenderLogic: (plan, currentIndex) => {
+    handleBiomechanicsRenderLogic: (plan, currentIndex, step) => {
         let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
         let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
         let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
@@ -2042,6 +2042,8 @@ const PlanLogic = {
         let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
         let rightPieWidth = pieLeftWrapperWidth;
         let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        let extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+        rightPieInnerRadius = (rightPieInnerRadius - extraInnerRadiusToRemove);
         if(currentIndex === -1) {
             return {
                 leftPieInnerRadius,
@@ -2077,9 +2079,31 @@ const PlanLogic = {
             newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
             return [newDataObjLeft, newDataObjRight];
         });
+        let parsedData = [];
+        if(
+            selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt &&
+            (
+                (step === 1 && selectedSession.asymmetry.apt.summary_take_away_text) ||
+                (step === 2 && selectedSession.asymmetry.apt.detail_text)
+            )
+        ) {
+            _.map(step === 1 ? selectedSession.asymmetry.apt.summary_take_away_bold_text : selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                let sessionColor = _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                    10
+                    : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                        4
+                        :
+                        13;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedData.push(newParsedData);
+            });
+        }
         return {
             leftPieInnerRadius,
             leftPieWidth,
+            parsedData,
             pieData,
             pieLeftWrapperWidth,
             pieRightWrapperWidth,

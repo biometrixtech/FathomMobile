@@ -13,7 +13,7 @@ module.exports = {
         './__tests__/*.*test.[jt]s?(x)'
     ],
     transformIgnorePatterns: [
-        'node_modules/(?!react-native|tcomb-form-native|apsl-react-native-button|react-clone-referenced-element|react-navigation|redux-persist|react-native-vector-icons|rn-apple-healthkit|@react-native-community/async-storage)',
+        'node_modules/(?!react-native|tcomb-form-native|apsl-react-native-button|react-clone-referenced-element|react-navigation|redux-persist|react-native-vector-icons|rn-apple-healthkit|@react-native-community/async-storage|@react-native-community/push-notification-ios)',
         '/node_modules/@react-native-community/async-storage/(?!(lib))'
     ],
     verbose: false,

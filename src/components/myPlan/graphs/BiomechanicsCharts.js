@@ -109,30 +109,48 @@ class BiomechanicsCharts extends PureComponent {
                         <View style={{marginBottom: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
                             <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
                         </View>
-                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
-                            {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
-                                <View
-                                    key={i}
-                                    style={[
-                                        i % 2 === 0 ? {marginRight: AppSizes.padding,} : {},
-                                        {alignItems: 'center', flexDirection: 'row', justifyContent: 'center',},
-                                    ]}
-                                >
-                                    {_.map(legend.color, (color, index) =>
-                                        <View
-                                            key={index}
-                                            style={{
-                                                backgroundColor: PlanLogic.returnInsightColorString(color),
-                                                borderRadius:    (10 / 2),
-                                                height:          10,
-                                                marginRight:     AppSizes.paddingSml,
-                                                width:           10,
-                                            }}
-                                        />
-                                    )}
-                                    <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{legend.text}</Text>
-                                </View>
-                            ))}
+                        <View style={{flexDirection: 'row', justifyContent: showTitle ? 'space-between' : 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
+                            { showTitle &&
+                                <TabIcon
+                                    color={AppColors.white}
+                                    icon={'chevron-right'}
+                                    size={20}
+                                    type={'material-community'}
+                                />
+                            }
+                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
+                                    <View
+                                        key={i}
+                                        style={[
+                                            i % 2 === 0 ? {marginRight: AppSizes.padding,} : {},
+                                            {alignItems: 'center', flexDirection: 'row', justifyContent: 'center',},
+                                        ]}
+                                    >
+                                        {_.map(legend.color, (color, index) =>
+                                            <View
+                                                key={index}
+                                                style={{
+                                                    backgroundColor: PlanLogic.returnInsightColorString(color),
+                                                    borderRadius:    (10 / 2),
+                                                    height:          10,
+                                                    marginRight:     AppSizes.paddingSml,
+                                                    width:           10,
+                                                }}
+                                            />
+                                        )}
+                                        <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{legend.text}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                            { showTitle &&
+                                <TabIcon
+                                    color={AppColors.zeplin.slateXLight}
+                                    icon={'chevron-right'}
+                                    size={20}
+                                    type={'material-community'}
+                                />
+                            }
                         </View>
                     </View>
                     :
@@ -170,13 +188,13 @@ class BiomechanicsCharts extends PureComponent {
                             </View>
                         </ImageBackground>
                         <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
-                            <View style={{justifyContent: 'space-between',}}>
+                            <View style={{flex: showTitle ? 9 : 1, justifyContent: 'space-between',}}>
                                 { showDetails ?
                                     <View>
                                         { showTitle &&
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
                                         }
-                                        { _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                        { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
@@ -189,13 +207,13 @@ class BiomechanicsCharts extends PureComponent {
                                             parse={parsedSummaryData}
                                             style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
                                         >
-                                            {selectedSession.asymmetry.apt.summary_text}
+                                            {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt ? selectedSession.asymmetry.apt.summary_text : ''}
                                         </ParsedText>
                                     </View>
                                     :
                                     <View />
                                 }
-                                { _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
                                     <View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
                                             <View
@@ -240,13 +258,14 @@ class BiomechanicsCharts extends PureComponent {
                                 }
                             </View>
                             { showTitle &&
-                                <TabIcon
-                                    color={AppColors.zeplin.slateXLight}
-                                    containerStyle={[{alignSelf: 'flex-end',}]}
-                                    icon={'chevron-right'}
-                                    size={20}
-                                    type={'material-community'}
-                                />
+                                <View style={{flex: 1, justifyContent: 'flex-end',}}>
+                                    <TabIcon
+                                        color={AppColors.zeplin.slateXLight}
+                                        icon={'chevron-right'}
+                                        size={20}
+                                        type={'material-community'}
+                                    />
+                                </View>
                             }
                         </View>
                     </View>

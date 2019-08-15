@@ -348,25 +348,27 @@ class ExerciseModality extends Component {
                             user={user}
                         />
                     </FathomModal>
-                    <ExerciseCompletionModal
-                        completedExercises={completedExercises}
-                        exerciseList={exerciseList}
-                        isModalOpen={isExerciseCompletionModalOpen}
-                        onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
-                        onComplete={() => {
-                            this.setState(
-                                { isExerciseCompletionModalOpen: false, isSubmitting: true, },
-                                () => {
-                                    let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
-                                    let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
-                                    patchActiveRecovery(newCompletedExercises, recoveryType)
-                                        .then(res => Actions.pop())
-                                        .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
-                                }
-                            );
-                        }}
-                        user={user}
-                    />
+                    { isExerciseCompletionModalOpen &&
+                        <ExerciseCompletionModal
+                            completedExercises={completedExercises}
+                            exerciseList={exerciseList}
+                            isModalOpen={isExerciseCompletionModalOpen}
+                            onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
+                            onComplete={() => {
+                                this.setState(
+                                    { isExerciseCompletionModalOpen: false, isSubmitting: true, },
+                                    () => {
+                                        let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+                                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
+                                        patchActiveRecovery(newCompletedExercises, recoveryType)
+                                            .then(res => Actions.pop())
+                                            .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
+                                    }
+                                );
+                            }}
+                            user={user}
+                        />
+                    }
                 </View>
             </View>
         );

@@ -118,6 +118,8 @@ jest.mock('StatusBar', () => {
     };
 });
 
+jest.mock('@react-native-community/push-notification-ios', () => 'PushNotificationIOS');
+
 jest.mock('NativeAnimatedHelper');
 
 // Mocking the global.fetch included in React Native
