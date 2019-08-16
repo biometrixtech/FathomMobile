@@ -13,7 +13,6 @@ import { PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import _ from 'lodash';
 
 /*
   NOTE:
@@ -156,7 +155,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                             :
                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
                                 { step === 3 ?
-                                    'Chronically anterior pelvic asymmetric  may correlate with imbalances in these muscle groups.'
+                                    'Chronic anterior pelvic asymmetry may correlate with imbalances in these muscle groups.'
                                     : step === 4 ?
                                         'We\'re searching for strength & length imbalances in your tissues to design your optimal recovery & prevention.'
                                         :
@@ -167,7 +166,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                         <Spacer size={AppSizes.padding} />
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                             { step === 1 ?
-                                'How It’s Measured:'
+                                'How It\'s Measured:'
                                 : step === 2 ?
                                     'Why this asymmetry matters:'
                                     : step === 3 ?
@@ -184,9 +183,9 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
                                 : step === 2 ?
                                     'Anterior pelvic motion asymmetry can be caused by uneven terrain or by imbalance in the lats, hip flexors, and a nearly a dozen other muscles.\n\nChronic asymmetry is likely driven by imbalances like over-activity, tightness, under-activity, and weakness in these muscles which can lead to skeletal misalignments. This has sweeping influence on other muscular structures affecting performance and increasing overuse injury risk.\n\nCombined with other movement data, training data, soreness, pain, and more we try to identify your body part imbalances and the best corrective exercise to efficiently address them.'
                                     : step === 3 ?
-                                        'Chronic asymmetry in your anterior pelvic range of motion may hint at left-right imbalances in strength and tightness along the posterior (or back) muscle chain. This system of interconnected muscles, ligaments, and fascia, is pictured above and includes muscles along your spine, you hamstrings, and muscles in your calves and shins.\n\nWith time, slight imbalances can develop into significant compensations if not corrected. These imbalances can place unaccustomed stress on other tissues and lead to overuse injury.\n\nHowever, asymmetry in your anterior pelvic range of motion may be caused by environmental factors (like running on an uneven surface or trail) as well as biomechanical imbalances. So to help us to weed out your movement from your environment it\'s important to wear your system consistently in training.'
+                                        'Chronic asymmetry in your anterior pelvic range of motion may hint at left-right imbalances in overactivity, weakness and tightness within a series of tissues which stabilize your hips. These imbalances typically place exess strain on other muscles, joints, and tissues in the manner pictured above.\n\nHowever, asymmetry in your anterior pelvic range of motion may be caused by environmental factors (like running on an uneven surface or trail) as well as biomechanical imbalances. So to help us to weed out your movement from your environment it\'s important to wear your system consistently in training.'
                                         : step === 4 ?
-                                            'We use every data point you give us to build a map of your bodies strengths and weaknesses. This map is unique to you and is used to identify potential imbalances that actively adapt  your activity plan.\n\nUse your Fathom sensors in as many running workouts as you can and log your training and soreness as much as possible to optimize your plan’s as effectiveness and efficiency.'
+                                            'We use every data point you give us to build a map of your bodies strengths and weaknesses. This map is unique to you and is used to identify potential imbalances that actively adapt  your activity plan.\n\nUse your Fathom sensors in as many running workouts as you can and log your training and soreness as much as possible to optimize your plan\'s as effectiveness and efficiency.'
                                             :
                                             null
                             }

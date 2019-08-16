@@ -51,9 +51,10 @@ class BiomechanicsCharts extends PureComponent {
         let {
             largerPieData,
             parsedSummaryData,
+            richDataYDomain,
             rotateDeg,
             smallerPieData,
-        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView);
+        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData);
         return (
             <View pointerEvents={'none'}>
 
@@ -70,7 +71,7 @@ class BiomechanicsCharts extends PureComponent {
                             <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(10),}}>{'left'}</Text>
                         </View>
                         <V.VictoryChart
-                            domain={{ y: [-10, 10], }}
+                            domain={{ y: richDataYDomain, }}
                             height={((AppSizes.screen.width - (AppSizes.paddingMed * 2)) * 0.5)}
                             padding={{bottom: AppSizes.paddingSml, left: AppSizes.paddingLrg, right: AppSizes.paddingSml, top: AppSizes.paddingSml,}}
                             width={(AppSizes.screen.width - (AppSizes.paddingMed * 2))}
@@ -95,14 +96,17 @@ class BiomechanicsCharts extends PureComponent {
                             {/* X-Axis */}
                             <V.VictoryAxis
                                 style={{
-                                    axis: { stroke: AppColors.white, size: 1, },
+                                    axis: { stroke: AppColors.zeplin.superLight, size: 0.5, },
                                     grid: { stroke: AppColors.transparent, },
                                 }}
                                 tickFormat={t => ' '}
                             />
                             {/* Bar Chart */}
                             <V.VictoryBar
+                                alignment={selectedSession.duration <= 600 ? 'start' : 'middle'}
+                                barWidth={selectedSession.duration <= 600 ? 20 : null}
                                 data={chartData}
+                                domainPadding={selectedSession.duration <= 600 ? { x: 20, } : null}
                                 style={{ data: { fill: d => d.color, }, }}
                             />
                         </V.VictoryChart>
@@ -198,10 +202,12 @@ class BiomechanicsCharts extends PureComponent {
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                                style={{height: 60, tintColor: AppColors.zeplin.successLight, width: 60,}}
+                                                style={{height: 35, tintColor: AppColors.zeplin.successLight, width: 35,}}
                                             />
                                             :
-                                            <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(38),}}>{`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}</Text>
+                                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
+                                                {`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}
+                                            </Text>
                                         }
                                         <ParsedText
                                             parse={parsedSummaryData}

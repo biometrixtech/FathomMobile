@@ -95,6 +95,7 @@ import SurveyComponent from '../components/onboarding/Survey';
 const Index = (
     <Router hideNavBar={true}>
         <Stack
+            gesturesEnabled={true}
             hideNavBar={true}
             key={'root'}
             titleStyle={{ alignSelf: 'center' }}
@@ -143,7 +144,6 @@ const Index = (
                 component={TutorialContainer}
                 hideNavBar={true}
                 key={'tutorial'}
-                panHandlers={null}
             />
             <Scene
                 Layout={SurveyComponent}
@@ -157,14 +157,12 @@ const Index = (
                 component={OnboardingContainer}
                 hideNavBar={true}
                 key={'onboarding'}
-                panHandlers={null}
             />
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar={true}
                 key={'login'}
-                panHandlers={null}
             />
             <Scene
                 Layout={AccountTypeComponent}
@@ -188,7 +186,6 @@ const Index = (
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
                 onLeft={() => Actions.pop()}
-                panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
             <Scene
@@ -243,28 +240,24 @@ const Index = (
                 component={TrendChildContainer}
                 hideNavBar={true}
                 key={'trendChild'}
-                panHandlers={null}
             />
             <Scene
                 Layout={InsightComponent}
                 component={InsightContainer}
                 hideNavBar={true}
                 key={'insight'}
-                panHandlers={null}
             />
             <Scene
                 Layout={BiomechanicsComponent}
                 component={BiomechanicsContainer}
                 hideNavBar={true}
                 key={'biomechanics'}
-                panHandlers={null}
             />
             <Scene
                 Layout={BiomechanicsSummaryComponent}
                 component={BiomechanicsSummaryContainer}
                 hideNavBar={true}
                 key={'biomechanicsSummary'}
-                panHandlers={null}
             />
             <Scene
                 Layout={ExerciseModalityComponent}

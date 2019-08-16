@@ -26,7 +26,7 @@ import moment from 'moment';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    circleStyle: (circleSize) => ({
+    circleStyle: circleSize => ({
         alignItems:      'center',
         backgroundColor: AppColors.white,
         borderRadius:    (circleSize / 2),
@@ -42,10 +42,16 @@ class Biomechanics extends PureComponent {
     constructor(props) {
         super(props);
         this.state  = {
-            currentIndex:   _.findLastIndex(this.props.plan.dailyPlan[0].trends.biomechanics_summary.sessions),
-            isRichDataView: false,
-            loading:        false,
+            currentIndex:        _.findLastIndex(this.props.plan.dailyPlan[0].trends.biomechanics_summary.sessions),
+            isRichDataView:      false,
+            isToggleBtnDisabled: false,
+            loading:             false,
         };
+        this.scrollView = {};
+    }
+
+    componentDidMount = () => {
+        _.delay(() => this.scrollView.scrollToEnd({animated: true}), 10); // scroll view to end
     }
 
     _toggleRichDataView = () => {
@@ -54,15 +60,17 @@ class Biomechanics extends PureComponent {
         let doWeHaveRichData = plan.dailyPlan[0].trends.biomechanics_summary.sessions[currentIndex].asymmetry.apt.detail_data;
         this.setState(
             {
-                isRichDataView: !this.state.isRichDataView,
-                loading:        !doWeHaveRichData && !this.state.isRichDataView,
+                isRichDataView:      !this.state.isRichDataView,
+                isToggleBtnDisabled: true,
+                loading:             !doWeHaveRichData && !this.state.isRichDataView,
             },
             () => {
                 if(this.state.isRichDataView && !doWeHaveRichData) {
-                    getBiomechanicsDetails(plan.dailyPlan[0])
-                        .then(res => this.setState({ loading: false, }))
-                        .catch(err => this.setState({ loading: false, }));
+                    return getBiomechanicsDetails(plan.dailyPlan[0])
+                        .then(res => this.setState({ isToggleBtnDisabled: false, loading: false, }))
+                        .catch(err => this.setState({ isToggleBtnDisabled: false, loading: false, }));
                 }
+                return _.delay(() => this.setState({ isToggleBtnDisabled: false, }), 250);
             },
         );
     }
@@ -73,7 +81,7 @@ class Biomechanics extends PureComponent {
 
     render = () => {
         const { plan, } = this.props;
-        const { currentIndex, isRichDataView, loading, } = this.state;
+        const { currentIndex, isRichDataView, isToggleBtnDisabled, loading, } = this.state;
         let {
             leftPieInnerRadius,
             leftPieWidth,
@@ -95,7 +103,6 @@ class Biomechanics extends PureComponent {
                 <View style={{backgroundColor: AppColors.white, height: AppSizes.statusBarHeight,}} />
 
                 <ScrollView
-                    contentContainerStyle={{flexDirection: 'column', flexGrow: 1,}}
                     automaticallyAdjustContentInsets={false}
                     bounces={false}
                     nestedScrollEnabled={true}
@@ -115,58 +122,73 @@ class Biomechanics extends PureComponent {
 
                     <Spacer size={AppSizes.padding} />
 
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.padding,}}>
-                        { _.map(sessions, (session, index) => {
-                            let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
-                            let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;
-                            let circleSize = _.floor(size) > 50 ? 50 : _.floor(size);
-                            let sessionColor = session.asymmetry.body_side === 1 ?
-                                10
-                                : session.asymmetry.body_side === 2 ?
-                                    4
-                                    :
-                                    13;
-                            return (
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    key={index}
-                                    onPress={() => this._toggleSelectedDate(index)}
-                                    style={{marginRight: index === (sessions.length - 1) ? 0 : AppSizes.paddingMed,}}
-                                >
-                                    <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(circleSize),]}>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
-                                            {moment(session.event_date_time).format('M/D')}
-                                        </Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
-                                            {moment(session.event_date_time).format('h:mma')}
-                                        </Text>
-                                    </View>
-                                    { index === currentIndex ?
-                                        <Divider style={{backgroundColor: sessionColor ? PlanLogic.returnInsightColorString(sessionColor) : AppColors.zeplin.slateLight, height: 2,}} />
+                    <ScrollView
+                        centerContent={true}
+                        contentInset={{
+                            bottom: 0,
+                            left:   AppSizes.padding,
+                            right:  AppSizes.padding,
+                            top:    0,
+                        }}
+                        horizontal={true}
+                        ref={scrollView => {this.scrollView = scrollView;}}
+                        scrollEventThrottle={10}
+                        showsHorizontalScrollIndicator={false}
+                        snapToInterval={AppSizes.screen.width}
+                    >
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                            { _.map(sessions, (session, index) => {
+                                // let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
+                                // let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;
+                                let circleSize = 50;//_.floor(size) > 50 ? 50 : _.floor(size);
+                                let sessionColor = session.asymmetry.body_side === 1 ?
+                                    10
+                                    : session.asymmetry.body_side === 2 ?
+                                        4
                                         :
-                                        <Divider style={{backgroundColor: AppColors.white, height: 2,}} />
-                                    }
-                                    { sessionColor &&
-                                        <Badge
-                                            containerStyle={{
-                                                left:      0,
-                                                position:  'absolute',
-                                                top:       0,
-                                                elevation: 5,
-                                            }}
-                                            badgeStyle={{
-                                                backgroundColor: PlanLogic.returnInsightColorString(sessionColor),
-                                                minWidth:        14,
-                                                height:          14,
-                                                borderRadius:    (14 / 2),
-                                            }}
-                                            status={'success'}
-                                        />
-                                    }
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </View>
+                                        13;
+                                return (
+                                    <TouchableOpacity
+                                        activeOpacity={1}
+                                        key={index}
+                                        onPress={() => this._toggleSelectedDate(index)}
+                                        style={{marginRight: index === (sessions.length - 1) ? 0 : AppSizes.paddingMed,}}
+                                    >
+                                        <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(circleSize),]}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
+                                                {moment(session.event_date_time).format('M/D')}
+                                            </Text>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
+                                                {moment(session.event_date_time).format('h:mma')}
+                                            </Text>
+                                        </View>
+                                        { index === currentIndex ?
+                                            <Divider style={{backgroundColor: sessionColor ? PlanLogic.returnInsightColorString(sessionColor) : AppColors.zeplin.slateLight, height: 2,}} />
+                                            :
+                                            <Divider style={{backgroundColor: AppColors.white, height: 2,}} />
+                                        }
+                                        { sessionColor &&
+                                            <Badge
+                                                containerStyle={{
+                                                    left:      0,
+                                                    position:  'absolute',
+                                                    top:       0,
+                                                    elevation: 5,
+                                                }}
+                                                badgeStyle={{
+                                                    backgroundColor: PlanLogic.returnInsightColorString(sessionColor),
+                                                    minWidth:        14,
+                                                    height:          14,
+                                                    borderRadius:    (14 / 2),
+                                                }}
+                                                status={'success'}
+                                            />
+                                        }
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    </ScrollView>
 
                     <Spacer size={AppSizes.paddingMed} />
 
@@ -183,7 +205,7 @@ class Biomechanics extends PureComponent {
                         <View style={{flex: 2, alignItems: 'flex-end', justifyContent: 'center',}}>
                             <TouchableOpacity
                                 activeOpacity={1}
-                                onPress={() => this._toggleRichDataView()}
+                                onPress={() => isToggleBtnDisabled ? {} : this._toggleRichDataView()}
                                 style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 10, paddingHorizontal: AppSizes.paddingSml,}]}
                             >
                                 <Image

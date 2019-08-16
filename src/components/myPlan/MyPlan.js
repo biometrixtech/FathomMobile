@@ -948,7 +948,7 @@ class MyPlan extends Component {
                                     }
                                 >
 
-                                    { !triggerStep &&
+                                    { (!triggerStep && !offDaySelected) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
                                     }
 
@@ -1001,7 +1001,7 @@ class MyPlan extends Component {
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
 
-                                    { (afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) &&
+                                    { ((afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) && !offDaySelected) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
                                     }
 

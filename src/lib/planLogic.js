@@ -2063,7 +2063,7 @@ const PlanLogic = {
         let sessionHours = _.floor(selectedSession.duration / 3600);
         let updatedTime = selectedSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
-        let sessionSeconds = updatedTime - sessionMinutes * 60;
+        let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
         let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedSession.asymmetry.apt.summary_data;
@@ -2123,7 +2123,7 @@ const PlanLogic = {
       * - BiomechanicsCharts
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView) => {
+    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData) => {
         const PIE_CHART_TOTAL = 60;
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
@@ -2133,9 +2133,15 @@ const PlanLogic = {
         let largerPieData = emptyPieData;
         let smallerPieData = emptyPieData;
         let rotateDeg = '0deg';
+        let richDataYDomain = [-10, 10];
         if(isRichDataView) {
+            let maxChartObj = _.maxBy(chartData, o => o.y < 0 ? (o.y * -1) : o.y);
+            let maxDomain = maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y;
+            maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
+            maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
             return {
                 largerPieData,
+                richDataYDomain: [-maxDomain, maxDomain],
                 rotateDeg,
                 smallerPieData,
             };
@@ -2181,6 +2187,7 @@ const PlanLogic = {
         return {
             largerPieData,
             parsedSummaryData,
+            richDataYDomain,
             rotateDeg,
             smallerPieData,
         };
