@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     addBtn: {
         backgroundColor: AppColors.white,
         borderColor:     AppColors.zeplin.yellow,
-        borderRadius:    5,
+        borderRadius:    AppSizes.paddingLrg,
         borderWidth:     1,
         marginLeft:      Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
         marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         paddingBottom:  AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     submitBtn: {
-        borderRadius:   5,
+        borderRadius:   AppSizes.paddingLrg,
         justifyContent: 'center',
         marginLeft:     Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
         marginRight:    Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
