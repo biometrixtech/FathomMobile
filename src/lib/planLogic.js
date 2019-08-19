@@ -931,7 +931,7 @@ const PlanLogic = {
             sessions_planned:          dailyReadiness.sessions_planned,
             sleep_quality:             dailyReadiness.sleep_quality,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-            user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+            user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
             wants_functional_strength: dailyReadiness.wants_functional_strength,
         };
         if(dailyReadiness.current_sport_name === 0 || dailyReadiness.current_sport_name > 0) {
@@ -992,7 +992,7 @@ const PlanLogic = {
             event_date:       eventDate,
             sessions:         [],
             sessions_planned: postSession.sessions_planned,
-            user_age:         moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+            user_age:         moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
         };
         let landingScreen = postSession.sessions_planned ? 0 : 2;
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];

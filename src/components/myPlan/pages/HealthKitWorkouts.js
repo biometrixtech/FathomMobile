@@ -264,8 +264,8 @@ class HealthKitWorkouts extends Component {
 
                 <ProgressPill
                     currentStep={1}
-                    onBack={pageIndex > 0 ? () => this._updateBackPageIndex(pageIndex - 1) : null}
-                    onClose={handleTogglePostSessionSurvey}
+                    onBack={pageIndex > 0 && !isHKRetrieveModalOpen ? () => this._updateBackPageIndex(pageIndex - 1) : null}
+                    onClose={isHKRetrieveModalOpen? () => {} : () => handleTogglePostSessionSurvey()}
                     totalSteps={3}
                 />
 
@@ -293,7 +293,7 @@ class HealthKitWorkouts extends Component {
                                         <TabIcon
                                             color={AppColors.zeplin.slateXLight}
                                             icon={'help'}
-                                            onPress={() => this._hkPanel.show()}
+                                            onPress={() => isHKRetrieveModalOpen ? {} : this._hkPanel.show()}
                                             reverse={false}
                                             size={20}
                                             type={'material'}
@@ -302,7 +302,7 @@ class HealthKitWorkouts extends Component {
                                 </View>
                                 {_.map(workouts, (workout, index) =>
                                     <WorkoutListDetail
-                                        handleHealthDataFormChange={isDeleted => handleHealthDataFormChange(index, 'deleted', isDeleted)}
+                                        handleHealthDataFormChange={isDeleted => isHKRetrieveModalOpen ? {} : handleHealthDataFormChange(index, 'deleted', isDeleted)}
                                         key={index}
                                         workout={workout}
                                     />
@@ -313,21 +313,22 @@ class HealthKitWorkouts extends Component {
                                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                         <Checkbox
                                             checked={isHKRetrieveChecked}
-                                            onPress={() => this.setState({ isHKRetrieveChecked: !this.state.isHKRetrieveChecked, })}
+                                            onPress={() => isHKRetrieveModalOpen ? {} : this.setState({ isHKRetrieveChecked: !this.state.isHKRetrieveChecked, })}
                                         />
                                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Retrieve Heart Rate Data if available'}</Text>
                                     </View>
                                 }
                                 <BackNextButtons
                                     addBtnText={'Delete all sessions'}
-                                    handleFormSubmit={() => this._handleHeartRateDataCheck(pageIndex)}
+                                    handleFormSubmit={() => isHKRetrieveModalOpen ? {} : this._handleHeartRateDataCheck(pageIndex)}
+                                    isSubmitBtnSubmitting={isHKRetrieveModalOpen}
                                     isValid={true}
-                                    onBackClick={() => this._deleteAllWorkouts()}
+                                    onBackClick={() => isHKRetrieveModalOpen ? {} : this._deleteAllWorkouts()}
                                     showAddBtn={true}
                                     showAddBtnDisabledStyle={true}
                                     showBackIcon={false}
                                     showSubmitBtn={true}
-                                    submitBtnText={'Accept'}
+                                    submitBtnText={isHKRetrieveModalOpen ? 'Loading...' : 'Accept'}
                                 />
                             </View>
                         </View>
@@ -533,11 +534,11 @@ class HealthKitWorkouts extends Component {
                     </View>
                 </SlidingUpPanel>
 
-                { isHKRetrieveModalOpen &&
+                {/* isHKRetrieveModalOpen &&
                     <Loading
                         text={'Processing Heart Rate Data...'}
                     />
-                }
+                */}
 
             </View>
         )
