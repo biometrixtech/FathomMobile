@@ -70,10 +70,16 @@ class ExerciseModality extends Component {
     }
 
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
-        this.setState({
-            isSelectedExerciseModalOpen: isModalOpen,
-            selectedExercise:            exerciseObj,
-        });
+        this.setState(
+            {
+                isSelectedExerciseModalOpen: isModalOpen,
+                selectedExercise:            exerciseObj,
+            },
+            () => this.state.isSelectedExerciseModalOpen ?
+                Actions.refresh({ panHandlers: null, })
+                :
+                {}
+        );
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
@@ -328,7 +334,7 @@ class ExerciseModality extends Component {
                         updateStatusBar={true}
                     >
                         <Exercises
-                            closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                            closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, }, () => Actions.refresh({ panHandlers: true, }))}
                             completedExercises={completedExercises}
                             exerciseList={exerciseList}
                             handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {

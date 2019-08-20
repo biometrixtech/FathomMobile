@@ -103,10 +103,10 @@ class BiomechanicsCharts extends PureComponent {
                             />
                             {/* Bar Chart */}
                             <V.VictoryBar
-                                alignment={selectedSession.duration <= 600 ? 'start' : 'middle'}
-                                barWidth={selectedSession.duration <= 600 ? 20 : null}
+                                alignment={selectedSession.duration <= 360 ? 'start' : 'middle'}
+                                barWidth={selectedSession.duration <= 360 ? 20 : null}
                                 data={chartData}
-                                domainPadding={selectedSession.duration <= 600 ? { x: 20, } : null}
+                                domainPadding={selectedSession.duration <= 360 ? { x: 20, } : null}
                                 style={{ data: { fill: d => d.color, }, }}
                             />
                         </V.VictoryChart>

@@ -98,7 +98,7 @@ const Index = (
             gesturesEnabled={true}
             hideNavBar={true}
             key={'root'}
-            titleStyle={{ alignSelf: 'center' }}
+            titleStyle={{ alignSelf: 'center', }}
             transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal, })}
         >
             <Scene
@@ -264,14 +264,12 @@ const Index = (
                 component={ExerciseModalityContainer}
                 hideNavBar={true}
                 key={'exerciseModality'}
-                panHandlers={null}
             />
             <Scene
                 Layout={BodyModalityComponent}
                 component={BodyModalityContainer}
                 hideNavBar={true}
                 key={'bodyModality'}
-                panHandlers={null}
             />
             <Scene
                 Layout={CoachesDashboardComponent}

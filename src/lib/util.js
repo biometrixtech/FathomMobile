@@ -454,7 +454,7 @@ const UTIL = {
                         sessions:   cleanedWorkoutValues,
                         sleep_data: filteredSleepValues,
                         start_date: moment(startDate).format('YYYY-MM-DD'),
-                        user_age:   moment().diff(moment(userObj.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+                        user_age:   moment().diff(moment(userObj.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
                         user_id:    userObj.id,
                     };
                     PlanActions.postHealthData(payload)
