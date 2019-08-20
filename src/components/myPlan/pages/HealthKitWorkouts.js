@@ -161,9 +161,7 @@ class HealthKitWorkouts extends Component {
                                 handleHealthDataFormChange(index, 'hr_data', res[index], () => index === (workouts.length - 1) ?
                                     this.setState(
                                         { isHKRetrieveModalOpen: false, },
-                                        () => {
-                                            return this._renderNextPage(currentPage);
-                                        },
+                                        () => _.delay(() => this._renderNextPage(currentPage), 250),
                                     )
                                     :
                                     null

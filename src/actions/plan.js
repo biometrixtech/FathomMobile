@@ -734,7 +734,8 @@ const getBiomechanicsDetails = currentPlan => {
     return dispatch => AppAPI.biomechanics_detail.post(false, payload)
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
-            _.merge(newPlan.trends.biomechanics_summary, response);
+            let mergedSessions = _.unionBy(newPlan.trends.biomechanics_summary.sessions, response.sessions, 'session_id');
+            newPlan.trends.biomechanics_summary.sessions = mergedSessions;
             dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: [newPlan],

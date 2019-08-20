@@ -780,10 +780,12 @@ const PlanLogic = {
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
         } else if(currentPage === 2) { // 2. train later?
-            pageNum = (postSessionSessions && postSessionSessions.length > 0) ?
-                (pageState.pageIndex - 1)
-                :
-                0;
+            pageNum = (healthKitWorkouts && healthKitWorkouts.length > 0) ?
+                (pageState.pageIndex - 2)
+                : (postSessionSessions && postSessionSessions.length > 0) ?
+                    (pageState.pageIndex - 1)
+                    :
+                    0;
         } else if(currentPage === 3) { // 3. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
         } else if(currentPage === 4) { // 4. Areas of Soreness
