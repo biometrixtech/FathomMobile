@@ -734,7 +734,13 @@ const getBiomechanicsDetails = currentPlan => {
     return dispatch => AppAPI.biomechanics_detail.post(false, payload)
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
-            let mergedSessions = _.unionBy(newPlan.trends.biomechanics_summary.sessions, response.sessions, 'session_id');
+            let mergedSessions = _.map(newPlan.trends.biomechanics_summary.sessions, obj => {
+                let clonedObj = _.cloneDeep(obj);
+                let returnedSession = _.find(response.sessions, 'session_id');
+                let mergedAsymmetryAptObj = _.merge(clonedObj.asymmetry.apt, returnedSession.asymmetry.apt);
+                clonedObj.asymmetry.apt = mergedAsymmetryAptObj;
+                return clonedObj;
+            });
             newPlan.trends.biomechanics_summary.sessions = mergedSessions;
             dispatch({
                 type: Actions.GET_MY_PLAN,

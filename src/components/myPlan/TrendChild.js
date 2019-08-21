@@ -325,8 +325,10 @@ class TrendChild extends PureComponent {
                     onSlideChange={(index, lastIndex) => {
                         let newTrendContext = _.cloneDeep(this.state.trendContext);
                         newTrendContext[lastIndex].isPaused = true;
-                        this._videos[lastIndex].seek(0);
-                        this.setState({ currentCardIndex: index, trendContext: newTrendContext, });
+                        this.setState(
+                            { currentCardIndex: index, trendContext: newTrendContext, },
+                            () => this._videos[lastIndex].seek(0),
+                        );
                     }}
                     renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends, dashboardTrendCategories)}
                     scrollEnabled={true}

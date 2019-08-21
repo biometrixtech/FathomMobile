@@ -369,7 +369,7 @@ class MyPlan extends Component {
             if(dailyPlanObj.daily_readiness_survey_completed) {
                 this.setState(
                     { healthData: healthData, },
-                    () => this._togglePostSessionSurveyModal(),
+                    () => this.state.isPostSessionSurveyModalOpen ? {} : this._togglePostSessionSurveyModal(),
                 );
             } else {
                 this.setState({ healthData: healthData, });
