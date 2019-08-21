@@ -13,18 +13,21 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Keyboard, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Keyboard, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { FormInput, Spacer, TabIcon, Text, } from '../../custom';
-import { PlanLogic, } from '../../../lib';
+import { Checkbox, FormInput, Spacer, TabIcon, Text, } from '../../custom';
+import { AppUtil, PlanLogic, } from '../../../lib';
 import { BackNextButtons, ProgressPill, ScaleButton, } from './';
+import { Loading, } from '../../general';
 
 // import third-party libraries
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
+import AppleHealthKit from 'rn-apple-healthkit';
 import SlidingUpPanel from 'rn-sliding-up-panel';
+import moment from 'moment';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -94,11 +97,13 @@ class HealthKitWorkouts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            delayTimerId:        null,
-            isEditingDuration:   false,
-            pageIndex:           0,
-            showAddContinueBtns: false,
-            showRPEPicker:       false,
+            delayTimerId:          null,
+            isEditingDuration:     false,
+            isHKRetrieveChecked:   Platform.OS === 'ios',
+            isHKRetrieveModalOpen: false,
+            pageIndex:             0,
+            showAddContinueBtns:   false,
+            showRPEPicker:         false,
         };
         this._activityRPERef = {};
         this._hkPanel = {};
@@ -118,32 +123,66 @@ class HealthKitWorkouts extends Component {
         clearInterval(this.state.delayTimerId);
     }
 
-    _resetStep = pageIndex => {
-        const { handleHealthDataFormChange, } = this.props;
-        this.setState(
-            { showRPEPicker: false, },
-            () => {
-                if(pageIndex > 0) {
-                    handleHealthDataFormChange((pageIndex - 1), 'deleted', false, () => {
-                        handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', null);
-                    });
+    _deleteAllWorkouts = () => {
+        const { handleHealthDataFormChange, workouts, } = this.props;
+        let i = 0;
+        _.map(workouts, (workout, index) => {
+            _.delay(() => handleHealthDataFormChange(index, 'deleted', true), 200 * i);
+            i = i + 1;
+        });
+    }
+
+    _editDuration = index => {
+        this.textInput[index].focus();
+        this.setState({ isEditingDuration: true, });
+    }
+
+    _handleHeartRateDataCheck = currentPage => {
+        const { isHKRetrieveChecked, } = this.state;
+        const { handleHealthDataFormChange, workouts, } = this.props;
+        if(isHKRetrieveChecked) {
+            return this.setState(
+                { isHKRetrieveModalOpen: true, },
+                async () => {
+                    let appleHealthKitPerms = AppUtil._getAppleHealthKitPerms();
+                    return await Promise.all(
+                        _.map(workouts, (workout, index) => {
+                            return AppUtil._getHeartRateSamples(
+                                appleHealthKitPerms,
+                                moment(workout.event_date.replace('Z', ''), 'YYYY-MM-DDThh:mm:ss.SSS').subtract(1, 'minutes').toISOString(),
+                                moment(workout.end_date.replace('Z', ''), 'YYYY-MM-DDThh:mm:ss.SSS').add(1, 'minutes').toISOString(),
+                                workout.deleted,
+                                AppleHealthKit
+                            );
+                        })
+                    )
+                        .then(res =>
+                            _.map(workouts, (workout, index) => {
+                                handleHealthDataFormChange(index, 'hr_data', res[index], () => index === (workouts.length - 1) ?
+                                    this.setState(
+                                        { isHKRetrieveModalOpen: false, },
+                                        () => _.delay(() => this._renderNextPage(currentPage), 250),
+                                    )
+                                    :
+                                    null
+                                );
+                            })
+                        );
                 }
-                this.setState({
-                    delayTimerId: _.delay(() => this._scrollTo({x: 0, y: 0}), 500),
-                });
-            }
-        );
+            );
+        }
+        return this._renderNextPage(currentPage);
     }
 
     _renderNextPage = currentPage => {
         const { handleNextStep, handleToggleSurvey, workouts, } = this.props;
         Keyboard.dismiss();
         let numberOfNonDeletedWorkouts = _.filter(workouts, ['deleted', false]);
-        if(numberOfNonDeletedWorkouts.length === 0) {
+        if(numberOfNonDeletedWorkouts.length === 0) { // if all workouts are cancelled, handle next step
             handleToggleSurvey(true);
-        } else if(currentPage === workouts.length || (currentPage + 1) > numberOfNonDeletedWorkouts.length) {
+        } else if(currentPage === workouts.length || (currentPage + 1) > numberOfNonDeletedWorkouts.length) { // render next page, out of HK Workouts
             handleNextStep(true);
-        } else {
+        } else { // render next non-deleted HK workout
             let nextNonDeletedWorkout = (_.findIndex(workouts, (workout, i) => !workout.deleted && (currentPage - 1) < i) + 1);
             let moreNonDeletedWorkouts = _.filter(workouts, (workout, i) => !workout.deleted && (nextNonDeletedWorkout - 1) < i);
             this.pages.scrollToPage(nextNonDeletedWorkout);
@@ -161,9 +200,21 @@ class HealthKitWorkouts extends Component {
         }
     }
 
-    _editDuration = index => {
-        this.textInput[index].focus();
-        this.setState({ isEditingDuration: true, });
+    _resetStep = pageIndex => {
+        const { handleHealthDataFormChange, } = this.props;
+        this.setState(
+            { showRPEPicker: false, },
+            () => {
+                if(pageIndex > 0) {
+                    handleHealthDataFormChange((pageIndex - 1), 'deleted', false, () => {
+                        handleHealthDataFormChange((pageIndex - 1), 'post_session_survey.RPE', null);
+                    });
+                }
+                this.setState({
+                    delayTimerId: _.delay(() => this._scrollTo({x: 0, y: 0}), 500),
+                });
+            }
+        );
     }
 
     _scrollTo = (myComponentsLocation, scrollViewRef) => {
@@ -194,15 +245,6 @@ class HealthKitWorkouts extends Component {
         }
     }
 
-    _deleteAllWorkouts = () => {
-        const { handleHealthDataFormChange, workouts, } = this.props;
-        let i = 0;
-        _.map(workouts, (workout, index) => {
-            _.delay(() => handleHealthDataFormChange(index, 'deleted', true), 200 * i);
-            i = i + 1;
-        });
-    }
-
     _updateBackPageIndex = pageIndex => {
         this.pages.scrollToPage(pageIndex);
         this.setState(
@@ -212,16 +254,16 @@ class HealthKitWorkouts extends Component {
     }
 
     render = () => {
-        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
-        const { isEditingDuration, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, workouts, } = this.props;
+        const { isEditingDuration, isHKRetrieveChecked, isHKRetrieveModalOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         return(
             <View style={{flex: 1,}}>
 
                 <ProgressPill
                     currentStep={1}
-                    onBack={pageIndex > 0 ? () => this._updateBackPageIndex(pageIndex - 1) : null}
-                    onClose={handleTogglePostSessionSurvey}
+                    onBack={pageIndex > 0 && !isHKRetrieveModalOpen ? () => this._updateBackPageIndex(pageIndex - 1) : null}
+                    onClose={isHKRetrieveModalOpen? () => {} : () => handleTogglePostSessionSurvey()}
                     totalSteps={3}
                 />
 
@@ -249,7 +291,7 @@ class HealthKitWorkouts extends Component {
                                         <TabIcon
                                             color={AppColors.zeplin.slateXLight}
                                             icon={'help'}
-                                            onPress={() => this._hkPanel.show()}
+                                            onPress={() => isHKRetrieveModalOpen ? {} : this._hkPanel.show()}
                                             reverse={false}
                                             size={20}
                                             type={'material'}
@@ -258,23 +300,33 @@ class HealthKitWorkouts extends Component {
                                 </View>
                                 {_.map(workouts, (workout, index) =>
                                     <WorkoutListDetail
-                                        handleHealthDataFormChange={isDeleted => handleHealthDataFormChange(index, 'deleted', isDeleted)}
+                                        handleHealthDataFormChange={isDeleted => isHKRetrieveModalOpen ? {} : handleHealthDataFormChange(index, 'deleted', isDeleted)}
                                         key={index}
                                         workout={workout}
                                     />
                                 )}
                             </View>
                             <View>
+                                { (Platform.OS === 'ios') &&
+                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                        <Checkbox
+                                            checked={isHKRetrieveChecked}
+                                            onPress={() => isHKRetrieveModalOpen ? {} : this.setState({ isHKRetrieveChecked: !this.state.isHKRetrieveChecked, })}
+                                        />
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Retrieve Heart Rate Data if available'}</Text>
+                                    </View>
+                                }
                                 <BackNextButtons
                                     addBtnText={'Delete all sessions'}
-                                    handleFormSubmit={() => this._renderNextPage(pageIndex)}
+                                    handleFormSubmit={() => isHKRetrieveModalOpen ? {} : this._handleHeartRateDataCheck(pageIndex)}
+                                    isSubmitBtnSubmitting={isHKRetrieveModalOpen}
                                     isValid={true}
-                                    onBackClick={() => this._deleteAllWorkouts()}
+                                    onBackClick={() => isHKRetrieveModalOpen ? {} : this._deleteAllWorkouts()}
                                     showAddBtn={true}
                                     showAddBtnDisabledStyle={true}
                                     showBackIcon={false}
                                     showSubmitBtn={true}
-                                    submitBtnText={'Accept'}
+                                    submitBtnText={isHKRetrieveModalOpen ? 'Loading...' : 'Accept'}
                                 />
                             </View>
                         </View>
@@ -331,7 +383,7 @@ class HealthKitWorkouts extends Component {
                                         <Spacer size={AppSizes.padding} />
                                         <TouchableOpacity
                                             onPress={() => this._editDuration(index)}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: AppSizes.paddingLrg, flexDirection: 'row', marginBottom: AppSizes.paddingSml, padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
@@ -349,7 +401,7 @@ class HealthKitWorkouts extends Component {
                                                     this._renderNextPage(pageIndex);
                                                 });
                                             }}
-                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: 5, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
+                                            style={{alignSelf: 'center', borderColor: AppColors.zeplin.slateLight, borderWidth: 1, borderRadius: AppSizes.paddingLrg, flexDirection: 'row', padding: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}
                                         >
                                             <TabIcon
                                                 containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
@@ -369,7 +421,7 @@ class HealthKitWorkouts extends Component {
                                                     () => this._scrollTo(this._activityRPERef, this.scrollViewHealthKitRef[index]),
                                                 )
                                             }
-                                            style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 5, padding: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                                            style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, padding: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
                                         >
                                             <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Yes'}</Text>
                                         </TouchableOpacity>
@@ -479,6 +531,12 @@ class HealthKitWorkouts extends Component {
                         </View>
                     </View>
                 </SlidingUpPanel>
+
+                {/* isHKRetrieveModalOpen &&
+                    <Loading
+                        text={'Processing Heart Rate Data...'}
+                    />
+                */}
 
             </View>
         )

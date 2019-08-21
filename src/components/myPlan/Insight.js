@@ -278,6 +278,7 @@ class Insight extends PureComponent {
 
 Insight.propTypes = {
     insightType: PropTypes.number.isRequired,
+    plan:        PropTypes.object.isRequired,
 };
 
 Insight.defaultProps = {};

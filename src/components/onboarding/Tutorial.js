@@ -7,6 +7,7 @@ import { Image, ImageBackground, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import _ from 'lodash';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import PushNotification from 'react-native-push-notification';
 
@@ -107,14 +108,17 @@ class Tutorial extends Component {
                             <Button
                                 buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() => Platform.OS === 'ios' ?
+                                onPress={() => {
+                                    if(Platform.OS === 'ios') {
+                                        return PushNotification
+                                            .requestPermissions()
+                                            .then(grant => this._onDone())
+                                            .catch(err => this._onDone());
+                                    }
                                     PushNotification
-                                        .requestPermissions()
-                                        .then(grant => this._onDone())
-                                        .catch(err => this._onDone())
-                                    :
-                                    this._onDone()
-                                }
+                                        .requestPermissions();
+                                    return _.delay(() => this._onDone(), 250);
+                                }}
                                 raised={true}
                                 title={'Enable Notifications'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}

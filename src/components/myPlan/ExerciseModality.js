@@ -19,7 +19,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Easing, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
@@ -32,7 +32,6 @@ import { ExerciseCompletionModal, ExerciseListItem, Exercises, GoalPill, } from 
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -71,10 +70,16 @@ class ExerciseModality extends Component {
     }
 
     _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
-        this.setState({
-            isSelectedExerciseModalOpen: isModalOpen,
-            selectedExercise:            exerciseObj,
-        });
+        this.setState(
+            {
+                isSelectedExerciseModalOpen: isModalOpen,
+                selectedExercise:            exerciseObj,
+            },
+            () => this.state.isSelectedExerciseModalOpen ?
+                Actions.refresh({ panHandlers: null, })
+                :
+                {}
+        );
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
@@ -204,7 +209,7 @@ class ExerciseModality extends Component {
             textId,
         } = PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index);
         return (
-            <MagicMove.Scene debug={false} disabled={true} duration={500} id={'myPlanScene'} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
                 <View style={{flex: 1,}}>
                     <ScrollView
                         bounces={false}
@@ -214,15 +219,10 @@ class ExerciseModality extends Component {
                     >
                         <View style={{height: Platform.OS === 'android' ? (AppSizes.screen.height * 0.85) : AppSizes.screen.heightThreeQuarters,}}>
                             <View style={{flex: 1,}}>
-                                <MagicMove.Image
-                                    disabled={true}
-                                    easing={Easing.in(Easing.cubic)}
-                                    id={`${imageId}.image`}
+                                <Image
                                     resizeMode={'cover'}
                                     source={imageSource}
                                     style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
-                                    transition={MagicMove.Transition.morph}
-                                    useNativeDriver={false}
                                 />
                                 <LinearGradient
                                     colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.8)']}
@@ -243,18 +243,9 @@ class ExerciseModality extends Component {
                                             type={'material-community'}
                                         />
                                     </TouchableOpacity>
-                                    <MagicMove.Text
-                                        allowFontScaling={false}
-                                        disabled={true}
-                                        duration={600}
-                                        id={`${textId}.title`}
-                                        style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
-                                        transition={MagicMove.Transition.move}
-                                        useNativeDriver={false}
-                                        zIndex={10}
-                                    >
+                                    <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
                                         {pageTitle}
-                                    </MagicMove.Text>
+                                    </Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <MultiSwitch
                                         buttons={buttons}
@@ -343,7 +334,7 @@ class ExerciseModality extends Component {
                         updateStatusBar={true}
                     >
                         <Exercises
-                            closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, })}
+                            closeModal={() => this.setState({ isSelectedExerciseModalOpen: false, }, () => Actions.refresh({ panHandlers: true, }))}
                             completedExercises={completedExercises}
                             exerciseList={exerciseList}
                             handleCompleteExercise={(exerciseId, setNumber, hasNextExercise) => {
@@ -363,27 +354,29 @@ class ExerciseModality extends Component {
                             user={user}
                         />
                     </FathomModal>
-                    <ExerciseCompletionModal
-                        completedExercises={completedExercises}
-                        exerciseList={exerciseList}
-                        isModalOpen={isExerciseCompletionModalOpen}
-                        onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
-                        onComplete={() => {
-                            this.setState(
-                                { isExerciseCompletionModalOpen: false, isSubmitting: true, },
-                                () => {
-                                    let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
-                                    let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
-                                    patchActiveRecovery(newCompletedExercises, recoveryType)
-                                        .then(res => Actions.pop())
-                                        .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
-                                }
-                            );
-                        }}
-                        user={user}
-                    />
+                    { isExerciseCompletionModalOpen &&
+                        <ExerciseCompletionModal
+                            completedExercises={completedExercises}
+                            exerciseList={exerciseList}
+                            isModalOpen={isExerciseCompletionModalOpen}
+                            onClose={() => this.setState({ isExerciseCompletionModalOpen: false, })}
+                            onComplete={() => {
+                                this.setState(
+                                    { isExerciseCompletionModalOpen: false, isSubmitting: true, },
+                                    () => {
+                                        let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+                                        let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
+                                        patchActiveRecovery(newCompletedExercises, recoveryType)
+                                            .then(res => Actions.pop())
+                                            .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
+                                    }
+                                );
+                            }}
+                            user={user}
+                        />
+                    }
                 </View>
-            </MagicMove.Scene>
+            </View>
         );
     }
 }

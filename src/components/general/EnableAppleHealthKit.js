@@ -50,6 +50,7 @@ const EnableAppleHealthKit = ({
                     <View style={{flex: 1,}}>
                         <TouchableHighlight
                             onPress={() => isLoading ? null : handleSkip('apple_healthkit')}
+                            style={{paddingVertical: AppSizes.paddingMed,}}
                             underlayColor={AppColors.transparent}
                         >
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>{'Not now'}</Text>

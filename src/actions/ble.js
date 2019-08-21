@@ -469,13 +469,14 @@ const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value
 };
 
 const checkCharacteristicForChange = async (device, readConnectBase64, transactionId, startTime) => {
+    const timeLimit = 12;
     const readConnectSleep = await sleeper(1000);
     return await write(device, readConnectBase64, transactionId)
         .then(readConnectCharacteristic => {
             let timeDiff = moment().diff(startTime, 'seconds');
-            if(readConnectCharacteristic[4] !== 1 && timeDiff <= 10) {
+            if(readConnectCharacteristic[4] !== 1 && timeDiff <= timeLimit) {
                 return checkCharacteristicForChange(device, readConnectBase64, transactionId, startTime);
-            } else if(readConnectCharacteristic[4] !== 1 && timeDiff >= 10) {
+            } else if(readConnectCharacteristic[4] !== 1 && timeDiff >= timeLimit) {
                 return Promise.reject({});
             }
             return Promise.resolve(readConnectCharacteristic);

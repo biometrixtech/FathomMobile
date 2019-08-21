@@ -71,8 +71,8 @@ class ExerciseCompletionModal extends Component {
         _.map(this.iconTimers, (timer, i) => clearInterval(this.iconTimers[i]));
     }
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) {
+    componentDidMount = () => {
+        if(this.props.isModalOpen) {
             this.mainTimer = _.delay(() => {
                 const completionModalExerciseList = MyPlanConstants.completionModalExerciseList(this.props.exerciseList, this.props.completedExercises, this.props.isFS);
                 let newProgressCounters = _.cloneDeep(this.state.progressCounters);

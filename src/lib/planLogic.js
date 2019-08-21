@@ -780,10 +780,12 @@ const PlanLogic = {
         } else if(currentPage === 1) { // 1. Session + RPE/Duration
             pageNum = 0;
         } else if(currentPage === 2) { // 2. train later?
-            pageNum = (postSessionSessions && postSessionSessions.length > 0) ?
-                (pageState.pageIndex - 1)
-                :
-                0;
+            pageNum = (healthKitWorkouts && healthKitWorkouts.length > 0) ?
+                (pageState.pageIndex - 2)
+                : (postSessionSessions && postSessionSessions.length > 0) ?
+                    (pageState.pageIndex - 1)
+                    :
+                    0;
         } else if(currentPage === 3) { // 3. Follow Up Pain & Soreness
             pageNum = (pageState.pageIndex - 1);
         } else if(currentPage === 4) { // 4. Areas of Soreness
@@ -931,7 +933,7 @@ const PlanLogic = {
             sessions_planned:          dailyReadiness.sessions_planned,
             sleep_quality:             dailyReadiness.sleep_quality,
             soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
-            user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+            user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
             wants_functional_strength: dailyReadiness.wants_functional_strength,
         };
         if(dailyReadiness.current_sport_name === 0 || dailyReadiness.current_sport_name > 0) {
@@ -992,7 +994,7 @@ const PlanLogic = {
             event_date:       eventDate,
             sessions:         [],
             sessions_planned: postSession.sessions_planned,
-            user_age:         moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD']), 'years'),
+            user_age:         moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
         };
         let landingScreen = postSession.sessions_planned ? 0 : 2;
         let healthDataWorkouts = healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : [];
@@ -1543,10 +1545,10 @@ const PlanLogic = {
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
         let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
-        let biomechanics = PlanLogic.returnStubBiomechanicsTrend();
+        let biomechanics = trends && trends.biomechanics_summary ? trends.biomechanics_summary : [];
         let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsLocked = (currentBiomechanicsAlert.trigger_type || currentBiomechanicsAlert.trigger_type === 0) && currentBiomechanicsAlert.trigger_type >= 200;
+        let isBiomechanicsLocked = trends && trends.biomechanics_summary && trends.biomechanics_summary.sessions.length === 0;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
@@ -1848,11 +1850,11 @@ const PlanLogic = {
             let splitTextArray = _.split(subtitleText, textRegEx);
             splitTextArray = _.remove(splitTextArray, o => o.length > 0);
             if(!textMatchedArray) {
-                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
             } else {
                 if(splitTextArray.length === 2 && textMatchedArray.length === 1) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1860,7 +1862,7 @@ const PlanLogic = {
                     );
                 } else if(splitTextArray.length === 3 && textMatchedArray.length === 2) {
                     cleanedText = (
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                             {splitTextArray[0]}
                             <Text robotoBold style={{color: AppColors.zeplin.splashLight,}}>{textMatchedArray[0]}</Text>
                             {splitTextArray[1]}
@@ -1869,7 +1871,7 @@ const PlanLogic = {
                         </Text>
                     );
                 } else {
-                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, flex: 1, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
+                    cleanedText = (<Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{subtitleText}</Text>);
                 }
             }
         }
@@ -2029,6 +2031,191 @@ const PlanLogic = {
         };
     },
 
+    /**
+      * Handle Biomechanics Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsRenderLogic: (plan, currentIndex, step) => {
+        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
+        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
+        let leftPieWidth = (pieLeftWrapperWidth - 35);
+        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
+        let rightPieWidth = pieLeftWrapperWidth;
+        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        let extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+        rightPieInnerRadius = (rightPieInnerRadius - extraInnerRadiusToRemove);
+        if(currentIndex === -1) {
+            return {
+                leftPieInnerRadius,
+                leftPieWidth,
+                pieData:         { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
+                pieLeftWrapperWidth,
+                pieRightWrapperWidth,
+                rightPieInnerRadius,
+                rightPieWidth,
+                selectedSession: {},
+            };
+        }
+        let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
+        let biomechanicsSummary = dailyPlan ? dailyPlan.trends.biomechanics_summary : {};
+        let selectedSession = biomechanicsSummary.sessions[currentIndex];
+        let sessionSportName = selectedSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedSession.duration / 3600);
+        let updatedTime = selectedSession.duration - sessionHours * 3600;
+        let sessionMinutes = _.floor(updatedTime / 60);
+        let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
+        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+        let pieData = selectedSession.asymmetry.apt.summary_data;
+        let chartData = selectedSession.asymmetry.apt.detail_data;
+        let updatedChartData = _.map(chartData, (data, index) => {
+            let newDataObjLeft = {};
+            newDataObjLeft.x = data.x;
+            newDataObjLeft.y = data.y1;
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 10 : 8);
+            let newDataObjRight = {};
+            newDataObjRight.x = data.x;
+            newDataObjRight.y = data.y2;
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
+            return [newDataObjLeft, newDataObjRight];
+        });
+        let parsedData = [];
+        if(
+            selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt &&
+            (
+                (step === 1 && selectedSession.asymmetry.apt.summary_take_away_text) ||
+                (step === 2 && selectedSession.asymmetry.apt.detail_text)
+            )
+        ) {
+            _.map(step === 1 ? selectedSession.asymmetry.apt.summary_take_away_bold_text : selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                let sessionColor = _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                    10
+                    : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                        4
+                        :
+                        13;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedData.push(newParsedData);
+            });
+        }
+        return {
+            leftPieInnerRadius,
+            leftPieWidth,
+            parsedData,
+            pieData,
+            pieLeftWrapperWidth,
+            pieRightWrapperWidth,
+            rightPieInnerRadius,
+            rightPieWidth,
+            selectedSession,
+            sessionDuration,
+            sessionSportName,
+            sessionStartTimeDuration,
+            sessions:         biomechanicsSummary.sessions,
+            updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
+    /**
+      * Handle Biomechanics Charts Render Logic
+      * - BiomechanicsCharts
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData) => {
+        const PIE_CHART_TOTAL = 60;
+        let newPieData = _.cloneDeep(pieData);
+        const emptyPieData = [
+            {color: AppColors.transparent, x: 0, y: 0,},
+            {color: AppColors.transparent, x: 0, y: 0,},
+        ];
+        let largerPieData = emptyPieData;
+        let smallerPieData = emptyPieData;
+        let rotateDeg = '0deg';
+        let richDataYDomain = [-10, 10];
+        if(isRichDataView) {
+            let maxChartObj = _.maxBy(chartData, o => o.y < 0 ? (o.y * -1) : o.y);
+            let maxDomain = maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y;
+            maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
+            maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
+            return {
+                largerPieData,
+                richDataYDomain: [-maxDomain, maxDomain],
+                rotateDeg,
+                smallerPieData,
+            };
+        }
+        const isLeftDataEmpty = newPieData.left_y === 0;
+        const isRightDataEmpty = newPieData.right_y === 0;
+        if(!isLeftDataEmpty && !isRightDataEmpty) {
+            if(_.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL, true);
+                smallerPieData = emptyPieData;
+                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            } else if(newPieData.left_y > newPieData.right_y) {
+                let ratio = (newPieData.left_y / newPieData.right_y);
+                newPieData.right_y = 5;
+                newPieData.left_y  = (5 * ratio);
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
+                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
+                rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
+            } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                let ratio = (newPieData.right_y / newPieData.left_y);
+                newPieData.left_y = 5;
+                newPieData.right_y = (5 * ratio);
+                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
+                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
+                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            }
+        }
+        let parsedSummaryData = [];
+        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
+            _.map(selectedSession.asymmetry.apt.summary_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
+                    10
+                    : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
+                        4
+                        :
+                        null;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedSummaryData.push(newParsedData);
+            });
+        }
+        return {
+            largerPieData,
+            parsedSummaryData,
+            richDataYDomain,
+            rotateDeg,
+            smallerPieData,
+        };
+    },
+
+    returnPieChartCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
+        let color = isSymmetry ?
+            AppColors.zeplin.successLight
+            :
+            isLeft ?
+                AppColors.zeplin.purpleLight
+                :
+                AppColors.zeplin.splashLight;
+        if(y < otherY) {
+            return [
+                {color: AppColors.transparent, x: 0, y: ((otherY - y) / 2),},
+                {color: color, x: 1, y: y,},
+                {color: AppColors.transparent, x: 2, y: (total - (y + ((otherY - y) / 2))),},
+            ];
+        }
+        return [
+            {color: color, x: 0, y: y,},
+            {color: AppColors.transparent, x: 1, y: (total - y),},
+        ];
+    },
+
     returnBodyOverlayColorString: (value, isPain, color) => {
         if(color) {
             return PlanLogic.returnInsightColorString(color);
@@ -2064,8 +2251,20 @@ const PlanLogic = {
                                 AppColors.zeplin.errorLight
                                 : color === 7 ?
                                     AppColors.zeplin.splashXLight
-                                    :
-                                    AppColors.zeplin.errorLight;
+                                    : color === 8 ?
+                                        `${AppColors.zeplin.purpleLight}${PlanLogic.returnHexOpacity(0.3)}`
+                                        : color === 9 ?
+                                            `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.3)}`
+                                            : color === 10 ?
+                                                AppColors.zeplin.purpleLight
+                                                : color === 11 ?
+                                                    AppColors.zeplin.slateLight
+                                                    : color === 12 ?
+                                                        AppColors.zeplin.slate
+                                                        : color === 13 ?
+                                                            AppColors.zeplin.successLight
+                                                            :
+                                                            AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
@@ -2084,6 +2283,12 @@ const PlanLogic = {
         }
         biomechanics.data = dataArray;
         return biomechanics;
+    },
+
+    returnHexOpacity: (opacity = 1) => {
+        let alpha = Math.round(opacity * 255);
+        let hex = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
+        return hex;
     },
 
 };

@@ -19,6 +19,6 @@ YellowBox.ignoreWarnings([
 
 const { persistor, store, } = configureStore();
 
-const App = () => <Root store={store} persistor={persistor}/>;
+const App = () => <Root store={store} persistor={persistor} />;
 
 AppRegistry.registerComponent('Fathom', () => App);
