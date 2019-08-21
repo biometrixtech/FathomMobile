@@ -5,7 +5,7 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_2';
+const plansAPIVersion = '/plans/4_3';
 const preprocessingAPIVersion = '/preprocessing/1_1';
 const usersAPIVersion = '/users/2_3';
 
@@ -48,6 +48,7 @@ export default {
         ['active_recovery',       `${plansAPIVersion}/active_recovery/exercise_modalities`], // POST/PATCH
         ['active_time',           `${plansAPIVersion}/active_recovery/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/app_logs`], // POST
+        ['biomechanics_detail',   `${plansAPIVersion}/three_sensor/biomechanics_detail`], // POST
         ['body_active_recovery',  `${plansAPIVersion}/active_recovery/body_part_modalities`], // POST/PATCH
         ['clear_fte_category',    `${plansAPIVersion}/trends/first_time_experience/category`], // POST
         ['clear_fte_view',        `${plansAPIVersion}/trends/first_time_experience/view`], // POST

@@ -65,6 +65,12 @@ import TrendChildComponent from '../components/myPlan/TrendChild';
 import InsightContainer from '../containers/myPlan/Insight';
 import InsightComponent from '../components/myPlan/Insight';
 
+import BiomechanicsContainer from '../containers/myPlan/Biomechanics';
+import BiomechanicsComponent from '../components/myPlan/Biomechanics';
+
+import BiomechanicsSummaryContainer from '../containers/myPlan/BiomechanicsSummary';
+import BiomechanicsSummaryComponent from '../components/myPlan/BiomechanicsSummary';
+
 import OnboardingContainer from '../containers/onboarding/Onboarding';
 import OnboardingComponent from '../components/onboarding/Onboarding';
 
@@ -89,9 +95,10 @@ import SurveyComponent from '../components/onboarding/Survey';
 const Index = (
     <Router hideNavBar={true}>
         <Stack
+            gesturesEnabled={true}
             hideNavBar={true}
             key={'root'}
-            titleStyle={{ alignSelf: 'center' }}
+            titleStyle={{ alignSelf: 'center', }}
             transitionConfig={() => ({ screenInterpolator: StackViewStyleInterpolator.forHorizontal, })}
         >
             <Scene
@@ -137,7 +144,6 @@ const Index = (
                 component={TutorialContainer}
                 hideNavBar={true}
                 key={'tutorial'}
-                panHandlers={null}
             />
             <Scene
                 Layout={SurveyComponent}
@@ -151,14 +157,12 @@ const Index = (
                 component={OnboardingContainer}
                 hideNavBar={true}
                 key={'onboarding'}
-                panHandlers={null}
             />
             <Scene
                 Layout={LoginComponent}
                 component={LoginContainer}
                 hideNavBar={true}
                 key={'login'}
-                panHandlers={null}
             />
             <Scene
                 Layout={AccountTypeComponent}
@@ -182,7 +186,6 @@ const Index = (
                 key={'forgotPassword'}
                 navBar={CustomNavBar}
                 onLeft={() => Actions.pop()}
-                panHandlers={null}
                 title={'FORGOT PASSWORD'}
             />
             <Scene
@@ -237,28 +240,36 @@ const Index = (
                 component={TrendChildContainer}
                 hideNavBar={true}
                 key={'trendChild'}
-                panHandlers={null}
             />
             <Scene
                 Layout={InsightComponent}
                 component={InsightContainer}
                 hideNavBar={true}
                 key={'insight'}
-                panHandlers={null}
+            />
+            <Scene
+                Layout={BiomechanicsComponent}
+                component={BiomechanicsContainer}
+                hideNavBar={true}
+                key={'biomechanics'}
+            />
+            <Scene
+                Layout={BiomechanicsSummaryComponent}
+                component={BiomechanicsSummaryContainer}
+                hideNavBar={true}
+                key={'biomechanicsSummary'}
             />
             <Scene
                 Layout={ExerciseModalityComponent}
                 component={ExerciseModalityContainer}
                 hideNavBar={true}
                 key={'exerciseModality'}
-                panHandlers={null}
             />
             <Scene
                 Layout={BodyModalityComponent}
                 component={BodyModalityContainer}
                 hideNavBar={true}
                 key={'bodyModality'}
-                panHandlers={null}
             />
             <Scene
                 Layout={CoachesDashboardComponent}

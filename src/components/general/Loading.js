@@ -26,7 +26,7 @@ const Loading = ({ text, }) => (
                 size={'large'}
             />
             <Spacer size={AppSizes.padding} />
-            {!!text && <Text oswaldMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14),}}>{text}</Text>}
+            {!!text && <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14),}}>{text}</Text>}
         </View>
     </FathomModal>
 );

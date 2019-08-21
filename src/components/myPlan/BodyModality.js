@@ -12,7 +12,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Easing, Platform, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View, } from 'react-native';
+import { Animated, Image, Platform, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
@@ -21,7 +21,6 @@ import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions } from 'react-native-router-flux';
-import * as MagicMove from 'react-native-magic-move';
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
 import LinearGradient from 'react-native-linear-gradient';
@@ -161,7 +160,7 @@ class BodyModality extends Component {
         });
         const animatedStyle = {transform: [{rotate: interpolateRotation,}]};
         return (
-            <MagicMove.Scene debug={false} disabled={true} duration={500} id={sceneId} style={{flex: 1, backgroundColor: AppColors.white,}} useNativeDriver={false}>
+            <View style={{backgroundColor: AppColors.white, flex: 1,}}>
                 <View style={{flex: 1,}}>
                     <ScrollView
                         automaticallyAdjustContentInsets={false}
@@ -172,15 +171,10 @@ class BodyModality extends Component {
                     >
                         <View style={{height: AppSizes.screen.heightTwoThirds,}}>
                             <View style={{flex: 1,}}>
-                                <MagicMove.Image
-                                    disabled={true}
-                                    easing={Easing.in(Easing.cubic)}
-                                    id={`${imageId}.image`}
+                                <Image
                                     resizeMode={'cover'}
                                     source={imageSource}
                                     style={[{height: (AppSizes.screen.heightTwoThirds - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
-                                    transition={MagicMove.Transition.morph}
-                                    useNativeDriver={false}
                                 />
                                 <LinearGradient
                                     colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.8)']}
@@ -201,18 +195,9 @@ class BodyModality extends Component {
                                             type={'material-community'}
                                         />
                                     </TouchableOpacity>
-                                    <MagicMove.Text
-                                        allowFontScaling={false}
-                                        disabled={true}
-                                        duration={600}
-                                        id={`${textId}.title`}
-                                        style={[AppStyles.oswaldRegular, {color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}]}
-                                        transition={MagicMove.Transition.move}
-                                        useNativeDriver={false}
-                                        zIndex={10}
-                                    >
+                                    <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
                                         {pageTitle}
-                                    </MagicMove.Text>
+                                    </Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
                                     <View style={[Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.white, borderRadius: 12, marginHorizontal: AppSizes.paddingLrg, padding: AppSizes.paddingMed,}]}>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>{pageText}</Text>
@@ -577,7 +562,7 @@ class BodyModality extends Component {
                         </View>
                     </SlidingUpPanel>
                 </View>
-            </MagicMove.Scene>
+            </View>
         );
     }
 }

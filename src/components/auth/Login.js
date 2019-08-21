@@ -29,6 +29,7 @@ import {
 import { Actions ,} from 'react-native-router-flux';
 import _ from 'lodash';
 import Egg from 'react-native-egg';
+import PushNotification from 'react-native-push-notification';
 
 // Consts and Libs
 import { AppAPI, AppUtil, } from '../../lib';
@@ -174,7 +175,7 @@ class Login extends Component {
         // validation
         let errorsArray = this._validateForm();
         if (errorsArray.length === 0) {
-            this.login();
+            this.registerPNToken();
         } else {
             let newErrorFields = _.update( this.state.resultMsg, 'error', () => errorsArray);
             this.setState({ loading: false, resultMsg: newErrorFields });
@@ -191,6 +192,18 @@ class Login extends Component {
         errorsArray = errorsArray.concat(onboardingUtils.isEmailValid(form_fields.form_values.email).errorsArray);
         errorsArray = errorsArray.concat(onboardingUtils.isPasswordValid(form_fields.form_values.password).errorsArray);
         return errorsArray;
+    }
+
+    registerPNToken = () => {
+        if(Platform.OS === 'ios') {
+            return PushNotification
+                .requestPermissions()
+                .then(grant => this.login())
+                .catch(err => this.login());
+        }
+        PushNotification
+            .requestPermissions();
+        return _.delay(() => this.login(), 250);
     }
 
     /**

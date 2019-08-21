@@ -322,7 +322,14 @@ class TrendChild extends PureComponent {
                     dotStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                     hidePagination={selectedTrends.length === 1 || selectedTrends.length === 0}
                     paginationStyle={[AppSizes.isIphoneX ? {paddingBottom: AppSizes.paddingSml,} : {}, {backgroundColor: AppColors.white, bottom: 0, left: 0, width: AppSizes.screen.width,}]}
-                    onSlideChange={index => this.setState({ currentCardIndex: index, })}
+                    onSlideChange={(index, lastIndex) => {
+                        let newTrendContext = _.cloneDeep(this.state.trendContext);
+                        newTrendContext[lastIndex].isPaused = true;
+                        this.setState(
+                            { currentCardIndex: index, trendContext: newTrendContext, },
+                            () => this._videos[lastIndex].seek(0),
+                        );
+                    }}
                     renderItem={props => this._renderItem(props, selectedTrendCategory[0], selectedTrends, dashboardTrendCategories)}
                     scrollEnabled={true}
                     slides={selectedTrends}

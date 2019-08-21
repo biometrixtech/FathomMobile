@@ -23,7 +23,7 @@ import { AppColors, } from '../../constants';
 
 /* Component ==================================================================== */
 const Spacer = ({ isDivider, size }) => isDivider ?
-    <Divider size={{backgroundColor: AppColors.zeplin.slateXLight, height: 1,}} />
+    <Divider style={{backgroundColor: AppColors.zeplin.slateXLight, height: 1,}} />
     :
     <View
         style={{

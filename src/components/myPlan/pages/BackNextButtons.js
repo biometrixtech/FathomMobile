@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     addBtn: {
         backgroundColor: AppColors.white,
         borderColor:     AppColors.zeplin.yellow,
-        borderRadius:    5,
+        borderRadius:    AppSizes.paddingLrg,
         borderWidth:     1,
         marginLeft:      Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
         marginRight:     Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         paddingBottom:  AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed,
     },
     submitBtn: {
-        borderRadius:   5,
+        borderRadius:   AppSizes.paddingLrg,
         justifyContent: 'center',
         marginLeft:     Platform.OS === 'ios' ? AppSizes.paddingSml : (AppSizes.paddingSml / 2),
         marginRight:    Platform.OS === 'ios' ? AppSizes.paddingXSml : (AppSizes.paddingXSml / 2),
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
 const BackNextButtons = ({
     addBtnText,
     handleFormSubmit,
+    isSubmitBtnSubmitting,
     isValid,
     onBackClick,
     onNextClick,
@@ -145,18 +146,28 @@ const BackNextButtons = ({
                 ]}
                 underlayColor={AppColors.transparent}
             >
-                <Text
-                    robotoMedium
-                    style={[
-                        AppStyles.textCenterAligned,
-                        {
-                            color:    isValid ? AppColors.white : AppColors.zeplin.slateXLight,
-                            fontSize: AppFonts.scaleFont(14),
-                        }
-                    ]}
-                >
-                    {submitBtnText}
-                </Text>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                    { (Platform.OS === 'ios' && isSubmitBtnSubmitting) &&
+                        <ActivityIndicator
+                            color={AppColors.white}
+                            size={'small'}
+                        />
+                    }
+                    <Text
+                        robotoMedium
+                        style={[
+                            AppStyles.textCenterAligned,
+                            Platform.OS === 'ios' ? { lineHeight: 20, } : {},
+                            {
+                                color:      isValid ? AppColors.white : AppColors.zeplin.slateXLight,
+                                fontSize:   AppFonts.scaleFont(14),
+                                marginLeft: isSubmitBtnSubmitting ? AppSizes.paddingXSml : 0,
+                            }
+                        ]}
+                    >
+                        {submitBtnText}
+                    </Text>
+                </View>
             </TouchableHighlight>
             :
             <TouchableHighlight
@@ -191,6 +202,7 @@ const BackNextButtons = ({
 BackNextButtons.propTypes = {
     addBtnText:              PropTypes.string,
     handleFormSubmit:        PropTypes.func,
+    isSubmitBtnSubmitting:   PropTypes.bool,
     isValid:                 PropTypes.bool.isRequired,
     onBackClick:             PropTypes.func,
     onNextClick:             PropTypes.func,
@@ -205,6 +217,7 @@ BackNextButtons.propTypes = {
 BackNextButtons.defaultProps = {
     addBtnText:              'Add another session',
     handleFormSubmit:        null,
+    isSubmitBtnSubmitting:   false,
     onBackClick:             null,
     onNextClick:             null,
     showAddBtn:              false,

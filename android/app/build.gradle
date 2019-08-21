@@ -129,8 +129,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 34
-        versionName "3.3.0"
+        versionCode 35
+        versionName "3.4.0"
     }
     configurations.all {
         resolutionStrategy {
@@ -206,7 +206,6 @@ dependencies {
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-fabric')
-    implementation project(':react-native-magic-move')
     implementation project(':react-native-haptic-feedback')
     implementation project(':react-native-svg')
     // For animated GIF support

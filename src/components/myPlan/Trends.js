@@ -14,14 +14,15 @@ import PropTypes from 'prop-types';
 import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { FathomCharts, InsightsCharts, } from './graphs';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
+import { BiomechanicsCharts, FathomCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
-import { FathomModal, SVGImage, Spacer, TabIcon, Text, } from '../custom';
+import { FathomModal, ParsedText, SVGImage, Spacer, TabIcon, Text, } from '../custom';
 import { store } from '../../store';
 
 // import third-party libraries
 import _ from 'lodash';
+import moment from 'moment';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -180,23 +181,13 @@ class Trends extends PureComponent {
         let {
             biomechanics,
             bodyResponse,
-            currentBiomechanicsAlert,
-            currentBodyResponseAlert,
-            currentResponseAlert,
-            currentStressAlert,
-            currentWorkloadAlert,
             extraBottomPadding,
             isBiomechanicsLocked,
             isBodyResponseLocked,
-            isResponseLocked,
-            isStressLocked,
             isWorkloadLocked,
             trendCategories,
             workload,
         } = PlanLogic.handleTrendsRenderLogic(plan, Platform.OS);
-        let currentStressAlertText = PlanLogic.handleChartTitleRenderLogic(currentStressAlert, styles.cardSubtitle);
-        let currentResponseAlertText = PlanLogic.handleChartTitleRenderLogic(currentResponseAlert, styles.cardSubtitle);
-        let currentBiomechanicsAlertText = PlanLogic.handleChartTitleRenderLogic(currentBiomechanicsAlert, styles.cardSubtitle);
         let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse && bodyResponse.status ? bodyResponse.status.bolded_text : [], bodyResponse && bodyResponse.status ? bodyResponse.status.text : '');
         let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(workload && workload.status ? workload.status.bolded_text : [], workload && workload.status ? workload.status.text : '');
         let {
@@ -213,6 +204,38 @@ class Trends extends PureComponent {
             subtitleColor: bodyResponseSubtitleColor,
             sportName: bodyResponseSportName,
         } = PlanLogic.handleTrendRenderLogic(bodyResponse);
+        let {
+            leftPieInnerRadius,
+            leftPieWidth,
+            pieData,
+            pieLeftWrapperWidth,
+            pieRightWrapperWidth,
+            rightPieInnerRadius,
+            rightPieWidth,
+            selectedSession,
+        } = PlanLogic.handleBiomechanicsRenderLogic(plan, _.findLastIndex(biomechanics.sessions));
+        let biomechanicsAlertText = '';
+        let parsedBiomechanicsData = [];
+        let sessionSport = false;
+        let sessionColor = 11;
+        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
+            sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
+                10
+                : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
+                    4
+                    :
+                    11;
+            sessionSport = selectedSession && _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name);
+            biomechanicsAlertText = `${selectedSession.asymmetry.apt.summary_percentage === '' ? '' : `${selectedSession.asymmetry.apt.summary_percentage}%`} ${selectedSession.asymmetry.apt.summary_text}`;
+            let boldedText = selectedSession.asymmetry.apt.summary_bold_text;
+            boldedText.push({color: null, text: `${selectedSession.asymmetry.apt.summary_percentage}% more`});
+            _.map(boldedText, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedBiomechanicsData.push(newParsedData);
+            });
+        }
         return (
             <View style={{flex: 1,}}>
 
@@ -357,119 +380,34 @@ class Trends extends PureComponent {
                                 </View>
                             }
                         </TouchableOpacity>
-                        <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}>
-                            <InsightsCharts
-                                currentAlert={biomechanics}
-                                data={biomechanics.data}
-                                showSelection={false}
-                            />
-                            <View style={[styles.lockedCardWrapper,]}>
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                    <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Biomechanics'}</Text>
-                                    <TabIcon
-                                        color={AppColors.white}
-                                        containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                        icon={'lock'}
-                                        iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
-                                        size={40}
-                                    />
-                                </View>
-                                <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                    <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advance biomechanics tracking system coming soon.'}</Text>
-                                </View>
-                            </View>
-                        </View>
-                        {/*<TouchableOpacity
-                            activeOpacity={isStressLocked ? 1 : 0.2}
-                            onPress={() => isStressLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 0, })}
-                            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
-                        >
-                            { !isStressLocked &&
-                                <Text oswaldRegular style={[styles.cardTitle,]}>{'STRESS'}</Text>
-                            }
-                            { (currentStressAlertText && !isStressLocked) &&
-                                currentStressAlertText
-                            }
-                            <FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentStressAlert}
-                                startSliceValue={7}
-                            />
-                            { isStressLocked &&
-                                <View style={[styles.lockedCardWrapper,]}>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'STRESS'}</Text>
-                                        <TabIcon
-                                            color={AppColors.white}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={'lock'}
-                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
-                                            size={40}
-                                        />
-                                    </View>
-                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'Insufficient data. Keep logging workouts in Fathom to unlock Stress Trends!'}</Text>
-                                    </View>
-                                </View>
-                            }
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            activeOpacity={isResponseLocked ? 1 : 0.2}
-                            onPress={() => isResponseLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 1, })}
-                            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
-                        >
-                            { !isResponseLocked &&
-                                <Text oswaldRegular style={[styles.cardTitle,]}>{'RESPONSE'}</Text>
-                            }
-                            { (currentResponseAlertText && !isResponseLocked) &&
-                                currentResponseAlertText
-                            }
-                            <FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 7)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentResponseAlert}
-                                startSliceValue={7}
-                            />
-                            { isResponseLocked &&
-                                <View style={[styles.lockedCardWrapper,]}>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'RESPONSE'}</Text>
-                                        <TabIcon
-                                            color={AppColors.white}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={'lock'}
-                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
-                                            size={40}
-                                        />
-                                    </View>
-                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Response Trends yet. Keep logging symptoms for insight into how your body responds to training.'}</Text>
-                                    </View>
-                                </View>
-                            }
-                        </TouchableOpacity>
                         <TouchableOpacity
                             activeOpacity={isBiomechanicsLocked ? 1 : 0.2}
-                            onPress={() => isBiomechanicsLocked ? () => {} : AppUtil.pushToScene('trendChild', { insightType: 2, })}
+                            onPress={() => isBiomechanicsLocked ? () => {} : AppUtil.pushToScene('biomechanics')}
                             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                         >
                             { !isBiomechanicsLocked &&
-                                <Text oswaldRegular style={[styles.cardTitle,]}>{'BIOMECHANICS'}</Text>
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
+                                    <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Biomechanics'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.event_date_time).format('M/D, h:mma')}</Text>
+                                </View>
                             }
-                            { (currentBiomechanicsAlertText && !isBiomechanicsLocked) &&
-                                currentBiomechanicsAlertText
-                            }
-                            <FathomCharts
-                                barData={PlanLogic.handleBarChartRenderLogic(plan, 0)}
-                                containerWidth={AppSizes.screen.width - (AppSizes.paddingMed * 2)}
-                                currentAlert={currentBiomechanicsAlert}
-                                startSliceValue={0}
+                            <BiomechanicsCharts
+                                pieDetails={{
+                                    leftPieInnerRadius,
+                                    leftPieWidth,
+                                    pieData,
+                                    pieLeftWrapperWidth,
+                                    pieRightWrapperWidth,
+                                    rightPieInnerRadius,
+                                    rightPieWidth,
+                                }}
+                                selectedSession={selectedSession}
+                                showDetails={false}
                             />
                             { isBiomechanicsLocked &&
                                 <View style={[styles.lockedCardWrapper,]}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text oswaldRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'BIOMECHANICS'}</Text>
+                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Biomechanics'}</Text>
                                         <TabIcon
                                             color={AppColors.white}
                                             containerStyle={[{marginRight: AppSizes.paddingSml,}]}
@@ -479,11 +417,29 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Biomechanics Trends yet. Keep logging symptoms to help us identify possible weaknesses or strength imbalances.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advanced biomechanics tracking system coming soon.'}</Text>
                                     </View>
                                 </View>
                             }
-                        </TouchableOpacity>*/}
+                            { (!isBiomechanicsLocked && selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) &&
+                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                    { sessionSport ?
+                                        <Image
+                                            source={sessionSport.imagePath}
+                                            style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
+                                        />
+                                        :
+                                        null
+                                    }
+                                    <ParsedText
+                                        parse={parsedBiomechanicsData}
+                                        style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
+                                    >
+                                        {biomechanicsAlertText}
+                                    </ParsedText>
+                                </View>
+                            }
+                        </TouchableOpacity>
                     </View>
 
                 </ScrollView>
