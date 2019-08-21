@@ -736,7 +736,7 @@ const getBiomechanicsDetails = (currentPlan, userId) => {
             let newPlan = _.cloneDeep(currentPlan);
             let mergedSessions = _.map(newPlan.trends.biomechanics_summary.sessions, obj => {
                 let clonedObj = _.cloneDeep(obj);
-                let returnedSession = _.find(response.sessions, 'session_id');
+                let returnedSession = _.find(response.sessions, ['session_id', clonedObj.session_id]);
                 let mergedAsymmetryAptObj = _.merge(clonedObj.asymmetry.apt, returnedSession.asymmetry.apt);
                 clonedObj.asymmetry.apt = mergedAsymmetryAptObj;
                 return clonedObj;
