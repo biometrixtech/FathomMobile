@@ -417,7 +417,7 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advance biomechanics tracking system coming soon.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advanced biomechanics tracking system coming soon.'}</Text>
                                     </View>
                                 </View>
                             }
