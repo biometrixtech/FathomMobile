@@ -46,7 +46,7 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
         myPlanObj.end_date = endDate;
     }
     myPlanObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.get_my_plan.post(false, myPlanObj)
+    return dispatch => AppAPI.get_my_plan.post({userId}, myPlanObj)
         .then(response => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -97,12 +97,12 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
 /**
   * Clear My Plan Alert
   */
-const clearPlanAlert = insightType => {
+const clearPlanAlert = (insightType, userId) => {
     let myPlanObj = {
         event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
         insight_type: insightType,
     };
-    return dispatch => AppAPI.clear_plan_alert.post(false, myPlanObj)
+    return dispatch => AppAPI.clear_plan_alert.post({userId}, myPlanObj)
         .then(response => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -116,7 +116,7 @@ const clearPlanAlert = insightType => {
 /**
   * Clear FTE for Category
   */
-const clearFTECategory = (newPlan, insightType) => {
+const clearFTECategory = (newPlan, insightType, userId) => {
     let myPlanObj = {
         event_date:   `${moment().toISOString(true).split('.')[0]}Z`,
         insight_type: insightType,
@@ -125,7 +125,7 @@ const clearFTECategory = (newPlan, insightType) => {
         type: Actions.GET_MY_PLAN,
         data: [newPlan],
     });
-    return AppAPI.clear_fte_category.post(false, myPlanObj)
+    return AppAPI.clear_fte_category.post({userId}, myPlanObj)
         .then(response => {
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -139,7 +139,7 @@ const clearFTECategory = (newPlan, insightType) => {
 /**
   * Clear FTE for View
   */
-const clearFTEView = (newPlan, insightType, visualizationType) => {
+const clearFTEView = (newPlan, insightType, visualizationType, userId) => {
     let myPlanObj = {
         event_date:         `${moment().toISOString(true).split('.')[0]}Z`,
         insight_type:       insightType,
@@ -149,7 +149,7 @@ const clearFTEView = (newPlan, insightType, visualizationType) => {
         type: Actions.GET_MY_PLAN,
         data: [newPlan],
     });
-    return AppAPI.clear_fte_view.post(false, myPlanObj)
+    return AppAPI.clear_fte_view.post({userId}, myPlanObj)
         .then(response => {
             store.dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -254,7 +254,7 @@ const setCompletedCoolDownExercises = exercise => {
 /**
   * Post Readiness Survey Data
   */
-const postReadinessSurvey = dailyReadinessObj => {
+const postReadinessSurvey = (dailyReadinessObj, userId) => {
     // update daily_readiness_survey_completed flag
     let newDailyPlanObj = _.cloneDeep(store.getState().plan.dailyPlan);
     newDailyPlanObj[0].daily_readiness_survey_completed = true;
@@ -267,7 +267,7 @@ const postReadinessSurvey = dailyReadinessObj => {
         data: newDailyPlanObj,
     });
     // continue logic
-    return dispatch => AppAPI.post_readiness_survey.post(false, dailyReadinessObj)
+    return dispatch => AppAPI.post_readiness_survey.post({userId}, dailyReadinessObj)
         .then(myPlanData => {
             // setup variables to be used
             let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
@@ -299,8 +299,8 @@ const postReadinessSurvey = dailyReadinessObj => {
 /**
   * Post sensor data
   */
-const postSingleSensorData = dataObj => {
-    return AppAPI.post_sensor_data.post(false, dataObj)
+const postSingleSensorData = (dataObj, userId) => {
+    return AppAPI.post_sensor_data.post({userId}, dataObj)
         .then(data => {
             let myPlanData = {};
             myPlanData.daily_plans = [data.daily_plan];
@@ -316,12 +316,12 @@ const postSingleSensorData = dataObj => {
 /**
   * Post Session Survey Data
   */
-const postSessionSurvey = postSessionObj => {
+const postSessionSurvey = (postSessionObj, userId) => {
     // call api
     store.dispatch({
         type: Actions.START_REQUEST,
     });
-    return dispatch => AppAPI.post_session_survey.post(false, postSessionObj)
+    return dispatch => AppAPI.post_session_survey.post({userId}, postSessionObj)
         .then(myPlanData => {
             // setup variables to be used
             let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
@@ -353,10 +353,10 @@ const postSessionSurvey = postSessionObj => {
 /**
   * Get Sore Body Parts Data
   */
-const getSoreBodyParts = () => {
+const getSoreBodyParts = userId => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.get_sore_body_parts.post(false, bodyObj)
+    return dispatch => AppAPI.get_sore_body_parts.post({userId}, bodyObj)
         .then(response => {
             dispatch({
                 type: Actions.GET_SORE_BODY_PARTS,
@@ -373,12 +373,12 @@ const getSoreBodyParts = () => {
 /**
   * Patch Active Recovery
   */
-const patchActiveRecovery = (completed_exercises, recovery_type) => {
+const patchActiveRecovery = (completed_exercises, recovery_type, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     bodyObj.completed_exercises = completed_exercises;
-    return dispatch => AppAPI.active_recovery.patch(false, bodyObj)
+    return dispatch => AppAPI.active_recovery.patch({userId}, bodyObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -395,12 +395,12 @@ const patchActiveRecovery = (completed_exercises, recovery_type) => {
 /**
   * Patch Body Active Recovery
   */
-const patchBodyActiveRecovery = (completed_body_parts, recovery_type) => {
+const patchBodyActiveRecovery = (completed_body_parts, recovery_type, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
     bodyObj.completed_body_parts = completed_body_parts;
-    return dispatch => AppAPI.body_active_recovery.patch(false, bodyObj)
+    return dispatch => AppAPI.body_active_recovery.patch({userId}, bodyObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -414,11 +414,11 @@ const patchBodyActiveRecovery = (completed_body_parts, recovery_type) => {
 /**
   * Patch Active Time
   */
-const patchActiveTime = active_time => {
+const patchActiveTime = (active_time, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.active_time = active_time;
-    return dispatch => AppAPI.active_time.patch(false, bodyObj)
+    return dispatch => AppAPI.active_time.patch({userId}, bodyObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -432,13 +432,13 @@ const patchActiveTime = active_time => {
 /**
   * No Session
   */
-const noSessions = () => {
+const noSessions = userId => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     store.dispatch({
         type: Actions.START_REQUEST,
     });
-    return dispatch => AppAPI.no_sessions.post(false, bodyObj)
+    return dispatch => AppAPI.no_sessions.post({userId}, bodyObj)
         .then(data => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -460,11 +460,11 @@ const noSessions = () => {
 /**
   * Patch Functional Strength
   */
-const patchFunctionalStrength = completed_exercises => {
+const patchFunctionalStrength = (completed_exercises, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.completed_exercises = completed_exercises;
-    return dispatch => AppAPI.functional_strength.patch(false, bodyObj)
+    return dispatch => AppAPI.functional_strength.patch({userId}, bodyObj)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -481,8 +481,8 @@ const patchFunctionalStrength = completed_exercises => {
 /**
   * Activate Functional Strength
   */
-const activateFunctionalStrength = payload => {
-    return dispatch => AppAPI.activate_fs.post(false, payload)
+const activateFunctionalStrength = (payload, userId) => {
+    return dispatch => AppAPI.activate_fs.post({userId}, payload)
         .then(myPlanData => {
             dispatch({
                 type: Actions.GET_MY_PLAN,
@@ -496,11 +496,11 @@ const activateFunctionalStrength = payload => {
 /**
   * Mark Started Recovery - recovery_type of pre or post
   */
-const markStartedRecovery = (recovery_type, newMyPlan) => {
+const markStartedRecovery = (recovery_type, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
-    return dispatch => AppAPI.active_recovery.post(false, bodyObj)
+    return dispatch => AppAPI.active_recovery.post({userId}, bodyObj)
         .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
@@ -508,10 +508,10 @@ const markStartedRecovery = (recovery_type, newMyPlan) => {
 /**
   * Mark Started Functional Strength
   */
-const markStartedFunctionalStrength = newMyPlan => {
+const markStartedFunctionalStrength = (newMyPlan, userId) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.functional_strength.post(false, bodyObj)
+    return dispatch => AppAPI.functional_strength.post({userId}, bodyObj)
         .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
@@ -562,13 +562,13 @@ const getCoachesDashboardData = userId => {
 /**
   * Log Device/App Information and Usage
   */
-const setAppLogs = () => {
+const setAppLogs = userId => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.os_name = DeviceInfo.getSystemName();
     bodyObj.os_version = DeviceInfo.getSystemVersion();
     bodyObj.app_version = Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion();
-    return dispatch => AppAPI.app_logs.post(false, bodyObj)
+    return dispatch => AppAPI.app_logs.post({userId}, bodyObj)
         .then(response => Promise.resolve(response))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
@@ -585,8 +585,8 @@ const postSurvey = (userId, payload) => {
 /**
   * Post Health Data
   */
-const postHealthData = payload => {
-    return AppAPI.health_data.post(false, payload)
+const postHealthData = (userId, payload) => {
+    return AppAPI.health_data.post({userId}, payload)
         .then(data => Promise.resolve(data))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
@@ -594,8 +594,8 @@ const postHealthData = payload => {
 /**
   * Patch Session
   */
-const patchSession = (session_id, payload) => {
-    return AppAPI.patch_sessions.patch({session_id}, payload)
+const patchSession = (userId, session_id, payload) => {
+    return AppAPI.patch_sessions.patch({ userId, session_id, }, payload)
         .then(data => Promise.resolve(data))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 }
@@ -654,7 +654,7 @@ const handleBodyPartClick = (dailyPlan, bodyPartyId, side, modality) => {
 /**
   * Handle Read Insight
   */
-const handleReadInsight = (dailyPlan, insightIndex) => {
+const handleReadInsight = (dailyPlan, insightIndex, userId) => {
     if(!dailyPlan.insights[insightIndex]) {
         return dispatch => Promise.resolve();
     }
@@ -670,7 +670,7 @@ const handleReadInsight = (dailyPlan, insightIndex) => {
                 type: Actions.GET_MY_PLAN,
                 data: [newDailyPlanObj],
             });
-            return AppAPI.insights_read.post(false, bodyObj)
+            return AppAPI.insights_read.post({userId}, bodyObj)
                 .then(response => resolve(response))
                 .catch(err => reject(AppAPI.handleError(err)));
         });
@@ -686,13 +686,13 @@ const handleReadInsight = (dailyPlan, insightIndex) => {
 /**
   * Log Device/App Information and Usage
   */
-const getMobilize = () => {
+const getMobilize = userId => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     store.dispatch({
         type: Actions.START_REQUEST,
     });
-    return dispatch => AppAPI.get_mobilize.post(false, bodyObj)
+    return dispatch => AppAPI.get_mobilize.post({userId}, bodyObj)
         .then(data => {
             // update My Plan reducer
             store.dispatch({
@@ -728,10 +728,10 @@ const getMobilize = () => {
 /**
   * Get Biomechanics Details
   */
-const getBiomechanicsDetails = currentPlan => {
+const getBiomechanicsDetails = (currentPlan, userId) => {
     let payload = {};
     payload.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return dispatch => AppAPI.biomechanics_detail.post(false, payload)
+    return dispatch => AppAPI.biomechanics_detail.post({userId}, payload)
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
             let mergedSessions = _.map(newPlan.trends.biomechanics_summary.sessions, obj => {

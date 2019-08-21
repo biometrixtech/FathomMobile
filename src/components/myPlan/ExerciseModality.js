@@ -83,7 +83,7 @@ class ExerciseModality extends Component {
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
-        const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
+        const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, user, } = this.props;
         let index = 0; // NOTE: THIS WOULD NEED TO UPDATE SOON
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         let clonedPlan = _.cloneDeep(plan);
@@ -125,7 +125,7 @@ class ExerciseModality extends Component {
             } else if(recoveryType === 'cool_down') {
                 newMyPlan[0].cool_down.start_date_time = true;
             }
-            markStartedRecovery(recoveryType, newMyPlan);
+            markStartedRecovery(recoveryType, user.id);
         }
         // continue by updating reducer and state
         if(recoveryType === 'cool_down') {
@@ -366,7 +366,7 @@ class ExerciseModality extends Component {
                                     () => {
                                         let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
                                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
-                                        patchActiveRecovery(newCompletedExercises, recoveryType)
+                                        patchActiveRecovery(newCompletedExercises, recoveryType, user.id)
                                             .then(res => Actions.pop())
                                             .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
                                     }

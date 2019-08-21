@@ -185,7 +185,7 @@ class Start extends Component {
                 return this.props.getMyPlan(userObj.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                     .then(response => {
                         if(!response.daily_plans[0].daily_readiness_survey_completed) {
-                            this.props.setAppLogs();
+                            this.props.setAppLogs(userObj.id);
                         }
                         if(userObj.health_enabled) {
                             return AppUtil.getAppleHealthKitDataPrevious(userObj, userObj.health_sync_date, userObj.historic_health_sync_date)

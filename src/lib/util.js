@@ -457,7 +457,7 @@ const UTIL = {
                         user_age:   moment().diff(moment(userObj.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
                         user_id:    userObj.id,
                     };
-                    PlanActions.postHealthData(payload)
+                    PlanActions.postHealthData(user.id, payload)
                         .then(() => {
                             return;
                         });
@@ -585,7 +585,7 @@ const UTIL = {
                 hr_data:      o.hr_data,
             };
             newSession.sessions.push(cleanedSessionObj);
-            PlanActions.patchSession(o.session_id, newSession);
+            PlanActions.patchSession(userId, o.session_id, newSession);
         });
     },
 

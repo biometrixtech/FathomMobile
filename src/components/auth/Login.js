@@ -240,7 +240,7 @@ class Login extends Component {
                                 return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                                     .then(res => {
                                         if(!res.daily_plans[0].daily_readiness_survey_completed) {
-                                            this.props.setAppLogs();
+                                            this.props.setAppLogs(user.id);
                                         }
                                         if(user.health_enabled) {
                                             return AppUtil.getAppleHealthKitDataPrevious(user, user.health_sync_date, user.historic_health_sync_date)

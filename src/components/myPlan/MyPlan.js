@@ -243,7 +243,7 @@ const MyPlanNavBar = ({
                 <DeckCards
                     cards={cards.length === 0 ? cards : _.concat(cards, {})}
                     categories={categories}
-                    handleReadInsight={index => handleReadInsight(index)}
+                    handleReadInsight={index => handleReadInsight(index, user.id)}
                     hideDeck={() => onRight()}
                     isVisible={expandNotifications}
                     layout={'tinder'}
@@ -525,7 +525,7 @@ class MyPlan extends Component {
                 }, 500)
             },
         );
-        postReadinessSurvey(newDailyReadiness)
+        postReadinessSurvey(newDailyReadiness, user.id)
             .then(response => {
                 this.setState(
                     { isPageCalculating: false, },
@@ -588,12 +588,12 @@ class MyPlan extends Component {
                     }
                 } else {
                     this.setState({ isPageLoading: false, });
-                    getSoreBodyParts()
+                    getSoreBodyParts(user.id)
                         .then(soreBodyParts => {
                             let newDailyReadiness = _.cloneDeep(dailyReadiness);
                             newDailyReadiness.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                             this.setState({ dailyReadiness: newDailyReadiness, });
-                            setAppLogs();
+                            setAppLogs(user.id);
                             this.setState({
                                 isPageLoading:              false,
                                 isReadinessSurveyModalOpen: true,
@@ -655,11 +655,11 @@ class MyPlan extends Component {
     }
 
     _handleGetMobilize = () => {
-        const { getMobilize, } = this.props;
+        const { getMobilize, user, } = this.props;
         this.setState(
             { expandNotifications: false, isPageCalculating: true, },
             () =>
-                getMobilize()
+                getMobilize(user.id)
                     .then(res => this.setState({ isPageCalculating: false, }))
                     .catch(() => this.setState({ isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
@@ -685,11 +685,11 @@ class MyPlan extends Component {
     }
 
     _handleNoSessions = () => {
-        const { noSessions, } = this.props;
+        const { noSessions, user, } = this.props;
         this.setState(
             { expandNotifications: false, isPageCalculating: true, },
             () =>
-                noSessions()
+                noSessions(user.id)
                     .then(res => this.setState({ isPageCalculating: false, }))
                     .catch(() => this.setState({ isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
@@ -729,7 +729,7 @@ class MyPlan extends Component {
             () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: !areAllDeleted, }), 500); }
         );
         clearHealthKitWorkouts() // clear HK workouts right away
-            .then(() => postSessionSurvey(newPostSession))
+            .then(() => postSessionSurvey(newPostSession, user.id))
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
@@ -835,12 +835,12 @@ class MyPlan extends Component {
     }
 
     _togglePostSessionSurveyModal = () => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
         const { isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
         this.setState({ loading: isLoading, showLoadingText: true, });
         if (!isPostSessionSurveyModalOpen) {
-            getSoreBodyParts()
+            getSoreBodyParts(user.id)
                 .then(soreBodyParts => {
                     let newPostSession = _.cloneDeep(defaultPlanState.postSession);
                     newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
@@ -918,7 +918,7 @@ class MyPlan extends Component {
                     cards={newInsights}
                     categories={trendDashboardCategories}
                     expandNotifications={expandNotifications}
-                    handleReadInsight={insightType => handleReadInsight(insightType)}
+                    handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
                 />

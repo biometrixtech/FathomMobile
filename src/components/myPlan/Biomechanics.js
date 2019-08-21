@@ -55,7 +55,7 @@ class Biomechanics extends PureComponent {
     }
 
     _toggleRichDataView = () => {
-        const { getBiomechanicsDetails, plan, } = this.props;
+        const { getBiomechanicsDetails, plan, user, } = this.props;
         const { currentIndex, } = this.state;
         let doWeHaveRichData = plan.dailyPlan[0].trends.biomechanics_summary.sessions[currentIndex].asymmetry.apt.detail_data;
         this.setState(
@@ -66,7 +66,7 @@ class Biomechanics extends PureComponent {
             },
             () => {
                 if(this.state.isRichDataView && !doWeHaveRichData) {
-                    return getBiomechanicsDetails(plan.dailyPlan[0])
+                    return getBiomechanicsDetails(plan.dailyPlan[0], user.id)
                         .then(res => this.setState({ isToggleBtnDisabled: false, loading: false, }))
                         .catch(err => this.setState({ isToggleBtnDisabled: false, loading: false, }));
                 }
@@ -319,6 +319,7 @@ class Biomechanics extends PureComponent {
 Biomechanics.propTypes = {
     getBiomechanicsDetails: PropTypes.func.isRequired,
     plan:                   PropTypes.object.isRequired,
+    user:                   PropTypes.object.isRequired,
 };
 
 Biomechanics.defaultProps = {};

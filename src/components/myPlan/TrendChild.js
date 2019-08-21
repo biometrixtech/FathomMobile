@@ -69,14 +69,14 @@ class TrendChild extends PureComponent {
     }
 
     _handleFTEClick = (insightType, visualizationType, isCategory, props, callback) => {
-        const { clearFTECategory, clearFTEView, plan, } = this.props;
+        const { clearFTECategory, clearFTEView, plan, user, } = this.props;
         let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
         if(isCategory) {
             newDailyPlan.trends.trend_categories[0].first_time_experience = false;
-            clearFTECategory(newDailyPlan, insightType);
+            clearFTECategory(newDailyPlan, insightType, user.id);
         } else if(!isCategory && newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience) {
             newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience = false;
-            clearFTEView(newDailyPlan, insightType, visualizationType);
+            clearFTEView(newDailyPlan, insightType, visualizationType, user.id);
         }
         if(callback) {
             callback();
@@ -398,6 +398,7 @@ TrendChild.propTypes = {
     insightType:      PropTypes.number.isRequired,
     plan:             PropTypes.object.isRequired,
     triggerType:      PropTypes.number,
+    user:             PropTypes.object.isRequired,
 };
 
 TrendChild.defaultProps = {

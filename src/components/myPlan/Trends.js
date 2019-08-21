@@ -150,7 +150,7 @@ class Trends extends PureComponent {
             <TouchableOpacity
                 onPress={() => {
                     AppUtil.pushToScene('trendChild', { insightType: item.insight_type, });
-                    this.props.clearPlanAlert(item.insight_type);
+                    this.props.clearPlanAlert(item.insight_type, this.props.user.id);
                 }}
                 style={[styles.categoryCard, AppStyles.scaleButtonShadowEffect,]}
             >

@@ -153,7 +153,7 @@ class ResetPassword extends Component {
                         return this.props.getMyPlan(user.id, moment().format('YYYY-MM-DD'), false, clearMyPlan)
                             .then(res => {
                                 if(!res.daily_plans[0].daily_readiness_survey_completed) {
-                                    this.props.setAppLogs();
+                                    this.props.setAppLogs(user.id);
                                 }
                                 return res;
                             })
