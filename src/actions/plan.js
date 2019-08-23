@@ -125,9 +125,9 @@ const clearFTECategory = (newPlan, insightType, userId) => {
         type: Actions.GET_MY_PLAN,
         data: [newPlan],
     });
-    return AppAPI.clear_fte_category.post({userId}, myPlanObj)
+    return dispatch => AppAPI.clear_fte_category.post({userId}, myPlanObj)
         .then(response => {
-            store.dispatch({
+            dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: response.daily_plans,
             });

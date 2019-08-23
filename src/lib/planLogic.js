@@ -1451,6 +1451,7 @@ const PlanLogic = {
                 });
             });
         }
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
         return {
             activeAfterModalities,
@@ -1462,6 +1463,7 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            trendCategories,
             trendDashboardCategories,
             triggerStep,
         };

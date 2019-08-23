@@ -170,16 +170,16 @@ class Biomechanics extends PureComponent {
                                         { sessionColor &&
                                             <Badge
                                                 containerStyle={{
+                                                    elevation: 5,
                                                     left:      0,
                                                     position:  'absolute',
                                                     top:       0,
-                                                    elevation: 5,
                                                 }}
                                                 badgeStyle={{
                                                     backgroundColor: PlanLogic.returnInsightColorString(sessionColor),
-                                                    minWidth:        14,
-                                                    height:          14,
                                                     borderRadius:    (14 / 2),
+                                                    height:          14,
+                                                    minWidth:        14,
                                                 }}
                                                 status={'success'}
                                             />

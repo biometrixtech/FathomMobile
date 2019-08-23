@@ -55,7 +55,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { DeckCards, FathomModal, TabIcon, Text, } from '../custom';
+import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
 import { Loading, } from '../general';
 
@@ -186,7 +186,7 @@ const ActivityTab = ({
     </View>
 );
 
-const MyPlanNavBar = ({
+/*const MyPlanNavBar = ({
     cards = [],
     categories,
     handleReadInsight,
@@ -253,7 +253,7 @@ const MyPlanNavBar = ({
             }
         </Collapsible>
     </View>
-);
+);*/
 
 class MyPlan extends Component {
     static componentName = 'MyPlan';
@@ -908,19 +908,30 @@ class MyPlan extends Component {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            trendCategories,
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
-                <MyPlanNavBar
+                {/*<MyPlanNavBar
                     cards={newInsights}
                     categories={trendDashboardCategories}
                     expandNotifications={expandNotifications}
                     handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
                     onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
+                />*/}
+                <CustomMyPlanNavBar
+                    categories={trendCategories}
+                    handleReadInsight={insightType => {
+                        let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
+                        let trendCategoryIndex = _.findIndex(newDailyPlan.trends.trend_categories, ['insight_type', insightType]);
+                        newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
+                        handleReadInsight(newDailyPlan, insightType, user.id);
+                    }}
+                    user={isReadinessSurveyCompleted && !isPageCalculating ? user : {}}
                 />
 
                 <Placeholder
