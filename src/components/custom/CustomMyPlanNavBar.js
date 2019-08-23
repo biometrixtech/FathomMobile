@@ -85,8 +85,8 @@ const InsightIcon = ({
                                     require('../../../assets/images/standard/prevention.png')
                                     : insightType === 4 && isSelected ?
                                         require('../../../assets/images/standard/recovery-selected.png')
-                                            :
-                                            require('../../../assets/images/standard/recovery.png')
+                                        :
+                                        require('../../../assets/images/standard/recovery.png')
                 }
                 style={{height: 30, width: 30,}}
             />
