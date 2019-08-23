@@ -41,11 +41,11 @@ class BodyOverlay extends Component {
         let frontImageSource = resolveAssetSource(frontImage);
         const { remainingWidth, } = this.props;
         let updatedRemainingWidth = (remainingWidth - ADDITIONAL_MIDDLE_PADDING);
-        let backImageRatio = ((updatedRemainingWidth / 2) / backImageSource.width);
-        let frontImageRatio = ((updatedRemainingWidth / 2) / frontImageSource.width);
+        let newBackImageHeight = backImageSource.height * ((updatedRemainingWidth / 2) / backImageSource.width);
+        let newFrontImageHeight = frontImageSource.height * ((updatedRemainingWidth / 2) / frontImageSource.width);
         this.setState({
-            back:  { height: ((updatedRemainingWidth / 2) / backImageRatio), width: (updatedRemainingWidth / 2), },
-            front: { height: ((updatedRemainingWidth / 2) / frontImageRatio), width: (updatedRemainingWidth / 2), },
+            back:  { height: newBackImageHeight, width: (updatedRemainingWidth / 2), },
+            front: { height: newFrontImageHeight, width: (updatedRemainingWidth / 2), },
         });
     }
 

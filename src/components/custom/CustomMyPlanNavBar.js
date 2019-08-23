@@ -14,18 +14,24 @@ import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWith
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { FathomModal, Spacer, Text, } from './';
+import { BodyOverlay, FathomModal, ParsedText, Spacer, Text, } from './';
 import { PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Badge, Divider, } from 'react-native-elements';
 import _ from 'lodash';
+import Carousel from 'react-native-snap-carousel';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    card: {
+        backgroundColor: AppColors.white,
+        borderRadius:    12,
+        padding:         AppSizes.padding,
+    },
     circleStyle: (circleSize, isSelected) => ({
         alignItems:      'center',
-        backgroundColor: isSelected ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight,
+        backgroundColor: isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:    (circleSize / 2),
         height:          circleSize,
         justifyContent:  'center',
@@ -47,10 +53,16 @@ const styles = StyleSheet.create({
         marginVertical:  AppSizes.paddingMed,
         width:           AppSizes.screen.widthThird,
     },
+    text: {
+        ...AppStyles.robotoLight,
+        color:    AppColors.zeplin.slate,
+        fontSize: AppFonts.scaleFont(13),
+    },
 });
 
 /* Component ==================================================================== */
 const InsightIcon = ({
+    insightType,
     isFTE,
     isSelected,
     text,
@@ -60,8 +72,24 @@ const InsightIcon = ({
         onPress={toggleModal}
         style={{alignItems: 'center', marginBottom: AppSizes.paddingSml, marginRight: AppSizes.paddingMed, justifyContent: 'center',}}
     >
-        <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(40, isSelected),]}>
-            {/* TODO: IMAGE HERE*/}
+        <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(45, isSelected),]}>
+            <Image
+                source={
+                    insightType === 6 && isSelected ?
+                        require('../../../assets/images/standard/care-selected.png')
+                        : insightType === 6 && !isSelected ?
+                            require('../../../assets/images/standard/care.png')
+                            : insightType === 5 && isSelected ?
+                                require('../../../assets/images/standard/prevention-selected.png')
+                                : insightType === 5 && !isSelected ?
+                                    require('../../../assets/images/standard/prevention.png')
+                                    : insightType === 4 && isSelected ?
+                                        require('../../../assets/images/standard/recovery-selected.png')
+                                            :
+                                            require('../../../assets/images/standard/recovery.png')
+                }
+                style={{height: 30, width: 30,}}
+            />
         </View>
         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
             {text}
@@ -113,44 +141,139 @@ class CustomMyPlanNavBar extends Component {
         }
     }
 
-    _renderContent = (selectedCategory, text) => {
-        if(!selectedCategory) {
-            return (<View />);
+    _renderCard = (item, index) => {
+        let parsedData = [];
+        if(item && item.text) {
+            _.map(item.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold,];
+                parsedData.push(newParsedData);
+            });
         }
         return (
-            <View style={{margin: AppSizes.paddingSml,}}>
-                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>{selectedCategory.title}</Text>
-                <Spacer size={AppSizes.paddingXSml} />
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'HELLO'}</Text>
-                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>{'In your data, we\'ve identified'}</Text>
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`Look for XYZ in your plan`}</Text>
+            <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
+                <ParsedText
+                    parse={parsedData}
+                    style={[styles.text,]}
+                >
+                    {item ? item.text : ''}
+                </ParsedText>
             </View>
         );
     }
 
-    _renderTopNav = () => {
-        const { categories, user, } = this.props;
-        let selectedCareCategory = _.find(categories, ['insight_type', 6]);
-        let selectedPreventionCategory = _.find(categories, ['insight_type', 4]);
-        let selectedRecoveryCategory = _.find(categories, ['insight_type', 5]);
+    _renderContent = (selectedCategory, text) => {
+        if(!selectedCategory) {
+            return (<View />);
+        }
+        let categoryTrend = selectedCategory.trends[0];
+        let categoryData = categoryTrend.trend_data && categoryTrend.trend_data.data && categoryTrend.trend_data.data[0] ? categoryTrend.trend_data.data[0] : [];
+        let bodyOverlayData = _.flatten(_.map(categoryData, (category, i) => {
+            let clonedCategory = _.cloneDeep(category);
+            return _.map(clonedCategory, newCategory => {
+                let clonedNewCategory = _.cloneDeep(newCategory);
+                clonedNewCategory.color = categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends ?
+                    _.find(categoryTrend.trend_data.visualization_data.plot_legends, ['series', i]).color
+                    :
+                    2;
+                return clonedNewCategory;
+            });
+        }));
+        console.log('selectedCategory',selectedCategory,categoryTrend);
+        return (
+            <View style={{margin: AppSizes.paddingMed,}}>
+                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>{selectedCategory.title}</Text>
+                <Spacer size={AppSizes.paddingXSml} />
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'HELLO-Data here'}</Text>
+                <Spacer size={AppSizes.paddingSml} />
+                <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                    <BodyOverlay
+                        bodyParts={bodyOverlayData}
+                        remainingWidth={(AppSizes.screen.widthHalf)}
+                    />
+                    <Spacer size={AppSizes.paddingSml} />
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                        {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
+                            <View
+                                key={i}
+                                style={[categoryTrend && categoryTrend.trend_data && i !== categoryTrend.trend_data.visualization_data.plot_legends.length ? {marginRight: AppSizes.paddingSml,} : {}, {flexDirection: 'row',}]}
+                            >
+                                <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>
+                            </View>
+                        )}
+                    </View>
+                </View>
+                <Spacer size={AppSizes.paddingSml} />
+                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>{'In your data, we\'ve identified'}</Text>
+                <Spacer size={AppSizes.paddingSml} />
+                <View>
+                    { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
+                        <Carousel
+                            contentContainerCustomStyle={{alignItems: 'center', paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
+                            data={categoryTrend.trigger_tiles}
+                            firstItem={0}
+                            initialNumToRender={categoryTrend && categoryTrend.trigger_tiles ? categoryTrend.trigger_tiles.length : 0}
+                            itemWidth={(AppSizes.screen.widthThreeQuarters)}
+                            layout={'default'}
+                            lockScrollWhileSnapping={true}
+                            maxToRenderPerBatch={3}
+                            // onSnapToItem={index => this._handleOnSwiped(index)}
+                            // ref={ref => {this._swiperRef = ref;}}
+                            removeClippedSubviews={false}
+                            renderItem={({item, index}) => this._renderCard(item, index)}
+                            sliderWidth={AppSizes.screen.width}
+                            windowSize={3}
+                        />
+                        :
+                        <Text>{'NONE'}</Text>
+                    }
+                </View>
+                <Spacer size={AppSizes.paddingSml} />
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                    <Image
+                        source={
+                            selectedCategory.insight_type === 6 ?
+                                require('../../../assets/images/standard/care.png')
+                                : selectedCategory.insight_type === 5 ?
+                                    require('../../../assets/images/standard/prevention.png')
+                                    :
+                                    require('../../../assets/images/standard/recovery.png')
+                        }
+                        style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
+                    />
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                        {`Look for ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} in your plan`}
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+
+    _renderTopNav = (selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory) => {
+        const { user, } = this.props;
         return (
             <View onLayout={ev => {this._navBarHeight = ev.nativeEvent.layout.height;}}>
                 <View style={{backgroundColor: AppColors.white, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                 <View style={[styles.container,]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                         <InsightIcon
+                            insightType={6}
                             isFTE={selectedCareCategory ? selectedCareCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 6 && this.state.isModalOpen}
                             text={'Care'}
                             toggleModal={user && user.id ? () => this._toggleModal(6) : null}
                         />
                         <InsightIcon
+                            insightType={4}
                             isFTE={selectedPreventionCategory ? selectedPreventionCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 4 && this.state.isModalOpen}
                             text={'Recovery'}
                             toggleModal={user && user.id ? () => this._toggleModal(4) : null}
                         />
                         <InsightIcon
+                            insightType={5}
                             isFTE={selectedRecoveryCategory ? selectedRecoveryCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 5 && this.state.isModalOpen}
                             text={'Prevention'}
@@ -188,21 +311,24 @@ class CustomMyPlanNavBar extends Component {
         const { selectedIndex, isModalOpen, } = this.state;
         console.log('categories',categories);
         let selectedCategory = _.find(categories, ['insight_type', selectedIndex]);
-        console.log('selectedCategory',selectedCategory);
+        let selectedCareCategory = _.find(categories, ['insight_type', 6]);
+        let selectedPreventionCategory = _.find(categories, ['insight_type', 4]);
+        let selectedRecoveryCategory = _.find(categories, ['insight_type', 5]);
         return (
             <View style={[AppStyles.scaleButtonShadowEffect,]}>
-                {this._renderTopNav()}
+                {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
                 <FathomModal
                     animationIn={'slideInDown'}
                     animationOut={'slideOutUp'}
                     isVisible={isModalOpen}
                     onBackdropPress={() => this._toggleModal(null)}
-                    onSwipeComplete={() => this._toggleModal(null)}
+                    // onSwipeComplete={() => this._toggleModal(null)}
+                    propagateSwipe={true}
                     style={{justifyContent: 'flex-start',}}
-                    swipeDirection={'up'}
+                    // swipeDirection={'up'}
                 >
                     <View>
-                        {this._renderTopNav()}
+                        {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
                         <View style={{backgroundColor: AppColors.white, borderBottomLeftRadius: 20, borderBottomRightRadius: 20,}}>
                             {this._renderContent(selectedCategory)}
                             <TouchableWithoutFeedback onPress={() => this._toggleModal(null)}>
