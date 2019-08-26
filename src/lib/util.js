@@ -457,7 +457,7 @@ const UTIL = {
                         user_age:   moment().diff(moment(userObj.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
                         user_id:    userObj.id,
                     };
-                    PlanActions.postHealthData(user.id, payload)
+                    PlanActions.postHealthData(userObj.id, payload)
                         .then(() => {
                             return;
                         });
