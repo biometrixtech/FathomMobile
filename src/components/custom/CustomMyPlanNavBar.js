@@ -32,9 +32,7 @@ const styles = StyleSheet.create({
     circleStyle: (circleSize, isSelected) => ({
         alignItems:      'center',
         backgroundColor: isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
-        borderColor:     isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:    (circleSize / 2),
-        borderWidth:     2,
         height:          circleSize,
         justifyContent:  'center',
         marginBottom:    AppSizes.paddingXSml,
@@ -79,7 +77,7 @@ const InsightIcon = ({
             style={[
                 AppStyles.scaleButtonShadowEffect,
                 styles.circleStyle(45, isSelected),
-                isVisible ? {} : {backgroundColor: AppColors.zeplin.superLight, borderColor: AppColors.zeplin.splashLight, borderWidth: 2,},
+                isVisible ? {} : {backgroundColor: AppColors.zeplin.superLight,},
             ]}
         >
             { isVisible ?
