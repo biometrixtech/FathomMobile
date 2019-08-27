@@ -1197,19 +1197,25 @@ class MyPlan extends Component {
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
                         { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
                             <View style={{flex: 1,}}>
-                                <View style={{backgroundColor: AppColors.zeplin.navy, height: AppSizes.statusBarHeight, opacity: 0.8,}} />
-                                <View style={{backgroundColor: AppColors.transparent, flexDirection: 'row', height: AppSizes.navbarHeight,}}>
-                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
-                                    <View style={{flexDirection: 'row', width: (AppSizes.screen.width - (AppSizes.paddingSml * 2)),}}>
-                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8, paddingLeft: AppSizes.paddingSml,}}>
-                                            <View style={{width: 20,}} />
-                                        </View>
-                                        <View style={{backgroundColor: AppColors.zeplin.navy, flex: 8, opacity: 0.8,}} />
-                                        <View style={{backgroundColor: AppColors.transparent, flex: 1, opacity: 0.8,}}>
-                                            <View style={{height: '100%', width: '100%',}} />
-                                        </View>
-                                    </View>
-                                    <View style={{backgroundColor: AppColors.zeplin.navy, opacity: 0.8, width: AppSizes.paddingSml,}} />
+                                <View style={{backgroundColor: AppColors.transparent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
+                                <View style={{
+                                    alignItems:        'center',
+                                    backgroundColor:   AppColors.transparent,
+                                    justifyContent:    'center',
+                                    paddingHorizontal: AppSizes.paddingMed,
+                                }}>
+                                    <View style={{
+                                        alignItems:      'center',
+                                        backgroundColor: AppColors.transparent,
+                                        borderRadius:    (45 / 2),
+                                        height:          45,
+                                        justifyContent:  'center',
+                                        marginBottom:    AppSizes.paddingXSml,
+                                        width:           45,
+                                    }} />
+                                    <Text robotoRegular style={{color: AppColors.transparent, fontSize: AppFonts.scaleFont(10), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>
+                                        {'Care'}
+                                    </Text>
                                 </View>
                                 <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
                             </View>
