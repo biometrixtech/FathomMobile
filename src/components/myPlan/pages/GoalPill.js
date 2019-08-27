@@ -23,14 +23,13 @@ const customStyles = StyleSheet.create({
     goalPillWrapper: isSelected => ({
         backgroundColor:   isSelected ? AppColors.white : `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,
         borderRadius:      20,
-        marginBottom:      AppSizes.paddingSml,
-        paddingHorizontal: AppSizes.paddingMed,
+        paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
     }),
     textStyle: isSelected => ({
         color:        AppColors.zeplin.splash,
         fontSize:     AppFonts.scaleFont(14),
-        paddingRight: AppSizes.paddingSml,
+        paddingRight: AppSizes.paddingXSml,
     }),
 });
 
@@ -125,7 +124,7 @@ class GoalPill extends Component {
                             <TabIcon
                                 color={AppColors.zeplin.splash}
                                 icon={'add'}
-                                size={AppFonts.scaleFont(20)}
+                                size={AppFonts.scaleFont(25)}
                             />
                         </Animated.View>
                         :
@@ -133,7 +132,7 @@ class GoalPill extends Component {
                             <TabIcon
                                 color={AppColors.zeplin.splash}
                                 icon={'add'}
-                                size={AppFonts.scaleFont(20)}
+                                size={AppFonts.scaleFont(25)}
                             />
                         </View>
                     }

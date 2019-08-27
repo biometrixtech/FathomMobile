@@ -35,7 +35,8 @@ import { Text, } from './';
 const { width, } = Dimensions.get('window');
 const Metrics = {
     containerWidth: (width - AppSizes.paddingLrg),
-    switchWidth:    (width / 2.7),
+    switchHeight:   (AppFonts.scaleFont(15) + AppSizes.paddingMed), // 40,
+    switchWidth:    (width / 3), //2.7),
 };
 
 /* Styles ==================================================================== */
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     buttonStyle: {
         alignItems:     'center',
         flex:           1,
-        height:         30,
+        height:         (Metrics.switchHeight - 10),
         justifyContent: 'center',
         width:          Metrics.containerWidth / 3,
     },
@@ -52,13 +53,13 @@ const styles = StyleSheet.create({
         backgroundColor: AppColors.transparent,
         borderRadius:    20,
         flexDirection:   'row',
-        height:          30,
+        height:          (Metrics.switchHeight - 10),
         justifyContent:  'center',
         marginVertical:  5,
         width:           Metrics.containerWidth,
     },
     containerWrapper: {
-        height: 40,
+        height: Metrics.switchHeight,
     },
     switcher: {
         alignItems:      'center',
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
         borderRadius:    20,
         elevation:       4,
         flexDirection:   'row',
-        height:          40,
+        height:          Metrics.switchHeight,
         justifyContent:  'center',
         left:            0,
         position:        'absolute',
@@ -91,7 +92,7 @@ export default class MultiSwitch extends Component {
             posValue:          0,
             position:          new Animated.Value(0),
             selectedPosition:  props.selectedIndex,
-            switcherWidth:     (width / 2.7),
+            switcherWidth:     Metrics.switchWidth,
             thresholdDistance: (width - 8 - width / 2.4),
         };
         this.isParentScrollDisabled = false;

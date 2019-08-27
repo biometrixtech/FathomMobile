@@ -214,7 +214,7 @@ class Biomechanics extends PureComponent {
                     </View>
 
                     <View style={{marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.paddingMed,}}>
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: (AppSizes.paddingLrg - AppSizes.paddingMed),}}>{'Range of Motion Summary'}</Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: (AppSizes.paddingLrg - AppSizes.paddingMed),}}>{'Range of Motion Summary'}</Text>
                         <BiomechanicsCharts
                             pieDetails={{
                                 leftPieInnerRadius,
@@ -230,8 +230,8 @@ class Biomechanics extends PureComponent {
                         />
                     </View>
 
-                    <View style={{marginVertical: AppSizes.paddingMed,}}>
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginHorizontal: AppSizes.paddingLrg,}}>{'Session Asymmetry'}</Text>
+                    <View style={{marginVertical: AppSizes.paddingLrg,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Session Asymmetry'}</Text>
                         <BiomechanicsCharts
                             chartData={updatedChartData}
                             isRichDataView={true}
@@ -270,11 +270,15 @@ class Biomechanics extends PureComponent {
                 <SlidingUpPanel
                     allowDragging={false}
                     backdropOpacity={0.8}
+                    backdropStyle={{backgroundColor: AppColors.zeplin.navy,}}
                     ref={ref => {this._panel = ref;}}
                 >
-
                     <View style={{flex: 1, flexDirection: 'column',}}>
-                        <View style={{flex: 1,}} />
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => this._panel.hide()}
+                            style={{flex: 1,}}
+                        />
                         <View style={{backgroundColor: AppColors.white,}}>
                             <View style={{backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', padding: AppSizes.padding,}}>
                                 <Text robotoMedium style={{color: AppColors.zeplin.slate, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{'Pelvic Tilt Asymmetry'}</Text>
@@ -297,7 +301,6 @@ class Biomechanics extends PureComponent {
                             </ScrollView>
                         </View>
                     </View>
-
                 </SlidingUpPanel>
 
             </View>

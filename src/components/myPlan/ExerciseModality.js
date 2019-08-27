@@ -261,22 +261,22 @@ class ExerciseModality extends Component {
                                     </View>
                                     <ParsedText
                                         parse={[{pattern: new RegExp(priorityText, 'i'), style: {textDecorationLine: 'underline',},}]}
-                                        style={[AppStyles.robotoBold, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}]}
+                                        style={[AppStyles.robotoBold, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}]}
                                     >
                                         {goalsHeader}
                                     </ParsedText>
                                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
                                         {_.map(goals, (goal, key) =>
                                             <GoalPill
-                                                extraStyles={{marginTop: AppSizes.paddingSml, marginRight: AppSizes.paddingSml,}}
+                                                extraStyles={{marginTop: AppSizes.paddingXSml, marginHorizontal: AppSizes.paddingXSml,}}
                                                 goal={goal}
                                                 key={key}
                                                 onPress={() => isSubmitting ? null : this._toggleGoal(key)}
                                             />
                                         )}
                                     </View>
-                                    {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
-                                        <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
+                                    { (exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0) &&
+                                        <View style={{marginTop: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingMed,}}>
                                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
                                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
                                         </View>

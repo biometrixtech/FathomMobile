@@ -29,14 +29,15 @@ const styles = StyleSheet.create({
         borderRadius:    12,
         padding:         AppSizes.padding,
     },
-    circleStyle: (circleSize, isSelected) => ({
-        alignItems:      'center',
-        backgroundColor: isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
-        borderRadius:    (circleSize / 2),
-        height:          circleSize,
-        justifyContent:  'center',
-        marginBottom:    AppSizes.paddingXSml,
-        width:           circleSize,
+    circleStyle: circleSize => ({
+        ...AppStyles.scaleButtonShadowEffect,
+        alignItems:     'center',
+        borderRadius:   (circleSize / 2),
+        borderWidth:    2,
+        height:         circleSize,
+        justifyContent: 'center',
+        marginBottom:   AppSizes.paddingXSml,
+        width:          circleSize,
     }),
     container: {
         alignItems:        'center',
@@ -53,11 +54,19 @@ const styles = StyleSheet.create({
         marginVertical:  AppSizes.paddingMed,
         width:           AppSizes.screen.widthThird,
     },
+    notVisibleCircleStyle: isSelected => ({
+        backgroundColor: AppColors.zeplin.superLight,
+        borderColor:     isSelected ? AppColors.zeplin.splash : AppColors.transparent,
+    }),
     text: {
         ...AppStyles.robotoLight,
         color:    AppColors.zeplin.slate,
         fontSize: AppFonts.scaleFont(13),
     },
+    visibleCircleStyle: isSelected => ({
+        backgroundColor: isSelected ? AppColors.zeplin.splashLight : AppColors.zeplin.splashXXLight,
+        borderColor:     AppColors.transparent,
+    }),
 });
 
 /* Component ==================================================================== */
@@ -71,13 +80,15 @@ const InsightIcon = ({
 }) => (
     <TouchableOpacity
         onPress={toggleModal}
-        style={{alignItems: 'center', marginBottom: AppSizes.paddingSml, marginRight: AppSizes.paddingMed, justifyContent: 'center',}}
+        style={{alignItems: 'center', marginBottom: AppSizes.paddingSml, justifyContent: 'center',}}
     >
         <View
             style={[
-                AppStyles.scaleButtonShadowEffect,
-                styles.circleStyle(45, isSelected),
-                isVisible ? {} : {backgroundColor: AppColors.zeplin.superLight,},
+                styles.circleStyle(45),
+                isVisible ?
+                    styles.visibleCircleStyle(isSelected)
+                    :
+                    styles.notVisibleCircleStyle(isSelected),
             ]}
         >
             { isVisible ?
@@ -112,7 +123,17 @@ const InsightIcon = ({
                 />
             }
         </View>
-        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
+        <Text
+            style={[
+                isVisible && isSelected ?
+                    { ...AppStyles.robotoBold, color: AppColors.zeplin.splashLight, }
+                    : !isVisible && isSelected ?
+                        { ...AppStyles.robotoBold, color: AppColors.zeplin.slateLight, }
+                        :
+                        { ...AppStyles.robotoRegular, color: AppColors.zeplin.slateLight, },
+                { fontSize: AppFonts.scaleFont(10), textAlign: 'center', }
+            ]}
+        >
             {text}
         </Text>
         { (isFTE && isVisible) &&
@@ -235,11 +256,11 @@ class CustomMyPlanNavBar extends Component {
                             }
                         </Text>
                     }
-                    <Spacer size={AppSizes.paddingSml} />
+                    <Spacer size={AppSizes.padding} />
                     <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
                         <BodyOverlay
                             bodyParts={bodyOverlayData}
-                            remainingWidth={(AppSizes.screen.widthHalf)}
+                            remainingWidth={(AppSizes.screen.widthTwoThirds)}
                         />
                         <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.paddingSml,}}>
                             {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
@@ -253,7 +274,7 @@ class CustomMyPlanNavBar extends Component {
                             )}
                         </View>
                     </View>
-                    <Spacer size={AppSizes.paddingSml} />
+                    <Spacer size={AppSizes.padding} />
                     { selectedCategory.visible ?
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
                             {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
@@ -274,7 +295,8 @@ class CustomMyPlanNavBar extends Component {
                 <View>
                     { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
                         <Carousel
-                            contentContainerCustomStyle={{alignItems: 'center', paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
+                            activeSlideAlignment={'start'}
+                            contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
                             data={categoryTrend.trigger_tiles}
                             firstItem={0}
                             initialNumToRender={categoryTrend && categoryTrend.trigger_tiles ? categoryTrend.trigger_tiles.length : 0}
@@ -282,8 +304,6 @@ class CustomMyPlanNavBar extends Component {
                             layout={'default'}
                             lockScrollWhileSnapping={true}
                             maxToRenderPerBatch={3}
-                            // onSnapToItem={index => this._handleOnSwiped(index)}
-                            // ref={ref => {this._swiperRef = ref;}}
                             removeClippedSubviews={false}
                             renderItem={({item, index}) => this._renderCard(item, index)}
                             sliderWidth={AppSizes.screen.width}
@@ -331,7 +351,7 @@ class CustomMyPlanNavBar extends Component {
             <View onLayout={ev => {this._navBarHeight = ev.nativeEvent.layout.height;}}>
                 <View style={{backgroundColor: AppColors.white, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                 <View style={[styles.container,]}>
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                    <View style={{alignItems: 'flex-start', flex: 6, flexDirection: 'row', justifyContent: 'space-between', marginRight: AppSizes.padding,}}>
                         <InsightIcon
                             insightType={6}
                             isFTE={selectedCareCategory ? selectedCareCategory.first_time_experience : false}
@@ -359,7 +379,7 @@ class CustomMyPlanNavBar extends Component {
                     </View>
                     <Image
                         source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                        style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 1, justifyContent: 'center',}]}
+                        style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 4, justifyContent: 'center',}]}
                     />
                 </View>
             </View>
@@ -398,10 +418,8 @@ class CustomMyPlanNavBar extends Component {
                     animationOut={'slideOutUp'}
                     isVisible={isModalOpen}
                     onBackdropPress={() => this._toggleModal(null)}
-                    // onSwipeComplete={() => this._toggleModal(null)}
-                    propagateSwipe={true}
+                    onSwipeComplete={() => this._toggleModal(null)}
                     style={{justifyContent: 'flex-start',}}
-                    // swipeDirection={'up'}
                 >
                     <View>
                         {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
