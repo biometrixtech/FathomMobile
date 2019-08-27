@@ -2085,18 +2085,17 @@ const PlanLogic = {
         });
         let parsedData = [];
         if(
-            selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt &&
-            (
-                (step === 1 && selectedSession.asymmetry.apt.summary_take_away_text) ||
-                (step === 2 && selectedSession.asymmetry.apt.detail_text)
-            )
+            selectedSession &&
+            selectedSession.asymmetry &&
+            selectedSession.asymmetry.apt &&
+            selectedSession.asymmetry.apt.detail_text
         ) {
-            _.map(step === 1 ? selectedSession.asymmetry.apt.summary_take_away_bold_text : selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+            _.map(selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
                     10
-                    : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                    : _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
                         4
                         :
                         13;
@@ -2140,7 +2139,10 @@ const PlanLogic = {
         let richDataYDomain = [-10, 10];
         if(isRichDataView) {
             let maxChartObj = _.maxBy(chartData, o => o.y < 0 ? (o.y * -1) : o.y);
-            let maxDomain = maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y;
+            let maxDomain = maxChartObj ?
+                maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y
+                :
+                10;
             maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
             maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
             return {

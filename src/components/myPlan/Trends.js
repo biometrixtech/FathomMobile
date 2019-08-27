@@ -18,6 +18,7 @@ import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, M
 import { BiomechanicsCharts, FathomCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { FathomModal, ParsedText, SVGImage, Spacer, TabIcon, Text, } from '../custom';
+import { ContactUsModal, } from '../general';
 import { store } from '../../store';
 
 // import third-party libraries
@@ -92,6 +93,7 @@ class Trends extends PureComponent {
         super(props);
         this.state = {
             isCoachModalOpen: false,
+            isContactUsOpen:  false,
         };
         this._carousel = {};
         this._timer = null;
@@ -175,8 +177,10 @@ class Trends extends PureComponent {
         );
     }
 
+    _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
+
     render = () => {
-        const { isCoachModalOpen, } = this.state;
+        const { isCoachModalOpen, isContactUsOpen, } = this.state;
         const { plan, } = this.props;
         let {
             biomechanics,
@@ -185,7 +189,6 @@ class Trends extends PureComponent {
             isBiomechanicsLocked,
             isBodyResponseLocked,
             isWorkloadLocked,
-            trendCategories,
             workload,
         } = PlanLogic.handleTrendsRenderLogic(plan, Platform.OS);
         let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse && bodyResponse.status ? bodyResponse.status.bolded_text : [], bodyResponse && bodyResponse.status ? bodyResponse.status.text : '');
@@ -255,27 +258,54 @@ class Trends extends PureComponent {
                         </View>
                     </View>
 
-                    <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.paddingLrg,}}>
-                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28),}}>{'This week'}</Text>
+                    <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.padding,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28),}}>{'Trends'}</Text>
                         <Spacer size={AppSizes.paddingXSml} />
                         <Spacer isDivider />
                         <Spacer size={AppSizes.padding} />
-
-                        <View style={{alignItems: 'center', flex: 1,}}>
-                            { trendCategories.length === 1 ?
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingXLrg,}}>
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={require('../../../assets/images/standard/research.png')}
-                                        style={{height: 60, marginRight: AppSizes.paddingSml, width: 60,}}
-                                    />
-                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'No Trends right now. We\'ll keep looking.'}</Text>
+                        { !isBiomechanicsLocked &&
+                            <TouchableOpacity
+                                activeOpacity={0.2}
+                                onPress={() => AppUtil.pushToScene('biomechanics')}
+                                style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                            >
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
+                                    <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Pelvic Tilt'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.event_date_time).format('M/D, h:mma')}</Text>
                                 </View>
-                                :
-                                this._renderItem(trendCategories[0])
-                            }
-                        </View>
-                        <Spacer size={AppSizes.paddingLrg} />
+                                <BiomechanicsCharts
+                                    pieDetails={{
+                                        leftPieInnerRadius,
+                                        leftPieWidth,
+                                        pieData,
+                                        pieLeftWrapperWidth,
+                                        pieRightWrapperWidth,
+                                        rightPieInnerRadius,
+                                        rightPieWidth,
+                                    }}
+                                    selectedSession={selectedSession}
+                                    showDetails={false}
+                                />
+                                { (selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) &&
+                                    <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                        { sessionSport ?
+                                            <Image
+                                                source={sessionSport.imagePath}
+                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        <ParsedText
+                                            parse={parsedBiomechanicsData}
+                                            style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
+                                        >
+                                            {biomechanicsAlertText}
+                                        </ParsedText>
+                                    </View>
+                                }
+                            </TouchableOpacity>
+                        }
                         <TouchableOpacity
                             activeOpacity={isWorkloadLocked ? 1 : 0.2}
                             onPress={isWorkloadLocked ? () => {} : () => AppUtil.pushToScene('insight', { insightType: 8, })}
@@ -380,34 +410,31 @@ class Trends extends PureComponent {
                                 </View>
                             }
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            activeOpacity={isBiomechanicsLocked ? 1 : 0.2}
-                            onPress={() => isBiomechanicsLocked ? () => {} : AppUtil.pushToScene('biomechanics')}
-                            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
-                        >
-                            { !isBiomechanicsLocked &&
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
-                                    <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Biomechanics'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.event_date_time).format('M/D, h:mma')}</Text>
-                                </View>
-                            }
-                            <BiomechanicsCharts
-                                pieDetails={{
-                                    leftPieInnerRadius,
-                                    leftPieWidth,
-                                    pieData,
-                                    pieLeftWrapperWidth,
-                                    pieRightWrapperWidth,
-                                    rightPieInnerRadius,
-                                    rightPieWidth,
-                                }}
-                                selectedSession={selectedSession}
-                                showDetails={false}
-                            />
-                            { isBiomechanicsLocked &&
-                                <View style={[styles.lockedCardWrapper,]}>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-between',}}>
-                                        <Text robotoRegular style={[styles.cardTitle, {color: AppColors.white,}]}>{'Biomechanics'}</Text>
+                        { isBiomechanicsLocked &&
+                            <TouchableOpacity
+                                activeOpacity={0.2}
+                                onPress={() => AppUtil.pushToScene('biomechanics')}
+                                style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                            >
+                                <BiomechanicsCharts
+                                    pieDetails={{
+                                        leftPieInnerRadius,
+                                        leftPieWidth,
+                                        pieData,
+                                        pieLeftWrapperWidth,
+                                        pieRightWrapperWidth,
+                                        rightPieInnerRadius,
+                                        rightPieWidth,
+                                    }}
+                                    selectedSession={selectedSession}
+                                    showDetails={false}
+                                />
+                                <TouchableOpacity
+                                    activeOpacity={1}
+                                    onPress={() => this._toggleContactUsWebView()}
+                                    style={[styles.lockedCardWrapper,]}
+                                >
+                                    <View style={{justifyContent: 'center',}}>
                                         <TabIcon
                                             color={AppColors.white}
                                             containerStyle={[{marginRight: AppSizes.paddingSml,}]}
@@ -417,29 +444,13 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advanced biomechanics tracking system coming soon.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'Optimize your recovery & prevention with the world\'s most advanced biomechanics AI system.'}</Text>
+                                        <Spacer size={AppSizes.paddingMed} />
+                                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{'Request access to Fathom\'s Pro Sensors.'}</Text>
                                     </View>
-                                </View>
-                            }
-                            { (!isBiomechanicsLocked && selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) &&
-                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
-                                    { sessionSport ?
-                                        <Image
-                                            source={sessionSport.imagePath}
-                                            style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
-                                        />
-                                        :
-                                        null
-                                    }
-                                    <ParsedText
-                                        parse={parsedBiomechanicsData}
-                                        style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
-                                    >
-                                        {biomechanicsAlertText}
-                                    </ParsedText>
-                                </View>
-                            }
-                        </TouchableOpacity>
+                                </TouchableOpacity>
+                            </TouchableOpacity>
+                        }
                     </View>
 
                 </ScrollView>
@@ -462,6 +473,11 @@ class Trends extends PureComponent {
                         </TouchableOpacity>
                     </View>
                 </FathomModal>
+
+                <ContactUsModal
+                    handleModalToggle={this._toggleContactUsWebView}
+                    isPrivacyPolicyOpen={isContactUsOpen}
+                />
 
             </View>
         );
