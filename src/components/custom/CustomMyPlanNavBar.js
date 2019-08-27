@@ -236,17 +236,16 @@ class CustomMyPlanNavBar extends Component {
                     </Text>
                 }
                 <Spacer size={AppSizes.paddingSml} />
-                <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
                     <BodyOverlay
                         bodyParts={bodyOverlayData}
                         remainingWidth={(AppSizes.screen.widthHalf)}
                     />
-                    <Spacer size={AppSizes.paddingSml} />
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                    <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.paddingSml,}}>
                         {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
                             <View
                                 key={i}
-                                style={[categoryTrend && categoryTrend.trend_data && i !== categoryTrend.trend_data.visualization_data.plot_legends.length ? {marginRight: AppSizes.paddingSml,} : {}, {flexDirection: 'row',}]}
+                                style={{flexDirection: 'row', marginBottom: AppSizes.paddingXSml,}}
                             >
                                 <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>

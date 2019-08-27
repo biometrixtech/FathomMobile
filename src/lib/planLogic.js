@@ -2267,8 +2267,10 @@ const PlanLogic = {
                                                         AppColors.zeplin.slate
                                                         : color === 13 ?
                                                             AppColors.zeplin.successLight
-                                                            :
-                                                            AppColors.zeplin.errorLight;
+                                                            : color === 14 ?
+                                                                `${AppColors.zeplin.splash}${PlanLogic.returnHexOpacity(0.5)}`
+                                                                :
+                                                                AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
