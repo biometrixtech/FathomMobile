@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
         ...AppStyles.scaleButtonShadowEffect,
         alignItems:     'center',
         borderRadius:   (circleSize / 2),
-        borderWidth:    2,
         height:         circleSize,
         justifyContent: 'center',
         marginBottom:   AppSizes.paddingXSml,
@@ -55,8 +54,7 @@ const styles = StyleSheet.create({
         width:           AppSizes.screen.widthThird,
     },
     notVisibleCircleStyle: isSelected => ({
-        backgroundColor: AppColors.zeplin.superLight,
-        borderColor:     isSelected ? AppColors.zeplin.splash : AppColors.transparent,
+        backgroundColor: isSelected ? AppColors.zeplin.slateLight : AppColors.zeplin.superLight,
     }),
     text: {
         ...AppStyles.robotoLight,
@@ -65,7 +63,6 @@ const styles = StyleSheet.create({
     },
     visibleCircleStyle: isSelected => ({
         backgroundColor: isSelected ? AppColors.zeplin.splashLight : AppColors.zeplin.splashXXLight,
-        borderColor:     AppColors.transparent,
     }),
 });
 
@@ -275,21 +272,42 @@ class CustomMyPlanNavBar extends Component {
                         </View>
                     </View>
                     <Spacer size={AppSizes.padding} />
-                    { selectedCategory.visible ?
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                            {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
-                        </Text>
-                        :
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                            { selectedCategory.insight_type === 6 ?
-                                'No Care needs identified:'
-                                : selectedCategory.insight_type === 5 ?
-                                    'Searching for Prevention needs:'
+                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                        <Image
+                            source={
+                                selectedCategory.visible ?
+                                    selectedCategory.insight_type === 6 ?
+                                        require('../../../assets/images/standard/care.png')
+                                        : selectedCategory.insight_type === 5 ?
+                                            require('../../../assets/images/standard/prevention.png')
+                                            :
+                                            require('../../../assets/images/standard/recovery.png')
                                     :
-                                    'Searching for Recovery needs:'
+                                    selectedCategory.insight_type === 6 ?
+                                        require('../../../assets/images/standard/care-empty.png')
+                                        : selectedCategory.insight_type === 5 ?
+                                            require('../../../assets/images/standard/prevention-empty.png')
+                                            :
+                                            require('../../../assets/images/standard/recovery-empty.png')
                             }
-                        </Text>
-                    }
+                            style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
+                        />
+                        { selectedCategory.visible ?
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                                {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
+                            </Text>
+                            :
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                                { selectedCategory.insight_type === 6 ?
+                                    'No Care needs identified:'
+                                    : selectedCategory.insight_type === 5 ?
+                                        'Searching for Prevention needs:'
+                                        :
+                                        'Searching for Recovery needs:'
+                                }
+                            </Text>
+                        }
+                    </View>
                     <Spacer size={AppSizes.paddingSml} />
                 </View>
                 <View>
