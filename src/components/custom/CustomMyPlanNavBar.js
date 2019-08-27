@@ -387,7 +387,6 @@ class CustomMyPlanNavBar extends Component {
     render = () => {
         const { categories, } = this.props;
         const { selectedIndex, isModalOpen, } = this.state;
-        console.log('categories',categories);
         let selectedCategory = _.find(categories, ['insight_type', selectedIndex]);
         let selectedCareCategory = _.find(categories, ['insight_type', 6]);
         let selectedPreventionCategory = _.find(categories, ['insight_type', 4]);
