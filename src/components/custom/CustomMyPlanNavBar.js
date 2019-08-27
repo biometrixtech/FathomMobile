@@ -32,7 +32,9 @@ const styles = StyleSheet.create({
     circleStyle: (circleSize, isSelected) => ({
         alignItems:      'center',
         backgroundColor: isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
+        borderColor:     isSelected ? AppColors.zeplin.splashLight : `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:    (circleSize / 2),
+        borderWidth:     2,
         height:          circleSize,
         justifyContent:  'center',
         marginBottom:    AppSizes.paddingXSml,
@@ -65,6 +67,7 @@ const InsightIcon = ({
     insightType,
     isFTE,
     isSelected,
+    isVisible,
     text,
     toggleModal = () => {},
 }) => (
@@ -72,24 +75,44 @@ const InsightIcon = ({
         onPress={toggleModal}
         style={{alignItems: 'center', marginBottom: AppSizes.paddingSml, marginRight: AppSizes.paddingMed, justifyContent: 'center',}}
     >
-        <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(45, isSelected),]}>
-            <Image
-                source={
-                    insightType === 6 && isSelected ?
-                        require('../../../assets/images/standard/care-selected.png')
-                        : insightType === 6 && !isSelected ?
-                            require('../../../assets/images/standard/care.png')
-                            : insightType === 5 && isSelected ?
-                                require('../../../assets/images/standard/prevention-selected.png')
-                                : insightType === 5 && !isSelected ?
-                                    require('../../../assets/images/standard/prevention.png')
-                                    : insightType === 4 && isSelected ?
-                                        require('../../../assets/images/standard/recovery-selected.png')
-                                        :
-                                        require('../../../assets/images/standard/recovery.png')
-                }
-                style={{height: 30, width: 30,}}
-            />
+        <View
+            style={[
+                AppStyles.scaleButtonShadowEffect,
+                styles.circleStyle(45, isSelected),
+                isVisible ? {} : {backgroundColor: AppColors.zeplin.superLight, borderColor: AppColors.zeplin.splashLight, borderWidth: 2,},
+            ]}
+        >
+            { isVisible ?
+                <Image
+                    source={
+                        insightType === 6 && isSelected ?
+                            require('../../../assets/images/standard/care-selected.png')
+                            : insightType === 6 && !isSelected ?
+                                require('../../../assets/images/standard/care.png')
+                                : insightType === 5 && isSelected ?
+                                    require('../../../assets/images/standard/prevention-selected.png')
+                                    : insightType === 5 && !isSelected ?
+                                        require('../../../assets/images/standard/prevention.png')
+                                        : insightType === 4 && isSelected ?
+                                            require('../../../assets/images/standard/recovery-selected.png')
+                                            :
+                                            require('../../../assets/images/standard/recovery.png')
+                    }
+                    style={{height: 30, width: 30,}}
+                />
+                :
+                <Image
+                    source={
+                        insightType === 6 ?
+                            require('../../../assets/images/standard/care-empty.png')
+                            : insightType === 5 ?
+                                require('../../../assets/images/standard/prevention-empty.png')
+                                :
+                                require('../../../assets/images/standard/recovery-empty.png')
+                    }
+                    style={{height: 30, width: 30,}}
+                />
+            }
         </View>
         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
             {text}
@@ -183,9 +206,37 @@ class CustomMyPlanNavBar extends Component {
         console.log('selectedCategory',selectedCategory,categoryTrend);
         return (
             <View style={{margin: AppSizes.paddingMed,}}>
-                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>{selectedCategory.title}</Text>
+                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
+                    { selectedCategory.insight_type === 6 ?
+                        'Care For Pain & Soreness'
+                        : selectedCategory.insight_type === 5 ?
+                            'Injury Prevention'
+                            :
+                            'Personalized Recovery'
+                    }
+                </Text>
                 <Spacer size={AppSizes.paddingXSml} />
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'HELLO-Data here'}</Text>
+                { selectedCategory.visible ?
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
+                        { selectedCategory.insight_type === 6 ?
+                            'Pain and soreness alter your neuromuscular control. "Care" helps retain mobility and minimize the effects.'
+                            : selectedCategory.insight_type === 5 ?
+                                'Your data indicates imbalances in muscle activation & strength which may elevate overuse injury risk.'
+                                :
+                                'Based on your data, we\'ve identified ways to expedite tissue recovery with targeted care for stressed areas.'
+                        }
+                    </Text>
+                    :
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
+                        { selectedCategory.insight_type === 6 ?
+                            'Because pain and soreness alter your neuro-muscular control, we design "Care" to minimize the effects of pain, soreness, and projected soreness.'
+                            : selectedCategory.insight_type === 5 ?
+                                'We haven\'t yet found signs of imbalances in your body which elevate injury risk. If we do, "Prevention" will help correct those underlying issues.'
+                                :
+                                'We\'re still looking for intelligent ways to expedite your recovery by up to 30%. When we discover an optimization, we\'ll add it to your "Recovery" plan.'
+                        }
+                    </Text>
+                }
                 <Spacer size={AppSizes.paddingSml} />
                 <View style={{alignItems: 'center', justifyContent: 'center',}}>
                     <BodyOverlay
@@ -206,7 +257,22 @@ class CustomMyPlanNavBar extends Component {
                     </View>
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
-                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>{'In your data, we\'ve identified'}</Text>
+                { selectedCategory.visible ?
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                        {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
+                    </Text>
+                    :
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                        { selectedCategory.insight_type === 6 ?
+                            'No Care needs identified:'
+                            : selectedCategory.insight_type === 5 ?
+                                'Searching for Prevention needs:'
+                                :
+                                'Searching for Recovery needs:'
+                        }
+                    </Text>
+                }
+
                 <Spacer size={AppSizes.paddingSml} />
                 <View>
                     { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
@@ -227,26 +293,35 @@ class CustomMyPlanNavBar extends Component {
                             windowSize={3}
                         />
                         :
-                        <Text>{'NONE'}</Text>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../assets/images/standard/research.png')}
+                                style={{alignSelf: 'center', height: 75, marginRight: AppSizes.paddingSml, width: 75,}}
+                            />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We\'re still looking for insights in your data to optimize your plan.'}</Text>
+                        </View>
                     }
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
-                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                    <Image
-                        source={
-                            selectedCategory.insight_type === 6 ?
-                                require('../../../assets/images/standard/care.png')
-                                : selectedCategory.insight_type === 5 ?
-                                    require('../../../assets/images/standard/prevention.png')
-                                    :
-                                    require('../../../assets/images/standard/recovery.png')
-                        }
-                        style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
-                    />
-                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
-                        {`Look for ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} in your plan`}
-                    </Text>
-                </View>
+                { selectedCategory.visible &&
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                        <Image
+                            source={
+                                selectedCategory.insight_type === 6 ?
+                                    require('../../../assets/images/standard/care.png')
+                                    : selectedCategory.insight_type === 5 ?
+                                        require('../../../assets/images/standard/prevention.png')
+                                        :
+                                        require('../../../assets/images/standard/recovery.png')
+                            }
+                            style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
+                        />
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                            {`Look for ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} in your plan`}
+                        </Text>
+                    </View>
+                }
             </View>
         );
     }
@@ -262,6 +337,7 @@ class CustomMyPlanNavBar extends Component {
                             insightType={6}
                             isFTE={selectedCareCategory ? selectedCareCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 6 && this.state.isModalOpen}
+                            isVisible={selectedCareCategory ? selectedCareCategory.visible : false}
                             text={'Care'}
                             toggleModal={user && user.id ? () => this._toggleModal(6) : null}
                         />
@@ -269,6 +345,7 @@ class CustomMyPlanNavBar extends Component {
                             insightType={4}
                             isFTE={selectedPreventionCategory ? selectedPreventionCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 4 && this.state.isModalOpen}
+                            isVisible={selectedPreventionCategory ? selectedPreventionCategory.visible : false}
                             text={'Recovery'}
                             toggleModal={user && user.id ? () => this._toggleModal(4) : null}
                         />
@@ -276,6 +353,7 @@ class CustomMyPlanNavBar extends Component {
                             insightType={5}
                             isFTE={selectedRecoveryCategory ? selectedRecoveryCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 5 && this.state.isModalOpen}
+                            isVisible={selectedRecoveryCategory ? selectedRecoveryCategory.visible : false}
                             text={'Prevention'}
                             toggleModal={user && user.id ? () => this._toggleModal(5) : null}
                         />
