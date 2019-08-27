@@ -23,7 +23,7 @@ import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
-import { Button, FathomModal, MultiSwitch, Spacer, TabIcon, Text, } from '../custom';
+import { Button, FathomModal, MultiSwitch, ParsedText, Spacer, TabIcon, Text, } from '../custom';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { store, } from '../../store';
 
@@ -204,6 +204,7 @@ class ExerciseModality extends Component {
             imageSource,
             pageSubtitle,
             pageTitle,
+            priorityText,
             recoveryObj,
             recoveryType,
             textId,
@@ -258,15 +259,22 @@ class ExerciseModality extends Component {
                                         <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
                                         <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                     </View>
-                                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
-                                    {_.map(goals, (goal, key) =>
-                                        <GoalPill
-                                            isSelected={goal.isSelected}
-                                            key={key}
-                                            onPress={() => isSubmitting ? null : this._toggleGoal(key)}
-                                            text={goal.text}
-                                        />
-                                    )}
+                                    <ParsedText
+                                        parse={[{pattern: new RegExp(priorityText, 'i'), style: {textDecorationLine: 'underline',},}]}
+                                        style={[AppStyles.robotoBold, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}]}
+                                    >
+                                        {goalsHeader}
+                                    </ParsedText>
+                                    <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
+                                        {_.map(goals, (goal, key) =>
+                                            <GoalPill
+                                                extraStyles={{marginTop: AppSizes.paddingSml, marginRight: AppSizes.paddingSml,}}
+                                                goal={goal}
+                                                key={key}
+                                                onPress={() => isSubmitting ? null : this._toggleGoal(key)}
+                                            />
+                                        )}
+                                    </View>
                                     {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
                                         <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
                                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>

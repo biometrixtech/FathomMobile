@@ -1260,7 +1260,7 @@ const PlanLogic = {
             return false;
         });
         let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
-        let goalsHeader = `${priorityText} Routine to:`;
+        let goalsHeader = `${priorityText} routine to reduce effects of:`;
         return {
             buttons,
             exerciseList,
@@ -1271,6 +1271,7 @@ const PlanLogic = {
             imageSource,
             pageSubtitle,
             pageTitle,
+            priorityText,
             recoveryObj,
             recoveryType,
             sceneId,
