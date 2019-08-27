@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
 import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { BodyOverlay, FathomModal, ParsedText, Spacer, Text, } from './';
+import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
+import { BodyOverlay, FathomModal, ParsedText, Spacer, TabIcon, Text, } from './';
 import { PlanLogic, } from '../../lib';
 
 // import third-party libraries
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: AppColors.white,
         borderRadius:    12,
-        padding:         AppSizes.padding,
+        padding:         AppSizes.paddingSml,
     },
     circleStyle: circleSize => ({
         ...AppStyles.scaleButtonShadowEffect,
@@ -186,18 +186,81 @@ class CustomMyPlanNavBar extends Component {
             _.map(item.bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                newParsedData.style = [AppStyles.robotoBold,];
+                newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
                 parsedData.push(newParsedData);
+            });
+        }
+        let imageSource = null;
+        let iconSource = null;
+        if([11, 12, 13, 14, 15, 23, 24].includes(item.trigger_type)) {
+            iconSource = { icon: 'md-body', type: 'ionicon', };
+        } else if([16, 19].includes(item.trigger_type)) {
+            iconSource = { icon: 'timeline', type: 'material', };
+        } else if([110, 111].includes(item.trigger_type)) {
+            imageSource = require('../../../assets/images/standard/apt.png');
+        } else {
+            switch (item.trigger_type) {
+            case 0:
+                let filteredSportName = _.filter(MyPlanConstants.teamSports, s => s.index === item.sport_name);
+                imageSource = filteredSportName && filteredSportName[0] && filteredSportName[0].imagePath ? filteredSportName[0].imagePath : null;
+                break;
+            default:
+                iconSource = null;
+                imageSource = null;
+            }
+        }
+        let parsedStatisticData = [];
+        if(item && item.statistic_text) {
+            _.map(item.bold_statistic_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [{fontSize: AppFonts.scaleFont(18),}];
+                parsedStatisticData.push(newParsedData);
             });
         }
         return (
             <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
-                <ParsedText
-                    parse={parsedData}
-                    style={[styles.text,]}
-                >
-                    {item ? item.text : ''}
-                </ParsedText>
+                <View style={{backgroundColor: `${PlanLogic.returnInsightColorString(item.bold_text[0].color)}${PlanLogic.returnHexOpacity(0.15)}`, borderRadius: 10, padding: AppSizes.paddingSml,}}>
+                    <ParsedText
+                        parse={parsedData}
+                        style={[styles.text,]}
+                    >
+                        {item ? item.text : ''}
+                    </ParsedText>
+                </View>
+                <Spacer size={AppSizes.paddingSml} />
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingLeft: AppSizes.paddingSml,}}>
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(10), width: '40%',}}>{item.description}</Text>
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', width: '40%',}}>
+                        <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: (20 / 2), height: 20, justifyContent: 'center', width: 20,}}>
+                            { imageSource ?
+                                <Image
+                                    source={imageSource}
+                                    style={{height: 18, tintColor: AppColors.zeplin.slateLight, width: 18,}}
+                                />
+                                : iconSource ?
+                                    <TabIcon
+                                        color={AppColors.zeplin.slateLight}
+                                        icon={iconSource.icon}
+                                        size={18}
+                                        type={iconSource.type}
+                                    />
+                                    :
+                                    null
+                            }
+                        </View>
+                        { (item.statistic_text && item.statistic_text.length > 0) ?
+                            <ParsedText
+                                parse={parsedStatisticData}
+                                style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(10), marginLeft: AppSizes.paddingXSml,}}
+                            >
+                                {item.statistic_text}
+                            </ParsedText>
+                            :
+                            null
+                        }
+                    </View>
+                </View>
             </View>
         );
     }
