@@ -209,15 +209,18 @@ class CustomMyPlanNavBar extends Component {
                 imageSource = null;
             }
         }
-        let parsedStatisticData = [];
-        if(item && item.statistic_text) {
-            _.map(item.bold_statistic_text, (prop, i) => {
-                let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
-                newParsedData.style = [{fontSize: AppFonts.scaleFont(18),}];
-                parsedStatisticData.push(newParsedData);
-            });
-        }
+        let statisticText1 = (item.statistic_text && item.statistic_text.length > 0) ?
+            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
+                {item.bold_statistic_text[0] ? item.bold_statistic_text[0].text : ''}
+            </Text>
+            :
+            null;
+        let statisticText2 = (item.statistic_text && item.statistic_text.length > 0) ?
+            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(10),}}>
+                {item.statistic_text.replace(`${item.bold_statistic_text[0] ? item.bold_statistic_text[0].text : ''} `, '')}
+            </Text>
+            :
+            null;
         return (
             <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
                 <View style={{backgroundColor: `${PlanLogic.returnInsightColorString(item.bold_text[0].color)}${PlanLogic.returnHexOpacity(0.15)}`, borderRadius: 10, padding: AppSizes.paddingSml,}}>
@@ -229,36 +232,32 @@ class CustomMyPlanNavBar extends Component {
                     </ParsedText>
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
-                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingLeft: AppSizes.paddingSml,}}>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingSml,}}>
                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(10), width: '40%',}}>{item.description}</Text>
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', width: '40%',}}>
-                        <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: (20 / 2), height: 20, justifyContent: 'center', width: 20,}}>
+                    <View style={{width: '7%'}} />
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', width: '10%',}}>
+                        <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: (28 / 2), height: 28, justifyContent: 'center', width: 28,}}>
                             { imageSource ?
                                 <Image
                                     source={imageSource}
-                                    style={{height: 18, tintColor: AppColors.zeplin.slateLight, width: 18,}}
+                                    style={{height: 22, tintColor: AppColors.zeplin.slateLight, width: 22,}}
                                 />
                                 : iconSource ?
                                     <TabIcon
                                         color={AppColors.zeplin.slateLight}
                                         icon={iconSource.icon}
-                                        size={18}
+                                        size={22}
                                         type={iconSource.type}
                                     />
                                     :
                                     null
                             }
                         </View>
-                        { (item.statistic_text && item.statistic_text.length > 0) ?
-                            <ParsedText
-                                parse={parsedStatisticData}
-                                style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(10), marginLeft: AppSizes.paddingXSml,}}
-                            >
-                                {item.statistic_text}
-                            </ParsedText>
-                            :
-                            null
-                        }
+                    </View>
+                    <View style={{width: '3%'}} />
+                    <View style={{flex: 1, width: '40%',}}>
+                        {statisticText1}
+                        {statisticText2}
                     </View>
                 </View>
             </View>
@@ -401,7 +400,7 @@ class CustomMyPlanNavBar extends Component {
                         </View>
                     }
                 </View>
-                <View style={{marginHorizontal: AppSizes.paddingMed,}}>
+                {/*<View style={{marginHorizontal: AppSizes.paddingMed,}}>
                     <Spacer size={AppSizes.paddingSml} />
                     { selectedCategory.visible &&
                         <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
@@ -421,7 +420,7 @@ class CustomMyPlanNavBar extends Component {
                             </Text>
                         </View>
                     }
-                </View>
+                </View>*/}
             </View>
         );
     }
