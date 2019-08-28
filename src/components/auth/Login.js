@@ -323,12 +323,14 @@ class Login extends Component {
 
                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', marginTop: AppSizes.padding,}}>
                         <View>
-                            <Alerts
-                                error={this.state.resultMsg.error}
-                                extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
-                                showEmptyState={true}
-                                success={this.state.resultMsg.success}
-                            />
+                            <View style={{alignItems: 'center', justifyContent: 'space-between',}}>
+                                <Alerts
+                                    error={this.state.resultMsg.error}
+                                    extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
+                                    showEmptyState={true}
+                                    success={this.state.resultMsg.success}
+                                />
+                            </View>
                             <Spacer size={AppSizes.paddingMed} />
                             <FormInput
                                 autoCapitalize={'none'}

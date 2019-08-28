@@ -27,7 +27,7 @@ const customStyles = StyleSheet.create({
         paddingVertical:   AppSizes.paddingXSml,
     }),
     textStyle: isSelected => ({
-        color:        AppColors.zeplin.splash,
+        color:        AppColors.zeplin.splashLight,
         fontSize:     AppFonts.scaleFont(14),
         paddingRight: AppSizes.paddingXSml,
     }),
@@ -114,7 +114,7 @@ class GoalPill extends Component {
                         />
                     }
                     <Text
-                        robotoBold
+                        robotoRegular
                         style={[customStyles.textStyle(goal.isSelected),]}
                     >
                         {goal.text}
@@ -122,7 +122,7 @@ class GoalPill extends Component {
                     { Platform.OS === 'ios' ?
                         <Animated.View style={[animatedStyle,]}>
                             <TabIcon
-                                color={AppColors.zeplin.splash}
+                                color={AppColors.zeplin.splashLight}
                                 icon={'add'}
                                 size={AppFonts.scaleFont(25)}
                             />
@@ -130,7 +130,7 @@ class GoalPill extends Component {
                         :
                         <View style={[animatedStyle,]}>
                             <TabIcon
-                                color={AppColors.zeplin.splash}
+                                color={AppColors.zeplin.splashLight}
                                 icon={'add'}
                                 size={AppFonts.scaleFont(25)}
                             />

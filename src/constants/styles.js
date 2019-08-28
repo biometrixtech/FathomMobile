@@ -342,7 +342,7 @@ export default {
         tintColor: Colors.white,
     },
     navbarImageTitle: {
-        height:     Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5),
+        height:     Sizes.navbarHeight / 2.5,//(Platform.OS === 'ios' ? 1.8 : 1.5),
         resizeMode: 'contain',
         // marginTop:  (Sizes.navbarHeight - (Sizes.navbarHeight/(Platform.OS === 'ios' ? 1.8 : 1.5))) / 2,
     },

@@ -53,13 +53,15 @@ const styles = StyleSheet.create({
         backgroundColor: AppColors.transparent,
         borderRadius:    20,
         flexDirection:   'row',
-        height:          (Metrics.switchHeight - 10),
+        height:          (Metrics.switchHeight - 6),
         justifyContent:  'center',
         marginVertical:  5,
         width:           Metrics.containerWidth,
     },
     containerWrapper: {
-        height: Metrics.switchHeight,
+        alignItems:     'center',
+        height:         Metrics.switchHeight,
+        justifyContent: 'center',
     },
     switcher: {
         alignItems:      'center',
@@ -211,15 +213,15 @@ export default class MultiSwitch extends Component {
         const { buttons, isDisabled, selectedIndex, } = this.props;
         const { isPanning, } = this.state;
         return (
-            <View style={styles.containerWrapper}>
-                <View style={styles.container}>
+            <View style={[styles.containerWrapper,]}>
+                <View style={[styles.container, {backgroundColor: `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,}]}>
                     {_.map(buttons, (button, index) =>
                         <TouchableOpacity
                             key={index}
                             onPress={() => this._onStatusChanged(index)}
                             style={styles.buttonStyle}
                         >
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
                         </TouchableOpacity>
                     )}
                 </View>

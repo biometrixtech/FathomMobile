@@ -268,7 +268,7 @@ class ExerciseModality extends Component {
                                     <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
                                         {_.map(goals, (goal, key) =>
                                             <GoalPill
-                                                extraStyles={{marginTop: AppSizes.paddingXSml, marginHorizontal: AppSizes.paddingXSml,}}
+                                                extraStyles={{marginTop: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingXSml,}}
                                                 goal={goal}
                                                 key={key}
                                                 onPress={() => isSubmitting ? null : this._toggleGoal(key)}

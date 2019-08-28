@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
         flexDirection:     'row',
         justifyContent:    'center',
         paddingHorizontal: AppSizes.paddingMed,
+        paddingVertical:   AppSizes.paddingSml,
     },
     divider: {
         alignSelf:       'center',
@@ -77,7 +78,7 @@ const InsightIcon = ({
 }) => (
     <TouchableOpacity
         onPress={toggleModal}
-        style={{alignItems: 'center', marginBottom: AppSizes.paddingSml, justifyContent: 'center',}}
+        style={{alignItems: 'center', justifyContent: 'center',}}
     >
         <View
             style={[
@@ -120,7 +121,7 @@ const InsightIcon = ({
                 />
             }
         </View>
-        <Text
+        {/*<Text
             style={[
                 isVisible && isSelected ?
                     { ...AppStyles.robotoBold, color: AppColors.zeplin.splashLight, }
@@ -132,7 +133,7 @@ const InsightIcon = ({
             ]}
         >
             {text}
-        </Text>
+        </Text>*/}
         { (isFTE && isVisible) &&
             <Badge
                 containerStyle={{
@@ -167,16 +168,24 @@ class CustomMyPlanNavBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedIndex: 0,
-            isModalOpen:   false,
+            isModalOpen:        false,
+            modalContentHeight: 0,
+            selectedIndex:      0,
         };
         this._navBarHeight = 0;
+        this._swiperRef = {};
     }
 
     componentDidMount = () => {
         StatusBar.setBarStyle('dark-content');
         if(Platform.OS === 'android') {
             StatusBar.setBackgroundColor(AppColors.white);
+        }
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        if(this._swiperRef && this.state.isModalOpen && prevState.selectedIndex !== this.state.selectedIndex) {
+            _.delay(() => this._swiperRef.snapToItem(0), 250);
         }
     }
 
@@ -255,7 +264,7 @@ class CustomMyPlanNavBar extends Component {
                         </View>
                     </View>
                     <View style={{width: '3%'}} />
-                    <View style={{flex: 1, width: '40%',}}>
+                    <View style={{alignSelf: 'flex-end', flex: 1, width: '40%',}}>
                         {statisticText1}
                         {statisticText2}
                     </View>
@@ -268,6 +277,7 @@ class CustomMyPlanNavBar extends Component {
         if(!selectedCategory) {
             return (<View />);
         }
+        const { modalContentHeight, } = this.state;
         let categoryTrend = selectedCategory.trends[0];
         let categoryData = categoryTrend.trend_data && categoryTrend.trend_data.data && categoryTrend.trend_data.data[0] ? categoryTrend.trend_data.data[0] : [];
         let bodyOverlayData = _.flatten(_.map(categoryData, (category, i) => {
@@ -281,6 +291,7 @@ class CustomMyPlanNavBar extends Component {
                 return clonedNewCategory;
             });
         }));
+        let bodyOverlayHeightMultiplier = modalContentHeight && modalContentHeight > 0 && (AppSizes.screen.height - modalContentHeight) <= (AppSizes.paddingXLrg) ? 0.75 : 1;
         return (
             <View style={{marginVertical: AppSizes.paddingMed,}}>
                 <View style={{marginHorizontal: AppSizes.paddingMed,}}>
@@ -297,7 +308,7 @@ class CustomMyPlanNavBar extends Component {
                     { selectedCategory.visible ?
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                             { selectedCategory.insight_type === 6 ?
-                                'Pain and soreness alter your neuromuscular control. "Care" helps retain mobility and minimize the effects.'
+                                'Training with pain & soreness changes the way you move and distribute force. "Care" helps retain mobility and minimize these effects.'
                                 : selectedCategory.insight_type === 5 ?
                                     'Your data indicates imbalances in muscle activation & strength which may elevate overuse injury risk.'
                                     :
@@ -319,7 +330,7 @@ class CustomMyPlanNavBar extends Component {
                     <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
                         <BodyOverlay
                             bodyParts={bodyOverlayData}
-                            remainingWidth={(AppSizes.screen.widthTwoThirds)}
+                            remainingWidth={(AppSizes.screen.widthTwoThirds * bodyOverlayHeightMultiplier)}
                         />
                         <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.paddingSml,}}>
                             {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
@@ -384,6 +395,7 @@ class CustomMyPlanNavBar extends Component {
                             layout={'default'}
                             lockScrollWhileSnapping={true}
                             maxToRenderPerBatch={3}
+                            ref={ref => {this._swiperRef = ref;}}
                             removeClippedSubviews={false}
                             renderItem={({item, index}) => this._renderCard(item, index)}
                             sliderWidth={AppSizes.screen.width}
@@ -501,7 +513,7 @@ class CustomMyPlanNavBar extends Component {
                     onSwipeComplete={() => this._toggleModal(null)}
                     style={{justifyContent: 'flex-start',}}
                 >
-                    <View>
+                    <View onLayout={ev => this.setState({ modalContentHeight: ev.nativeEvent.layout.height, })}>
                         {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
                         <View style={{backgroundColor: AppColors.white, borderBottomLeftRadius: 20, borderBottomRightRadius: 20,}}>
                             {this._renderContent(selectedCategory)}

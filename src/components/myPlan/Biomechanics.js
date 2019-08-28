@@ -230,7 +230,7 @@ class Biomechanics extends PureComponent {
                         />
                     </View>
 
-                    <View style={{marginVertical: AppSizes.paddingLrg,}}>
+                    <View style={{marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Session Asymmetry'}</Text>
                         <BiomechanicsCharts
                             chartData={updatedChartData}
