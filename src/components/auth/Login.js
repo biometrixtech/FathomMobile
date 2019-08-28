@@ -277,18 +277,33 @@ class Login extends Component {
 
                 <ImageBackground
                     source={require('../../../assets/images/standard/welcome_background.png')}
-                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingVertical: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
+                    style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingBottom: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
                 >
 
-                    <TabIcon
-                        color={AppColors.zeplin.slateLight}
-                        containerStyle={[{position: 'absolute', top: (20 + AppSizes.statusBarHeight), left: 10}]}
-                        icon={'chevron-left'}
-                        onPress={() => Actions.pop()}
-                        size={26}
-                    />
+                    <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
+                        <View style={{flex: 1, justifyContent: 'center',}}>
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                icon={'chevron-left'}
+                                onPress={() => Actions.pop()}
+                                size={26}
+                            />
+                        </View>
+                        <View style={{flex: 8, justifyContent: 'center',}}>
+                            <Egg
+                                onCatch={() => this.setState({ isModalVisible: true, })}
+                                setps={'TTTTT'}
+                            >
+                                <Image
+                                    source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
+                                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', justifyContent: 'center',}]}
+                                />
+                            </Egg>
+                        </View>
+                        <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />
+                    </View>
 
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                    {/*<View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
                         <View>
                             <Egg
                                 onCatch={() => this.setState({ isModalVisible: true, })}
@@ -304,54 +319,73 @@ class Login extends Component {
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
                             {'Optimal recovery,\ndesigned for your body.'}
                         </Text>
-                    </View>
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
-                        <Alerts
-                            error={this.state.resultMsg.error}
-                            extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
-                            success={this.state.resultMsg.success}
-                        />
-                        <Spacer size={AppSizes.paddingMed} />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            autoCompleteType={'username'}
-                            blurOnSubmit={false}
-                            clearButtonMode={'never'}
-                            containerStyle={{backgroundColor: AppColors.zeplin.splashLight, borderBottomWidth: 0, borderRadius: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.email = ref}
-                            inputStyle={{color: AppColors.white, paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}
-                            keyboardType={'email-address'}
-                            onChangeText={(text) => this._handleFormChange('email', text)}
-                            onSubmitEditing={() => this._focusNextField('password')}
-                            placeholder={'username'}
-                            placeholderTextColor={AppColors.white}
-                            returnKeyType={'next'}
-                            textContentType={'username'}
-                            value={this.state.form_values.email}
-                        />
-                        <Spacer size={AppSizes.paddingMed} />
-                        <FormInput
-                            autoCapitalize={'none'}
-                            autoCompleteType={'password'}
-                            blurOnSubmit={true}
-                            clearButtonMode={'never'}
-                            containerStyle={{backgroundColor: AppColors.zeplin.splashLight, borderBottomWidth: 0, borderRadius: AppSizes.paddingLrg, width: AppSizes.screen.widthTwoThirds,}}
-                            inputRef={ref => this.inputs.password = ref}
-                            inputStyle={{color: AppColors.white, paddingVertical: AppSizes.paddingMed, textAlign: 'center',}}
-                            keyboardType={'default'}
-                            onChangeText={(text) => this._handleFormChange('password', text)}
-                            onSubmitEditing={() => this.state.loading ? null : this.setState({ loading: true, }, () => this._handleFormSubmit())}
-                            password={true}
-                            placeholder={'password'}
-                            placeholderTextColor={AppColors.white}
-                            returnKeyType={'done'}
-                            secureTextEntry={true}
-                            textContentType={'password'}
-                            value={this.state.form_values.password}
-                        />
-                        <TouchableOpacity onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : AppUtil.pushToScene('forgotPassword')}>
-                            <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11), fontStyle: 'italic', marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingSml, textAlign: 'center',}}>{'forgot password?'}</Text>
-                        </TouchableOpacity>
+                    </View>*/}
+
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', marginTop: AppSizes.padding,}}>
+                        <View>
+                            <Alerts
+                                error={this.state.resultMsg.error}
+                                extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
+                                showEmptyState={true}
+                                success={this.state.resultMsg.success}
+                            />
+                            <Spacer size={AppSizes.paddingMed} />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                autoCompleteType={'username'}
+                                blurOnSubmit={false}
+                                clearButtonMode={'never'}
+                                containerStyle={{borderBottomColor: AppColors.zeplin.slateLight, borderBottomWidth: 2, width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.email = ref}
+                                inputStyle={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20), paddingVertical: AppSizes.paddingSml,}}
+                                keyboardType={'email-address'}
+                                onChangeText={(text) => this._handleFormChange('email', text)}
+                                onSubmitEditing={() => this._focusNextField('password')}
+                                placeholder={'username'}
+                                placeholderTextColor={AppColors.zeplin.slateLight}
+                                returnKeyType={'next'}
+                                textContentType={'username'}
+                                value={this.state.form_values.email}
+                            />
+                            <Spacer size={AppSizes.paddingMed} />
+                            <FormInput
+                                autoCapitalize={'none'}
+                                autoCompleteType={'password'}
+                                blurOnSubmit={true}
+                                clearButtonMode={'never'}
+                                containerStyle={{borderBottomColor: AppColors.zeplin.slateLight, borderBottomWidth: 2, width: AppSizes.screen.widthTwoThirds,}}
+                                inputRef={ref => this.inputs.password = ref}
+                                inputStyle={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20), paddingVertical: AppSizes.paddingSml,}}
+                                keyboardType={'default'}
+                                onChangeText={(text) => this._handleFormChange('password', text)}
+                                onSubmitEditing={() => this.state.loading ? null : this.setState({ loading: true, }, () => this._handleFormSubmit())}
+                                password={true}
+                                placeholder={'password'}
+                                placeholderTextColor={AppColors.zeplin.slateLight}
+                                returnKeyType={'done'}
+                                secureTextEntry={true}
+                                textContentType={'password'}
+                                value={this.state.form_values.password}
+                            />
+                            <TouchableOpacity
+                                onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : AppUtil.pushToScene('forgotPassword')}
+                                style={{width: AppSizes.screen.widthTwoThirds,}}
+                            >
+                                <Text
+                                    robotoBold
+                                    style={{
+                                        color:             AppColors.zeplin.slateLight,
+                                        fontSize:          AppFonts.scaleFont(11),
+                                        fontStyle:         'italic',
+                                        marginBottom:      AppSizes.paddingLrg,
+                                        marginTop:         AppSizes.paddingSml,
+                                        paddingHorizontal: (AppSizes.paddingLrg + AppSizes.paddingSml),
+                                    }}
+                                >
+                                    {'forgot password?'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', width: AppSizes.screen.widthTwoThirds,}}
