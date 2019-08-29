@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
-        <View behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
             <ImageBackground
                 source={require('../../../assets/images/standard/start.png')}
                 style={[AppStyles.containerCentered, styles.imageBackground,]}
@@ -162,9 +162,7 @@ class Login extends Component {
         this.inputs[id].focus();
     }
 
-
     _handleFormChange = (name, value) => {
-
         let newFormFields = _.update( this.state.form_values, name, () => value);
         this.setState({
             ['form_values']: newFormFields,
@@ -280,7 +278,7 @@ class Login extends Component {
                     style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingBottom: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
                 >
 
-                    <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
+                    <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight > 0 ? AppSizes.statusBarHeight : AppSizes.padding,}}>
                         <TabIcon
                             color={AppColors.zeplin.slateLight}
                             containerStyle={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
@@ -297,7 +295,7 @@ class Login extends Component {
                                 <Image
                                     resizeMode={'contain'}
                                     source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                                    style={{height: (AppSizes.statusBarHeight / 2), width: AppSizes.screen.widthThird,}}
+                                    style={{width: AppSizes.screen.widthQuarter,}}
                                 />
                             </Egg>
                         </View>

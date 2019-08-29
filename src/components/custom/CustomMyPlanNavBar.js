@@ -185,7 +185,7 @@ class CustomMyPlanNavBar extends Component {
 
     componentDidUpdate = (prevProps, prevState) => {
         if(this._swiperRef && this._swiperRef.snapToItem && this.state.isModalOpen && prevState.selectedIndex !== this.state.selectedIndex) {
-            _.delay(() => this._swiperRef.snapToItem(0), 250);
+            _.delay(() => this._swiperRef.snapToItem(0, false), 250);
         }
     }
 
@@ -304,15 +304,27 @@ class CustomMyPlanNavBar extends Component {
         return (
             <View style={{marginBottom: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
                 <View style={{marginHorizontal: AppSizes.paddingMed,}}>
-                    <Text robotoRegular style={{color: selectedCategory.visible ? AppColors.zeplin.splashLight : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
-                        { selectedCategory.insight_type === 6 ?
-                            'Care For Pain & Soreness'
-                            : selectedCategory.insight_type === 5 ?
-                                'Injury Prevention'
-                                :
-                                'Personalized Recovery'
-                        }
-                    </Text>
+                    { selectedCategory.visible ?
+                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
+                            { selectedCategory.insight_type === 6 ?
+                                'Care For Pain & Soreness'
+                                : selectedCategory.insight_type === 5 ?
+                                    'Injury Prevention'
+                                    :
+                                    'Personalized Recovery'
+                            }
+                        </Text>
+                        :
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
+                            { selectedCategory.insight_type === 6 ?
+                                'Care: Searching for Care Insights'
+                                : selectedCategory.insight_type === 5 ?
+                                    'Prevention: Searching for Prevention Insights'
+                                    :
+                                    'Recovery: Searching for Recovery Insights'
+                            }
+                        </Text>
+                    }
                     <Spacer size={AppSizes.paddingXSml} />
                     { selectedCategory.visible ?
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
