@@ -185,7 +185,7 @@ class CustomMyPlanNavBar extends Component {
 
     componentDidUpdate = (prevProps, prevState) => {
         if(this._swiperRef && this._swiperRef.snapToItem && this.state.isModalOpen && prevState.selectedIndex !== this.state.selectedIndex) {
-            _.delay(() => this._swiperRef.snapToItem(0, false), 250);
+            _.delay(() => this._swiperRef.snapToItem(0), 250);
         }
     }
 
@@ -317,11 +317,11 @@ class CustomMyPlanNavBar extends Component {
                         :
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
                             { selectedCategory.insight_type === 6 ?
-                                'Care: Searching for Care Insights'
+                                'Searching for Care Insights'
                                 : selectedCategory.insight_type === 5 ?
-                                    'Prevention: Searching for Prevention Insights'
+                                    'Searching for Prevention Insights'
                                     :
-                                    'Recovery: Searching for Recovery Insights'
+                                    'Searching for Recovery Insights'
                             }
                         </Text>
                     }
@@ -355,7 +355,7 @@ class CustomMyPlanNavBar extends Component {
                                     : selectedCategory.insight_type === 5 ?
                                         'Keep using your sensors and logging your workouts, pain and soreness to help our AI find underlying injury risk factors.'
                                         :
-                                        'Keep using your sensors and logging your workouts. Our AI searches for daily optimizations your tissue recovery.'
+                                        'Keep using your sensors and logging your workouts. Our AI searches for daily optimizations for your tissue recovery.'
                                 }
                             </Text>
                             <Spacer size={AppSizes.paddingMed} />
