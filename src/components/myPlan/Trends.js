@@ -444,13 +444,9 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-<<<<<<< HEAD
                                         <Text robotoRegular style={[styles.lockedCardText,]}>{'Optimize your recovery & prevention with the world\'s most advanced biomechanics AI system.'}</Text>
                                         <Spacer size={AppSizes.paddingMed} />
                                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{'Request access to Fathom\'s Pro Sensors.'}</Text>
-=======
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'The world\'s most advanced biomechanics tracking system coming soon.'}</Text>
->>>>>>> 721836892b437d35187ca3a25b5d679080a6373d
                                     </View>
                                 </TouchableOpacity>
                             </TouchableOpacity>
