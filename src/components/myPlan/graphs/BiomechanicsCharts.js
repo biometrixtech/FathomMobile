@@ -60,11 +60,11 @@ class BiomechanicsCharts extends PureComponent {
 
                 { isRichDataView ?
                     <View>
-                        <View style={{marginTop: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
+                        <View style={{paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
                             { showTitle &&
                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>{'Pelvic Tilt Range of Motion'}</Text>
                             }
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingSml,}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingXSml,}}>
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{'00:00'}</Text>
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{sessionDuration}</Text>
                             </View>

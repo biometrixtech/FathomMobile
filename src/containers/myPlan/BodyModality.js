@@ -11,6 +11,7 @@ const BodyModality = ({
     modality,
     patchBodyActiveRecovery,
     plan,
+    user,
 }) => (
     <Layout
         handleBodyPartClick={handleBodyPartClick}
@@ -18,6 +19,7 @@ const BodyModality = ({
         modality={modality}
         patchBodyActiveRecovery={patchBodyActiveRecovery}
         plan={plan}
+        user={user}
     />
 );
 
@@ -27,6 +29,7 @@ BodyModality.propTypes = {
     modality:                PropTypes.string.isRequired,
     patchBodyActiveRecovery: PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,
+    user:                    PropTypes.object.isRequired,
 };
 
 BodyModality.defaultProps = {};
@@ -34,6 +37,7 @@ BodyModality.defaultProps = {};
 const mapStateToProps = (state, props) => ({
     modality: props.modality,
     plan:     state.plan,
+    user:     state.user,
 });
 
 const mapDispatchToProps = {

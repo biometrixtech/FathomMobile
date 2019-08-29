@@ -23,7 +23,7 @@ import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
-import { Button, FathomModal, MultiSwitch, Spacer, TabIcon, Text, } from '../custom';
+import { Button, FathomModal, MultiSwitch, ParsedText, Spacer, TabIcon, Text, } from '../custom';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { store, } from '../../store';
 
@@ -83,7 +83,7 @@ class ExerciseModality extends Component {
     }
 
     _handleCompleteExercise = (exerciseId, setNumber) => {
-        const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, } = this.props;
+        const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, user, } = this.props;
         let index = 0; // NOTE: THIS WOULD NEED TO UPDATE SOON
         let newExerciseId = setNumber ? `${exerciseId}-${setNumber}` : exerciseId;
         let clonedPlan = _.cloneDeep(plan);
@@ -125,7 +125,7 @@ class ExerciseModality extends Component {
             } else if(recoveryType === 'cool_down') {
                 newMyPlan[0].cool_down.start_date_time = true;
             }
-            markStartedRecovery(recoveryType, newMyPlan);
+            markStartedRecovery(recoveryType, user.id);
         }
         // continue by updating reducer and state
         if(recoveryType === 'cool_down') {
@@ -204,6 +204,7 @@ class ExerciseModality extends Component {
             imageSource,
             pageSubtitle,
             pageTitle,
+            priorityText,
             recoveryObj,
             recoveryType,
             textId,
@@ -258,17 +259,24 @@ class ExerciseModality extends Component {
                                         <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Complete' ? 'Recommended' : ''}</Text>
                                         <Text robotoRegular style={{color: AppColors.white, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{recoveryObj.default_plan === 'Comprehensive' ? 'Recommended' : ''}</Text>
                                     </View>
-                                    <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', marginBottom: AppSizes.paddingSml,}}>{goalsHeader}</Text>
-                                    {_.map(goals, (goal, key) =>
-                                        <GoalPill
-                                            isSelected={goal.isSelected}
-                                            key={key}
-                                            onPress={() => isSubmitting ? null : this._toggleGoal(key)}
-                                            text={goal.text}
-                                        />
-                                    )}
-                                    {exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0 &&
-                                        <View style={{paddingHorizontal: AppSizes.paddingMed,}}>
+                                    <ParsedText
+                                        parse={[{pattern: new RegExp(priorityText, 'i'), style: {textDecorationLine: 'underline',},}]}
+                                        style={[AppStyles.robotoBold, {color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}]}
+                                    >
+                                        {goalsHeader}
+                                    </ParsedText>
+                                    <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
+                                        {_.map(goals, (goal, key) =>
+                                            <GoalPill
+                                                extraStyles={{marginTop: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingXSml,}}
+                                                goal={goal}
+                                                key={key}
+                                                onPress={() => isSubmitting ? null : this._toggleGoal(key)}
+                                            />
+                                        )}
+                                    </View>
+                                    { (exerciseList.equipmentRequired && exerciseList.equipmentRequired.length > 0) &&
+                                        <View style={{marginTop: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingMed,}}>
                                             <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{'You\'ll need:'}</Text>
                                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{exerciseList.totalLength > 0 ? exerciseList.equipmentRequired.join(', ') : 'None'}</Text>
                                         </View>
@@ -366,7 +374,7 @@ class ExerciseModality extends Component {
                                     () => {
                                         let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
                                         let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
-                                        patchActiveRecovery(newCompletedExercises, recoveryType)
+                                        patchActiveRecovery(newCompletedExercises, recoveryType, user.id)
                                             .then(res => Actions.pop())
                                             .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
                                     }

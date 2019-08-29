@@ -61,8 +61,23 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const Alerts = ({ error, extraStyles, leftAlignText, rightAlignText, status, success, }) => (
+const Alerts = ({ error, extraStyles, leftAlignText, rightAlignText, showEmptyState, status, success, }) => (
     <View style={styles.alerts}>
+
+        { (showEmptyState && !success && !status && !error) &&
+            <View>
+                <View style={[extraStyles, styles.msg, {backgroundColor: AppColors.transparent,}]}>
+                    <Text style={[
+                        leftAlignText ? AppStyles.textLeftAligned : rightAlignText ? AppStyles.textRightAligned : AppStyles.textCenterAligned,
+                        styles.msg_text,
+                        {color: AppColors.transparent,}
+                    ]}>
+                        {' '}
+                    </Text>
+                </View>
+            </View>
+        }
+
         {!!success &&
           <View>
               <View style={[extraStyles, styles.msg]}>
@@ -117,8 +132,9 @@ Alerts.propTypes = {
         PropTypes.array,
         PropTypes.shape({}),
     ]),
-    leftAlignText: PropTypes.bool,
-    status:        PropTypes.oneOfType([
+    leftAlignText:  PropTypes.bool,
+    showEmptyState: PropTypes.bool,
+    status:         PropTypes.oneOfType([
         PropTypes.array,
         PropTypes.string,
     ]),
@@ -129,11 +145,12 @@ Alerts.propTypes = {
 };
 
 Alerts.defaultProps = {
-    error:         '',
-    extraStyles:   null,
-    leftAlignText: false,
-    status:        '',
-    success:       '',
+    error:          '',
+    extraStyles:    null,
+    leftAlignText:  false,
+    showEmptyState: false,
+    status:         '',
+    success:        '',
 };
 
 Alerts.componentName = 'Alerts';

@@ -11,6 +11,7 @@ const TrendChild = ({
     insightType,
     plan,
     triggerType,
+    user,
 }) => (
     <Layout
         clearFTECategory={clearFTECategory}
@@ -18,6 +19,7 @@ const TrendChild = ({
         insightType={insightType}
         plan={plan}
         triggerType={triggerType}
+        user={user}
     />
 );
 
@@ -28,6 +30,7 @@ TrendChild.propTypes = {
     insightType:      PropTypes.number.isRequired,
     plan:             PropTypes.object.isRequired,
     triggerType:      PropTypes.number,
+    user:             PropTypes.object.isRequired,
 };
 
 TrendChild.defaultProps = {
@@ -40,6 +43,7 @@ const mapStateToProps = (state, props) => ({
     insightType:      props.insightType,
     plan:             state.plan,
     triggerType:      props.triggerType,
+    user:     state.user,
 });
 
 const mapDispatchToProps = {};

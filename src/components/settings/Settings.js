@@ -45,9 +45,9 @@ class Settings extends Component {
         accessoryData:   PropTypes.object.isRequired,
         logout:          PropTypes.func.isRequired,
         network:         PropTypes.object.isRequired,
-        user:            PropTypes.object.isRequired,
         updateUser:      PropTypes.func.isRequired,
         userJoinAccount: PropTypes.func.isRequired,
+        user:            PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -140,7 +140,7 @@ class Settings extends Component {
                 {
                     text:    'Yes',
                     onPress: () => {
-                        return UserActions.clearUserData()
+                        return UserActions.clearUserData(this.props.user.id)
                             .then(res => this.refs.toast.show('Your account has been reset!', (DURATION.LENGTH_SHORT * 2)))
                             .catch(err => this._alertResetError(err));
                     }

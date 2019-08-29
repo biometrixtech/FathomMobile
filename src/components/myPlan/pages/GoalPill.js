@@ -1,32 +1,36 @@
 /**
  * GoalPill
  *
-     <GoalPill
-         isSelected={goal.isSelected}
-         key={key}
-         onPress={() => this._toggleRecoveryGoal(key)}
-         text={goal.text}
-     />
+    <GoalPill
+        extraStyles={{marginTop: AppSizes.paddingSml, marginRight: AppSizes.paddingSml,}}
+        goal={goal}
+        key={key}
+        onPress={() => isSubmitting ? null : this._toggleGoal(key)}
+    />
  *
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Animated, Image, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
-    goalPillWrapper: {
-        borderColor:       AppColors.white,
+    goalPillWrapper: isSelected => ({
+        backgroundColor:   isSelected ? AppColors.white : `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,
         borderRadius:      20,
-        borderWidth:       1,
-        marginBottom:      AppSizes.paddingSml,
-        paddingHorizontal: AppSizes.paddingMed,
+        paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
-    },
+    }),
+    textStyle: isSelected => ({
+        color:        AppColors.zeplin.splashLight,
+        fontSize:     AppFonts.scaleFont(14),
+        paddingRight: AppSizes.paddingXSml,
+    }),
 });
 
 /* Component ==================================================================== */
@@ -38,11 +42,11 @@ class GoalPill extends Component {
                 transform: [{rotate: '45deg',}],
             },
         };
-        this._animatedValue = props.isSelected ? new Animated.Value(1) : new Animated.Value(0);
+        this._animatedValue = props.goal.isSelected ? new Animated.Value(1) : new Animated.Value(0);
     }
 
     componentDidUpdate = prevProps => {
-        if(prevProps.isSelected !== this.props.isSelected && this.props.isSelected) {
+        if(prevProps.goal.isSelected !== this.props.goal.isSelected && this.props.goal.isSelected) {
             if(Platform.OS === 'ios') {
                 Animated.timing(this._animatedValue, {
                     duration: 250,
@@ -51,7 +55,7 @@ class GoalPill extends Component {
             } else {
                 this.setState({ androidStyle: { transform: [{rotate: '45deg',}], }, });
             }
-        } else if(prevProps.isSelected !== this.props.isSelected && !this.props.isSelected) {
+        } else if(prevProps.goal.isSelected !== this.props.goal.isSelected && !this.props.goal.isSelected) {
             if(Platform.OS === 'ios') {
                 Animated.timing(this._animatedValue, {
                     duration: 250,
@@ -64,56 +68,84 @@ class GoalPill extends Component {
     }
 
     render = () => {
-        const { isSelected, onPress, text, } = this.props;
+        const { extraStyles, goal, onPress, } = this.props;
         const interpolateRotation = this._animatedValue.interpolate({
             inputRange:  [0, 1],
             outputRange: ['0deg', '45deg'],
         });
         const animatedStyle = Platform.OS === 'ios' ? {transform: [{rotate: interpolateRotation,}]} : this.state.androidStyle;
+        let imageSource = null;
+        switch (goal.goal_type) {
+        case 0:
+            imageSource = require('../../../../assets/images/standard/care.png');
+            break;
+        case 1:
+            imageSource = require('../../../../assets/images/standard/care.png');
+            break;
+        case 2:
+            imageSource = require('../../../../assets/images/standard/recovery.png');
+            break;
+        case 6:
+            imageSource = require('../../../../assets/images/standard/prevention.png');
+            break;
+        case 20:
+            imageSource = require('../../../../assets/images/standard/recovery.png');
+            break;
+        case 21:
+            imageSource = require('../../../../assets/images/standard/prevention.png')
+            break;
+        default:
+            imageSource = null;
+        }
         return (
             <TouchableOpacity
                 activeOpacity={1}
                 onPress={onPress}
-                style={[customStyles.goalPillWrapper, {backgroundColor: isSelected ? AppColors.white : AppColors.transparent,}]}
+                style={[
+                    customStyles.goalPillWrapper(goal.isSelected),
+                    extraStyles,
+                ]}
             >
-                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                    { imageSource &&
+                        <Image
+                            source={imageSource}
+                            style={{height: 15, marginRight: AppSizes.paddingSml, width: 15,}}
+                        />
+                    }
                     <Text
-                        robotoBold
-                        style={{
-                            color:        isSelected ? AppColors.zeplin.slate : AppColors.white,
-                            fontSize:     AppFonts.scaleFont(14),
-                            paddingRight: AppSizes.paddingSml,
-                        }}
+                        robotoRegular
+                        style={[customStyles.textStyle(goal.isSelected),]}
                     >
-                        {text}
+                        {goal.text}
                     </Text>
                     { Platform.OS === 'ios' ?
                         <Animated.View style={[animatedStyle,]}>
                             <TabIcon
-                                color={isSelected ? AppColors.zeplin.slate : AppColors.white}
+                                color={AppColors.zeplin.splashLight}
                                 icon={'add'}
-                                size={AppFonts.scaleFont(20)}
+                                size={AppFonts.scaleFont(25)}
                             />
                         </Animated.View>
                         :
                         <View style={[animatedStyle,]}>
                             <TabIcon
-                                color={isSelected ? AppColors.zeplin.slate : AppColors.white}
+                                color={AppColors.zeplin.splashLight}
                                 icon={'add'}
-                                size={AppFonts.scaleFont(20)}
+                                size={AppFonts.scaleFont(25)}
                             />
                         </View>
                     }
                 </View>
             </TouchableOpacity>
-        )
+        );
     }
 }
 
 GoalPill.propTypes = {
-    isSelected: PropTypes.bool.isRequired,
-    onPress:    PropTypes.func.isRequired,
-    text:       PropTypes.string,
+    extraStyles: PropTypes.object.isRequired,
+    goal:        PropTypes.object.isRequired,
+    onPress:     PropTypes.func.isRequired,
 };
 
 GoalPill.defaultProps = {
