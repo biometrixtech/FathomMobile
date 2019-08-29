@@ -110,10 +110,10 @@ const checkAccountCode = account_code => {
   * Clear User data
   * - WARNING: this will clear the users data for my plan and reset the reducer!
   */
-const clearUserData = () => {
+const clearUserData = userId => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    return AppAPI.clear_user_data.post(false, bodyObj)
+    return AppAPI.clear_user_data.post({userId}, bodyObj)
         .then(response => {
             store.dispatch({
                 type: Actions.NOTIFICATION_RECEIVED

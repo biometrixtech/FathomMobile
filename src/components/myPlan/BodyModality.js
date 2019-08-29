@@ -54,7 +54,7 @@ class BodyModality extends Component {
     }
 
     _completeBodyPartModality = () => {
-        const { modality, patchBodyActiveRecovery, plan, } = this.props;
+        const { modality, patchBodyActiveRecovery, plan, user, } = this.props;
         let updatedModality = modality === 'cwi' ? 'cold_water_immersion' : modality;
         let completedBodyParts = [];
         if(updatedModality === 'heat' || updatedModality === 'ice') {
@@ -63,7 +63,7 @@ class BodyModality extends Component {
         }
         this.setState(
             { isSubmitting: true, },
-            () => patchBodyActiveRecovery(completedBodyParts, updatedModality)
+            () => patchBodyActiveRecovery(completedBodyParts, updatedModality, user.id)
                 .then(res => Actions.pop())
                 .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)))
         );
@@ -95,9 +95,9 @@ class BodyModality extends Component {
     }
 
     _toggleTimer = time => {
-        const { modality, markStartedRecovery, } = this.props;
+        const { modality, markStartedRecovery, user, } = this.props;
         let updatedModality = modality === 'cwi' ? 'cold_water_immersion' : modality;
-        markStartedRecovery(updatedModality);
+        markStartedRecovery(updatedModality, user.id);
         this.setState(
             { showInstructions: false, },
             () => {
@@ -439,7 +439,7 @@ class BodyModality extends Component {
                         <View style={{flex: 1, flexDirection: 'column',}}>
                             <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
                             <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{`${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{modality === 'cwi' ? 'THE SCIENCE OF CWB' : `${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
                                 <TabIcon
                                     color={AppColors.zeplin.slate}
                                     icon={'close'}
@@ -573,6 +573,7 @@ BodyModality.propTypes = {
     modality:                PropTypes.string.isRequired,
     patchBodyActiveRecovery: PropTypes.func.isRequired,
     plan:                    PropTypes.object.isRequired,
+    user:                    PropTypes.object.isRequired,
 };
 
 BodyModality.defaultProps = {};

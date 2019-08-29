@@ -28,13 +28,15 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // consts and custom components
 import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { PlanLogic, } from '../../lib';
 import { Text, } from './';
 
 // setup variables
 const { width, } = Dimensions.get('window');
 const Metrics = {
     containerWidth: (width - AppSizes.paddingLrg),
-    switchWidth:    (width / 2.7),
+    switchHeight:   (AppFonts.scaleFont(15) + AppSizes.paddingMed), // 40,
+    switchWidth:    (width / 3), //2.7),
 };
 
 /* Styles ==================================================================== */
@@ -42,30 +44,32 @@ const styles = StyleSheet.create({
     buttonStyle: {
         alignItems:     'center',
         flex:           1,
-        height:         30,
+        height:         (Metrics.switchHeight - 10),
         justifyContent: 'center',
         width:          Metrics.containerWidth / 3,
     },
     container: {
         alignItems:      'center',
-        backgroundColor: AppColors.zeplin.superLight,
+        backgroundColor: AppColors.transparent,
         borderRadius:    20,
         flexDirection:   'row',
-        height:          30,
+        height:          (Metrics.switchHeight - 6),
         justifyContent:  'center',
         marginVertical:  5,
         width:           Metrics.containerWidth,
     },
     containerWrapper: {
-        height: 40,
+        alignItems:     'center',
+        height:         Metrics.switchHeight,
+        justifyContent: 'center',
     },
     switcher: {
         alignItems:      'center',
-        backgroundColor: AppColors.zeplin.yellow,
+        backgroundColor: AppColors.white,
         borderRadius:    20,
         elevation:       4,
         flexDirection:   'row',
-        height:          40,
+        height:          Metrics.switchHeight,
         justifyContent:  'center',
         left:            0,
         position:        'absolute',
@@ -90,7 +94,7 @@ export default class MultiSwitch extends Component {
             posValue:          0,
             position:          new Animated.Value(0),
             selectedPosition:  props.selectedIndex,
-            switcherWidth:     (width / 2.7),
+            switcherWidth:     Metrics.switchWidth,
             thresholdDistance: (width - 8 - width / 2.4),
         };
         this.isParentScrollDisabled = false;
@@ -209,15 +213,15 @@ export default class MultiSwitch extends Component {
         const { buttons, isDisabled, selectedIndex, } = this.props;
         const { isPanning, } = this.state;
         return (
-            <View style={styles.containerWrapper}>
-                <View style={styles.container}>
+            <View style={[styles.containerWrapper,]}>
+                <View style={[styles.container, {backgroundColor: `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,}]}>
                     {_.map(buttons, (button, index) =>
                         <TouchableOpacity
                             key={index}
                             onPress={() => this._onStatusChanged(index)}
                             style={styles.buttonStyle}
                         >
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
+                            <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(12),}}>{button}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -226,8 +230,8 @@ export default class MultiSwitch extends Component {
                     style={[
                         styles.switcher,
                         {transform: [{ translateX: this.state.position, }]},
-                        isPanning ? {backgroundColor: 'rgba(235, 186, 45, 0.75)',} : {},
-                        isDisabled ? {backgroundColor: AppColors.zeplin.slateLight,} : {},
+                        isPanning ? {backgroundColor: `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,} : {},
+                        isDisabled ? {backgroundColor: `${AppColors.white}${PlanLogic.returnHexOpacity(0.6)}`,} : {},
                     ]}
                 >
                     <TouchableOpacity
@@ -235,7 +239,7 @@ export default class MultiSwitch extends Component {
                         style={styles.buttonStyle}
                     >
                         { !isPanning &&
-                            <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{buttons[selectedIndex]}</Text>
+                            <Text robotoBold style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(15),}}>{buttons[selectedIndex]}</Text>
                         }
                     </TouchableOpacity>
                 </Animated.View>

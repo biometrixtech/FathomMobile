@@ -81,7 +81,7 @@ const bleUtils = {
         dataObj.user_id = userId;
         dataObj.sessions = sessionsArray;
         dataObj.last_sensor_sync = `${moment().toISOString(true).split('.')[0]}Z`;
-        return planActions.postSingleSensorData(dataObj)
+        return planActions.postSingleSensorData(dataObj, userId)
             .then(result => {
                 // delete AsyncStorage record
                 return AppUtil._removeAsyncStorageData(userId)

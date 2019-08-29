@@ -1,10 +1,3 @@
-/*
- * @Author: Vir Desai 
- * @Date: 2017-10-12 11:27:57 
- * @Last Modified by: Vir Desai
- * @Last Modified time: 2018-07-20 18:22:49
- */
-
 /**
  * Web View
  *
@@ -14,16 +7,16 @@
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import {
-    WebView,
-    StyleSheet,
     InteractionManager,
+    StyleSheet,
+    WebView,
 } from 'react-native';
 
 // Consts and Libs
-import { AppColors, AppStyles } from '../../constants';
+import { AppColors, AppStyles, } from '../../constants';
 
 // Components
-import { Error, Loading } from './';
+import { Error, Loading, } from './';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -66,23 +59,25 @@ class AppWebView extends Component {
       */
     onNavigationStateChange = (navState) => {
         this.state.webViewURL = navState.url;
-        if (this.props.onNavigationStateChange) { this.props.onNavigationStateChange(navState.url); }
+        if (this.props.onNavigationStateChange) {
+            this.props.onNavigationStateChange(navState.url);
+        }
     }
 
     render = () => {
-        const { webViewURL, loading } = this.state;
+        const { loading, webViewURL, } = this.state;
 
-        if (loading) { return <Loading />; }
-        if (!webViewURL) { return <Error type={'URL not defined.'} />; }
+        if (loading) { return (<Loading />); }
+        if (!webViewURL) { return (<Error type={'URL not defined.'} />); }
 
         return (
             <WebView
-                scalesPageToFit
-                startInLoadingState
-                source={{ uri: webViewURL }}
                 automaticallyAdjustContentInsets={false}
-                style={[AppStyles.container, styles.container]}
                 onNavigationStateChange={this.onNavigationStateChange}
+                scalesPageToFit={true}
+                source={{ uri: webViewURL, }}
+                startInLoadingState={true}
+                style={[AppStyles.container, styles.container,]}
             />
         );
     }

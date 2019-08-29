@@ -13,15 +13,16 @@ import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-na
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { Badge, Divider, } from 'react-native-elements';
-import { Spacer, TabIcon, Text, } from '../custom';
+import { Button, ParsedText, Spacer, TabIcon, Text, } from '../custom';
 import { BiomechanicsCharts, } from './graphs';
 import { Loading, } from '../general';
 import { AppUtil, PlanLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import { Badge, Divider, } from 'react-native-elements';
 import _ from 'lodash';
+import SlidingUpPanel from 'rn-sliding-up-panel';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -48,14 +49,18 @@ class Biomechanics extends PureComponent {
             loading:             false,
         };
         this.scrollView = {};
+        this._panel = {};
     }
 
     componentDidMount = () => {
-        _.delay(() => this.scrollView.scrollToEnd({animated: true}), 10); // scroll view to end
+        _.delay(() => {
+            this.scrollView.scrollToEnd({ animated: true, });
+            this._toggleRichDataView();
+        }, 10); // scroll view to end
     }
 
     _toggleRichDataView = () => {
-        const { getBiomechanicsDetails, plan, } = this.props;
+        const { getBiomechanicsDetails, plan, user, } = this.props;
         const { currentIndex, } = this.state;
         let doWeHaveRichData = plan.dailyPlan[0].trends.biomechanics_summary.sessions[currentIndex].asymmetry.apt.detail_data;
         this.setState(
@@ -66,7 +71,7 @@ class Biomechanics extends PureComponent {
             },
             () => {
                 if(this.state.isRichDataView && !doWeHaveRichData) {
-                    return getBiomechanicsDetails(plan.dailyPlan[0])
+                    return getBiomechanicsDetails(plan.dailyPlan[0], user.id)
                         .then(res => this.setState({ isToggleBtnDisabled: false, loading: false, }))
                         .catch(err => this.setState({ isToggleBtnDisabled: false, loading: false, }));
                 }
@@ -75,16 +80,15 @@ class Biomechanics extends PureComponent {
         );
     }
 
-    _toggleSelectedDate = newIndex => {
-        this.setState({ currentIndex: newIndex, });
-    }
+    _toggleSelectedDate = newIndex => this.setState({ currentIndex: newIndex, })
 
     render = () => {
         const { plan, } = this.props;
-        const { currentIndex, isRichDataView, isToggleBtnDisabled, loading, } = this.state;
+        const { currentIndex, loading, } = this.state;
         let {
             leftPieInnerRadius,
             leftPieWidth,
+            parsedData,
             pieData,
             pieLeftWrapperWidth,
             pieRightWrapperWidth,
@@ -108,16 +112,24 @@ class Biomechanics extends PureComponent {
                     nestedScrollEnabled={true}
                 >
 
-                    <View>
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed,}}>
                         <TabIcon
                             color={AppColors.zeplin.slateLight}
-                            containerStyle={[{alignSelf: 'flex-start',}]}
+                            containerStyle={[{flex: 1,}]}
                             icon={'chevron-left'}
                             onPress={() => Actions.pop()}
                             size={40}
                             type={'material-community'}
                         />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Biomechanics'}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, flex: 8, fontSize: AppFonts.scaleFont(24), textAlign: 'center',}}>{'Pelvic Tilt'}</Text>
+                        <TabIcon
+                            color={AppColors.zeplin.slateXLight}
+                            containerStyle={[{flex: 1,}]}
+                            icon={'help-circle-outline'}
+                            onPress={() => this._panel.show()}
+                            size={30}
+                            type={'material-community'}
+                        />
                     </View>
 
                     <Spacer size={AppSizes.padding} />
@@ -170,16 +182,16 @@ class Biomechanics extends PureComponent {
                                         { sessionColor &&
                                             <Badge
                                                 containerStyle={{
+                                                    elevation: 5,
                                                     left:      0,
                                                     position:  'absolute',
                                                     top:       0,
-                                                    elevation: 5,
                                                 }}
                                                 badgeStyle={{
                                                     backgroundColor: PlanLogic.returnInsightColorString(sessionColor),
-                                                    minWidth:        14,
-                                                    height:          14,
                                                     borderRadius:    (14 / 2),
+                                                    height:          14,
+                                                    minWidth:        14,
                                                 }}
                                                 status={'success'}
                                             />
@@ -196,110 +208,54 @@ class Biomechanics extends PureComponent {
 
                     <Spacer size={AppSizes.padding} />
 
-                    <View style={{flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed,}}>
-                        <View style={{alignItems: 'center', flex: 2,}} />
-                        <View style={{alignItems: 'center', flex: 6, justifyContent: 'center',}}>
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(17), textAlign: 'center',}}>{sessionSportName}</Text>
-                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{sessionStartTimeDuration}</Text>
-                        </View>
-                        <View style={{flex: 2, alignItems: 'flex-end', justifyContent: 'center',}}>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => isToggleBtnDisabled ? {} : this._toggleRichDataView()}
-                                style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 10, paddingHorizontal: AppSizes.paddingSml,}]}
-                            >
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={
-                                        isRichDataView ?
-                                            require('../../../assets/images/standard/summaryvisual.png')
-                                            :
-                                            require('../../../assets/images/standard/richdatavisual.png')
-                                    }
-                                    style={{alignSelf: 'center', height: 40, width: 40,}}
-                                />
-                            </TouchableOpacity>
-                        </View>
+                    <View style={{alignItems: 'center', justifyContent: 'center', marginHorizontal: AppSizes.paddingMed,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(17), textAlign: 'center',}}>{sessionSportName}</Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{sessionStartTimeDuration}</Text>
                     </View>
 
-                    { isRichDataView && !loading ?
-                        <View style={{marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.paddingMed,}}>
-                            <TouchableOpacity
-                                onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 2, title: 'Pelvic Tilt Range of Motion', })}
-                                style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12,}]}
-                            >
-                                <BiomechanicsCharts
-                                    chartData={updatedChartData}
-                                    isRichDataView={true}
-                                    sessionDuration={sessionDuration}
-                                    selectedSession={selectedSession}
-                                    showTitle={true}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        :
-                        <View style={{marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.paddingMed,}}>
-                            <TouchableOpacity
-                                onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 1, title: 'Pelvic Tilt', })}
-                                style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, flexDirection: 'row',}]}
-                            >
-                                <BiomechanicsCharts
-                                    pieDetails={{
-                                        leftPieInnerRadius,
-                                        leftPieWidth,
-                                        pieData,
-                                        pieLeftWrapperWidth,
-                                        pieRightWrapperWidth,
-                                        rightPieInnerRadius,
-                                        rightPieWidth,
-                                    }}
-                                    selectedSession={selectedSession}
-                                    showTitle={true}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                    }
-
-                    <View style={{flexDirection: 'row', marginHorizontal: AppSizes.paddingMed, marginVertical: AppSizes.padding,}}>
-                        <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 3, title: 'Effects of Asymmetry', })}
-                            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginRight: AppSizes.paddingSml, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
-                        >
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Effects of Asymmetry'}</Text>
-                            <Image
-                                resizeMode={'contain'}
-                                source={require('../../../assets/images/standard/effectsasymmetry.png')}
-                                style={{alignSelf: 'center', height: 125, marginTop: AppSizes.padding, width: 125,}}
-                            />
-                            <TabIcon
-                                color={AppColors.zeplin.slateXLight}
-                                containerStyle={[{bottom: AppSizes.paddingMed, position: 'absolute', right: AppSizes.paddingMed,}]}
-                                icon={'chevron-right'}
-                                size={20}
-                                type={'material-community'}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => AppUtil.pushToScene('biomechanicsSummary', { currentIndex: currentIndex, step: 4, title: 'Searching for Insights', })}
-                            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, padding: AppSizes.paddingMed, width: ((AppSizes.screen.width - ((AppSizes.paddingMed * 2) + AppSizes.paddingSml)) / 2),}]}
-                        >
-                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>{'Searching for Insights'}</Text>
-                            <View style={{alignItems: 'center', alignSelf: 'center', height: 125, justifyContent: 'center', marginTop: AppSizes.padding, width: 125,}}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/research.png')}
-                                    style={{height: 75, width: 75,}}
-                                />
-                            </View>
-                            <TabIcon
-                                color={AppColors.zeplin.slateXLight}
-                                containerStyle={[{bottom: AppSizes.paddingMed, position: 'absolute', right: AppSizes.paddingMed,}]}
-                                icon={'chevron-right'}
-                                size={20}
-                                type={'material-community'}
-                            />
-                        </TouchableOpacity>
+                    <View style={{marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.paddingMed,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: (AppSizes.paddingLrg - AppSizes.paddingMed),}}>{'Range of Motion Summary'}</Text>
+                        <BiomechanicsCharts
+                            pieDetails={{
+                                leftPieInnerRadius,
+                                leftPieWidth,
+                                pieData,
+                                pieLeftWrapperWidth,
+                                pieRightWrapperWidth,
+                                rightPieInnerRadius,
+                                rightPieWidth,
+                            }}
+                            selectedSession={selectedSession}
+                            showTitle={false}
+                        />
                     </View>
+
+                    <View style={{marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Session Asymmetry'}</Text>
+                        <BiomechanicsCharts
+                            chartData={updatedChartData}
+                            isRichDataView={true}
+                            sessionDuration={sessionDuration}
+                            selectedSession={selectedSession}
+                            showTitle={false}
+                        />
+                    </View>
+
+                    <ParsedText
+                        parse={parsedData}
+                        style={[AppStyles.robotoLight, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginHorizontal: AppSizes.paddingLrg,},]}
+                    >
+                        {selectedSession.asymmetry.apt.detail_text ? selectedSession.asymmetry.apt.detail_text : ''}
+                    </ParsedText>
+
+                    <Button
+                        buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                        containerStyle={{alignItems: 'center', flex: 1, justifyContent: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, marginTop: AppSizes.paddingLrg,}}
+                        onPress={() => AppUtil.pushToScene('myPlan')}
+                        raised={true}
+                        title={'Go to your plan'}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                    />
 
                     { loading ?
                         <Loading
@@ -311,6 +267,42 @@ class Biomechanics extends PureComponent {
 
                 </ScrollView>
 
+                <SlidingUpPanel
+                    allowDragging={false}
+                    backdropOpacity={0.8}
+                    backdropStyle={{backgroundColor: AppColors.zeplin.navy,}}
+                    ref={ref => {this._panel = ref;}}
+                >
+                    <View style={{flex: 1, flexDirection: 'column',}}>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => this._panel.hide()}
+                            style={{flex: 1,}}
+                        />
+                        <View style={{backgroundColor: AppColors.white,}}>
+                            <View style={{backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', padding: AppSizes.padding,}}>
+                                <Text robotoMedium style={{color: AppColors.zeplin.slate, flex: 9, fontSize: AppFonts.scaleFont(22),}}>{'Pelvic Tilt Asymmetry'}</Text>
+                                <TabIcon
+                                    containerStyle={[{flex: 1,}]}
+                                    icon={'close'}
+                                    iconStyle={[{color: `${AppColors.black}${PlanLogic.returnHexOpacity(0.3)}`,}]}
+                                    onPress={() => this._panel.hide()}
+                                    reverse={false}
+                                    size={30}
+                                    type={'material-community'}
+                                />
+                            </View>
+                            <ScrollView style={{padding: AppSizes.paddingLrg,}}>
+                                <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'What is Pelvic Tilt Asymmetry?'}</Text>
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'Anterior pelvic motion asymmetry can be caused by uneven terrain or by imbalance in the lats, hip flexors, and a nearly a dozen other muscles.\n\nChronic asymmetry is likely driven by imbalances like over-activity, tightness, under-activity, and weakness in these muscles which can lead to skeletal misalignments. This has sweeping influence on other muscular structures affecting performance and increasing overuse injury risk.\n\nCombined with other movement data, training data, soreness, pain, and more we try to identify your body part imbalances and the best corrective exercise to efficiently address them.'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'How It\'s Measured:'}</Text>
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>{'The range of anterior pelvic tilt is measured by the motion of your hips when you arch your lower back. We measure this range of motion while left foot is in contact with the ground and compare that to right foot ground contacts to identify asymmetry. We\'ll try to identify and correct the imbalances at the source to avoid the potential effects.\n\nFor best results, remember to consistently place your "hip sensor" in the center of your spine and on your sacrum, just above the tailbone.'}</Text>
+                            </ScrollView>
+                        </View>
+                    </View>
+                </SlidingUpPanel>
+
             </View>
         );
     }
@@ -319,6 +311,7 @@ class Biomechanics extends PureComponent {
 Biomechanics.propTypes = {
     getBiomechanicsDetails: PropTypes.func.isRequired,
     plan:                   PropTypes.object.isRequired,
+    user:                   PropTypes.object.isRequired,
 };
 
 Biomechanics.defaultProps = {};

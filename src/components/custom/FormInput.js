@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { Input, } from 'react-native-elements';
 
 // Consts and Libs
-import { AppColors, AppFonts, } from '../../constants';
+import { AppColors, AppFonts, AppSizes, } from '../../constants';
 
 /* Component ==================================================================== */
 class FormInput extends Component {
@@ -38,8 +38,7 @@ class FormInput extends Component {
                 borderBottomColor: AppColors.zeplin.slateXLight,
                 borderBottomWidth: 1,
                 backgroundColor:   AppColors.transparent,
-                marginLeft:        20,
-                marginRight:       20,
+                marginHorizontal:  AppSizes.padding,
             }],
             inputContainerStyle: [{
                 borderBottomWidth: 0,
@@ -48,7 +47,7 @@ class FormInput extends Component {
                 ...AppFonts.robotoRegular,
                 color:             AppColors.black,
                 fontSize:          AppFonts.scaleFont(16),
-                paddingHorizontal: 10,
+                paddingHorizontal: AppSizes.paddingSml,
                 paddingVertical:   3,
             }],
             ref: this.props.inputRef,

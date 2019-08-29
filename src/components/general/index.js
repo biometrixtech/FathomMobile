@@ -8,6 +8,7 @@
 /**
  * General Elements
  */
+import ContactUsModal from './ContactUsModal';
 import EnableAppleHealthKit from './EnableAppleHealthKit';
 import Error from './Error';
 import Loading from './Loading';
@@ -15,4 +16,12 @@ import PrivacyPolicyModal from './PrivacyPolicyModal';
 import Placeholder from './Placeholder';
 import WebView from './WebView';
 
-export { EnableAppleHealthKit, Error, Loading, PrivacyPolicyModal, Placeholder, WebView, };
+export {
+    ContactUsModal,
+    EnableAppleHealthKit,
+    Error,
+    Loading,
+    PrivacyPolicyModal,
+    Placeholder,
+    WebView,
+};

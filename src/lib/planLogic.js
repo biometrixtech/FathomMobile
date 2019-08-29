@@ -1260,7 +1260,7 @@ const PlanLogic = {
             return false;
         });
         let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
-        let goalsHeader = `${priorityText} Routine to:`;
+        let goalsHeader = `${priorityText} routine to reduce effects of:`;
         return {
             buttons,
             exerciseList,
@@ -1271,6 +1271,7 @@ const PlanLogic = {
             imageSource,
             pageSubtitle,
             pageTitle,
+            priorityText,
             recoveryObj,
             recoveryType,
             sceneId,
@@ -1451,6 +1452,7 @@ const PlanLogic = {
                 });
             });
         }
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
         return {
             activeAfterModalities,
@@ -1462,6 +1464,7 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            trendCategories,
             trendDashboardCategories,
             triggerStep,
         };
@@ -2083,18 +2086,17 @@ const PlanLogic = {
         });
         let parsedData = [];
         if(
-            selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt &&
-            (
-                (step === 1 && selectedSession.asymmetry.apt.summary_take_away_text) ||
-                (step === 2 && selectedSession.asymmetry.apt.detail_text)
-            )
+            selectedSession &&
+            selectedSession.asymmetry &&
+            selectedSession.asymmetry.apt &&
+            selectedSession.asymmetry.apt.detail_text
         ) {
-            _.map(step === 1 ? selectedSession.asymmetry.apt.summary_take_away_bold_text : selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+            _.map(selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
                     10
-                    : _.toInteger(step === 1 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                    : _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
                         4
                         :
                         13;
@@ -2138,7 +2140,10 @@ const PlanLogic = {
         let richDataYDomain = [-10, 10];
         if(isRichDataView) {
             let maxChartObj = _.maxBy(chartData, o => o.y < 0 ? (o.y * -1) : o.y);
-            let maxDomain = maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y;
+            let maxDomain = maxChartObj ?
+                maxChartObj.y < 0 ? (maxChartObj.y * -1) : maxChartObj.y
+                :
+                10;
             maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
             maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
             return {
@@ -2263,8 +2268,10 @@ const PlanLogic = {
                                                         AppColors.zeplin.slate
                                                         : color === 13 ?
                                                             AppColors.zeplin.successLight
-                                                            :
-                                                            AppColors.zeplin.errorLight;
+                                                            : color === 14 ?
+                                                                `${AppColors.zeplin.splash}${PlanLogic.returnHexOpacity(0.5)}`
+                                                                :
+                                                                AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
