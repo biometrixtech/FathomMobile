@@ -34,19 +34,14 @@ class BodyOverlay extends Component {
         super(props);
     }
 
+    componentDidUpdate = (prevProps, prevState) => {
+        if(prevProps.remainingWidth !== this.props.remainingWidth) {
+            this._handleImageSizing();
+        }
+    }
+
     componentWillMount = () => {
-        let backImage =  require('../../../assets/images/body/body_overlay/body_full_back.png');
-        let backImageSource = resolveAssetSource(backImage);
-        let frontImage =  require('../../../assets/images/body/body_overlay/body_full_front.png');
-        let frontImageSource = resolveAssetSource(frontImage);
-        const { remainingWidth, } = this.props;
-        let updatedRemainingWidth = (remainingWidth - ADDITIONAL_MIDDLE_PADDING);
-        let newBackImageHeight = backImageSource.height * ((updatedRemainingWidth / 2) / backImageSource.width);
-        let newFrontImageHeight = frontImageSource.height * ((updatedRemainingWidth / 2) / frontImageSource.width);
-        this.setState({
-            back:  { height: newBackImageHeight, width: (updatedRemainingWidth / 2), },
-            front: { height: newFrontImageHeight, width: (updatedRemainingWidth / 2), },
-        });
+        this._handleImageSizing();
     }
 
     _getImageString = image => {
@@ -144,6 +139,21 @@ class BodyOverlay extends Component {
             :
                 require('../../../assets/images/body/body_overlay/Abs.png');
         return imageName;
+    }
+
+    _handleImageSizing = () => {
+        let backImage =  require('../../../assets/images/body/body_overlay/body_full_back.png');
+        let backImageSource = resolveAssetSource(backImage);
+        let frontImage =  require('../../../assets/images/body/body_overlay/body_full_front.png');
+        let frontImageSource = resolveAssetSource(frontImage);
+        const { remainingWidth, } = this.props;
+        let updatedRemainingWidth = (remainingWidth - ADDITIONAL_MIDDLE_PADDING);
+        let newBackImageHeight = backImageSource.height * ((updatedRemainingWidth / 2) / backImageSource.width);
+        let newFrontImageHeight = frontImageSource.height * ((updatedRemainingWidth / 2) / frontImageSource.width);
+        this.setState({
+            back:  { height: newBackImageHeight, width: (updatedRemainingWidth / 2), },
+            front: { height: newFrontImageHeight, width: (updatedRemainingWidth / 2), },
+        });
     }
 
     render = () => {

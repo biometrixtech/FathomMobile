@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
 
 const Wrapper = props => Platform.OS === 'ios' ?
     (
-        <KeyboardAvoidingView behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
+        <View behavior={'padding'} style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
             <ImageBackground
                 source={require('../../../assets/images/standard/start.png')}
                 style={[AppStyles.containerCentered, styles.imageBackground,]}
@@ -71,7 +71,7 @@ const Wrapper = props => Platform.OS === 'ios' ?
                     {props.children}
                 </View>
             </ImageBackground>
-        </KeyboardAvoidingView>
+        </View>
     ) :
     (
         <View style={[AppStyles.containerCentered, AppStyles.container, styles.background]}>
@@ -281,45 +281,28 @@ class Login extends Component {
                 >
 
                     <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center', marginTop: AppSizes.statusBarHeight,}}>
-                        <View style={{flex: 1, justifyContent: 'center',}}>
-                            <TabIcon
-                                color={AppColors.zeplin.slateLight}
-                                icon={'chevron-left'}
-                                onPress={() => Actions.pop()}
-                                size={26}
-                            />
-                        </View>
+                        <TabIcon
+                            color={AppColors.zeplin.slateLight}
+                            containerStyle={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
+                            icon={'chevron-left'}
+                            onPress={() => Actions.pop()}
+                            size={30}
+                        />
                         <View style={{flex: 8, justifyContent: 'center',}}>
                             <Egg
                                 onCatch={() => this.setState({ isModalVisible: true, })}
                                 setps={'TTTTT'}
+                                style={{alignItems: 'center',}}
                             >
                                 <Image
+                                    resizeMode={'contain'}
                                     source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                                    style={[AppStyles.navbarImageTitle, {alignSelf: 'center', justifyContent: 'center',}]}
+                                    style={{height: (AppSizes.statusBarHeight / 2), width: AppSizes.screen.widthThird,}}
                                 />
                             </Egg>
                         </View>
                         <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />
                     </View>
-
-                    {/*<View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                        <View>
-                            <Egg
-                                onCatch={() => this.setState({ isModalVisible: true, })}
-                                setps={'TTTTT'}
-                            >
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/fathom_logo_yellow_stacked.png')}
-                                    style={{height: 150, width: 150,}}
-                                />
-                            </Egg>
-                        </View>
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
-                            {'Optimal recovery,\ndesigned for your body.'}
-                        </Text>
-                    </View>*/}
 
                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', marginTop: AppSizes.padding,}}>
                         <View>

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         backgroundColor: AppColors.zeplin.slateLight,
         borderRadius:    10,
         height:          3,
-        marginVertical:  AppSizes.paddingMed,
+        marginBottom:    AppSizes.paddingMed,
         width:           AppSizes.screen.widthThird,
     },
     notVisibleCircleStyle: isSelected => ({
@@ -184,7 +184,7 @@ class CustomMyPlanNavBar extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(this._swiperRef && this.state.isModalOpen && prevState.selectedIndex !== this.state.selectedIndex) {
+        if(this._swiperRef && this._swiperRef.snapToItem && this.state.isModalOpen && prevState.selectedIndex !== this.state.selectedIndex) {
             _.delay(() => this._swiperRef.snapToItem(0), 250);
         }
     }
@@ -232,10 +232,18 @@ class CustomMyPlanNavBar extends Component {
             null;
         return (
             <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
-                <View style={{backgroundColor: `${PlanLogic.returnInsightColorString(item.bold_text[0].color)}${PlanLogic.returnHexOpacity(0.15)}`, borderRadius: 10, padding: AppSizes.paddingSml,}}>
+                <View
+                    style={{
+                        backgroundColor: `${PlanLogic.returnInsightColorString(item.bold_text[0].color)}${PlanLogic.returnHexOpacity(0.15)}`,
+                        borderRadius:    10,
+                        height:          ((AppSizes.paddingSml * 2) + (AppFonts.scaleFont(15) * 2)),
+                        justifyContent:  'center',
+                        padding:         AppSizes.paddingSml,
+                    }}
+                >
                     <ParsedText
                         parse={parsedData}
-                        style={[styles.text,]}
+                        style={[styles.text, {lineHeight: AppFonts.scaleFont(15),}]}
                     >
                         {item ? item.text : ''}
                     </ParsedText>
@@ -291,11 +299,12 @@ class CustomMyPlanNavBar extends Component {
                 return clonedNewCategory;
             });
         }));
-        let bodyOverlayHeightMultiplier = modalContentHeight && modalContentHeight > 0 && (AppSizes.screen.height - modalContentHeight) <= (AppSizes.paddingXLrg) ? 0.75 : 1;
+        let bodyOverlayHeightMultiplier = (modalContentHeight && modalContentHeight > 0 && (AppSizes.screen.height - modalContentHeight) <= (AppSizes.paddingXLrg) ? 0.8 : 1);
+        let remainingBodyOverlayWidth = (AppSizes.screen.widthTwoThirds * bodyOverlayHeightMultiplier);
         return (
-            <View style={{marginVertical: AppSizes.paddingMed,}}>
+            <View style={{marginBottom: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
                 <View style={{marginHorizontal: AppSizes.paddingMed,}}>
-                    <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
+                    <Text robotoRegular style={{color: selectedCategory.visible ? AppColors.zeplin.splashLight : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
                         { selectedCategory.insight_type === 6 ?
                             'Care For Pain & Soreness'
                             : selectedCategory.insight_type === 5 ?
@@ -308,7 +317,7 @@ class CustomMyPlanNavBar extends Component {
                     { selectedCategory.visible ?
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                             { selectedCategory.insight_type === 6 ?
-                                'Training with pain & soreness changes the way you move and distribute force. "Care" helps retain mobility and minimize these effects.'
+                                'Pain & soreness change the way you move and distribute force. "Care" improves mobility & reduces those effects.'
                                 : selectedCategory.insight_type === 5 ?
                                     'Your data indicates imbalances in muscle activation & strength which may elevate overuse injury risk.'
                                     :
@@ -316,123 +325,174 @@ class CustomMyPlanNavBar extends Component {
                             }
                         </Text>
                         :
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
-                            { selectedCategory.insight_type === 6 ?
-                                'Because pain and soreness alter your neuro-muscular control, we design "Care" to minimize the effects of pain, soreness, and projected soreness.'
-                                : selectedCategory.insight_type === 5 ?
-                                    'We haven\'t yet found signs of imbalances in your body which elevate injury risk. If we do, "Prevention" will help correct those underlying issues.'
-                                    :
-                                    'We\'re still looking for intelligent ways to expedite your recovery by up to 30%. When we discover an optimization, we\'ll add it to your "Recovery" plan.'
-                            }
-                        </Text>
-                    }
-                    <Spacer size={AppSizes.padding} />
-                    <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
-                        <BodyOverlay
-                            bodyParts={bodyOverlayData}
-                            remainingWidth={(AppSizes.screen.widthTwoThirds * bodyOverlayHeightMultiplier)}
-                        />
-                        <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.paddingSml,}}>
-                            {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
-                                <View
-                                    key={i}
-                                    style={{flexDirection: 'row', marginBottom: AppSizes.paddingXSml,}}
-                                >
-                                    <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>
-                                </View>
-                            )}
-                        </View>
-                    </View>
-                    <Spacer size={AppSizes.padding} />
-                    <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                        <Image
-                            source={
-                                selectedCategory.visible ?
-                                    selectedCategory.insight_type === 6 ?
-                                        require('../../../assets/images/standard/care.png')
-                                        : selectedCategory.insight_type === 5 ?
-                                            require('../../../assets/images/standard/prevention.png')
-                                            :
-                                            require('../../../assets/images/standard/recovery.png')
-                                    :
-                                    selectedCategory.insight_type === 6 ?
-                                        require('../../../assets/images/standard/care-empty.png')
-                                        : selectedCategory.insight_type === 5 ?
-                                            require('../../../assets/images/standard/prevention-empty.png')
-                                            :
-                                            require('../../../assets/images/standard/recovery-empty.png')
-                            }
-                            style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
-                        />
-                        { selectedCategory.visible ?
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                                {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
-                            </Text>
-                            :
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                                { selectedCategory.insight_type === 6 ?
-                                    'No Care needs identified:'
-                                    : selectedCategory.insight_type === 5 ?
-                                        'Searching for Prevention needs:'
-                                        :
-                                        'Searching for Recovery needs:'
-                                }
-                            </Text>
-                        }
-                    </View>
-                    <Spacer size={AppSizes.paddingSml} />
-                </View>
-                <View>
-                    { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
-                        <Carousel
-                            activeSlideAlignment={'start'}
-                            contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
-                            data={categoryTrend.trigger_tiles}
-                            firstItem={0}
-                            initialNumToRender={categoryTrend && categoryTrend.trigger_tiles ? categoryTrend.trigger_tiles.length : 0}
-                            itemWidth={(AppSizes.screen.widthThreeQuarters)}
-                            layout={'default'}
-                            lockScrollWhileSnapping={true}
-                            maxToRenderPerBatch={3}
-                            ref={ref => {this._swiperRef = ref;}}
-                            removeClippedSubviews={false}
-                            renderItem={({item, index}) => this._renderCard(item, index)}
-                            sliderWidth={AppSizes.screen.width}
-                            windowSize={3}
-                        />
-                        :
-                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                            <Image
-                                resizeMode={'contain'}
-                                source={require('../../../assets/images/standard/research.png')}
-                                style={{alignSelf: 'center', height: 75, marginRight: AppSizes.paddingSml, width: 75,}}
-                            />
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We\'re still looking for insights in your data to optimize your plan.'}</Text>
-                        </View>
-                    }
-                </View>
-                {/*<View style={{marginHorizontal: AppSizes.paddingMed,}}>
-                    <Spacer size={AppSizes.paddingSml} />
-                    { selectedCategory.visible &&
-                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                        <View style={{alignItems: 'center', justifyContent: 'center',}}>
                             <Image
                                 source={
                                     selectedCategory.insight_type === 6 ?
-                                        require('../../../assets/images/standard/care.png')
+                                        require('../../../assets/images/standard/care-not-visible.png')
                                         : selectedCategory.insight_type === 5 ?
-                                            require('../../../assets/images/standard/prevention.png')
+                                            require('../../../assets/images/standard/prevention-not-visible.png')
                                             :
-                                            require('../../../assets/images/standard/recovery.png')
+                                            require('../../../assets/images/standard/recovery-not-visible.png')
                                 }
-                                style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
+                                style={{height: 100, marginVertical: AppSizes.paddingLrg, width: 100,}}
                             />
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
-                                {`Look for ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} in your plan`}
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
+                                { selectedCategory.insight_type === 6 ?
+                                    'We use a research-validated approach to help heal areas of pain and soreness and keep symptoms from worsening.'
+                                    : selectedCategory.insight_type === 5 ?
+                                        'Keep using your sensors and logging your workouts, pain and soreness to help our AI find underlying injury risk factors.'
+                                        :
+                                        'Keep using your sensors and logging your workouts. Our AI searches for daily optimizations your tissue recovery.'
+                                }
+                            </Text>
+                            <Spacer size={AppSizes.paddingMed} />
+                            { selectedCategory.insight_type === 6 ?
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                    <Image
+                                        source={require('../../../assets/images/standard/sorepain.png')}
+                                        style={{height: 40, width: 40,}}
+                                    />
+                                </View>
+                                : selectedCategory.insight_type === 5 ?
+                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                        <Image
+                                            source={require('../../../assets/images/standard/load.png')}
+                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
+                                        />
+                                        <Image
+                                            source={require('../../../assets/images/standard/trend.png')}
+                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
+                                        />
+                                        <Image
+                                            source={require('../../../assets/images/standard/sorepain.png')}
+                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
+                                        />
+                                        <Image
+                                            source={require('../../../assets/images/standard/sensorsession.png')}
+                                            style={{height: 40, width: 40,}}
+                                        />
+                                    </View>
+                                    :
+                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                        <Image
+                                            source={require('../../../assets/images/standard/load.png')}
+                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
+                                        />
+                                        <Image
+                                            source={require('../../../assets/images/standard/trend.png')}
+                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
+                                        />
+                                        <Image
+                                            source={require('../../../assets/images/standard/sensorsession.png')}
+                                            style={{height: 40, width: 40,}}
+                                        />
+                                    </View>
+                            }
+                            <Spacer size={AppSizes.paddingMed} />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
+                                { selectedCategory.insight_type === 6 ?
+                                    'Your unique combination of daily pain & soreness informs your Care activities.'
+                                    : selectedCategory.insight_type === 5 ?
+                                        'These factors are used to design your personalized Injury Prevention activities.'
+                                        :
+                                        'These factors are used to design your optimal Personalized Recovery activities.'
+                                }
                             </Text>
                         </View>
                     }
-                </View>*/}
+                    { selectedCategory.visible &&
+                        <View>
+                            <Spacer size={AppSizes.padding} />
+                            <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
+                                <BodyOverlay
+                                    bodyParts={bodyOverlayData}
+                                    remainingWidth={remainingBodyOverlayWidth}
+                                />
+                                <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.padding,}}>
+                                    {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
+                                        <View
+                                            key={i}
+                                            style={{flexDirection: 'row', marginBottom: AppSizes.paddingXSml,}}
+                                        >
+                                            <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            </View>
+                            <Spacer size={AppSizes.padding} />
+                            <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                                <Image
+                                    source={
+                                        selectedCategory.visible ?
+                                            selectedCategory.insight_type === 6 ?
+                                                require('../../../assets/images/standard/care.png')
+                                                : selectedCategory.insight_type === 5 ?
+                                                    require('../../../assets/images/standard/prevention.png')
+                                                    :
+                                                    require('../../../assets/images/standard/recovery.png')
+                                            :
+                                            selectedCategory.insight_type === 6 ?
+                                                require('../../../assets/images/standard/care-empty.png')
+                                                : selectedCategory.insight_type === 5 ?
+                                                    require('../../../assets/images/standard/prevention-empty.png')
+                                                    :
+                                                    require('../../../assets/images/standard/recovery-empty.png')
+                                    }
+                                    style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
+                                />
+                                { selectedCategory.visible ?
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                                        {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
+                                    </Text>
+                                    :
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                                        { selectedCategory.insight_type === 6 ?
+                                            'No Care needs identified:'
+                                            : selectedCategory.insight_type === 5 ?
+                                                'Searching for Prevention needs:'
+                                                :
+                                                'Searching for Recovery needs:'
+                                        }
+                                    </Text>
+                                }
+                            </View>
+                            <Spacer size={AppSizes.paddingSml} />
+                        </View>
+                    }
+                </View>
+                { selectedCategory.visible &&
+                    <View>
+                        { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
+                            <Carousel
+                                activeSlideAlignment={'start'}
+                                contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
+                                data={categoryTrend.trigger_tiles}
+                                firstItem={0}
+                                initialNumToRender={categoryTrend && categoryTrend.trigger_tiles ? categoryTrend.trigger_tiles.length : 0}
+                                itemWidth={(AppSizes.screen.widthThreeQuarters)}
+                                layout={'default'}
+                                lockScrollWhileSnapping={true}
+                                maxToRenderPerBatch={3}
+                                ref={ref => {this._swiperRef = ref;}}
+                                removeClippedSubviews={false}
+                                renderItem={({item, index}) => this._renderCard(item, index)}
+                                sliderWidth={AppSizes.screen.width}
+                                windowSize={3}
+                            />
+                            :
+                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/research.png')}
+                                    style={{alignSelf: 'center', height: 75, marginRight: AppSizes.paddingSml, width: 75,}}
+                                />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We\'re still looking for insights in your data to optimize your plan.'}</Text>
+                            </View>
+                        }
+                    </View>
+                }
             </View>
         );
     }

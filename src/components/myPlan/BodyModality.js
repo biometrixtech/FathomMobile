@@ -439,7 +439,7 @@ class BodyModality extends Component {
                         <View style={{flex: 1, flexDirection: 'column',}}>
                             <View style={{backgroundColor: AppColors.zeplin.navy, flex: 1, opacity: 0.8,}} />
                             <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, flexDirection: 'row', justifyContent: 'space-between', paddingRight: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
-                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{`${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
+                                <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), paddingLeft: AppSizes.paddingLrg, }}>{modality === 'cwi' ? 'THE SCIENCE OF CWB' : `${_.toUpper(pageTitle)}${modality === 'heat' ? 'ING' : ''} PRECAUTIONS`}</Text>
                                 <TabIcon
                                     color={AppColors.zeplin.slate}
                                     icon={'close'}

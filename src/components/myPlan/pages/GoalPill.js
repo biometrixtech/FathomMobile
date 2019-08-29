@@ -83,7 +83,7 @@ class GoalPill extends Component {
             imageSource = require('../../../../assets/images/standard/care.png');
             break;
         case 2:
-            imageSource = require('../../../../assets/images/standard/care.png');
+            imageSource = require('../../../../assets/images/standard/recovery.png');
             break;
         case 6:
             imageSource = require('../../../../assets/images/standard/prevention.png');
