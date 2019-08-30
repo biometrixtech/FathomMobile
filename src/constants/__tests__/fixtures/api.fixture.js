@@ -100,10 +100,10 @@ export default {
     ]),
 
     PREPROCESSING_APIs: {
-        DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        DEV:  'https://apis.dev.fathomai.com',
         TEST: 'https://apis.test.fathomai.com',
-        QA:   'https://apis.qa.fathomai.com/preprocessing',
-        PROD: 'https://apis.production.fathomai.com/preprocessing',
+        QA:   'https://apis.qa.fathomai.com',
+        PROD: 'https://apis.production.fathomai.com',
     },
 
     preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
