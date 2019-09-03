@@ -274,7 +274,7 @@ class Start extends Component {
                                         size={40}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH! NO CONNECTION...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH!'}</Text>
                                     <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Tap anywhere to try again.'}</Text>
                                 </View>
                             </TouchableOpacity>
