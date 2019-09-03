@@ -788,7 +788,7 @@ class SensorFilesPage extends Component {
                     }
                 </View>
                 <Text
-                    onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'session', })}
+                    onPress={() => Actions.sensorFilesPage({ pageStep: 'session', })}
                     robotoMedium
                     style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}
                 >
