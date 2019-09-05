@@ -382,14 +382,12 @@ const UTIL = {
     },
 
     getAppleHealthKitDataPrevious: (userObj, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
-        console.log('getAppleHealthKitDataPrevious', lastSyncDate, historicSyncDate, numberOfDaysAgo);
         return new Promise((resolve, reject) => {
             if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
                 let { daysAgo, lastSync, now, syncDate, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
-                console.log('getAppleHealthKitDataPrevious', daysAgo, lastSync, now, syncDate, today3AM);
                 // setup variables
                 let apiPromisesArray = [];
                 // combine promises and trigger next step
@@ -417,14 +415,12 @@ const UTIL = {
     },
 
     getAppleHealthKitData: (userObj, lastSyncDate, historicSyncDate, numberOfDaysAgo = 35) => {
-        console.log('getAppleHealthKitData', lastSyncDate, historicSyncDate, numberOfDaysAgo);
         return new Promise((resolve, reject) => {
             if(Platform.OS === 'ios') {
                 // grab permissions
                 let appleHealthKitPerms = UTIL._getAppleHealthKitPerms();
                 // set start and end dates
                 let { now, today3AM, } = UTIL._getAppleHealthTimes(lastSyncDate, historicSyncDate, numberOfDaysAgo);
-                console.log('getAppleHealthKitData', now, today3AM);
                 // setup variables
                 let apiPromisesArray = [];
                 // combine promises and trigger next step
@@ -446,12 +442,10 @@ const UTIL = {
         return Promise
             .all(promisesArray)
             .then(values => {
-                console.log('_handleReturnedPromises-1', values, sendAPI);
                 // [0] = workoutValues, [1] = heartRateSamples, [2] = sleepSamples
                 let possibleSleepValues = ['ASLEEP', 'INBED', 'UNKNOWN'];
                 let { cleanedIgnoredWorkoutValues, cleanedWorkoutValues, } = UTIL._cleanWorkoutObject(values[0], values[1], sendAPI);
                 let filteredSleepValues = _.filter(values[2], s => possibleSleepValues.includes(s.value));
-                console.log('_handleReturnedPromises-2', cleanedIgnoredWorkoutValues, cleanedWorkoutValues, filteredSleepValues);
                 if(sendAPI) {
                     // send api
                     let payload = {
