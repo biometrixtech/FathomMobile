@@ -254,7 +254,7 @@ class HealthKitWorkouts extends Component {
     }
 
     render = () => {
-        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, workouts, } = this.props;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
         const { isEditingDuration, isHKRetrieveChecked, isHKRetrieveModalOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         return(
@@ -263,7 +263,7 @@ class HealthKitWorkouts extends Component {
                 <ProgressPill
                     currentStep={1}
                     onBack={pageIndex > 0 && !isHKRetrieveModalOpen ? () => this._updateBackPageIndex(pageIndex - 1) : null}
-                    onClose={isHKRetrieveModalOpen? () => {} : () => handleTogglePostSessionSurvey()}
+                    onClose={isHKRetrieveModalOpen || !isPostSession ? null : () => handleTogglePostSessionSurvey()}
                     totalSteps={3}
                 />
 
