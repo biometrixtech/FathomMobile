@@ -908,10 +908,11 @@ class MyPlan extends Component {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            sensorSessions,
             trendCategories,
             trendDashboardCategories,
             triggerStep,
-        } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
+        } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -959,9 +960,9 @@ class MyPlan extends Component {
                                     }
                                 >
 
-                                    { (!triggerStep && !offDaySelected) &&
+                                    {/* (!triggerStep && !offDaySelected) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
-                                    }
+                                    */}
 
                                     { offDaySelected &&
                                         <ActivityTab
@@ -979,6 +980,19 @@ class MyPlan extends Component {
                                             title={completedLockedModality.title}
                                         />
                                     ))}
+
+                                    {_.map(sensorSessions, (activity, key) => {
+                                        console.log('activity', activity);
+                                        // `status`
+                                        //    UPLOAD_PAUSED, UPLOAD_IN_PROGRESS, PROCESSING_IN_PROGRESS, PROCESSING_FAILED or PROCESSING_COMPLETE
+                                        // `cause_of_failure` if status is PROCESSING_FAILED
+                                        //    CALIBRATION, PLACEMENT, ERROR
+                                        //    else
+                                        //    null
+                                        return (
+                                            <Text key={key}>{activity.status}</Text>
+                                        );
+                                    })}
 
                                     {_.map(activeBeforeModalities, (activeModality, key) => (
                                         <ActivityTab
@@ -1012,9 +1026,9 @@ class MyPlan extends Component {
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
 
-                                    { ((afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) && !offDaySelected) &&
+                                    {/* ((afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) && !offDaySelected) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
-                                    }
+                                    */}
 
                                     {_.map(afterCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab

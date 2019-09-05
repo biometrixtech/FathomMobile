@@ -1370,7 +1370,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderLogic: dailyPlanObj => {
+    handleMyPlanRenderLogic: (dailyPlanObj, userObj) => {
         let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'HEAT', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
         let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest, MyPlanConstants.preExerciseListOrder), false, MyPlanConstants.preExerciseListOrder);
         let completedWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_warm_up, '');
@@ -1454,6 +1454,7 @@ const PlanLogic = {
         }
         let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
+        let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ? userObj.sensor_data.sessions : [];
         return {
             activeAfterModalities,
             activeBeforeModalities,
@@ -1464,6 +1465,7 @@ const PlanLogic = {
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            sensorSessions,
             trendCategories,
             trendDashboardCategories,
             triggerStep,

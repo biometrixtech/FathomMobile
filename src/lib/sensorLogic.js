@@ -180,15 +180,15 @@ const SensorLogic = {
     handleSessionRenderLogic: session => {
         let updateEndDateTimeString = session && session.upload_end_date ? moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma') : moment().format('M/D, h:mma');
         let leftIconString = moment(session.event_date).format('M/D');
-        let subtitle = session.status === 0 ?
+        let subtitle = session.status === 'UPLOAD_IN_PROGRESS' ?
             'Syncing your data! Do not remove from wifi.'
-            : session.status === 1 ?
+            : session.status === 'PROCESSING_COMPLETE' ?
                 `Synced & processed at ${updateEndDateTimeString}`
                 :
                 'Hmm...something went wrong. We\'re working on it!';
-        let iconName = session.status === 0 ?
+        let iconName = session.status === 'UPLOAD_IN_PROGRESS' ?
             'sync'
-            : session.status === 1 ?
+            : session.status === 'PROCESSING_COMPLETE' ?
                 'check-circle'
                 :
                 false;
