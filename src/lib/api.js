@@ -223,13 +223,13 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     return rawRes.json();
                 } else if(rawRes && /401/.test(`${rawRes.status}`) && endpoint !== APIConfig.endpoints.get(APIConfig.tokenKey)) {
                     // unauthorized error encountered
-                    if(unauthorizedCounter === 0) {
+                    if(unauthorizedCounter === 0 && currentState && currentState.user && currentState.user.id) {
                         // update counter and re-authorize user
                         unauthorizedCounter += 1;
                         let userIdObj = {userId: currentState.user.id};
                         let sessionTokenObj = {session_token: currentState.init.session_token};
-                        return fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
-                            .then(res => {
+                        return await fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
+                            .then(async res => {
                                 // successfully fetched, reset counter, update reducer, and resend API
                                 unauthorizedCounter = 0;
                                 store.dispatch({
@@ -237,7 +237,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                                     jwt:     res.authorization.jwt,
                                     expires: res.authorization.expires,
                                 });
-                                return fetcher(method, endpoint, params, body, api_enum);
+                                return await fetcher(method, endpoint, params, body, api_enum);
                             });
                     }
                     // reached limit, reset timer and log user out

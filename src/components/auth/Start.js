@@ -124,11 +124,15 @@ class Start extends Component {
     }
 
     hideSplash = callback => {
-        this.setState({ isLoggingIn: false, splashScreen: false, });
-        SplashScreen.hide();
-        if(callback) {
-            callback();
-        }
+        this.setState(
+            { isLoggingIn: false, splashScreen: false, },
+            () => {
+                SplashScreen.hide();
+                if(callback) {
+                    callback();
+                }
+            }
+        );
     }
 
     _routeToLogin = () => {
@@ -159,6 +163,9 @@ class Start extends Component {
             session_token: this.props.sessionToken,
         };
         let userObj = _.cloneDeep(this.props.user);
+        if(!userObj || !userObj.id) {
+            return this.hideSplash();
+        }
         return this.props.authorizeUser(authorization, userObj, credentials)
             .then(authorizationResponse => {
                 if(authorizationResponse && authorizationResponse.authorization) {
@@ -176,8 +183,12 @@ class Start extends Component {
             })
             .then(() => {
                 let clearMyPlan = (
-                    this.props.lastOpened.userId !== userObj.id ||
-                    moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                    this.props.lastOpened && this.props.lastOpened.userId && this.props.lastOpened.date &&
+                    userObj && userObj.id &&
+                    (
+                        this.props.lastOpened.userId !== userObj.id ||
+                        moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                    )
                 ) ?
                     true
                     :
@@ -204,7 +215,10 @@ class Start extends Component {
             .then(() => userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? this.props.getSensorFiles(userObj) : userObj)
             .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
-                this.setState(
+                if(!this.props.user.id) {
+                    return this.hideSplash();
+                }
+                return this.setState(
                     { isLoggingIn: false, },
                     () => {
                         const error = AppAPI.handleError(err);
@@ -260,7 +274,7 @@ class Start extends Component {
                                         size={40}
                                         type={'material-community'}
                                     />
-                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH! NO CONNECTION...'}</Text>
+                                    <Text oswaldMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(28), paddingBottom: AppSizes.paddingLrg, textAlign: 'center',}}>{'UH OH!'}</Text>
                                     <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Tap anywhere to try again.'}</Text>
                                 </View>
                             </TouchableOpacity>
