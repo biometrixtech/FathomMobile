@@ -1391,7 +1391,7 @@ const PlanLogic = {
             completedCurrentPreActiveRest,
             completedCurrentWarmUp,
         );
-        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['created_date'], ['asc']);
+        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['event_date_time'], ['asc']);
         let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER BATH', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
         let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
         let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'ICE', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
@@ -1410,7 +1410,7 @@ const PlanLogic = {
             completedCurrentIce,
             completedCurrentPostActiveRest,
         );
-        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['created_date'], ['asc']);
+        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['event_date_time'], ['asc']);
         let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
         let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
@@ -2299,6 +2299,74 @@ const PlanLogic = {
         let hex = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
         return hex;
     },
+
+    /**
+      * Handle Single Sensor Session Card Render Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
+        let title =  activity.status === 'PROCESSING_COMPLETE' ?
+            'Analysis Complete'
+            : activity.status === 'UPLOAD_IN_PROGRESS' ?
+                'Uploading'
+                : activity.status === 'UPLOAD_PAUSED' ?
+                    'Upload paused'
+                    : activity.status === 'PROCESSING_IN_PROGRESS' ?
+                        'Analyzing'
+                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                            'Calibration error'
+                            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                                'Placement error'
+                                :
+                                'Analysis failed';
+        let iconName = activity.status === 'PROCESSING_COMPLETE' ?
+            false
+            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                'sync'
+                :
+                'alert-circle-outline';
+        let iconType = activity.status === 'PROCESSING_COMPLETE' ?
+            false
+            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                'material'
+                :
+                'material-community';
+        let iconColor = activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
+        let actionText = activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            'Tap to refresh'
+            : activity.status === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
+                'Tap to access tutorial'
+                :
+                false;
+        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : '';
+        let parsedData = networkName && networkName.length > 0 ?
+            [{
+                pattern: new RegExp(networkName, 'i'),
+                style:   [AppStyles.robotoBold,],
+            }]
+            :
+            [];
+        let subtext = activity.status === 'UPLOAD_PAUSED' ?
+            `Return to kit to wifi ${networkName} to continue upload`
+            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                'It looks like you forgot to do calibration. Tap here to see the calibration process again.'
+                : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                    'We detected an error in the placement of your sensors. Tap to learn proper sensor placement.  '
+                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
+                        'We detected an error in analysis. We are working to fix it and will reach out to you soon.'
+                        :
+                        false;
+        return {
+            actionText,
+            iconColor,
+            iconName,
+            iconType,
+            parsedData,
+            subtext,
+            title,
+        };
+    }
 
 };
 

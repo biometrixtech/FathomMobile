@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { plan as PlanActions, user as UserActions, } from '../../actions';
+import { ble as BLEActions, plan as PlanActions, user as UserActions, } from '../../actions';
 
 const MyPlan = ({
     Layout,
@@ -11,6 +11,7 @@ const MyPlan = ({
     clearHealthKitWorkouts,
     getMobilize,
     getMyPlan,
+    getSensorFiles,
     getSoreBodyParts,
     handleReadInsight,
     healthData,
@@ -32,6 +33,7 @@ const MyPlan = ({
         clearHealthKitWorkouts={clearHealthKitWorkouts}
         getMobilize={getMobilize}
         getMyPlan={getMyPlan}
+        getSensorFiles={getSensorFiles}
         getSoreBodyParts={getSoreBodyParts}
         handleReadInsight={handleReadInsight}
         healthData={healthData}
@@ -56,6 +58,7 @@ MyPlan.propTypes = {
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
     getMobilize:                     PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
+    getSensorFiles:                  PropTypes.func.isRequired,
     getSoreBodyParts:                PropTypes.func.isRequired,
     handleReadInsight:               PropTypes.func.isRequired,
     healthData:                      PropTypes.object.isRequired,
@@ -95,6 +98,7 @@ const mapDispatchToProps = {
     clearHealthKitWorkouts:          PlanActions.clearHealthKitWorkouts,
     getMobilize:                     PlanActions.getMobilize,
     getMyPlan:                       PlanActions.getMyPlan,
+    getSensorFiles:                  BLEActions.getSensorFiles,
     getSoreBodyParts:                PlanActions.getSoreBodyParts,
     handleReadInsight:               PlanActions.clearFTECategory,
     noSessions:                      PlanActions.noSessions,

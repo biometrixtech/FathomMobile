@@ -55,7 +55,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
+import { CustomMyPlanNavBar, DeckCards, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
 import { Loading, } from '../general';
 
@@ -186,74 +186,121 @@ const ActivityTab = ({
     </View>
 );
 
-/*const MyPlanNavBar = ({
-    cards = [],
-    categories,
-    handleReadInsight,
-    expandNotifications,
-    onRight,
-    user,
-}) => (
-    <View style={{backgroundColor: AppColors.white,}}>
-        <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginHorizontal: AppSizes.paddingSml, marginTop: AppSizes.statusBarHeight,}}>
-            { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
-                <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => AppUtil.pushToScene('sensorFiles')}
-                    style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
-                >
+const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
+    let {
+        actionText,
+        iconColor,
+        iconName,
+        iconType,
+        parsedData,
+        subtext,
+        title,
+    } = PlanLogic.handleSingleSensorSessionCardRenderLogic(activity, userSesnorData);
+    return (
+        <TouchableOpacity
+            activeOpacity={1}
+            onPress={
+                activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                    () => handeRefresh()
+                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
+                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
+                            :
+                            () => {}
+            }
+            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}]}
+        >
+            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
+                <View style={{flexDirection: 'row',}}>
+                    { iconName && iconType ?
+                        <TabIcon
+                            color={iconColor}
+                            icon={iconName}
+                            size={20}
+                            type={iconType}
+                        />
+                        :
+                        <View style={{alignSelf: 'center', height: 20, width: 20,}}>
+                            <LottieView
+                                autoPlay={false}
+                                loop={false}
+                                progress={1}
+                                source={require('../../../assets/animation/checkmark-circle.json')}
+                            />
+                        </View>
+                    }
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingXSml,}}>{title}</Text>
+                </View>
+                { actionText &&
+                    <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
+                }
+            </View>
+            <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingXSml,}}>
                     <Image
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/sensor/sensor_slate.png')}
-                        style={{height: 20, width: 20,}}
+                        source={require('../../../assets/images/standard/kitactive.png')}
+                        style={{height: 25, width: 45,}}
                     />
-                </TouchableOpacity>
-                :
-                <View style={{flex: 1, justifyContent: 'center',}} />
-            }
-            <Image
-                source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
-            />
-            <TouchableOpacity
-                onPress={() => onRight()}
-                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
-            >
-                { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
-                    <LottieView
-                        autoPlay={true}
-                        source={require('../../../assets/animation/yellowpointer.json')}
+                    { activity.status === 'UPLOAD_IN_PROGRESS' && activity.status === 'PROCESSING_IN_PROGRESS' ?
+                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                            <LottieView
+                                autoPlay={true}
+                                loop={true}
+                                progress={1}
+                                source={require('../../../assets/animation/sensorloading.json')}
+                            />
+                        </View>
+                        :
+                        <Image
+                            resizeMode={'contain'}
+                            source={
+                                activity.status === 'UPLOAD_PAUSED' ?
+                                    require('../../../assets/images/standard/dotsdisabled.png')
+                                    :
+                                    require('../../../assets/images/standard/dotscompleted.png')
+                            }
+                            style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                        />
+                    }
+                    <TabIcon
+                        color={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
+                        icon={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? 'cloud' : 'cloud-done'}
+                        size={30}
+                        type={'material'}
                     />
+                    <Image
+                        resizeMode={'contain'}
+                        source={
+                            activity.status === 'PROCESSING_FAILED' ?
+                                require('../../../assets/images/standard/dotserror.png')
+                                : activity.status === 'PROCESSING_IN_PROGRESS' || activity.status === 'PROCESSING_COMPLETE' ?
+                                    require('../../../assets/images/standard/dotscompleted.png')
+                                    :
+                                    require('../../../assets/images/standard/dotsdisabled.png')
+                        }
+                        style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                    />
+                    <TabIcon
+                        color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
+                        icon={'clipboard-text'}
+                        size={20}
+                        type={'material-community'}
+                    />
+                </View>
+                { subtext &&
+                    <ParsedText
+                        parse={parsedData}
+                        style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,},]}
+                    >
+                        {subtext}
+                    </ParsedText>
                 }
-                <TabIcon
-                    icon={'notifications'}
-                    iconStyle={[{color: AppColors.zeplin.slate,}]}
-                    size={26}
-                />
-                { cards.length > 0 &&
-                    <View style={[styles.unreadNotificationsWrapper,]}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cards.length}</Text>
-                    </View>
-                }
-            </TouchableOpacity>
-        </View>
-        <Collapsible collapsed={!expandNotifications}>
-            { expandNotifications &&
-                <DeckCards
-                    cards={cards.length === 0 ? cards : _.concat(cards, {})}
-                    categories={categories}
-                    handleReadInsight={index => handleReadInsight(index, user.id)}
-                    hideDeck={() => onRight()}
-                    isVisible={expandNotifications}
-                    layout={'tinder'}
-                    shrinkNumberOfLines={true}
-                    unreadNotificationsCount={cards.length}
-                />
-            }
-        </Collapsible>
-    </View>
-);*/
+            </View>
+        </TouchableOpacity>
+    );
+};
 
 class MyPlan extends Component {
     static componentName = 'MyPlan';
@@ -264,6 +311,7 @@ class MyPlan extends Component {
         clearHealthKitWorkouts:          PropTypes.func.isRequired,
         getMobilize:                     PropTypes.func.isRequired,
         getMyPlan:                       PropTypes.func.isRequired,
+        getSensorFiles:                  PropTypes.func.isRequired,
         getSoreBodyParts:                PropTypes.func.isRequired,
         handleReadInsight:               PropTypes.func.isRequired,
         healthData:                      PropTypes.object.isRequired,
@@ -778,6 +826,23 @@ class MyPlan extends Component {
         );
     }
 
+    _handleSensorFilesRefresh = () => {
+        const { getSensorFiles, user, } = this.props;
+        this.setState(
+            { isPageCalculating: true, },
+            () => {
+                getSensorFiles(user)
+                    .then(res => this.setState({ isPageCalculating: false, }))
+                    .catch(err =>
+                        this.setState(
+                            { isPageCalculating: false, },
+                            () => AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan),
+                        )
+                    );
+            },
+        );
+    }
+
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
         // setup variables
@@ -916,14 +981,6 @@ class MyPlan extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
-                {/*<MyPlanNavBar
-                    cards={newInsights}
-                    categories={trendDashboardCategories}
-                    expandNotifications={expandNotifications}
-                    handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
-                    onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
-                    user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
-                />*/}
                 <CustomMyPlanNavBar
                     categories={trendCategories}
                     handleReadInsight={insightType => {
@@ -981,18 +1038,14 @@ class MyPlan extends Component {
                                         />
                                     ))}
 
-                                    {_.map(sensorSessions, (activity, key) => {
-                                        console.log('activity', activity);
-                                        // `status`
-                                        //    UPLOAD_PAUSED, UPLOAD_IN_PROGRESS, PROCESSING_IN_PROGRESS, PROCESSING_FAILED or PROCESSING_COMPLETE
-                                        // `cause_of_failure` if status is PROCESSING_FAILED
-                                        //    CALIBRATION, PLACEMENT, ERROR
-                                        //    else
-                                        //    null
-                                        return (
-                                            <Text key={key}>{activity.status}</Text>
-                                        );
-                                    })}
+                                    {_.map(sensorSessions, (activity, key) =>
+                                        <SensorSession
+                                            activity={activity}
+                                            handeRefresh={this._handleSensorFilesRefresh}
+                                            key={key}
+                                            userSesnorData={user.sensor_data}
+                                        />
+                                    )}
 
                                     {_.map(activeBeforeModalities, (activeModality, key) => (
                                         <ActivityTab
