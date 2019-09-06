@@ -144,8 +144,12 @@ class ResetPassword extends Component {
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => {
                         let clearMyPlan = (
-                            this.props.lastOpened.userId !== user.id ||
-                            moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                            this.props.lastOpened && this.props.lastOpened.userId && this.props.lastOpened.date &&
+                            user && user.id &&
+                            (
+                                this.props.lastOpened.userId !== user.id ||
+                                moment(this.props.lastOpened.date).format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD')
+                            )
                         ) ?
                             true
                             :
