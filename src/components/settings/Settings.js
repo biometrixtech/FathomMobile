@@ -11,6 +11,7 @@ import _ from 'lodash';
 import AppleHealthKit from 'rn-apple-healthkit';
 import DeviceInfo from 'react-native-device-info';
 import Toast, { DURATION, } from 'react-native-easy-toast';
+import moment from 'moment';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -263,6 +264,7 @@ class Settings extends Component {
                     /mazen[+]mvp@fathomai.com/g.test(userEmail) ||
                     /melissa[+]mvp@fathomai.com/g.test(userEmail) ||
                     /paul[+]mvp@fathomai.com/g.test(userEmail) ||
+                    /evan[+]mvp@fathomai.com/g.test(userEmail) ||
                     /dipesh@fathomai.com/g.test(userEmail) ||
                     /mazen@fathomai.com/g.test(userEmail) ?
                         <View>
@@ -282,6 +284,68 @@ class Settings extends Component {
                                     size:  ICON_SIZE,
                                 }}
                                 title={'Reset account data'}
+                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                            />
+                            <Spacer isDivider />
+                            <ListItem
+                                containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                                leftIcon={{
+                                    color:     AppColors.zeplin.splash,
+                                    iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                                    name:      'timer-sand',
+                                    size:      ICON_SIZE,
+                                    type:      'material-community',
+                                }}
+                                /*
+                                  1) Button click time
+                                  2) Time request was made to ntpool (if possible)
+                                  3) Ntppool data returned
+                                  4) time request was returned from ntppool
+                                */
+                                onPress={async () => {
+                                    /* global fetch console */
+                                    let btnClickTime = moment().format('hh:kk:ss.SS a');
+                                    try {
+                                        let requestTime = moment().format('hh:kk:ss.SS a');
+                                        // const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                                        const timesyncApiCall = await fetch('https://apis.dev.fathomai.com/hardware/latest/misc/time');
+                                        const timesyncResponse = await timesyncApiCall.json();
+                                        console.log('timesyncResponse',timesyncResponse);
+                                        // let dataReturned = moment(timesyncResponse.utc_datetime).utc().format('hh:kk:ss.SS a');
+                                        let dataReturned = moment(timesyncResponse.current_date).utc().format('hh:kk:ss.SS a');
+                                        let requestReturnTime = moment().format('hh:kk:ss.SS a');
+                                        Alert.alert(
+                                            'Timesync',
+                                            `Button Click Time: ${btnClickTime}\nRequest Start Time: ${requestTime}\nReturn Data: ${dataReturned}\nRequest Return Time: ${requestReturnTime}`,
+                                            [
+                                                {
+                                                    text:  'OK',
+                                                    style: 'cancel',
+                                                },
+                                            ],
+                                            { cancelable: true, }
+                                        );
+                                    } catch(err) {
+                                        console.log('err',err);
+                                        Alert.alert(
+                                            'Timesync',
+                                            'Error making call, please try again!',
+                                            [
+                                                {
+                                                    text:  'OK',
+                                                    style: 'cancel',
+                                                },
+                                            ],
+                                            { cancelable: true, }
+                                        );
+                                    }
+                                }}
+                                rightIcon={{
+                                    color: AppColors.zeplin.slate,
+                                    name:  'chevron-right',
+                                    size:  ICON_SIZE,
+                                }}
+                                title={'Check Timesync (Click and wait)'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                             />
                             <Spacer isDivider />
