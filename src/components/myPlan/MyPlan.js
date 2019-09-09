@@ -243,7 +243,7 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                         source={require('../../../assets/images/standard/kitactive.png')}
                         style={{height: 25, width: 45,}}
                     />
-                    { activity.status === 'UPLOAD_IN_PROGRESS' && activity.status === 'PROCESSING_IN_PROGRESS' ?
+                    { activity.status === 'UPLOAD_IN_PROGRESS' ?
                         <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
                             <LottieView
                                 autoPlay={true}
@@ -270,18 +270,29 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                         size={30}
                         type={'material'}
                     />
-                    <Image
-                        resizeMode={'contain'}
-                        source={
-                            activity.status === 'PROCESSING_FAILED' ?
-                                require('../../../assets/images/standard/dotserror.png')
-                                : activity.status === 'PROCESSING_IN_PROGRESS' || activity.status === 'PROCESSING_COMPLETE' ?
-                                    require('../../../assets/images/standard/dotscompleted.png')
-                                    :
-                                    require('../../../assets/images/standard/dotsdisabled.png')
-                        }
-                        style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
-                    />
+                    { activity.status === 'PROCESSING_IN_PROGRESS' ?
+                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                            <LottieView
+                                autoPlay={true}
+                                loop={true}
+                                progress={1}
+                                source={require('../../../assets/animation/sensorloading.json')}
+                            />
+                        </View>
+                        :
+                        <Image
+                            resizeMode={'contain'}
+                            source={
+                                activity.status === 'PROCESSING_FAILED' ?
+                                    require('../../../assets/images/standard/dotserror.png')
+                                    : activity.status === 'PROCESSING_COMPLETE' ?
+                                        require('../../../assets/images/standard/dotscompleted.png')
+                                        :
+                                        require('../../../assets/images/standard/dotsdisabled.png')
+                            }
+                            style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                        />
+                    }
                     <TabIcon
                         color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
                         icon={'clipboard-text'}

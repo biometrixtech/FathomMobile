@@ -1454,6 +1454,7 @@ const PlanLogic = {
         }
         let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
+        // TODO: filter sensorSessions by event_date
         let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ? userObj.sensor_data.sessions : [];
         return {
             activeAfterModalities,

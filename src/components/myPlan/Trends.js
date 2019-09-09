@@ -287,21 +287,23 @@ class Trends extends PureComponent {
                                     showDetails={false}
                                 />
                                 { (selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) &&
-                                    <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
-                                        { sessionSport ?
-                                            <Image
-                                                source={sessionSport.imagePath}
-                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
-                                            />
-                                            :
-                                            null
-                                        }
-                                        <ParsedText
-                                            parse={parsedBiomechanicsData}
-                                            style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
-                                        >
-                                            {biomechanicsAlertText}
-                                        </ParsedText>
+                                    <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
+                                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                            { sessionSport ?
+                                                <Image
+                                                    source={sessionSport.imagePath}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
+                                                />
+                                                :
+                                                null
+                                            }
+                                            <ParsedText
+                                                parse={parsedBiomechanicsData}
+                                                style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
+                                            >
+                                                {biomechanicsAlertText}
+                                            </ParsedText>
+                                        </View>
                                     </View>
                                 }
                             </TouchableOpacity>
@@ -337,24 +339,26 @@ class Trends extends PureComponent {
                                 </View>
                             }
                             { currentWorkloadAlertText &&
-                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
-                                    { workloadIcon ?
-                                        <TabIcon
-                                            color={workloadSubtitleColor}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={workloadIcon}
-                                            size={20}
-                                            type={workloadIconType}
-                                        />
-                                        : workloadSportName ?
-                                            <Image
-                                                source={workloadImageSource}
-                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: workloadSubtitleColor, width: 20,}}
+                                <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
+                                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                        { workloadIcon ?
+                                            <TabIcon
+                                                color={workloadSubtitleColor}
+                                                containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                                icon={workloadIcon}
+                                                size={20}
+                                                type={workloadIconType}
                                             />
-                                            :
-                                            null
-                                    }
-                                    {currentWorkloadAlertText}
+                                            : workloadSportName ?
+                                                <Image
+                                                    source={workloadImageSource}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: workloadSubtitleColor, width: 20,}}
+                                                />
+                                                :
+                                                null
+                                        }
+                                        {currentWorkloadAlertText}
+                                    </View>
                                 </View>
                             }
                         </TouchableOpacity>
@@ -389,24 +393,26 @@ class Trends extends PureComponent {
                                 </View>
                             }
                             { currentBodyResponseAlertText &&
-                                <View style={{alignItems: 'center', borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
-                                    { bodyResponseIcon ?
-                                        <TabIcon
-                                            color={bodyResponseSubtitleColor}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={bodyResponseIcon}
-                                            size={20}
-                                            type={bodyResponseIconType}
-                                        />
-                                        : bodyResponseSportName ?
-                                            <Image
-                                                source={bodyResponseImageSource}
-                                                style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: bodyResponseSubtitleColor, width: 20,}}
+                                <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
+                                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                        { bodyResponseIcon ?
+                                            <TabIcon
+                                                color={bodyResponseSubtitleColor}
+                                                containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                                icon={bodyResponseIcon}
+                                                size={20}
+                                                type={bodyResponseIconType}
                                             />
-                                            :
-                                            null
-                                    }
-                                    {currentBodyResponseAlertText}
+                                            : bodyResponseSportName ?
+                                                <Image
+                                                    source={bodyResponseImageSource}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: bodyResponseSubtitleColor, width: 20,}}
+                                                />
+                                                :
+                                                null
+                                        }
+                                        {currentBodyResponseAlertText}
+                                    </View>
                                 </View>
                             }
                         </TouchableOpacity>

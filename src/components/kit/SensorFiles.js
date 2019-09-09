@@ -41,8 +41,9 @@ class SensorFiles extends Component {
     static componentName = 'SensorFiles';
 
     static propTypes = {
-        updateUser: PropTypes.func.isRequired,
-        user:       PropTypes.object.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -73,20 +74,16 @@ class SensorFiles extends Component {
     }
 
     _handleBackUpTutorialOnClose = () => {
-        const { updateUser, user, } = this.props;
+        const { getSensorFiles, updateUser, user, } = this.props;
         // update state to close modal
-        this.setState(
-            { isTutorialModalOpen: false, },
-            () => {
-                // setup variables
-                let newUserPayloadObj = {};
-                newUserPayloadObj.first_time_experience = ['3Sensor-Onboarding-Tutorial-User-Complete'];
-                // update user object
-                updateUser(newUserPayloadObj, user.id)
-                    .then(res => console.log('res',res))
-                    .catch(err => console.log('err',err));
-            },
-        );
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.first_time_experience = ['3Sensor-Onboarding-Tutorial-User-Complete'];
+        // update user object
+        updateUser(newUserPayloadObj, user.id)
+            .then(res => getSensorFiles(res.user))
+            .then(res => this.setState({ isTutorialModalOpen: false, }))
+            .catch(err => this.setState({ isTutorialModalOpen: false, }));
     }
 
     _handleWifiClicked = sensorNetwork => {
@@ -215,7 +212,7 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={`WIFI: ${sensorData.sensor_networks[0]}`}
+                        title={`WIFI: ${sensorData.sensor_networks[0] || 'NO NETWORK DEFINED'}`}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />

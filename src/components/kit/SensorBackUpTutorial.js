@@ -25,6 +25,7 @@ class SensorBackUpTutorial extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isSavingUser: false,
             isVideoMuted: false,
             pageIndex:    0,
         }
@@ -59,7 +60,7 @@ class SensorBackUpTutorial extends Component {
 
     render = () => {
         const { handleOnClose, isVisible, } = this.props;
-        const { isVideoMuted, pageIndex, } = this.state;
+        const { isSavingUser, isVideoMuted, pageIndex, } = this.state;
         return (
             <FathomModal
                 isVisible={isVisible}
@@ -196,9 +197,10 @@ class SensorBackUpTutorial extends Component {
                         {/* End - page 14 */}
                         <Complete
                             currentPage={pageIndex === 14}
-                            nextBtn={() => handleOnClose()}
+                            isLoading={isSavingUser}
+                            nextBtn={() => this.setState({ isSavingUser: true, }, () => handleOnClose())}
                             onBack={this._renderPreviousPage}
-                            onClose={() => handleOnClose()}
+                            onClose={() => this.setState({ isSavingUser: true, }, () => handleOnClose())}
                             showTopNavStep={false}
                         />
 
