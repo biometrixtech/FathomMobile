@@ -186,7 +186,7 @@ const ActivityTab = ({
     </View>
 );
 
-const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
+const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, userSesnorData, }) => {
     let {
         actionText,
         iconColor,
@@ -206,10 +206,12 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                         () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
                         : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                             () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
-                            :
-                            () => {}
+                            : activity.status === 'PROCESSING_COMPLETE' ?
+                                () => handleGetMobilize()
+                                :
+                                () => {}
             }
-            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingSml, paddingVertical: AppSizes.paddingMed,}]}
+            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
         >
             <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
                 <View style={{flexDirection: 'row',}}>
@@ -217,11 +219,11 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                         <TabIcon
                             color={iconColor}
                             icon={iconName}
-                            size={20}
+                            size={AppFonts.scaleFont(24)}
                             type={iconType}
                         />
                         :
-                        <View style={{alignSelf: 'center', height: 20, width: 20,}}>
+                        <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
                             <LottieView
                                 autoPlay={false}
                                 loop={false}
@@ -261,7 +263,7 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                                     :
                                     require('../../../assets/images/standard/dotscompleted.png')
                             }
-                            style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            style={{height: 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
                         />
                     }
                     <TabIcon
@@ -290,7 +292,7 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                                         :
                                         require('../../../assets/images/standard/dotsdisabled.png')
                             }
-                            style={{height: 15, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            style={{height: 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
                         />
                     }
                     <TabIcon
@@ -309,6 +311,11 @@ const SensorSession = ({ activity, handeRefresh, userSesnorData, }) => {
                     </ParsedText>
                 }
             </View>
+            { activity.status === 'PROCESSING_COMPLETE' &&
+                <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
+                </View>
+            }
         </TouchableOpacity>
     );
 };
@@ -686,7 +693,7 @@ class MyPlan extends Component {
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, getSensorFiles, user, } = this.props;
         const { dailyReadiness, } = this.state;
         // clear timer
         clearInterval(this._timer);
@@ -695,6 +702,7 @@ class MyPlan extends Component {
             { isPageLoading: isFromPushNotification ? false : true, },
             () => {
                 getMyPlan(userId, moment().format('YYYY-MM-DD'))
+                    .then(() => getSensorFiles(user))
                     .then(response => {
                         if(shouldClearCompletedExercises) {
                             clearCompletedExercises();
@@ -1052,6 +1060,8 @@ class MyPlan extends Component {
                                     {_.map(sensorSessions, (activity, key) =>
                                         <SensorSession
                                             activity={activity}
+                                            askForNewMobilize={askForNewMobilize}
+                                            handleGetMobilize={this._handleGetMobilize}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
                                             userSesnorData={user.sensor_data}

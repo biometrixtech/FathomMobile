@@ -224,7 +224,7 @@ const getSensorFiles = (userObj, days = 14) => {
         payload.timezone = userObj.timezone;
     }
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.preprocessing.status.post(false, payload)
+        return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
             .then(response => {
                 let newUserObj = _.cloneDeep(userObj);
                 newUserObj.sensor_data.accessory = response.accessory;

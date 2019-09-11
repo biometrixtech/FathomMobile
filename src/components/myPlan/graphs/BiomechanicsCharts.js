@@ -29,6 +29,7 @@ import { ParsedText, Spacer, TabIcon, Text, } from '../../custom';
 class BiomechanicsCharts extends PureComponent {
     static propTypes = {
         chartData:       PropTypes.array,
+        dataType:        PropTypes.number.isRequired,
         isRichDataView:  PropTypes.bool,
         pieDetails:      PropTypes.object,
         sessionDuration: PropTypes.string,
@@ -47,14 +48,17 @@ class BiomechanicsCharts extends PureComponent {
     };
 
     render = () => {
-        const { chartData, isRichDataView, pieDetails, sessionDuration, selectedSession, showDetails, showTitle, } = this.props;
+        const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showDetails, showTitle, } = this.props;
         let {
+            asymmetryIndex,
             largerPieData,
             parsedSummaryData,
             richDataYDomain,
             rotateDeg,
             smallerPieData,
-        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData);
+        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
+        let extraPieStyles = dataType === 0 ? {} : {};
+        let extraImageBackgroundStyles = dataType === 0 ? {} : { justifyContent: 'flex-end', };
         return (
             <View pointerEvents={'none'}>
 
@@ -87,10 +91,16 @@ class BiomechanicsCharts extends PureComponent {
                                 }}
                                 tickCount={20}
                                 tickFormat={t =>
-                                    t % 2 === 0 ?
-                                        t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                    richDataYDomain[1] > 20 ?
+                                        t % 20 === 0 ?
+                                            t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                            :
+                                            ''
                                         :
-                                        ''
+                                        t % 2 === 0 ?
+                                            t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                            :
+                                            ''
                                 }
                             />
                             {/* X-Axis */}
@@ -123,7 +133,7 @@ class BiomechanicsCharts extends PureComponent {
                                 />
                             }
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
+                                {_.map(selectedSession.asymmetry[asymmetryIndex].detail_legend, (legend, i) => (
                                     <View
                                         key={i}
                                         style={[
@@ -161,10 +171,10 @@ class BiomechanicsCharts extends PureComponent {
                     <View style={{flexDirection: 'row',}}>
                         <ImageBackground
                             imageStyle={{borderRadius: 12,}}
-                            source={require('../../../../assets/images/standard/apt_notilt.png')}
-                            style={{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}}
+                            source={dataType === 0 ? require('../../../../assets/images/standard/apt_notilt.png') : require('../../../../assets/images/standard/ankle_pitch.png')}
+                            style={[{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}, extraImageBackgroundStyles,]}
                         >
-                            <View style={{transform: [{rotate: rotateDeg,}]}}>
+                            <View style={[{transform: [{rotate: rotateDeg,}]}, extraPieStyles,]}>
                                 <V.VictoryPie
                                     cornerRadius={7}
                                     data={largerPieData}
@@ -198,7 +208,7 @@ class BiomechanicsCharts extends PureComponent {
                                         { showTitle &&
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
                                         }
-                                        { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                        { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
@@ -206,20 +216,20 @@ class BiomechanicsCharts extends PureComponent {
                                             />
                                             :
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
-                                                {`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}
+                                                {`${_.round(selectedSession.asymmetry[asymmetryIndex].summary_percentage)}%`}
                                             </Text>
                                         }
                                         <ParsedText
                                             parse={parsedSummaryData}
                                             style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
                                         >
-                                            {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt ? selectedSession.asymmetry.apt.summary_text : ''}
+                                            {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] ? selectedSession.asymmetry[asymmetryIndex].summary_text : ''}
                                         </ParsedText>
                                     </View>
                                     :
                                     <View />
                                 }
-                                { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
                                     <View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
                                             <View

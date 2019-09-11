@@ -183,10 +183,12 @@ class Trends extends PureComponent {
         const { isCoachModalOpen, isContactUsOpen, } = this.state;
         const { plan, } = this.props;
         let {
-            biomechanics,
+            biomechanicsAnklePitch,
+            biomechanicsApt,
             bodyResponse,
             extraBottomPadding,
-            isBiomechanicsLocked,
+            isBiomechanicsAnklePitchLocked,
+            isBiomechanicsAptLocked,
             isBodyResponseLocked,
             isWorkloadLocked,
             workload,
@@ -215,30 +217,23 @@ class Trends extends PureComponent {
             pieRightWrapperWidth,
             rightPieInnerRadius,
             rightPieWidth,
-            selectedSession,
-        } = PlanLogic.handleBiomechanicsRenderLogic(plan, _.findLastIndex(biomechanics.sessions));
-        let biomechanicsAlertText = '';
-        let parsedBiomechanicsData = [];
-        let sessionSport = false;
-        let sessionColor = 11;
-        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
-            sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
-                10
-                : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
-                    4
-                    :
-                    11;
-            sessionSport = selectedSession && _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name);
-            biomechanicsAlertText = `${selectedSession.asymmetry.apt.summary_percentage === '' ? '' : `${selectedSession.asymmetry.apt.summary_percentage}%`} ${selectedSession.asymmetry.apt.summary_text}`;
-            let boldedText = selectedSession.asymmetry.apt.summary_bold_text;
-            boldedText.push({color: null, text: `${selectedSession.asymmetry.apt.summary_percentage}% more`});
-            _.map(boldedText, (prop, i) => {
-                let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
-                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
-                parsedBiomechanicsData.push(newParsedData);
-            });
-        }
+            selectedAptSession,
+        } = PlanLogic.handleBiomechanicsAptRenderLogic(plan, _.findLastIndex(biomechanicsApt.sessions));
+        let {
+            biomechanicsAlertText:  biomechanicsAptAlertText,
+            parsedBiomechanicsData: parsedBiomechanicsAptData,
+            sessionColor:           sessionAptColor,
+            sessionSport:           sessionAptSport,
+        } = PlanLogic.hanldeBiomechanicsSelectedSessionRenderLogic(selectedAptSession, 0);
+        let {
+            selectedAnklePitchSession,
+        } = PlanLogic.handleBiomechanicsAnklePitchRenderLogic(plan, _.findLastIndex(biomechanicsAnklePitch.sessions));
+        let {
+            biomechanicsAlertText:  biomechanicsAnklePitchAlertText,
+            parsedBiomechanicsData: parsedBiomechanicsAnklePitchData,
+            sessionColor:           sessionAnklePitchColor,
+            sessionSport:           sessionAnklePitchSport,
+        } = PlanLogic.hanldeBiomechanicsSelectedSessionRenderLogic(selectedAnklePitchSession, 1);
         return (
             <View style={{flex: 1,}}>
 
@@ -263,17 +258,18 @@ class Trends extends PureComponent {
                         <Spacer size={AppSizes.paddingXSml} />
                         <Spacer isDivider />
                         <Spacer size={AppSizes.padding} />
-                        { !isBiomechanicsLocked &&
+                        { !isBiomechanicsAptLocked &&
                             <TouchableOpacity
                                 activeOpacity={0.2}
-                                onPress={() => AppUtil.pushToScene('biomechanics')}
+                                onPress={() => AppUtil.pushToScene('biomechanics', {dataType: 0,})}
                                 style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
                             >
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
                                     <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Pelvic Tilt'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedSession.event_date_time).format('M/D, h:mma')}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAptSession.event_date_time).format('M/D, h:mma')}</Text>
                                 </View>
                                 <BiomechanicsCharts
+                                    dataType={0}
                                     pieDetails={{
                                         leftPieInnerRadius,
                                         leftPieWidth,
@@ -283,25 +279,71 @@ class Trends extends PureComponent {
                                         rightPieInnerRadius,
                                         rightPieWidth,
                                     }}
-                                    selectedSession={selectedSession}
+                                    selectedSession={selectedAptSession}
                                     showDetails={false}
                                 />
-                                { (selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) &&
+                                { (selectedAptSession && selectedAptSession.asymmetry && selectedAptSession.asymmetry.apt) &&
                                     <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
                                         <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
-                                            { sessionSport ?
+                                            { sessionAptSport ?
                                                 <Image
-                                                    source={sessionSport.imagePath}
-                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionColor), width: 20,}}
+                                                    source={sessionAptSport.imagePath}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionAptColor), width: 20,}}
                                                 />
                                                 :
                                                 null
                                             }
                                             <ParsedText
-                                                parse={parsedBiomechanicsData}
+                                                parse={parsedBiomechanicsAptData}
                                                 style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
                                             >
-                                                {biomechanicsAlertText}
+                                                {biomechanicsAptAlertText}
+                                            </ParsedText>
+                                        </View>
+                                    </View>
+                                }
+                            </TouchableOpacity>
+                        }
+                        { !isBiomechanicsAnklePitchLocked &&
+                            <TouchableOpacity
+                                activeOpacity={0.2}
+                                onPress={() => AppUtil.pushToScene('biomechanics', {dataType: 1,})}
+                                style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                            >
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
+                                    <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Leg Extension'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAnklePitchSession.event_date_time).format('M/D, h:mma')}</Text>
+                                </View>
+                                <BiomechanicsCharts
+                                    dataType={1}
+                                    pieDetails={{
+                                        leftPieInnerRadius,
+                                        leftPieWidth,
+                                        pieData,
+                                        pieLeftWrapperWidth,
+                                        pieRightWrapperWidth,
+                                        rightPieInnerRadius,
+                                        rightPieWidth,
+                                    }}
+                                    selectedSession={selectedAnklePitchSession}
+                                    showDetails={false}
+                                />
+                                { (selectedAnklePitchSession && selectedAnklePitchSession.asymmetry && selectedAnklePitchSession.asymmetry.ankle_pitch) &&
+                                    <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
+                                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                            { sessionAnklePitchSport ?
+                                                <Image
+                                                    source={sessionAnklePitchSport.imagePath}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionAnklePitchColor), width: 20,}}
+                                                />
+                                                :
+                                                null
+                                            }
+                                            <ParsedText
+                                                parse={parsedBiomechanicsAnklePitchData}
+                                                style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
+                                            >
+                                                {biomechanicsAnklePitchAlertText}
                                             </ParsedText>
                                         </View>
                                     </View>
@@ -416,13 +458,10 @@ class Trends extends PureComponent {
                                 </View>
                             }
                         </TouchableOpacity>
-                        { isBiomechanicsLocked &&
-                            <TouchableOpacity
-                                activeOpacity={0.2}
-                                onPress={() => AppUtil.pushToScene('biomechanics')}
-                                style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
-                            >
+                        { isBiomechanicsAptLocked &&
+                            <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}>
                                 <BiomechanicsCharts
+                                    dataType={0}
                                     pieDetails={{
                                         leftPieInnerRadius,
                                         leftPieWidth,
@@ -432,7 +471,7 @@ class Trends extends PureComponent {
                                         rightPieInnerRadius,
                                         rightPieWidth,
                                     }}
-                                    selectedSession={selectedSession}
+                                    selectedSession={selectedAptSession}
                                     showDetails={false}
                                 />
                                 <TouchableOpacity
@@ -455,7 +494,7 @@ class Trends extends PureComponent {
                                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{'Request access to Fathom\'s Pro Sensors.'}</Text>
                                     </View>
                                 </TouchableOpacity>
-                            </TouchableOpacity>
+                            </View>
                         }
                     </View>
 

@@ -1454,8 +1454,12 @@ const PlanLogic = {
         }
         let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
-        // TODO: filter sensorSessions by event_date
-        let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ? userObj.sensor_data.sessions : [];
+        let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ?
+            userObj.sensor_data.sessions
+            :
+            [];
+        sensorSessions = _.orderBy(sensorSessions, ['event_date'], ['asc']);
+        sensorSessions = _.filter(sensorSessions, u => u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD'))
         return {
             activeAfterModalities,
             activeBeforeModalities,
@@ -1551,10 +1555,12 @@ const PlanLogic = {
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
         let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
-        let biomechanics = trends && trends.biomechanics_summary ? trends.biomechanics_summary : [];
+        let biomechanicsAnklePitch = trends && trends.biomechanics_ankle_pitch ? trends.biomechanics_ankle_pitch : {};
+        let biomechanicsApt = trends && trends.biomechanics_apt ? trends.biomechanics_apt : {};
         let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsLocked = trends && trends.biomechanics_summary && trends.biomechanics_summary.sessions.length === 0;
+        let isBiomechanicsAnklePitchLocked = biomechanicsAnklePitch && biomechanicsAnklePitch.sessions && biomechanicsAnklePitch.sessions.length === 0;
+        let isBiomechanicsAptLocked = biomechanicsApt && biomechanicsApt.sessions && biomechanicsApt.sessions.length === 0;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
@@ -1562,7 +1568,8 @@ const PlanLogic = {
         let trendCategories = trends && trends.dashboard && trends.dashboard.trend_categories && trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(trends.dashboard.trend_categories) : [];
         trendCategories.push({});
         return {
-            biomechanics,
+            biomechanicsAnklePitch,
+            biomechanicsApt,
             bodyResponse,
             currentBiomechanicsAlert,
             currentBodyResponseAlert,
@@ -1570,7 +1577,8 @@ const PlanLogic = {
             currentStressAlert,
             currentWorkloadAlert,
             extraBottomPadding,
-            isBiomechanicsLocked,
+            isBiomechanicsAnklePitchLocked,
+            isBiomechanicsAptLocked,
             isBodyResponseLocked,
             isResponseLocked,
             isStressLocked,
@@ -2038,11 +2046,11 @@ const PlanLogic = {
     },
 
     /**
-      * Handle Biomechanics Render Logic
+      * Handle Biomechanics APT Render Logic
       * - Biomechanics
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsRenderLogic: (plan, currentIndex, step) => {
+    handleBiomechanicsAptRenderLogic: (plan, currentIndex, step) => {
         let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
         let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
         let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
@@ -2056,26 +2064,26 @@ const PlanLogic = {
             return {
                 leftPieInnerRadius,
                 leftPieWidth,
-                pieData:         { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
+                pieData:            { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
                 pieLeftWrapperWidth,
                 pieRightWrapperWidth,
                 rightPieInnerRadius,
                 rightPieWidth,
-                selectedSession: {},
+                selectedAptSession: {},
             };
         }
         let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
-        let biomechanicsSummary = dailyPlan ? dailyPlan.trends.biomechanics_summary : {};
-        let selectedSession = biomechanicsSummary.sessions[currentIndex];
-        let sessionSportName = selectedSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name).label : '';
-        let sessionHours = _.floor(selectedSession.duration / 3600);
-        let updatedTime = selectedSession.duration - sessionHours * 3600;
+        let biomechanicsAptSummary = dailyPlan ? dailyPlan.trends.biomechanics_apt : {};
+        let selectedAptSession = biomechanicsAptSummary.sessions[currentIndex];
+        let sessionSportName = selectedAptSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedAptSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedAptSession.duration / 3600);
+        let updatedTime = selectedAptSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
-        let pieData = selectedSession.asymmetry.apt.summary_data;
-        let chartData = selectedSession.asymmetry.apt.detail_data;
+        let pieData = selectedAptSession.asymmetry.apt.summary_data;
+        let chartData = selectedAptSession.asymmetry.apt.detail_data;
         let updatedChartData = _.map(chartData, (data, index) => {
             let newDataObjLeft = {};
             newDataObjLeft.x = data.x;
@@ -2089,17 +2097,17 @@ const PlanLogic = {
         });
         let parsedData = [];
         if(
-            selectedSession &&
-            selectedSession.asymmetry &&
-            selectedSession.asymmetry.apt &&
-            selectedSession.asymmetry.apt.detail_text
+            selectedAptSession &&
+            selectedAptSession.asymmetry &&
+            selectedAptSession.asymmetry.apt &&
+            selectedAptSession.asymmetry.apt.detail_text
         ) {
-            _.map(selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+            _.map(selectedAptSession.asymmetry.apt.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                let sessionColor = _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 1 ?
                     10
-                    : _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                    : _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 2 ?
                         4
                         :
                         13;
@@ -2116,12 +2124,142 @@ const PlanLogic = {
             pieRightWrapperWidth,
             rightPieInnerRadius,
             rightPieWidth,
-            selectedSession,
+            selectedAptSession,
             sessionDuration,
             sessionSportName,
             sessionStartTimeDuration,
-            sessions:         biomechanicsSummary.sessions,
+            sessions:         biomechanicsAptSummary.sessions,
             updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
+    /**
+      * Handle Biomechanics Ankle Pitch Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsAnklePitchRenderLogic: (plan, currentIndex, step) => {
+        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
+        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
+        let leftPieWidth = (pieLeftWrapperWidth - 35);
+        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
+        let rightPieWidth = pieLeftWrapperWidth;
+        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        let extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+        rightPieInnerRadius = (rightPieInnerRadius - extraInnerRadiusToRemove);
+        if(currentIndex === -1) {
+            return {
+                leftPieInnerRadius,
+                leftPieWidth,
+                pieLeftWrapperWidth,
+                pieRightWrapperWidth,
+                rightPieInnerRadius,
+                rightPieWidth,
+                selectedAnklePitchSession: {},
+            };
+        }
+        let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
+        let biomechanicsAnklePitchSummary = dailyPlan ? dailyPlan.trends.biomechanics_ankle_pitch : {};
+        let selectedAnklePitchSession = biomechanicsAnklePitchSummary && biomechanicsAnklePitchSummary.sessions[currentIndex];
+        let sessionSportName = selectedAnklePitchSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedAnklePitchSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedAnklePitchSession.duration / 3600);
+        let updatedTime = selectedAnklePitchSession.duration - sessionHours * 3600;
+        let sessionMinutes = _.floor(updatedTime / 60);
+        let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
+        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+        let pieData = selectedAnklePitchSession.asymmetry.ankle_pitch.summary_data;
+        let chartData = selectedAnklePitchSession.asymmetry.ankle_pitch.detail_data;
+        let updatedChartData = _.map(chartData, (data, index) => {
+            let newDataObjLeft = {};
+            newDataObjLeft.x = data.x;
+            newDataObjLeft.y = data.y1;
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 10 : 8);
+            let newDataObjRight = {};
+            newDataObjRight.x = data.x;
+            newDataObjRight.y = data.y2;
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
+            return [newDataObjLeft, newDataObjRight];
+        });
+        let parsedData = [];
+        if(
+            selectedAnklePitchSession &&
+            selectedAnklePitchSession.asymmetry &&
+            selectedAnklePitchSession.asymmetry.ankle_pitch &&
+            selectedAnklePitchSession.asymmetry.ankle_pitch.detail_text
+        ) {
+            _.map(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                let sessionColor = _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 1 ?
+                    10
+                    : _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 2 ?
+                        4
+                        :
+                        13;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedData.push(newParsedData);
+            });
+        }
+        return {
+            leftPieInnerRadius,
+            leftPieWidth,
+            parsedData,
+            pieData,
+            pieLeftWrapperWidth,
+            pieRightWrapperWidth,
+            rightPieInnerRadius,
+            rightPieWidth,
+            sessionDuration,
+            sessionSportName,
+            sessionStartTimeDuration,
+            selectedAnklePitchSession,
+            sessions:         biomechanicsAnklePitchSummary.sessions,
+            updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
+    /**
+      * Handle Biomechanics Selected Session Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    hanldeBiomechanicsSelectedSessionRenderLogic: (selectedSession, dataType) => {
+        let biomechanicsAlertText = '';
+        let parsedBiomechanicsData = [];
+        let sessionSport = false;
+        let sessionColor = 11;
+        if(
+            selectedSession &&
+            selectedSession.asymmetry &&
+            (
+                (dataType === 0 && selectedSession.asymmetry.apt) ||
+                (dataType === 1 && selectedSession.asymmetry.ankle_pitch)
+            )
+        ) {
+            sessionColor = _.toInteger(dataType === 0 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.ankle_pitch.summary_side) === 1 ?
+                10
+                : _.toInteger(dataType === 0 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.ankle_pitch.summary_side) === 2 ?
+                    4
+                    :
+                    11;
+            sessionSport = selectedSession && _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name);
+            biomechanicsAlertText = dataType === 0 ? `${selectedSession.asymmetry.apt.summary_percentage === '' ? '' : `${selectedSession.asymmetry.apt.summary_percentage}%`} ${selectedSession.asymmetry.apt.summary_text}` : `${selectedSession.asymmetry.ankle_pitch.summary_percentage === '' ? '' : `${selectedSession.asymmetry.ankle_pitch.summary_percentage}%`} ${selectedSession.asymmetry.ankle_pitch.summary_text}`;
+            let boldedText = dataType === 0 ? selectedSession.asymmetry.apt.summary_bold_text : selectedSession.asymmetry.ankle_pitch.summary_bold_text;
+            boldedText.push({color: null, text: `${dataType === 0 ? selectedSession.asymmetry.apt.summary_percentage : selectedSession.asymmetry.ankle_pitch.summary_percentage}% more`});
+            _.map(boldedText, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedBiomechanicsData.push(newParsedData);
+            });
+        }
+        return {
+            biomechanicsAlertText,
+            parsedBiomechanicsData,
+            sessionColor,
+            sessionSport,
         };
     },
 
@@ -2130,8 +2268,10 @@ const PlanLogic = {
       * - BiomechanicsCharts
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData) => {
-        const PIE_CHART_TOTAL = 60;
+    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData, dataType) => {
+        const asymmetryIndex = dataType === 0 ? 'apt' : 'ankle_pitch';
+        const APT_CHART_TOTAL = 60;
+        const ANKLE_PITCH_CART_RATIO = 45;
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
             {color: AppColors.transparent, x: 0, y: 0,},
@@ -2150,6 +2290,7 @@ const PlanLogic = {
             maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
             maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
             return {
+                asymmetryIndex,
                 largerPieData,
                 richDataYDomain: [-maxDomain, maxDomain],
                 rotateDeg,
@@ -2159,34 +2300,67 @@ const PlanLogic = {
         const isLeftDataEmpty = newPieData.left_y === 0;
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
-            if(_.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL, true);
-                smallerPieData = emptyPieData;
-                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
-            } else if(newPieData.left_y > newPieData.right_y) {
-                let ratio = (newPieData.left_y / newPieData.right_y);
-                newPieData.right_y = 5;
-                newPieData.left_y  = (5 * ratio);
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
-                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
-                rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
-            } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                let ratio = (newPieData.right_y / newPieData.left_y);
-                newPieData.left_y = 5;
-                newPieData.right_y = (5 * ratio);
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
-                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
-                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            if(dataType === 0) {
+                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL, true);
+                    smallerPieData = emptyPieData;
+                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                } else if(newPieData.left_y > newPieData.right_y) {
+                    let ratio = (newPieData.left_y / newPieData.right_y);
+                    newPieData.right_y = 5;
+                    newPieData.left_y  = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
+                } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                    let ratio = (newPieData.right_y / newPieData.left_y);
+                    newPieData.left_y = 5;
+                    newPieData.right_y = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                }
+            } else {
+                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
+                    largerPieData = [
+                        { color: AppColors.zeplin.successLight, x: 0, y: newPieData.right_y, },
+                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                    ];
+                    smallerPieData = emptyPieData;
+                } else if(newPieData.left_y > newPieData.right_y) {
+                    let largerValue = ((100 * newPieData.left_y) / ANKLE_PITCH_CART_RATIO);
+                    let fullValue = (largerValue + newPieData.left_y);
+                    largerPieData = [
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: newPieData.left_y, },
+                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                    ];
+                    smallerPieData = [
+                        { color: AppColors.zeplin.splashLight, x: 0, y: newPieData.right_y, },
+                        { color: AppColors.transparent, x: 1, y: (fullValue - newPieData.right_y), },
+                    ];
+                } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
+                    let fullValue = (largerValue + newPieData.right_y);
+                    largerPieData = [
+                        { color: AppColors.zeplin.splashLight, x: 0, y: newPieData.right_y, },
+                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                    ];
+                    smallerPieData = [
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: newPieData.left_y, },
+                        { color: AppColors.transparent, x: 1, y: (fullValue - newPieData.left_y), },
+                    ];
+                }
             }
         }
         let parsedSummaryData = [];
-        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
-            _.map(selectedSession.asymmetry.apt.summary_bold_text, (prop, i) => {
+        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex]) {
+            _.map(selectedSession.asymmetry[asymmetryIndex].summary_bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
+                let sessionColor = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 1 ?
                     10
-                    : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
+                    : _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 2 ?
                         4
                         :
                         null;
@@ -2195,10 +2369,11 @@ const PlanLogic = {
             });
         }
         return {
+            asymmetryIndex,
             largerPieData,
             parsedSummaryData,
             richDataYDomain,
-            rotateDeg,
+            rotateDeg: dataType === 0 ? rotateDeg : '147deg',
             smallerPieData,
         };
     },
@@ -2310,11 +2485,11 @@ const PlanLogic = {
         let title =  activity.status === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
             : activity.status === 'UPLOAD_IN_PROGRESS' ?
-                'Uploading'
+                'Uploading...'
                 : activity.status === 'UPLOAD_PAUSED' ?
                     'Upload paused'
                     : activity.status === 'PROCESSING_IN_PROGRESS' ?
-                        'Analyzing'
+                        'Analyzing...'
                         : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                             'Calibration error'
                             : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
@@ -2349,13 +2524,13 @@ const PlanLogic = {
             :
             [];
         let subtext = activity.status === 'UPLOAD_PAUSED' ?
-            `Return to kit to wifi ${networkName} to continue upload`
+            `Return your Kit to wifi network ${networkName} to finish uploading.`
             : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
-                'It looks like you forgot to do calibration. Tap here to see the calibration process again.'
+                'We can\'t analyze this data because you may have missed a step in calibration. Tap to review calibration for next time.'
                 : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
-                    'We detected an error in the placement of your sensors. Tap to learn proper sensor placement.  '
+                    'We can\'t analyze this data because your sensors were in the wrong position. Tap to review placement for next time.'
                     : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
-                        'We detected an error in analysis. We are working to fix it and will reach out to you soon.'
+                        'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
                         :
                         false;
         return {
