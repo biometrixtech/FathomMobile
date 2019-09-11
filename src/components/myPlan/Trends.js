@@ -226,6 +226,13 @@ class Trends extends PureComponent {
             sessionSport:           sessionAptSport,
         } = PlanLogic.hanldeBiomechanicsSelectedSessionRenderLogic(selectedAptSession, 0);
         let {
+            leftPieInnerRadius:   leftPieInnerRadiusAnklePitch,
+            leftPieWidth:         leftPieWidthAnklePitch,
+            pieData:              pieDataAnklePitch,
+            pieLeftWrapperWidth:  pieLeftWrapperWidthAnklePitch,
+            pieRightWrapperWidth: pieRightWrapperWidthAnklePitch,
+            rightPieInnerRadius:  rightPieInnerRadiusAnklePitch,
+            rightPieWidth:        rightPieWidthAnklePitch,
             selectedAnklePitchSession,
         } = PlanLogic.handleBiomechanicsAnklePitchRenderLogic(plan, _.findLastIndex(biomechanicsAnklePitch.sessions));
         let {
@@ -317,13 +324,13 @@ class Trends extends PureComponent {
                                 <BiomechanicsCharts
                                     dataType={1}
                                     pieDetails={{
-                                        leftPieInnerRadius,
-                                        leftPieWidth,
-                                        pieData,
-                                        pieLeftWrapperWidth,
-                                        pieRightWrapperWidth,
-                                        rightPieInnerRadius,
-                                        rightPieWidth,
+                                        leftPieInnerRadius:   leftPieInnerRadiusAnklePitch,
+                                        leftPieWidth:         leftPieWidthAnklePitch,
+                                        pieData:              pieDataAnklePitch,
+                                        pieLeftWrapperWidth:  pieLeftWrapperWidthAnklePitch,
+                                        pieRightWrapperWidth: pieRightWrapperWidthAnklePitch,
+                                        rightPieInnerRadius:  rightPieInnerRadiusAnklePitch,
+                                        rightPieWidth:        rightPieWidthAnklePitch,
                                     }}
                                     selectedSession={selectedAnklePitchSession}
                                     showDetails={false}

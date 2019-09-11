@@ -55,7 +55,7 @@ import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { CustomMyPlanNavBar, DeckCards, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
+import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
 import { Loading, } from '../general';
 
@@ -131,7 +131,7 @@ const ActivityTab = ({
                     }
                     <View style={{flex: 1, marginLeft: AppSizes.paddingSml,}}>
                         <Text
-                            oswaldRegular
+                            robotoRegular
                             style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
                         >{title}</Text>
                         { (subtitle && subtitle.length > 0) &&
@@ -170,7 +170,7 @@ const ActivityTab = ({
                             type={'material-community'}
                         />
                         <View style={{marginTop: AppSizes.paddingLrg,}}>
-                            <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(26),}}>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(26),}}>
                                 {title}
                             </Text>
                             <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
@@ -192,7 +192,6 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
         iconColor,
         iconName,
         iconType,
-        parsedData,
         subtext,
         title,
     } = PlanLogic.handleSingleSensorSessionCardRenderLogic(activity, userSesnorData);
@@ -232,14 +231,14 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                             />
                         </View>
                     }
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingXSml,}}>{title}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
                 </View>
                 { actionText &&
                     <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
                 }
             </View>
             <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingXSml,}}>
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
                     <Image
                         resizeMode={'contain'}
                         source={require('../../../assets/images/standard/kitactive.png')}
@@ -263,7 +262,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                                     :
                                     require('../../../assets/images/standard/dotscompleted.png')
                             }
-                            style={{height: 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
                         />
                     }
                     <TabIcon
@@ -292,7 +291,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                                         :
                                         require('../../../assets/images/standard/dotsdisabled.png')
                             }
-                            style={{height: 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
                         />
                     }
                     <TabIcon
@@ -302,13 +301,18 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                         type={'material-community'}
                     />
                 </View>
-                { subtext &&
-                    <ParsedText
-                        parse={parsedData}
-                        style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,},]}
-                    >
-                        {subtext}
-                    </ParsedText>
+                { (subtext && activity.status === 'UPLOAD_PAUSED') ?
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
+                        {subtext[0]}
+                        <Text robotoBold>{subtext[1]}</Text>
+                        {subtext[2]}
+                    </Text>
+                    : subtext ?
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
+                            {subtext}
+                        </Text>
+                        :
+                        null
                 }
             </View>
             { activity.status === 'PROCESSING_COMPLETE' &&

@@ -58,7 +58,10 @@ class BiomechanicsCharts extends PureComponent {
             smallerPieData,
         } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
         let extraPieStyles = dataType === 0 ? {} : {};
-        let extraImageBackgroundStyles = dataType === 0 ? {} : { justifyContent: 'flex-end', };
+        let extraImageBackgroundStyles = dataType === 0 ? {} : {
+            justifyContent: 'flex-end',
+        };
+        let innerRadiusAddOn = dataType === 0 ? 0 : 20;
         return (
             <View pointerEvents={'none'}>
 
@@ -179,8 +182,9 @@ class BiomechanicsCharts extends PureComponent {
                                     cornerRadius={7}
                                     data={largerPieData}
                                     height={pieDetails.pieLeftWrapperWidth}
-                                    innerRadius={pieDetails.rightPieInnerRadius}
+                                    innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
                                     labels={d => ''}
+                                    padding={dataType === 0 ? 50 : 30}
                                     style={{
                                         data: { fill: d => d.color},
                                     }}
@@ -191,8 +195,9 @@ class BiomechanicsCharts extends PureComponent {
                                         cornerRadius={7}
                                         data={smallerPieData}
                                         height={pieDetails.pieLeftWrapperWidth}
-                                        innerRadius={pieDetails.rightPieInnerRadius}
+                                        innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
                                         labels={d => ''}
+                                        padding={dataType === 0 ? 50 : 30}
                                         style={{
                                             data: { fill: d => d.color},
                                         }}
