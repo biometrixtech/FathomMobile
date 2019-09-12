@@ -140,8 +140,8 @@ describe('Handles Sensor File Render Logic', () => {
 });
 
 describe('Handles Sensor Files Session Render Logic', () => {
-    it('Status 0', () => {
-        let session = helperFunctions.getSessionObject(45, '2019-06-28T04:01:37Z', 0, '2019-06-28T09:03:37Z');
+    it('Status - UPLOAD_IN_PROGRESS', () => {
+        let session = helperFunctions.getSessionObject(45, '2019-06-28T04:01:37Z', 'UPLOAD_IN_PROGRESS', '2019-06-28T09:03:37Z');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             'sync',
             moment(session.event_date).format('M/D'),
@@ -150,8 +150,8 @@ describe('Handles Sensor Files Session Render Logic', () => {
         );
         expect(SensorLogic.handleSessionRenderLogic(session)).toEqual(expectedResult);
     });
-    it('Status 1', () => {
-        let session = helperFunctions.getSessionObject(12, '2019-06-28T04:01:37Z', 1, '2019-06-28T09:03:37Z');
+    it('Status - PROCESSING_COMPLETE', () => {
+        let session = helperFunctions.getSessionObject(12, '2019-06-28T04:01:37Z', 'PROCESSING_COMPLETE', '2019-06-28T09:03:37Z');
         let updateEndDateTimeString = moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             'check-circle',
@@ -161,8 +161,8 @@ describe('Handles Sensor Files Session Render Logic', () => {
         );
         expect(SensorLogic.handleSessionRenderLogic(session)).toEqual(expectedResult);
     });
-    it('Status OTHER', () => {
-        let session = helperFunctions.getSessionObject(72, '2019-06-28T04:01:37Z', 2, '2019-06-28T09:03:37Z');
+    it('Status - PROCESSING_FAILED', () => {
+        let session = helperFunctions.getSessionObject(72, '2019-06-28T04:01:37Z', 'PROCESSING_FAILED', '2019-06-28T09:03:37Z');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             false,
             moment(session.event_date).format('M/D'),

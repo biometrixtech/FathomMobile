@@ -146,6 +146,7 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
+                            contentContainerStyle={{flex: 1,}}
                             contentInset={{
                                 bottom: 0,
                                 left:   AppSizes.padding,
@@ -158,7 +159,7 @@ class Biomechanics extends PureComponent {
                             showsHorizontalScrollIndicator={false}
                             snapToInterval={AppSizes.screen.width}
                         >
-                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
                                 { _.map(sessions, (session, index) => {
                                     // let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
                                     // let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;
