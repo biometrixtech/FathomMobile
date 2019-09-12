@@ -13,6 +13,7 @@ import {
     PermissionsAndroid,
     ScrollView,
     StatusBar,
+    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -287,6 +288,20 @@ class SensorFilesPage extends Component {
                         return callback && callback();
                     });
             }
+        );
+    }
+
+    _handleNotInRange = () => {
+        Alert.alert(
+            '',
+            'You may be out of range of your preferred network. If you have data on your kit pending upload, bring your kit into range of your preferred network.\n\nIf you do not have any recent workouts to upload, you do not need to be in range of your preferred network.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
         );
     }
 
@@ -787,13 +802,17 @@ class SensorFilesPage extends Component {
                         </View>
                     }
                 </View>
-                <Text
+                <TouchableOpacity
                     onPress={() => Actions.sensorFilesPage({ pageStep: 'session', })}
-                    robotoMedium
-                    style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}
+                    style={{paddingVertical: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}
                 >
-                    {'Remind me how to update data'}
-                </Text>
+                    <Text
+                        robotoMedium
+                        style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textAlign: 'center', textDecorationLine: 'underline',}}
+                    >
+                        {'Remind me how to update data'}
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     }
