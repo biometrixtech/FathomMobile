@@ -81,7 +81,7 @@ class UserAccountInfo extends Component {
             <KeyboardAwareScrollView
                 contentContainerStyle={{flexGrow: 1,}}
                 innerRef={ref => {this.scrollViewRef = ref;}}
-                scrollEnabled={false}
+                scrollEnabled={true}
             >
                 <FormInput
                     autoCapitalize={'none'}
