@@ -1047,7 +1047,7 @@ class MyPlan extends Component {
                                     { offDaySelected &&
                                         <ActivityTab
                                             completed={true}
-                                            title={'OFF DAY'}
+                                            title={'Off Day'}
                                         />
                                     }
 
@@ -1182,8 +1182,8 @@ class MyPlan extends Component {
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'OFF DAY'}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Off Day'}
                                 useNativeFeedback={false}
                             >
                                 <Image
@@ -1200,8 +1200,8 @@ class MyPlan extends Component {
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                            title={'LOG TRAINING'}
+                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={'Log Training'}
                             useNativeFeedback={false}
                         >
                             <Image
@@ -1218,8 +1218,8 @@ class MyPlan extends Component {
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'ADD MOBILIZE'}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Add Mobilize'}
                                 useNativeFeedback={false}
                             >
                                 <Image

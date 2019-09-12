@@ -369,6 +369,7 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
+                            contentContainerStyle={{flex: 1,}}
                             contentInset={{
                                 bottom: 0,
                                 left:   AppSizes.padding,

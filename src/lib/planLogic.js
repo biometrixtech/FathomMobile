@@ -1560,8 +1560,8 @@ const PlanLogic = {
         let biomechanicsApt = trends && trends.biomechanics_apt ? trends.biomechanics_apt : {};
         let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsAnklePitchLocked = biomechanicsAnklePitch && biomechanicsAnklePitch.sessions && biomechanicsAnklePitch.sessions.length === 0;
-        let isBiomechanicsAptLocked = biomechanicsApt && biomechanicsApt.sessions && biomechanicsApt.sessions.length === 0;
+        let isBiomechanicsAnklePitchLocked = biomechanicsAnklePitch && biomechanicsAnklePitch.sessions && biomechanicsAnklePitch.sessions.length > 0 ? false : true;
+        let isBiomechanicsAptLocked = biomechanicsApt && biomechanicsApt.sessions && biomechanicsApt.sessions.length > 0 ? false : true;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);

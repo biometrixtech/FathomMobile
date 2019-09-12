@@ -207,7 +207,12 @@ class BiomechanicsCharts extends PureComponent {
                             </View>
                         </ImageBackground>
                         <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
-                            <View style={{flex: showTitle ? 9 : 1, justifyContent: 'space-between',}}>
+                            <View
+                                style={{
+                                    flex:           showTitle ? 9 : 1,
+                                    justifyContent: showDetails && selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ? 'flex-end' : 'space-between',
+                                }}
+                            >
                                 { showDetails ?
                                     <View>
                                         { showTitle &&
@@ -217,7 +222,7 @@ class BiomechanicsCharts extends PureComponent {
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                                style={{height: 35, tintColor: AppColors.zeplin.successLight, width: 35,}}
+                                                style={{height: 55, tintColor: AppColors.zeplin.successLight, width: 55,}}
                                             />
                                             :
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
@@ -261,7 +266,9 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Left side ROM'}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                {dataType === 0 ? 'Left side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y ? _.round(pieDetails.pieData.left_y) : ''}\u00B0 Left ROM`}
+                                            </Text>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                             <View
@@ -273,7 +280,9 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Right side ROM'}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                {dataType === 0 ? 'Right side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y ? _.round(pieDetails.pieData.right_y) : ''}\u00B0 Right ROM`}
+                                            </Text>
                                         </View>
                                     </View>
                                 }

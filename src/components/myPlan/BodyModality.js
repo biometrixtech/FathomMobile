@@ -195,7 +195,7 @@ class BodyModality extends Component {
                                             type={'material-community'}
                                         />
                                     </TouchableOpacity>
-                                    <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
                                         {pageTitle}
                                     </Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
