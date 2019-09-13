@@ -636,41 +636,27 @@ class SensorFilesPage extends Component {
                                 >
                                     <Placement
                                         currentPage={pageIndex === 0}
-                                        handleAlertPress={() => this._handleAlertPress()}
-                                        nextBtn={this._renderNextPage}
-                                        page={1}
-                                        showTopNavStep={false}
-                                    />
-                                    <Placement
-                                        currentPage={pageIndex === 1}
-                                        nextBtn={this._renderNextPage}
-                                        onBack={this._renderPreviousPage}
-                                        page={2}
-                                        showTopNavStep={false}
-                                    />
-                                    <Placement
-                                        currentPage={pageIndex === 2}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
                                         page={3}
                                         showTopNavStep={false}
                                     />
                                     <Placement
-                                        currentPage={pageIndex === 3}
+                                        currentPage={pageIndex === 1}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
                                         page={4}
                                         showTopNavStep={false}
                                     />
                                     <Placement
-                                        currentPage={pageIndex === 4}
+                                        currentPage={pageIndex === 2}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
                                         page={5}
                                         showTopNavStep={false}
                                     />
                                     <Placement
-                                        currentPage={pageIndex === 5}
+                                        currentPage={pageIndex === 3}
                                         nextBtn={() => Actions.pop()}
                                         onBack={this._renderPreviousPage}
                                         page={6}
@@ -761,6 +747,7 @@ class SensorFilesPage extends Component {
                             {_.map(user.sensor_data.sessions, (session, key) => {
                                 const {
                                     iconName,
+                                    iconType,
                                     leftIconString,
                                     subtitle,
                                     title,
@@ -782,6 +769,7 @@ class SensorFilesPage extends Component {
                                                             containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
                                                             icon={iconName}
                                                             size={AppFonts.scaleFont(15)}
+                                                            type={iconType}
                                                         />
                                                     }
                                                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{subtitle}</Text>

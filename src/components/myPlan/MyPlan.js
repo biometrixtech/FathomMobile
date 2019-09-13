@@ -56,7 +56,7 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
+import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
 import { Loading, } from '../general';
 
 // global constants
@@ -331,6 +331,7 @@ class MyPlan extends Component {
         clearCompletedCoolDownExercises: PropTypes.func.isRequired,
         clearCompletedExercises:         PropTypes.func.isRequired,
         clearHealthKitWorkouts:          PropTypes.func.isRequired,
+        createSensorSession:             PropTypes.func.isRequired,
         getMobilize:                     PropTypes.func.isRequired,
         getMyPlan:                       PropTypes.func.isRequired,
         getSensorFiles:                  PropTypes.func.isRequired,
@@ -349,6 +350,7 @@ class MyPlan extends Component {
         postSessionSurvey:    PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         setAppLogs:           PropTypes.func.isRequired,
+        updateSensorSession:  PropTypes.func.isRequired,
         updateUser:           PropTypes.func.isRequired,
         user:                 PropTypes.object.isRequired,
     }
@@ -978,13 +980,14 @@ class MyPlan extends Component {
             isPostSessionSurveyModalOpen,
             isPrepareSessionsCompletionModalOpen,
             isReadinessSurveyModalOpen,
+            isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
             postSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { handleReadInsight, plan, user, } = this.props;
+        let { createSensorSession, handleReadInsight, plan, updateSensorSession, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1181,7 +1184,7 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'Off Day'}
                                 useNativeFeedback={false}
@@ -1199,7 +1202,7 @@ class MyPlan extends Component {
                             hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                             textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                             title={'Log Training'}
                             useNativeFeedback={false}
@@ -1217,13 +1220,39 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
                                 title={'Add Mobilize'}
                                 useNativeFeedback={false}
                             >
                                 <Image
                                     source={require('../../../assets/images/sports_images/icons8-warm-up-200.png')}
+                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                                />
+                            </ActionButton.Item>
+                        }
+                        { (
+                            user && user.personal_data && user.personal_data.email &&
+                            (
+                                /gabby[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
+                                /dipesh[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
+                                /mazen[+]mvp@fathomai.com/g.test(user.personal_data.email)
+                            )
+                        ) &&
+                            <ActionButton.Item
+                                activeOpacity={1}
+                                buttonColor={AppColors.zeplin.yellow}
+                                fixNativeFeedbackRadius={true}
+                                hideShadow={true}
+                                onPress={() => this.setState({ isStartSensorSessionModalOpen: true, })}
+                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Start Sensor Session'}
+                                useNativeFeedback={false}
+                            >
+                                <Image
+                                    source={require('../../../assets/images/sports_images/icons8-kitesurfing-200.png')}
                                     style={{height: 32, tintColor: AppColors.white, width: 32,}}
                                 />
                             </ActionButton.Item>
@@ -1274,6 +1303,13 @@ class MyPlan extends Component {
                     isModalOpen={isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
+                />
+                <StartSensorSessionModal
+                    createSensorSession={createSensorSession}
+                    isModalOpen={isStartSensorSessionModalOpen}
+                    onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                    updateSensorSession={updateSensorSession}
+                    user={user}
                 />
                 { loading ?
                     <Loading

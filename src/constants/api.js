@@ -6,7 +6,7 @@
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
 const plansAPIVersion = '/plans/4_5';
-const preprocessingAPIVersion = '/preprocessing/1_1';
+const preprocessingAPIVersion = '/preprocessing/2_0';
 const usersAPIVersion = '/users/2_3';
 
 export default {
@@ -112,7 +112,9 @@ export default {
     // preprocessingHostname: 'https://apis.dev.fathomai.com', // development
 
     preprocessingEndpoints: new Map([
-        ['status', `${preprocessingAPIVersion}/status/sensor`], // POST
+        ['create_session', `${preprocessingAPIVersion}/session`], // POST
+        ['status',         `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['update_session', `${preprocessingAPIVersion}/session/{sessionId}`], // PATCH
     ]),
 
     HARDWARE_APIs: {

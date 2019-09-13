@@ -112,7 +112,9 @@ export default {
     // preprocessingHostname: 'https://apis.dev.fathomai.com', // development
 
     preprocessingEndpoints: new Map([
-        ['status', `${preprocessingAPIVersion}/status/sensor`], // POST
+        ['create_session', `${preprocessingAPIVersion}/session`], // POST
+        ['status',         `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['update_session', `${preprocessingAPIVersion}/session/{sessionId}`], // PATCH
     ]),
 
     HARDWARE_APIs: {

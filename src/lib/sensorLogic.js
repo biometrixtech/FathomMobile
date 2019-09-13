@@ -180,21 +180,31 @@ const SensorLogic = {
     handleSessionRenderLogic: session => {
         let updateEndDateTimeString = session && session.upload_end_date ? moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma') : moment().format('M/D, h:mma');
         let leftIconString = moment(session.event_date).format('M/D');
-        let subtitle = session.status === 'UPLOAD_IN_PROGRESS' ?
-            'Syncing your data! Do not remove from wifi.'
-            : session.status === 'PROCESSING_COMPLETE' ?
-                `Synced & processed at ${updateEndDateTimeString}`
-                :
-                'Hmm...something went wrong. We\'re working on it!';
+        let subtitle = session.status === 'UPLOAD_PAUSED' ?
+            'Return your Kit to wifi to finish uploading.'
+            : session.status === 'PROCESSING_IN_PROGRESS' ?
+                'Analyzing your data, we\'ll have results soon.'
+                : session.status === 'PROCESSING_FAILED' ?
+                    'We were not able to analyze your data.'
+                    : session.status === 'UPLOAD_IN_PROGRESS' ?
+                        'Syncing your data! Do not remove from wifi.'
+                        : session.status === 'PROCESSING_COMPLETE' ?
+                            `Synced & processed at ${updateEndDateTimeString}`
+                            :
+                            'Hmm...something went wrong. We\'re working on it!';
         let iconName = session.status === 'UPLOAD_IN_PROGRESS' ?
             'sync'
             : session.status === 'PROCESSING_COMPLETE' ?
                 'check-circle'
-                :
-                false;
+                : session.status === 'PROCESSING_FAILED' ?
+                    'alert'
+                    :
+                    false;
+        let iconType = session.status === 'PROCESSING_FAILED' ? 'material-community' : 'material';
         let title = `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
         return {
             iconName,
+            iconType,
             leftIconString,
             subtitle,
             title,

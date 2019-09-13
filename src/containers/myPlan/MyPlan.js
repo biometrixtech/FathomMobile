@@ -9,6 +9,7 @@ const MyPlan = ({
     clearCompletedCoolDownExercises,
     clearCompletedExercises,
     clearHealthKitWorkouts,
+    createSensorSession,
     getMobilize,
     getMyPlan,
     getSensorFiles,
@@ -24,6 +25,7 @@ const MyPlan = ({
     postSessionSurvey,
     scheduledMaintenance,
     setAppLogs,
+    updateSensorSession,
     updateUser,
     user,
 }) => (
@@ -31,6 +33,7 @@ const MyPlan = ({
         clearCompletedCoolDownExercises={clearCompletedCoolDownExercises}
         clearCompletedExercises={clearCompletedExercises}
         clearHealthKitWorkouts={clearHealthKitWorkouts}
+        createSensorSession={createSensorSession}
         getMobilize={getMobilize}
         getMyPlan={getMyPlan}
         getSensorFiles={getSensorFiles}
@@ -46,6 +49,7 @@ const MyPlan = ({
         postSessionSurvey={postSessionSurvey}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
+        updateSensorSession={updateSensorSession}
         updateUser={updateUser}
         user={user}
     />
@@ -56,6 +60,7 @@ MyPlan.propTypes = {
     clearCompletedCoolDownExercises: PropTypes.func.isRequired,
     clearCompletedExercises:         PropTypes.func.isRequired,
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
+    createSensorSession:             PropTypes.func.isRequired,
     getMobilize:                     PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
     getSensorFiles:                  PropTypes.func.isRequired,
@@ -74,6 +79,7 @@ MyPlan.propTypes = {
     postSessionSurvey:    PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     setAppLogs:           PropTypes.func.isRequired,
+    updateSensorSession:  PropTypes.func.isRequired,
     updateUser:           PropTypes.func.isRequired,
     user:                 PropTypes.object.isRequired,
 };
@@ -96,6 +102,7 @@ const mapDispatchToProps = {
     clearCompletedCoolDownExercises: PlanActions.clearCompletedCoolDownExercises,
     clearCompletedExercises:         PlanActions.clearCompletedExercises,
     clearHealthKitWorkouts:          PlanActions.clearHealthKitWorkouts,
+    createSensorSession:             BLEActions.createSensorSession,
     getMobilize:                     PlanActions.getMobilize,
     getMyPlan:                       PlanActions.getMyPlan,
     getSensorFiles:                  BLEActions.getSensorFiles,
@@ -105,6 +112,7 @@ const mapDispatchToProps = {
     postReadinessSurvey:             PlanActions.postReadinessSurvey,
     postSessionSurvey:               PlanActions.postSessionSurvey,
     setAppLogs:                      PlanActions.setAppLogs,
+    updateSensorSession:             BLEActions.updateSensorSession,
     updateUser:                      UserActions.updateUser,
 };
 

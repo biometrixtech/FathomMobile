@@ -8,7 +8,7 @@
     />
  *
  */
-import React, { Component, } from 'react';
+import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 
@@ -154,7 +154,7 @@ const InsightIcon = ({
     </TouchableOpacity>
 );
 
-class CustomMyPlanNavBar extends Component {
+class CustomMyPlanNavBar extends PureComponent {
     static propTypes = {
         categories:        PropTypes.array,
         handleReadInsight: PropTypes.func.isRequired,
@@ -585,7 +585,7 @@ class CustomMyPlanNavBar extends Component {
                     onSwipeComplete={() => this._toggleModal(null)}
                     style={{justifyContent: 'flex-start',}}
                 >
-                    <View onLayout={ev => this.setState({ modalContentHeight: ev.nativeEvent.layout.height, })}>
+                    <View onLayout={ev => this.state.modalContentHeight === 0 ? this.setState({ modalContentHeight: ev.nativeEvent.layout.height, }) : null}>
                         {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
                         <View style={{backgroundColor: AppColors.white, borderBottomLeftRadius: 20, borderBottomRightRadius: 20,}}>
                             {this._renderContent(selectedCategory)}
