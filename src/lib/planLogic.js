@@ -2172,11 +2172,11 @@ const PlanLogic = {
             let newDataObjLeft = {};
             newDataObjLeft.x = data.x;
             newDataObjLeft.y = data.y1;
-            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 10 : 8);
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 10);
             let newDataObjRight = {};
             newDataObjRight.x = data.x;
             newDataObjRight.y = data.y2;
-            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 9 : 4);
             return [newDataObjLeft, newDataObjRight];
         });
         let parsedData = [];

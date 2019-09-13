@@ -118,8 +118,7 @@ class SensorFiles extends Component {
         return (
             <ScrollView
                 automaticallyAdjustContentInsets={false}
-                bounces={false}
-                contentContainerStyle={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}
+                contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between',}}
                 style={{backgroundColor: AppColors.white,}}
             >
                 <View>
