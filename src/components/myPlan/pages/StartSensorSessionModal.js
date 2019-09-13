@@ -69,6 +69,8 @@ class StartSensorSessionModal extends PureComponent {
         const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
         const timesyncResponse = await timesyncApiCall.json();
         let dateTimeReturned = timesyncResponse.utc_datetime;
+        let indexOfDot = dateTimeReturned.indexOf('.');
+        dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
         this.timerId = setInterval(() => {
             let newTimerValue = parseInt((this.state.timer + 1), 10);
             this.setState(

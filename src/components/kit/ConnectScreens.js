@@ -179,7 +179,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, onClose, nextBtn, pa
                         null
                 }
                 <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
-                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                             {content.subtitle}
                         </View>
@@ -498,7 +498,7 @@ const Complete = ({ currentPage, isLoading, onBack, onClose, nextBtn, showTopNav
         <TopNav darkColor={true} onBack={isLoading ? null : () => onBack()} onClose={isLoading ? null : () => onClose()} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
-            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
+            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access the tutorial, navigate through Settings to Manage Fathom PRO Kit'}</Text>
         </View>
         <View style={{flex: 1,}}>
             <View style={{alignSelf: 'center', flex: 1, width: AppSizes.screen.widthFourFifths,}}>

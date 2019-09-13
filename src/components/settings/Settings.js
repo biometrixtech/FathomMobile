@@ -308,11 +308,11 @@ class Settings extends Component {
                                     try {
                                         let requestTime = moment().format('hh:kk:ss.SS a');
                                         const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-                                        // const timesyncApiCall = await fetch('https://apis.dev.fathomai.com/hardware/latest/misc/time');
                                         const timesyncResponse = await timesyncApiCall.json();
-                                        console.log('timesyncResponse',timesyncResponse);
-                                        let dataReturned = moment(timesyncResponse.utc_datetime).utc().format('hh:kk:ss.SS a');
-                                        // let dataReturned = moment(timesyncResponse.current_date).utc().format('hh:kk:ss.SS a');
+                                        let cleanedDateTime = timesyncResponse.utc_datetime;
+                                        let indexOfDot = cleanedDateTime.indexOf('.');
+                                        cleanedDateTime = cleanedDateTime.substr(0, (indexOfDot + 3)) + 'Z';
+                                        let dataReturned = moment(cleanedDateTime).utc().toISOString();
                                         let requestReturnTime = moment().format('hh:kk:ss.SS a');
                                         Alert.alert(
                                             'Timesync',

@@ -265,7 +265,7 @@ const updateSensorSession = (endDate, sessionStatus, sessionId) => {
         payload.session_status = sessionStatus;
     }
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.preprocessing.update_session.post({sessionId}, payload)
+        return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
             .then(response => resolve(response))
             .catch(error => reject(error));
     });

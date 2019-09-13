@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, BackHandler, Image, Platform, StatusBar, TouchableOpacity, View, } from 'react-native';
+import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -116,7 +116,12 @@ class SensorFiles extends Component {
             sensorNetwork,
         } = SensorLogic.handleSensorFileRenderLogic(sensorData);
         return (
-            <View style={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}>
+            <ScrollView
+                automaticallyAdjustContentInsets={false}
+                bounces={false}
+                contentContainerStyle={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}
+                style={{backgroundColor: AppColors.white,}}
+            >
                 <View>
                     <TopNavBar />
                     <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${_.toUpper(user.personal_data.first_name)}\'S FATHOM PRO KIT`}</Text>
@@ -313,7 +318,7 @@ class SensorFiles extends Component {
                     handleOnClose={this._handleBackUpTutorialOnClose}
                     isVisible={isTutorialModalOpen}
                 />
-            </View>
+            </ScrollView>
         );
     }
 }

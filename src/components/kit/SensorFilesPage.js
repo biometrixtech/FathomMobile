@@ -637,7 +637,6 @@ class SensorFilesPage extends Component {
                                     <Placement
                                         currentPage={pageIndex === 0}
                                         nextBtn={this._renderNextPage}
-                                        onBack={this._renderPreviousPage}
                                         page={3}
                                         showTopNavStep={false}
                                     />
