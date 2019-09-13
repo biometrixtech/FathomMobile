@@ -59,9 +59,24 @@ class StartSensorSessionModal extends PureComponent {
         this.setState({ timer: 0, });
     }
 
-    _onClose = () => {
-        const { onClose, } = this.props;
+    _onClose = async patchSession => {
+        const { onClose, updateSensorSession, } = this.props;
+        const { sessionId, } = this.state;
         onClose();
+        if(patchSession) {
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncResponse = await timesyncApiCall.json();
+            let dateTimeReturned = timesyncResponse.utc_datetime;
+            let indexOfDot = dateTimeReturned.indexOf('.');
+            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+            updateSensorSession(dateTimeReturned, false, sessionId)
+                .then(res => {
+                    console.log('res',res);
+                })
+                .catch(err => {
+                    console.log('err',err);
+                });
+        }
     }
 
     _startCalibration = async () => {
@@ -71,21 +86,18 @@ class StartSensorSessionModal extends PureComponent {
         let dateTimeReturned = timesyncResponse.utc_datetime;
         let indexOfDot = dateTimeReturned.indexOf('.');
         dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+        createSensorSession(dateTimeReturned, user)
+            .then(res => {
+                console.log('res',res);
+                this.setState({ sessionId: res.session.id, });
+            })
+            .catch(err => {
+                console.log('err',err);
+                this.setState({ createError: err.message, });
+            });
         this.timerId = setInterval(() => {
             let newTimerValue = parseInt((this.state.timer + 1), 10);
-            this.setState(
-                { timer: newTimerValue, },
-                () =>
-                    createSensorSession(dateTimeReturned, user)
-                        .then(res => {
-                            console.log('res',res);
-                            this.setState({ sessionId: res.session.id, });
-                        })
-                        .catch(err => {
-                            console.log('err',err);
-                            this.setState({ createError: err.message, });
-                        })
-            );
+            this.setState({ timer: newTimerValue, },);
         }, 1000);
     }
 
@@ -138,19 +150,17 @@ class StartSensorSessionModal extends PureComponent {
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthThird,}}
                             containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthThird,}}
-                            // icon={{ color: AppColors.white, name: 'restart', size: 30, type: 'material-community', }}
-                            // iconRight={true}
                             onPress={() => this._startOver()}
                             raised={true}
                             title={'Start over'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     }
-                    { (timer <= 16 && timer > 120) &&
+                    { (timer > 120) &&
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
                             containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
-                            onPress={() => this._onClose()}
+                            onPress={() => this._onClose(true)}
                             raised={true}
                             title={'Start Workout'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
