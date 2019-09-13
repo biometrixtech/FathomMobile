@@ -98,6 +98,7 @@ const ActivityTab = ({
     backgroundImage = false,
     completed,
     id,
+    isSensorSession,
     locked,
     onLayout,
     onPress ,
@@ -130,16 +131,34 @@ const ActivityTab = ({
                         </View>
                     }
                     <View style={{flex: 1, marginLeft: AppSizes.paddingSml,}}>
-                        <Text
-                            robotoRegular
-                            style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
-                        >{title}</Text>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                            <Text
+                                robotoRegular
+                                style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
+                            >
+                                {title}
+                            </Text>
+                            { isSensorSession &&
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
+                                    />
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
+                                        {moment(isSensorSession).format('M/D, h:mma')}
+                                    </Text>
+                                </View>
+                            }
+                        </View>
                         { (subtitle && subtitle.length > 0) &&
                             <Text
                                 numberOfLines={1}
                                 robotoRegular
                                 style={[completed ? styles.completedSubtitle : styles.lockedSubtitle, {color: AppColors.zeplin.slate,}]}
-                            >{subtitle}</Text>
+                            >
+                                {subtitle}
+                            </Text>
                         }
                     </View>
                 </View>
@@ -189,6 +208,7 @@ const ActivityTab = ({
 const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, userSesnorData, }) => {
     let {
         actionText,
+        eventDate,
         iconColor,
         iconName,
         iconType,
@@ -233,8 +253,8 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                     }
                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
                 </View>
-                { actionText &&
-                    <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
+                { eventDate &&
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
                 }
             </View>
             <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
@@ -297,7 +317,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                     <TabIcon
                         color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
                         icon={'clipboard-text'}
-                        size={20}
+                        size={30}
                         type={'material-community'}
                     />
                 </View>
@@ -315,10 +335,16 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                         null
                 }
             </View>
-            { activity.status === 'PROCESSING_COMPLETE' &&
+            { activity.status === 'PROCESSING_COMPLETE' ?
                 <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                     <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
                 </View>
+                : actionText ?
+                    <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
+                    </View>
+                    :
+                    null
             }
         </TouchableOpacity>
     );
@@ -1057,6 +1083,7 @@ class MyPlan extends Component {
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
                                             completed={completedLockedModality.isCompleted}
+                                            isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
                                             locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}
@@ -1114,6 +1141,7 @@ class MyPlan extends Component {
                                     {_.map(afterCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
                                             completed={completedLockedModality.isCompleted}
+                                            isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
                                             locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}

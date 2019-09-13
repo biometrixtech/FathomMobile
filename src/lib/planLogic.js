@@ -1391,7 +1391,7 @@ const PlanLogic = {
             completedCurrentPreActiveRest,
             completedCurrentWarmUp,
         );
-        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['event_date_time'], ['asc']);
+        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['completed_date_time'], ['asc']);
         let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
         let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'Active Recovery', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
         let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
@@ -1410,7 +1410,7 @@ const PlanLogic = {
             completedCurrentIce,
             completedCurrentPostActiveRest,
         );
-        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['event_date_time'], ['asc']);
+        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['completed_date_time'], ['asc']);
         let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
         let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'Heat', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
@@ -2272,7 +2272,6 @@ const PlanLogic = {
     handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData, dataType) => {
         const asymmetryIndex = dataType === 0 ? 'apt' : 'ankle_pitch';
         const APT_CHART_TOTAL = 60;
-        const ANKLE_PITCH_CART_RATIO = 40;
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
             {color: AppColors.transparent, x: 0, y: 0,},
@@ -2303,25 +2302,29 @@ const PlanLogic = {
         if(!isLeftDataEmpty && !isRightDataEmpty) {
             if(dataType === 0) {
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL, true);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL, true);
                     smallerPieData = emptyPieData;
                     rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
                 } else if(newPieData.left_y > newPieData.right_y) {
                     let ratio = (newPieData.left_y / newPieData.right_y);
                     newPieData.right_y = 5;
                     newPieData.left_y  = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
                     rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
                     let ratio = (newPieData.right_y / newPieData.left_y);
                     newPieData.left_y = 5;
                     newPieData.right_y = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
                     rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
                 }
             } else {
+                const ANKLE_PITCH_CART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
+                    40
+                    :
+                    360;
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
                     let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
                     largerPieData = [
@@ -2330,26 +2333,30 @@ const PlanLogic = {
                     ];
                     smallerPieData = emptyPieData;
                 } else if(newPieData.left_y > newPieData.right_y) {
-                    let largerValue = ((100 * newPieData.left_y) / ANKLE_PITCH_CART_RATIO);
-                    let fullValue = (largerValue + newPieData.left_y);
+                    let largerValue = newPieData.left_y;
+                    let smallerValue = newPieData.right_y;
+                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: newPieData.left_y, },
-                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
+                        { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: newPieData.right_y, },
-                        { color: AppColors.transparent, x: 1, y: (fullValue - newPieData.right_y), },
+                        { color: AppColors.zeplin.splashLight, x: 0, y: smallerValue, },
+                        { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
-                    let fullValue = (largerValue + newPieData.right_y);
+                    let largerValue = newPieData.right_y;
+                    let smallerValue = newPieData.left_y;
+                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: newPieData.right_y, },
-                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                        { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
+                        { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: newPieData.left_y, },
-                        { color: AppColors.transparent, x: 1, y: (fullValue - newPieData.left_y), },
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: smallerValue, },
+                        { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 }
             }
@@ -2379,7 +2386,7 @@ const PlanLogic = {
         };
     },
 
-    returnPieChartCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
+    returnPieChartAptCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
         let color = isSymmetry ?
             AppColors.zeplin.successLight
             :
@@ -2486,11 +2493,11 @@ const PlanLogic = {
         let title =  activity.status === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
             : activity.status === 'UPLOAD_IN_PROGRESS' ?
-                'Uploading...'
+                'Uploading Workout...'
                 : activity.status === 'UPLOAD_PAUSED' ?
                     'Upload paused'
                     : activity.status === 'PROCESSING_IN_PROGRESS' ?
-                        'Analyzing...'
+                        'Analyzing Workout...'
                         : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                             'Calibration error'
                             : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
@@ -2527,8 +2534,10 @@ const PlanLogic = {
                         'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
                         :
                         false;
+        let eventDate = activity && activity.event_date ? moment(activity.event_date).format('M/D, h:mma') : false;
         return {
             actionText,
+            eventDate,
             iconColor,
             iconName,
             iconType,
