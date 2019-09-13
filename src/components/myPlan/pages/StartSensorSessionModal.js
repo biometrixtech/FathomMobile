@@ -10,37 +10,47 @@
     />
  *
  */
-import React, { Component, } from 'react';
+/* global fetch console */
+import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { Alert, StyleSheet, View, } from 'react-native';
 
-// import third-party libraries
-// import _ from 'lodash';
-
-// // Consts and Libs
+// Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-// import { MyPlan as MyPlanConstants, } from '../../../constants';
 import { Button, FathomModal, TabIcon, Text, } from '../../custom';
 
 /* Styles ==================================================================== */
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 
 /* Component ==================================================================== */
-class StartSensorSessionModal extends Component {
+class StartSensorSessionModal extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            timer: 0,
+            createError: null,
+            sessionId:   null,
+            timer:       0,
         };
         this.timerId = null;
     }
 
-    componentDidUpdate = prevProps => {
+    componentDidUpdate = (prevProps, prevState) => {
         if(prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isMounted) {
             clearInterval(this.timerId);
             this.setState({ timer: 0, });
+        }
+        if(prevState.timer !== this.state.timer && this.state.timer === 16 && this.state.createError) {
+            Alert.alert(
+                'Error creating session',
+                this.state.createError,
+                [
+                    {
+                        text:  'OK',
+                        style: 'cancel',
+                    },
+                ],
+                { cancelable: false, }
+            );
         }
     }
 
@@ -51,27 +61,46 @@ class StartSensorSessionModal extends Component {
 
     _onClose = () => {
         const { onClose, } = this.props;
-        // close modal, start calculating, make getMyPlan + getSensorFiles API calls
         onClose();
     }
 
-    _startCalibration = () => {
+    _startCalibration = async () => {
+        const { createSensorSession, user, } = this.props;
+        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+        const timesyncResponse = await timesyncApiCall.json();
+        let dateTimeReturned = timesyncResponse.utc_datetime;
         this.timerId = setInterval(() => {
             let newTimerValue = parseInt((this.state.timer + 1), 10);
-            this.setState({ timer: newTimerValue, });
+            this.setState(
+                { timer: newTimerValue, },
+                () =>
+                    createSensorSession(dateTimeReturned, user)
+                        .then(res => {
+                            console.log('res',res);
+                            this.setState({ sessionId: res.session.id, });
+                        })
+                        .catch(err => {
+                            console.log('err',err);
+                            this.setState({ createError: err.message, });
+                        })
+            );
         }, 1000);
     }
 
     _startOver = () => {
-        const { timer, } = this.state;
-        if(timer > 0 && timer < 16) {
+        const { sessionId, timer, } = this.state;
+        const { updateSensorSession, } = this.props;
+        if(timer > 0 && timer <= 16) {
             clearInterval(this.timerId);
             this.setState({ timer: 0, });
-        } else if(timer > 16 && timer < 31) {
-            // patch session_event with status as CREATE_ATTEMPT_FAILED
-            // able to 'start workout' (no API call)
-            // able to exit modal (no API call)
         }
+        updateSensorSession(false, 'CREATE_ATTEMPT_FAILED', sessionId)
+            .then(res => {
+                console.log('res',res);
+            })
+            .catch(err => {
+                console.log('err',err);
+            });
     }
 
     render = () => {
@@ -115,7 +144,7 @@ class StartSensorSessionModal extends Component {
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     }
-                    { (timer > 120) &&
+                    { (timer <= 16 && timer > 120) &&
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
                             containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}

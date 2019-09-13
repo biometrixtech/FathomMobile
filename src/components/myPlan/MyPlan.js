@@ -29,7 +29,6 @@ import {
     Image,
     ImageBackground,
     Platform,
-    RefreshControl,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -146,7 +145,7 @@ const ActivityTab = ({
                                         style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
                                     />
                                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
-                                        {moment(isSensorSession).format('M/D, h:mma')}
+                                        {moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
                                     </Text>
                                 </View>
                             }
@@ -1018,7 +1017,6 @@ class MyPlan extends Component {
         const {
             activeAfterModalities,
             activeBeforeModalities,
-            afterCompletedLockedModalities,
             askForNewMobilize,
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
@@ -1057,21 +1055,7 @@ class MyPlan extends Component {
                                         paddingTop:        AppSizes.padding,
                                     }}
                                     ref={ref => {this._scrollViewRef = ref;}}
-                                    refreshControl={
-                                        <RefreshControl
-                                            colors={[AppColors.zeplin.yellow]}
-                                            onRefresh={() => this._handleExerciseListRefresh(false)}
-                                            refreshing={isPageLoading}
-                                            title={'Loading...'}
-                                            titleColor={AppColors.zeplin.yellow}
-                                            tintColor={AppColors.zeplin.yellow}
-                                        />
-                                    }
                                 >
-
-                                    {/* (!triggerStep && !offDaySelected) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
-                                    */}
 
                                     { offDaySelected &&
                                         <ActivityTab
@@ -1133,21 +1117,6 @@ class MyPlan extends Component {
                                     { (dailyPlanObj.train_later && !triggerStep) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
-
-                                    {/* ((afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) && !offDaySelected) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
-                                    */}
-
-                                    {_.map(afterCompletedLockedModalities, (completedLockedModality, key) => (
-                                        <ActivityTab
-                                            completed={completedLockedModality.isCompleted}
-                                            isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
-                                            key={key}
-                                            locked={completedLockedModality.isLocked}
-                                            subtitle={completedLockedModality.subtitle}
-                                            title={completedLockedModality.title}
-                                        />
-                                    ))}
 
                                     {_.map(activeAfterModalities, (activeModality, key) => (
                                         <ActivityTab

@@ -187,7 +187,7 @@ const SensorLogic = {
                 : session.status === 'PROCESSING_FAILED' ?
                     'We were not able to analyze your data.'
                     : session.status === 'UPLOAD_IN_PROGRESS' ?
-                        'Syncing your data! Do not remove from wifi.'
+                        'Uploading your data! Do not remove from wifi.'
                         : session.status === 'PROCESSING_COMPLETE' ?
                             `Synced & processed at ${updateEndDateTimeString}`
                             :

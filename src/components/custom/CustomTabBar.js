@@ -80,7 +80,7 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
                 <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.settings()} style={{flex: 1,}}>
                     <TabIcon
                         color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
-                        icon={'dehaze'}
+                        icon={'settings'}
                         iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
                         size={20}
                     />

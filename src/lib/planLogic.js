@@ -1382,16 +1382,6 @@ const PlanLogic = {
         let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
         let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
         let completedCurrentWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', '', true);
-        let beforeCompletedLockedModalities = _.concat(
-            completedHeat,
-            completedPreActiveRest,
-            completedWarmUp,
-            completedTrainingSessions,
-            completedCurrentHeat,
-            completedCurrentPreActiveRest,
-            completedCurrentWarmUp,
-        );
-        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['completed_date_time'], ['asc']);
         let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
         let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'Active Recovery', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
         let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
@@ -1400,17 +1390,24 @@ const PlanLogic = {
         let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'Active Recovery', PlanLogic.handleFindGoals(dailyPlanObj.cool_down, MyPlanConstants.coolDownExerciseListOrder), true, MyPlanConstants.coolDownExerciseListOrder);
         let completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', PlanLogic.handleFindGoals([dailyPlanObj.ice]), true);
         let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest, MyPlanConstants.postExerciseListOrder), true, MyPlanConstants.postExerciseListOrder);
-        let afterCompletedLockedModalities = _.concat(
+        let beforeCompletedLockedModalities = _.concat(
             completedCWI,
             completedCoolDown,
-            completedIce,
-            completedPostActiveRest,
             completedCurrentCWI,
             completedCurrentCoolDown,
+            completedCurrentHeat,
             completedCurrentIce,
             completedCurrentPostActiveRest,
+            completedCurrentPreActiveRest,
+            completedCurrentWarmUp,
+            completedHeat,
+            completedIce,
+            completedPostActiveRest,
+            completedPreActiveRest,
+            completedTrainingSessions,
+            completedWarmUp,
         );
-        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['completed_date_time'], ['asc']);
+        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['completed_date_time'], ['asc']);
         let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
         let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'Heat', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
@@ -1460,11 +1457,10 @@ const PlanLogic = {
             :
             [];
         sensorSessions = _.orderBy(sensorSessions, ['event_date'], ['asc']);
-        sensorSessions = _.filter(sensorSessions, u => !trainingSessionsIds.includes(u.id) && u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD'));
+        sensorSessions = _.filter(sensorSessions, u => !trainingSessionsIds.includes(u.id) && (u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')));
         return {
             activeAfterModalities,
             activeBeforeModalities,
-            afterCompletedLockedModalities,
             askForNewMobilize,
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
@@ -2534,7 +2530,7 @@ const PlanLogic = {
                         'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
                         :
                         false;
-        let eventDate = activity && activity.event_date ? moment(activity.event_date).format('M/D, h:mma') : false;
+        let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
         return {
             actionText,
             eventDate,

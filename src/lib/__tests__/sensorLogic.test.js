@@ -146,7 +146,7 @@ describe('Handles Sensor Files Session Render Logic', () => {
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             'sync',
             moment(session.event_date).format('M/D'),
-            'Syncing your data! Do not remove from wifi.',
+            'Uploading your data! Do not remove from wifi.',
             `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`,
             'material'
         );

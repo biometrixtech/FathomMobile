@@ -307,12 +307,12 @@ class Settings extends Component {
                                     let btnClickTime = moment().format('hh:kk:ss.SS a');
                                     try {
                                         let requestTime = moment().format('hh:kk:ss.SS a');
-                                        // const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-                                        const timesyncApiCall = await fetch('https://apis.dev.fathomai.com/hardware/latest/misc/time');
+                                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                                        // const timesyncApiCall = await fetch('https://apis.dev.fathomai.com/hardware/latest/misc/time');
                                         const timesyncResponse = await timesyncApiCall.json();
                                         console.log('timesyncResponse',timesyncResponse);
-                                        // let dataReturned = moment(timesyncResponse.utc_datetime).utc().format('hh:kk:ss.SS a');
-                                        let dataReturned = moment(timesyncResponse.current_date).utc().format('hh:kk:ss.SS a');
+                                        let dataReturned = moment(timesyncResponse.utc_datetime).utc().format('hh:kk:ss.SS a');
+                                        // let dataReturned = moment(timesyncResponse.current_date).utc().format('hh:kk:ss.SS a');
                                         let requestReturnTime = moment().format('hh:kk:ss.SS a');
                                         Alert.alert(
                                             'Timesync',
