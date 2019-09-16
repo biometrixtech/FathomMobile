@@ -22,6 +22,7 @@ import SoreBodyPart from './SoreBodyPart';
 import SoreBodyPartScaleButton from './SoreBodyPartScaleButton';
 import SportBlock from './SportBlock';
 import SportScheduleBuilder from './SportScheduleBuilder';
+import StartSensorSessionModal from './StartSensorSessionModal';
 import SurveySlideUpPanel from './SurveySlideUpPanel';
 import TimedExercise from './TimedExercise';
 
@@ -46,6 +47,7 @@ export {
     SoreBodyPartScaleButton,
     SportBlock,
     SportScheduleBuilder,
+    StartSensorSessionModal,
     SurveySlideUpPanel,
     TimedExercise,
 };

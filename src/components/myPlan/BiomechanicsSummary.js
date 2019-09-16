@@ -37,7 +37,7 @@ const BiomechanicsSummary = ({ currentIndex, plan, step, title, }) => {
         selectedSession,
         sessionDuration,
         updatedChartData,
-    } = PlanLogic.handleBiomechanicsRenderLogic(plan, currentIndex, step);
+    } = PlanLogic.handleBiomechanicsAptRenderLogic(plan, currentIndex, step);
     return (
         <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 

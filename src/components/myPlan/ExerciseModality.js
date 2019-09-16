@@ -19,7 +19,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, MyPlan as MyPlanConstants, } from '../../constants';
@@ -218,18 +218,16 @@ class ExerciseModality extends Component {
                         ref={ref => {this._scrollViewRef = ref;}}
                         style={{backgroundColor: AppColors.white, flex: 1,}}
                     >
-                        <View style={{height: Platform.OS === 'android' ? (AppSizes.screen.height * 0.85) : AppSizes.screen.heightThreeQuarters,}}>
-                            <View style={{flex: 1,}}>
-                                <Image
-                                    resizeMode={'cover'}
-                                    source={imageSource}
-                                    style={[{height: (AppSizes.screen.heightThreeQuarters - AppSizes.paddingXLrg), width: AppSizes.screen.width,}, StyleSheet.absoluteFill,]}
-                                />
+                        <View>
+                            <ImageBackground
+                                source={imageSource}
+                                style={{flex: 1, width: AppSizes.screen.width,}}
+                            >
                                 <LinearGradient
                                     colors={['rgba(112, 190, 199, 0.8)', 'rgba(112, 190, 199, 0.8)']}
                                     end={{x: 1, y: 0}}
                                     start={{x: 0, y: 0}}
-                                    style={[{alignItems: 'center', flex: 1, justifyContent: 'center',}]}
+                                    style={[{alignItems: 'center', flex: 1, justifyContent: 'center', paddingBottom: (AppSizes.paddingXLrg + AppSizes.paddingLrg), paddingTop: (AppSizes.statusBarHeight + AppSizes.paddingXLrg),}]}
                                 >
                                     <TouchableOpacity
                                         activeOpacity={1}
@@ -244,7 +242,7 @@ class ExerciseModality extends Component {
                                             type={'material-community'}
                                         />
                                     </TouchableOpacity>
-                                    <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), paddingTop: AppSizes.paddingSml,}}>
                                         {pageTitle}
                                     </Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.superLight, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingLrg,}}>{pageSubtitle}</Text>
@@ -282,7 +280,7 @@ class ExerciseModality extends Component {
                                         </View>
                                     }
                                 </LinearGradient>
-                            </View>
+                            </ImageBackground>
                             <Button
                                 buttonStyle={StyleSheet.flatten([Platform.OS === 'ios' ? AppStyles.scaleButtonShadowEffect : {elevation: 2,}, {backgroundColor: AppColors.zeplin.yellow, borderRadius: (AppSizes.paddingXLrg), height: (AppSizes.paddingXLrg * 2), position: 'relative', top: -AppSizes.paddingXLrg, width: (AppSizes.paddingXLrg * 2),}])}
                                 containerStyle={{alignItems: 'center', height: AppSizes.paddingXLrg, overflow: 'visible',}}

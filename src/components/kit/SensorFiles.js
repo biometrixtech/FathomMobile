@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, BackHandler, Image, Platform, StatusBar, TouchableOpacity, View, } from 'react-native';
+import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -41,8 +41,9 @@ class SensorFiles extends Component {
     static componentName = 'SensorFiles';
 
     static propTypes = {
-        updateUser: PropTypes.func.isRequired,
-        user:       PropTypes.object.isRequired,
+        getSensorFiles: PropTypes.func.isRequired,
+        updateUser:     PropTypes.func.isRequired,
+        user:           PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -73,20 +74,16 @@ class SensorFiles extends Component {
     }
 
     _handleBackUpTutorialOnClose = () => {
-        const { updateUser, user, } = this.props;
+        const { getSensorFiles, updateUser, user, } = this.props;
         // update state to close modal
-        this.setState(
-            { isTutorialModalOpen: false, },
-            () => {
-                // setup variables
-                let newUserPayloadObj = {};
-                newUserPayloadObj.first_time_experience = ['3Sensor-Onboarding-Tutorial-User-Complete'];
-                // update user object
-                updateUser(newUserPayloadObj, user.id)
-                    .then(res => console.log('res',res))
-                    .catch(err => console.log('err',err));
-            },
-        );
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.first_time_experience = ['3Sensor-Onboarding-Tutorial-User-Complete'];
+        // update user object
+        updateUser(newUserPayloadObj, user.id)
+            .then(res => getSensorFiles(res.user))
+            .then(res => this.setState({ isTutorialModalOpen: false, }))
+            .catch(err => this.setState({ isTutorialModalOpen: false, }));
     }
 
     _handleWifiClicked = sensorNetwork => {
@@ -119,7 +116,11 @@ class SensorFiles extends Component {
             sensorNetwork,
         } = SensorLogic.handleSensorFileRenderLogic(sensorData);
         return (
-            <View style={{backgroundColor: AppColors.white, flex: 1, flexDirection: 'column', justifyContent: 'space-between',}}>
+            <ScrollView
+                automaticallyAdjustContentInsets={false}
+                contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between',}}
+                style={{backgroundColor: AppColors.white,}}
+            >
                 <View>
                     <TopNavBar />
                     <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${_.toUpper(user.personal_data.first_name)}\'S FATHOM PRO KIT`}</Text>
@@ -215,7 +216,7 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={`WIFI: ${sensorData.sensor_networks[0]}`}
+                        title={`WIFI: ${sensorData.sensor_networks[0] || 'NO NETWORK DEFINED'}`}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
@@ -316,7 +317,7 @@ class SensorFiles extends Component {
                     handleOnClose={this._handleBackUpTutorialOnClose}
                     isVisible={isTutorialModalOpen}
                 />
-            </View>
+            </ScrollView>
         );
     }
 }

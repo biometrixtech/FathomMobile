@@ -5,8 +5,8 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_4';
-const preprocessingAPIVersion = '/preprocessing/1_1';
+const plansAPIVersion = '/plans/4_5';
+const preprocessingAPIVersion = '/preprocessing/1_1';//2_0';
 const usersAPIVersion = '/users/2_3';
 
 export default {
@@ -100,10 +100,10 @@ export default {
     ]),
 
     PREPROCESSING_APIs: {
-        DEV:  'https://apis.dev.fathomai.com/preprocessing',
+        DEV:  'https://apis.dev.fathomai.com',
         TEST: 'https://apis.test.fathomai.com',
-        QA:   'https://apis.qa.fathomai.com/preprocessing',
-        PROD: 'https://apis.production.fathomai.com/preprocessing',
+        QA:   'https://apis.qa.fathomai.com',
+        PROD: 'https://apis.production.fathomai.com',
     },
 
     // preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
@@ -113,6 +113,9 @@ export default {
 
     preprocessingEndpoints: new Map([
         ['status', `${preprocessingAPIVersion}/status/sensor`], // POST
+        // ['create_session', `${preprocessingAPIVersion}/session`], // POST
+        // ['status',         `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        // ['update_session', `${preprocessingAPIVersion}/session/{sessionId}`], // PATCH
     ]),
 
     HARDWARE_APIs: {

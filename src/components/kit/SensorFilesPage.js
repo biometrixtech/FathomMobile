@@ -13,6 +13,7 @@ import {
     PermissionsAndroid,
     ScrollView,
     StatusBar,
+    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -287,6 +288,20 @@ class SensorFilesPage extends Component {
                         return callback && callback();
                     });
             }
+        );
+    }
+
+    _handleNotInRange = () => {
+        Alert.alert(
+            '',
+            'You may be out of range of your preferred network. If you have data on your kit pending upload, bring your kit into range of your preferred network.\n\nIf you do not have any recent workouts to upload, you do not need to be in range of your preferred network.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
         );
     }
 
@@ -621,41 +636,26 @@ class SensorFilesPage extends Component {
                                 >
                                     <Placement
                                         currentPage={pageIndex === 0}
-                                        handleAlertPress={() => this._handleAlertPress()}
                                         nextBtn={this._renderNextPage}
-                                        page={1}
+                                        page={3}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 1}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={2}
+                                        page={4}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 2}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={3}
-                                        showTopNavStep={false}
-                                    />
-                                    <Placement
-                                        currentPage={pageIndex === 3}
-                                        nextBtn={this._renderNextPage}
-                                        onBack={this._renderPreviousPage}
-                                        page={4}
-                                        showTopNavStep={false}
-                                    />
-                                    <Placement
-                                        currentPage={pageIndex === 4}
-                                        nextBtn={this._renderNextPage}
-                                        onBack={this._renderPreviousPage}
                                         page={5}
                                         showTopNavStep={false}
                                     />
                                     <Placement
-                                        currentPage={pageIndex === 5}
+                                        currentPage={pageIndex === 3}
                                         nextBtn={() => Actions.pop()}
                                         onBack={this._renderPreviousPage}
                                         page={6}
@@ -746,6 +746,7 @@ class SensorFilesPage extends Component {
                             {_.map(user.sensor_data.sessions, (session, key) => {
                                 const {
                                     iconName,
+                                    iconType,
                                     leftIconString,
                                     subtitle,
                                     title,
@@ -767,6 +768,7 @@ class SensorFilesPage extends Component {
                                                             containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
                                                             icon={iconName}
                                                             size={AppFonts.scaleFont(15)}
+                                                            type={iconType}
                                                         />
                                                     }
                                                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{subtitle}</Text>
@@ -787,13 +789,17 @@ class SensorFilesPage extends Component {
                         </View>
                     }
                 </View>
-                <Text
-                    onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'session', })}
-                    robotoMedium
-                    style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), paddingVertical: AppSizes.padding, textAlign: 'center',}}
+                <TouchableOpacity
+                    onPress={() => Actions.sensorFilesPage({ pageStep: 'session', })}
+                    style={{paddingVertical: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}
                 >
-                    {'Remind me how to update data'}
-                </Text>
+                    <Text
+                        robotoMedium
+                        style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), textAlign: 'center', textDecorationLine: 'underline',}}
+                    >
+                        {'Remind me how to update data'}
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     }

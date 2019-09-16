@@ -224,7 +224,7 @@ const getSensorFiles = (userObj, days = 14) => {
         payload.timezone = userObj.timezone;
     }
     return dispatch => new Promise((resolve, reject) => {
-        return AppAPI.preprocessing.status.post(false, payload)
+        return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
             .then(response => {
                 let newUserObj = _.cloneDeep(userObj);
                 newUserObj.sensor_data.accessory = response.accessory;
@@ -235,6 +235,38 @@ const getSensorFiles = (userObj, days = 14) => {
                 });
                 return resolve(response);
             })
+            .catch(error => reject(error));
+    });
+};
+
+const createSensorSession = (dateTime, userObj) => {
+    let payload = {};
+    payload.event_date = dateTime;
+    payload.accessory_id = userObj.sensor_data.sensor_pid;
+    payload.sensors = [];
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.create_session.post(false, payload)
+            .then(response => resolve(response))
+            .catch(error => reject(error));
+    });
+};
+
+const updateSensorSession = (endDate, sessionStatus, sessionId) => {
+    if(!sessionId) {
+        return dispatch => new Promise((resolve, reject) => {
+            reject('Session not found, please try again!');
+        });
+    }
+    let payload = {};
+    if(endDate) {
+        payload.end_date = endDate;
+    }
+    if(sessionStatus) {
+        payload.session_status = sessionStatus;
+    }
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
+            .then(response => resolve(response))
             .catch(error => reject(error));
     });
 };
@@ -590,6 +622,7 @@ const exitKitSetup = async device => {
 
 export default {
     assignKitIndividual,
+    createSensorSession,
     destroyInstance,
     enable,
     exitKitSetup,
@@ -599,5 +632,6 @@ export default {
     handleError,
     startDeviceScan,
     startMonitor,
+    updateSensorSession,
     writeWifiDetailsToSensor,
 };

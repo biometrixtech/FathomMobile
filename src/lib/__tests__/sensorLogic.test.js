@@ -27,9 +27,10 @@ const helperFunctions = {
         };
     },
 
-    getSessionsExpectedResult: (iconName, leftIconString, subtitle, title) => {
+    getSessionsExpectedResult: (iconName, leftIconString, subtitle, title, iconType) => {
         return {
             iconName,
+            iconType,
             leftIconString,
             subtitle,
             title,
@@ -140,34 +141,37 @@ describe('Handles Sensor File Render Logic', () => {
 });
 
 describe('Handles Sensor Files Session Render Logic', () => {
-    it('Status 0', () => {
-        let session = helperFunctions.getSessionObject(45, '2019-06-28T04:01:37Z', 0, '2019-06-28T09:03:37Z');
+    it('Status - UPLOAD_IN_PROGRESS', () => {
+        let session = helperFunctions.getSessionObject(45, '2019-06-28T04:01:37Z', 'UPLOAD_IN_PROGRESS', '2019-06-28T09:03:37Z');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             'sync',
             moment(session.event_date).format('M/D'),
-            'Syncing your data! Do not remove from wifi.',
-            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`
+            'Uploading your data! Do not remove from wifi.',
+            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`,
+            'material'
         );
         expect(SensorLogic.handleSessionRenderLogic(session)).toEqual(expectedResult);
     });
-    it('Status 1', () => {
-        let session = helperFunctions.getSessionObject(12, '2019-06-28T04:01:37Z', 1, '2019-06-28T09:03:37Z');
+    it('Status - PROCESSING_COMPLETE', () => {
+        let session = helperFunctions.getSessionObject(12, '2019-06-28T04:01:37Z', 'PROCESSING_COMPLETE', '2019-06-28T09:03:37Z');
         let updateEndDateTimeString = moment(session.upload_end_date.replace('Z', '')).format('M/D, h:mma');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
             'check-circle',
             moment(session.event_date).format('M/D'),
             `Synced & processed at ${updateEndDateTimeString}`,
-            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`
+            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`,
+            'material'
         );
         expect(SensorLogic.handleSessionRenderLogic(session)).toEqual(expectedResult);
     });
-    it('Status OTHER', () => {
-        let session = helperFunctions.getSessionObject(72, '2019-06-28T04:01:37Z', 2, '2019-06-28T09:03:37Z');
+    it('Status - PROCESSING_FAILED', () => {
+        let session = helperFunctions.getSessionObject(72, '2019-06-28T04:01:37Z', 'PROCESSING_FAILED', '2019-06-28T09:03:37Z');
         let expectedResult = helperFunctions.getSessionsExpectedResult(
-            false,
+            'alert',
             moment(session.event_date).format('M/D'),
-            'Hmm...something went wrong. We\'re working on it!',
-            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`
+            'We were not able to analyze your data.',
+            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`,
+            'material-community'
         );
         expect(SensorLogic.handleSessionRenderLogic(session)).toEqual(expectedResult);
     });

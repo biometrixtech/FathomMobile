@@ -728,20 +728,23 @@ const getMobilize = userId => {
 /**
   * Get Biomechanics Details
   */
-const getBiomechanicsDetails = (currentPlan, userId) => {
+const getBiomechanicsDetails = (currentPlan, dataType, userId) => {
+    const asymmetryIndex = dataType === 0 ? 'apt' : 'ankle_pitch';
+    const trendsIndex = dataType === 0 ? 'biomechanics_apt' : 'biomechanics_ankle_pitch';
     let payload = {};
     payload.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    payload.data_type = dataType;
     return dispatch => AppAPI.biomechanics_detail.post({userId}, payload)
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
-            let mergedSessions = _.map(newPlan.trends.biomechanics_summary.sessions, obj => {
+            let mergedSessions = _.map(newPlan.trends[trendsIndex].sessions, obj => {
                 let clonedObj = _.cloneDeep(obj);
                 let returnedSession = _.find(response.sessions, ['session_id', clonedObj.session_id]);
-                let mergedAsymmetryAptObj = _.merge(clonedObj.asymmetry.apt, returnedSession.asymmetry.apt);
-                clonedObj.asymmetry.apt = mergedAsymmetryAptObj;
+                let mergedAsymmetryAptObj = _.merge(clonedObj.asymmetry[asymmetryIndex], returnedSession.asymmetry[asymmetryIndex]);
+                clonedObj.asymmetry[asymmetryIndex] = mergedAsymmetryAptObj;
                 return clonedObj;
             });
-            newPlan.trends.biomechanics_summary.sessions = mergedSessions;
+            newPlan.trends[trendsIndex].sessions = mergedSessions;
             dispatch({
                 type: Actions.GET_MY_PLAN,
                 data: [newPlan],

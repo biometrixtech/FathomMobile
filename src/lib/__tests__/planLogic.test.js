@@ -1706,7 +1706,7 @@ it('Add Title To Completed Activity Helper - WITHOUT TITLE & WITH SPORT', () => 
     let obj = [{sport_name: 17, active: true, completed: true, created_date: date,}];
     let title = false;
     let subtitle = ' ';
-    let expectedResult = [{sport_name: 17, title: 'RUNNING', active: true, completed: true, created_date: date, isCompleted: 17, isLocked: false,}];
+    let expectedResult = [{sport_name: 17, title: 'Running', active: true, completed: true, created_date: date, isCompleted: 17, isLocked: false,}];
     expect(PlanLogic.addTitleToCompletedModalitiesHelper(obj, title, subtitle)).toEqual(expectedResult);
 });
 
@@ -1720,7 +1720,7 @@ it('Body Part Modality Render Logic - HEAT', () => {
         imageSource:       require('../../../assets/images/standard/heat.png'),
         pageSubtitle:      '30 minutes before training',
         pageText:          'Heat increases circulation & loosens up soft tissues to improve the benefits of foam rolling, stretching, & dynamic warmup.',
-        pageTitle:         'HEAT',
+        pageTitle:         'Heat',
         recoveryObj:       dailyPlanObj.heat,
         sceneId:           'heatScene',
         textId:            'heat',
@@ -1739,7 +1739,7 @@ it('Body Part Modality Render Logic - ICE', () => {
         imageSource:       require('../../../assets/images/standard/ice.png'),
         pageSubtitle:      'After all training is complete',
         pageText:          'Ice can help minimize swelling due to a minor injury & reduce inflammation in your tissues, muscle spasms, & pain.',
-        pageTitle:         'ICE',
+        pageTitle:         'Ice',
         recoveryObj:       dailyPlanObj.ice,
         sceneId:           'iceScene',
         textId:            'ice',
@@ -1758,7 +1758,7 @@ it('Body Part Modality Render Logic - CWI', () => {
         imageSource:       require('../../../assets/images/standard/cwi.png'),
         pageSubtitle:      'After all training is complete',
         pageText:          'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.',
-        pageTitle:         'COLD WATER BATH',
+        pageTitle:         'Cold Water Bath',
         recoveryObj:       dailyPlanObj.cold_water_immersion,
         sceneId:           'cwiScene',
         textId:            'cwi',
@@ -1787,7 +1787,7 @@ it('Exercise Modality Render Logic - MOBILIZE (PRE)', () => {
         imageId:            'prepareCareActivate',
         imageSource:        require('../../../assets/images/standard/mobilize.png'),
         pageSubtitle:       'Anytime before training',
-        pageTitle:          'MOBILIZE',
+        pageTitle:          'Mobilize',
         priorityText:       'Efficient',
         recoveryObj:        {},
         recoveryType:       'pre_active_rest',
@@ -1817,7 +1817,7 @@ it('Exercise Modality Render Logic - MOBILIZE (POST)', () => {
         imageId:            'recoverCareActivate',
         imageSource:        require('../../../assets/images/standard/mobilize.png'),
         pageSubtitle:       'Anytime',
-        pageTitle:          'MOBILIZE',
+        pageTitle:          'Mobilize',
         priorityText:       'Efficient',
         recoveryObj:        {active: true,},
         recoveryType:       'post_active_rest',
@@ -1847,7 +1847,7 @@ it('Exercise Modality Render Logic - ACTIVE RECOVERY', () => {
         imageId:            'coolDown',
         imageSource:        require('../../../assets/images/standard/active_recovery.png'),
         pageSubtitle:       'Immediately after training',
-        pageTitle:          'ACTIVE RECOVERY',
+        pageTitle:          'Active Recovery',
         priorityText:       'Efficient',
         recoveryObj:        {active: true,},
         recoveryType:       'cool_down',
@@ -1877,7 +1877,7 @@ it('Exercise Modality Render Logic - WARM UP', () => {
         imageId:            'warmUp',
         imageSource:        require('../../../assets/images/standard/mobilize.png'),
         pageSubtitle:       'Anytime before training',
-        pageTitle:          'WARM UP',
+        pageTitle:          'Warm Up',
         priorityText:       'Efficient',
         recoveryObj:        {active: true,},
         recoveryType:       'warm_up',

@@ -6,11 +6,13 @@ import { plan as PlanActions, } from '../../actions';
 
 const Biomechanics = ({
     Layout,
+    dataType,
     getBiomechanicsDetails,
     user,
     plan,
 }) => (
     <Layout
+        dataType={dataType}
         getBiomechanicsDetails={getBiomechanicsDetails}
         plan={plan}
         user={user}
@@ -19,6 +21,7 @@ const Biomechanics = ({
 
 Biomechanics.propTypes = {
     Layout:                 PropTypes.func.isRequired,
+    dataType:               PropTypes.number.isRequired,
     getBiomechanicsDetails: PropTypes.func.isRequired,
     plan:                   PropTypes.object.isRequired,
     user:                   PropTypes.object.isRequired,
@@ -27,8 +30,9 @@ Biomechanics.propTypes = {
 Biomechanics.defaultProps = {};
 
 const mapStateToProps = (state, props) => ({
-    plan: state.plan,
-    user: state.user,
+    dataType: props.dataType,
+    plan:     state.plan,
+    user:     state.user,
 });
 
 const mapDispatchToProps = {
