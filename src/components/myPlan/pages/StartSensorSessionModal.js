@@ -157,14 +157,24 @@ class StartSensorSessionModal extends PureComponent {
                         />
                     }
                     { (timer > 120) &&
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
-                            containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
-                            onPress={() => this._onClose(true)}
-                            raised={true}
-                            title={'Start Workout'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
-                        />
+                        <View>
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                                containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
+                                onPress={() => this._onClose()}
+                                raised={true}
+                                title={'Start Workout'}
+                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
+                            />
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                                containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
+                                onPress={() => this._onClose(true)}
+                                raised={true}
+                                title={'End Workout'}
+                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
+                            />
+                        </View>
                     }
                 </View>
             </FathomModal>
