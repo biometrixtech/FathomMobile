@@ -2317,12 +2317,12 @@ const PlanLogic = {
                     rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
                 }
             } else {
-                const ANKLE_PITCH_CART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
+                const ANKLE_PITCH_CHART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
                     40
                     :
                     360;
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
+                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CHART_RATIO);
                     largerPieData = [
                         { color: AppColors.zeplin.successLight, x: 0, y: newPieData.right_y, },
                         { color: AppColors.transparent, x: 1, y: largerValue, },
@@ -2331,8 +2331,8 @@ const PlanLogic = {
                 } else if(newPieData.left_y > newPieData.right_y) {
                     let largerValue = newPieData.left_y;
                     let smallerValue = newPieData.right_y;
-                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
-                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
                         { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
@@ -2344,8 +2344,8 @@ const PlanLogic = {
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
                     let largerValue = newPieData.right_y;
                     let smallerValue = newPieData.left_y;
-                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
-                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
                         { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
