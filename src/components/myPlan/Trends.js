@@ -224,7 +224,7 @@ class Trends extends PureComponent {
             parsedBiomechanicsData: parsedBiomechanicsAptData,
             sessionColor:           sessionAptColor,
             sessionSport:           sessionAptSport,
-        } = PlanLogic.hanldeBiomechanicsSelectedSessionRenderLogic(selectedAptSession, 0);
+        } = PlanLogic.handleBiomechanicsSelectedSessionRenderLogic(selectedAptSession, 0);
         let {
             leftPieInnerRadius:   leftPieInnerRadiusAnklePitch,
             leftPieWidth:         leftPieWidthAnklePitch,
@@ -240,7 +240,7 @@ class Trends extends PureComponent {
             parsedBiomechanicsData: parsedBiomechanicsAnklePitchData,
             sessionColor:           sessionAnklePitchColor,
             sessionSport:           sessionAnklePitchSport,
-        } = PlanLogic.hanldeBiomechanicsSelectedSessionRenderLogic(selectedAnklePitchSession, 1);
+        } = PlanLogic.handleBiomechanicsSelectedSessionRenderLogic(selectedAnklePitchSession, 1);
         return (
             <View style={{flex: 1,}}>
 

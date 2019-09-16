@@ -2222,7 +2222,7 @@ const PlanLogic = {
       * - Biomechanics
       */
     // TODO: UNIT TEST ME
-    hanldeBiomechanicsSelectedSessionRenderLogic: (selectedSession, dataType) => {
+    handleBiomechanicsSelectedSessionRenderLogic: (selectedSession, dataType) => {
         let biomechanicsAlertText = '';
         let parsedBiomechanicsData = [];
         let sessionSport = false;
