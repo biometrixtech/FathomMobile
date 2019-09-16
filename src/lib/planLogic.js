@@ -2101,7 +2101,7 @@ const PlanLogic = {
         ) {
             _.map(selectedAptSession.asymmetry.apt.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 let sessionColor = _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 1 ?
                     10
                     : _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 2 ?
@@ -2188,7 +2188,7 @@ const PlanLogic = {
         ) {
             _.map(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 let sessionColor = _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 1 ?
                     10
                     : _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 2 ?
