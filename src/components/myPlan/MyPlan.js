@@ -1228,7 +1228,7 @@ class MyPlan extends Component {
                                 />
                             </ActionButton.Item>
                         }
-                        { (
+                        {/* (
                             user && user.personal_data && user.personal_data.email &&
                             (
                                 /gabby[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
@@ -1253,7 +1253,7 @@ class MyPlan extends Component {
                                     style={{height: 32, tintColor: AppColors.white, width: 32,}}
                                 />
                             </ActionButton.Item>
-                        }
+                        */}
                     </ActionButton>
                 }
 
