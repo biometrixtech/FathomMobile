@@ -110,7 +110,7 @@ class GoalPill extends Component {
                     { imageSource &&
                         <Image
                             source={imageSource}
-                            style={{height: 15, marginRight: AppSizes.paddingSml, width: 15,}}
+                            style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
                         />
                     }
                     <Text

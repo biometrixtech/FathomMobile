@@ -8,7 +8,7 @@
     />
  *
  */
-import React, { Component, } from 'react';
+import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 
@@ -154,7 +154,7 @@ const InsightIcon = ({
     </TouchableOpacity>
 );
 
-class CustomMyPlanNavBar extends Component {
+class CustomMyPlanNavBar extends PureComponent {
     static propTypes = {
         categories:        PropTypes.array,
         handleReadInsight: PropTypes.func.isRequired,

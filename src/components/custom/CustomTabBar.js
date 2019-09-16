@@ -52,7 +52,7 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
                 <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.myPlan()} style={{flex: 1,}}>
                     <TabIcon
                         color={myPlanFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
-                        icon={'run'}
+                        icon={'clipboard-text'}
                         iconStyle={[{opacity: myPlanFocused ? 1 : 0.8,}]}
                         size={20}
                         type={'material-community'}
@@ -80,7 +80,7 @@ const CustomTabBar = ({ navigation, plan, user, }) => {
                 <TouchableOpacity onPress={user.loading ? () => {} : () => Actions.settings()} style={{flex: 1,}}>
                     <TabIcon
                         color={settingsFocused ? AppColors.zeplin.yellow : AppColors.zeplin.slateLight}
-                        icon={'dehaze'}
+                        icon={'settings'}
                         iconStyle={[{opacity: settingsFocused ? 1 : 0.8,}]}
                         size={20}
                     />

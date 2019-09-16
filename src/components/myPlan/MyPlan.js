@@ -29,7 +29,6 @@ import {
     Image,
     ImageBackground,
     Platform,
-    RefreshControl,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -56,7 +55,7 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, } from './pages';
+import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
 import { Loading, } from '../general';
 
 // global constants
@@ -98,6 +97,7 @@ const ActivityTab = ({
     backgroundImage = false,
     completed,
     id,
+    isSensorSession,
     locked,
     onLayout,
     onPress ,
@@ -130,16 +130,34 @@ const ActivityTab = ({
                         </View>
                     }
                     <View style={{flex: 1, marginLeft: AppSizes.paddingSml,}}>
-                        <Text
-                            oswaldRegular
-                            style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
-                        >{title}</Text>
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                            <Text
+                                robotoRegular
+                                style={[completed ? styles.completedTitle : styles.lockedTitle, {color: AppColors.zeplin.slate,}]}
+                            >
+                                {title}
+                            </Text>
+                            { isSensorSession &&
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
+                                    />
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
+                                        {moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
+                                    </Text>
+                                </View>
+                            }
+                        </View>
                         { (subtitle && subtitle.length > 0) &&
                             <Text
                                 numberOfLines={1}
                                 robotoRegular
                                 style={[completed ? styles.completedSubtitle : styles.lockedSubtitle, {color: AppColors.zeplin.slate,}]}
-                            >{subtitle}</Text>
+                            >
+                                {subtitle}
+                            </Text>
                         }
                     </View>
                 </View>
@@ -170,7 +188,7 @@ const ActivityTab = ({
                             type={'material-community'}
                         />
                         <View style={{marginTop: AppSizes.paddingLrg,}}>
-                            <Text oswaldRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(26),}}>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(26),}}>
                                 {title}
                             </Text>
                             <Text numberOfLines={1} robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(13),}}>{subtitle}</Text>
@@ -186,74 +204,150 @@ const ActivityTab = ({
     </View>
 );
 
-/*const MyPlanNavBar = ({
-    cards = [],
-    categories,
-    handleReadInsight,
-    expandNotifications,
-    onRight,
-    user,
-}) => (
-    <View style={{backgroundColor: AppColors.white,}}>
-        <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
-        <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, marginHorizontal: AppSizes.paddingSml, marginTop: AppSizes.statusBarHeight,}}>
-            { user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ?
-                <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => AppUtil.pushToScene('sensorFiles')}
-                    style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
-                >
+const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, userSesnorData, }) => {
+    let {
+        actionText,
+        eventDate,
+        iconColor,
+        iconName,
+        iconType,
+        subtext,
+        title,
+    } = PlanLogic.handleSingleSensorSessionCardRenderLogic(activity, userSesnorData);
+    return (
+        <TouchableOpacity
+            activeOpacity={1}
+            onPress={
+                activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                    () => handeRefresh()
+                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
+                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
+                            : activity.status === 'PROCESSING_COMPLETE' ?
+                                () => handleGetMobilize()
+                                :
+                                () => {}
+            }
+            style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
+        >
+            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
+                <View style={{flexDirection: 'row',}}>
+                    { iconName && iconType ?
+                        <TabIcon
+                            color={iconColor}
+                            icon={iconName}
+                            size={AppFonts.scaleFont(24)}
+                            type={iconType}
+                        />
+                        :
+                        <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
+                            <LottieView
+                                autoPlay={false}
+                                loop={false}
+                                progress={1}
+                                source={require('../../../assets/animation/checkmark-circle.json')}
+                            />
+                        </View>
+                    }
+                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
+                </View>
+                { eventDate &&
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
+                }
+            </View>
+            <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
                     <Image
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/sensor/sensor_slate.png')}
-                        style={{height: 20, width: 20,}}
+                        source={require('../../../assets/images/standard/kitactive.png')}
+                        style={{height: 25, width: 45,}}
                     />
-                </TouchableOpacity>
-                :
-                <View style={{flex: 1, justifyContent: 'center',}} />
-            }
-            <Image
-                source={require('../../../assets/images/standard/fathom-gold-and-grey.png')}
-                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
-            />
-            <TouchableOpacity
-                onPress={() => onRight()}
-                style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
-            >
-                { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
-                    <LottieView
-                        autoPlay={true}
-                        source={require('../../../assets/animation/yellowpointer.json')}
+                    { activity.status === 'UPLOAD_IN_PROGRESS' ?
+                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                            <LottieView
+                                autoPlay={true}
+                                loop={true}
+                                progress={1}
+                                source={require('../../../assets/animation/sensorloading.json')}
+                            />
+                        </View>
+                        :
+                        <Image
+                            resizeMode={'contain'}
+                            source={
+                                activity.status === 'UPLOAD_PAUSED' ?
+                                    require('../../../assets/images/standard/dotsdisabled.png')
+                                    :
+                                    require('../../../assets/images/standard/dotscompleted.png')
+                            }
+                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                        />
+                    }
+                    <TabIcon
+                        color={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
+                        icon={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? 'cloud' : 'cloud-done'}
+                        size={30}
+                        type={'material'}
                     />
+                    { activity.status === 'PROCESSING_IN_PROGRESS' ?
+                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                            <LottieView
+                                autoPlay={true}
+                                loop={true}
+                                progress={1}
+                                source={require('../../../assets/animation/sensorloading.json')}
+                            />
+                        </View>
+                        :
+                        <Image
+                            resizeMode={'contain'}
+                            source={
+                                activity.status === 'PROCESSING_FAILED' ?
+                                    require('../../../assets/images/standard/dotserror.png')
+                                    : activity.status === 'PROCESSING_COMPLETE' ?
+                                        require('../../../assets/images/standard/dotscompleted.png')
+                                        :
+                                        require('../../../assets/images/standard/dotsdisabled.png')
+                            }
+                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                        />
+                    }
+                    <TabIcon
+                        color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
+                        icon={'clipboard-text'}
+                        size={30}
+                        type={'material-community'}
+                    />
+                </View>
+                { (subtext && activity.status === 'UPLOAD_PAUSED') ?
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
+                        {subtext[0]}
+                        <Text robotoBold>{subtext[1]}</Text>
+                        {subtext[2]}
+                    </Text>
+                    : subtext ?
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
+                            {subtext}
+                        </Text>
+                        :
+                        null
                 }
-                <TabIcon
-                    icon={'notifications'}
-                    iconStyle={[{color: AppColors.zeplin.slate,}]}
-                    size={26}
-                />
-                { cards.length > 0 &&
-                    <View style={[styles.unreadNotificationsWrapper,]}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(11),}}>{cards.length}</Text>
+            </View>
+            { activity.status === 'PROCESSING_COMPLETE' ?
+                <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
+                </View>
+                : actionText ?
+                    <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
                     </View>
-                }
-            </TouchableOpacity>
-        </View>
-        <Collapsible collapsed={!expandNotifications}>
-            { expandNotifications &&
-                <DeckCards
-                    cards={cards.length === 0 ? cards : _.concat(cards, {})}
-                    categories={categories}
-                    handleReadInsight={index => handleReadInsight(index, user.id)}
-                    hideDeck={() => onRight()}
-                    isVisible={expandNotifications}
-                    layout={'tinder'}
-                    shrinkNumberOfLines={true}
-                    unreadNotificationsCount={cards.length}
-                />
+                    :
+                    null
             }
-        </Collapsible>
-    </View>
-);*/
+        </TouchableOpacity>
+    );
+};
 
 class MyPlan extends Component {
     static componentName = 'MyPlan';
@@ -262,8 +356,10 @@ class MyPlan extends Component {
         clearCompletedCoolDownExercises: PropTypes.func.isRequired,
         clearCompletedExercises:         PropTypes.func.isRequired,
         clearHealthKitWorkouts:          PropTypes.func.isRequired,
+        createSensorSession:             PropTypes.func.isRequired,
         getMobilize:                     PropTypes.func.isRequired,
         getMyPlan:                       PropTypes.func.isRequired,
+        getSensorFiles:                  PropTypes.func.isRequired,
         getSoreBodyParts:                PropTypes.func.isRequired,
         handleReadInsight:               PropTypes.func.isRequired,
         healthData:                      PropTypes.object.isRequired,
@@ -279,6 +375,7 @@ class MyPlan extends Component {
         postSessionSurvey:    PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         setAppLogs:           PropTypes.func.isRequired,
+        updateSensorSession:  PropTypes.func.isRequired,
         updateUser:           PropTypes.func.isRequired,
         user:                 PropTypes.object.isRequired,
     }
@@ -627,7 +724,7 @@ class MyPlan extends Component {
     }
 
     _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, getSensorFiles, user, } = this.props;
         const { dailyReadiness, } = this.state;
         // clear timer
         clearInterval(this._timer);
@@ -636,6 +733,7 @@ class MyPlan extends Component {
             { isPageLoading: isFromPushNotification ? false : true, },
             () => {
                 getMyPlan(userId, moment().format('YYYY-MM-DD'))
+                    .then(() => getSensorFiles(user))
                     .then(response => {
                         if(shouldClearCompletedExercises) {
                             clearCompletedExercises();
@@ -778,6 +876,23 @@ class MyPlan extends Component {
         );
     }
 
+    _handleSensorFilesRefresh = () => {
+        const { getSensorFiles, user, } = this.props;
+        this.setState(
+            { isPageCalculating: true, },
+            () => {
+                getSensorFiles(user)
+                    .then(res => this.setState({ isPageCalculating: false, }))
+                    .catch(err =>
+                        this.setState(
+                            { isPageCalculating: false, },
+                            () => AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan),
+                        )
+                    );
+            },
+        );
+    }
+
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
         // setup variables
@@ -890,39 +1005,32 @@ class MyPlan extends Component {
             isPostSessionSurveyModalOpen,
             isPrepareSessionsCompletionModalOpen,
             isReadinessSurveyModalOpen,
+            isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
             postSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { handleReadInsight, plan, user, } = this.props;
+        let { createSensorSession, handleReadInsight, plan, updateSensorSession, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
             activeBeforeModalities,
-            afterCompletedLockedModalities,
             askForNewMobilize,
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            sensorSessions,
             trendCategories,
             trendDashboardCategories,
             triggerStep,
-        } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj);
+        } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
-                {/*<MyPlanNavBar
-                    cards={newInsights}
-                    categories={trendDashboardCategories}
-                    expandNotifications={expandNotifications}
-                    handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
-                    onRight={() => this.setState({ expandNotifications: !this.state.expandNotifications, })}
-                    user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
-                />*/}
                 <CustomMyPlanNavBar
                     categories={trendCategories}
                     handleReadInsight={insightType => {
@@ -947,38 +1055,36 @@ class MyPlan extends Component {
                                         paddingTop:        AppSizes.padding,
                                     }}
                                     ref={ref => {this._scrollViewRef = ref;}}
-                                    refreshControl={
-                                        <RefreshControl
-                                            colors={[AppColors.zeplin.yellow]}
-                                            onRefresh={() => this._handleExerciseListRefresh(false)}
-                                            refreshing={isPageLoading}
-                                            title={'Loading...'}
-                                            titleColor={AppColors.zeplin.yellow}
-                                            tintColor={AppColors.zeplin.yellow}
-                                        />
-                                    }
                                 >
-
-                                    { (!triggerStep && !offDaySelected) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'Before training'}</Text>
-                                    }
 
                                     { offDaySelected &&
                                         <ActivityTab
                                             completed={true}
-                                            title={'OFF DAY'}
+                                            title={'Off Day'}
                                         />
                                     }
 
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
                                             completed={completedLockedModality.isCompleted}
+                                            isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
                                             locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}
                                             title={completedLockedModality.title}
                                         />
                                     ))}
+
+                                    {_.map(sensorSessions, (activity, key) =>
+                                        <SensorSession
+                                            activity={activity}
+                                            askForNewMobilize={askForNewMobilize}
+                                            handleGetMobilize={this._handleGetMobilize}
+                                            handeRefresh={this._handleSensorFilesRefresh}
+                                            key={key}
+                                            userSesnorData={user.sensor_data}
+                                        />
+                                    )}
 
                                     {_.map(activeBeforeModalities, (activeModality, key) => (
                                         <ActivityTab
@@ -1011,20 +1117,6 @@ class MyPlan extends Component {
                                     { (dailyPlanObj.train_later && !triggerStep) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
                                     }
-
-                                    { ((afterCompletedLockedModalities.length > 0 || activeAfterModalities.length > 0) && !offDaySelected) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.paddingMed,}}>{'After training'}</Text>
-                                    }
-
-                                    {_.map(afterCompletedLockedModalities, (completedLockedModality, key) => (
-                                        <ActivityTab
-                                            completed={completedLockedModality.isCompleted}
-                                            key={key}
-                                            locked={completedLockedModality.isLocked}
-                                            subtitle={completedLockedModality.subtitle}
-                                            title={completedLockedModality.title}
-                                        />
-                                    ))}
 
                                     {_.map(activeAfterModalities, (activeModality, key) => (
                                         <ActivityTab
@@ -1089,9 +1181,9 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleNoSessions()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'OFF DAY'}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Off Day'}
                                 useNativeFeedback={false}
                             >
                                 <Image
@@ -1107,9 +1199,9 @@ class MyPlan extends Component {
                             hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                            textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                            title={'LOG TRAINING'}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={'Log Training'}
                             useNativeFeedback={false}
                         >
                             <Image
@@ -1125,9 +1217,9 @@ class MyPlan extends Component {
                                 hideShadow={true}
                                 onPress={() => this._handleGetMobilize()}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 16),}}
-                                textStyle={[AppStyles.oswaldRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'ADD MOBILIZE'}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Add Mobilize'}
                                 useNativeFeedback={false}
                             >
                                 <Image
@@ -1136,6 +1228,32 @@ class MyPlan extends Component {
                                 />
                             </ActionButton.Item>
                         }
+                        {/* (
+                            user && user.personal_data && user.personal_data.email &&
+                            (
+                                /gabby[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
+                                /dipesh[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
+                                /mazen[+]mvp@fathomai.com/g.test(user.personal_data.email)
+                            )
+                        ) &&
+                            <ActionButton.Item
+                                activeOpacity={1}
+                                buttonColor={AppColors.zeplin.yellow}
+                                fixNativeFeedbackRadius={true}
+                                hideShadow={true}
+                                onPress={() => this.setState({ isStartSensorSessionModalOpen: true, })}
+                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                title={'Start Sensor Session'}
+                                useNativeFeedback={false}
+                            >
+                                <Image
+                                    source={require('../../../assets/images/sports_images/icons8-kitesurfing-200.png')}
+                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                                />
+                            </ActionButton.Item>
+                        */}
                     </ActionButton>
                 }
 
@@ -1182,6 +1300,13 @@ class MyPlan extends Component {
                     isModalOpen={isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
+                />
+                <StartSensorSessionModal
+                    createSensorSession={createSensorSession}
+                    isModalOpen={isStartSensorSessionModalOpen}
+                    onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                    updateSensorSession={updateSensorSession}
+                    user={user}
                 />
                 { loading ?
                     <Loading

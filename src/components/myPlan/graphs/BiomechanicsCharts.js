@@ -29,6 +29,7 @@ import { ParsedText, Spacer, TabIcon, Text, } from '../../custom';
 class BiomechanicsCharts extends PureComponent {
     static propTypes = {
         chartData:       PropTypes.array,
+        dataType:        PropTypes.number.isRequired,
         isRichDataView:  PropTypes.bool,
         pieDetails:      PropTypes.object,
         sessionDuration: PropTypes.string,
@@ -47,14 +48,20 @@ class BiomechanicsCharts extends PureComponent {
     };
 
     render = () => {
-        const { chartData, isRichDataView, pieDetails, sessionDuration, selectedSession, showDetails, showTitle, } = this.props;
+        const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showDetails, showTitle, } = this.props;
         let {
+            asymmetryIndex,
             largerPieData,
             parsedSummaryData,
             richDataYDomain,
             rotateDeg,
             smallerPieData,
-        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData);
+        } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
+        let extraPieStyles = dataType === 0 ? {} : {};
+        let extraImageBackgroundStyles = dataType === 0 ? {} : {
+            justifyContent: 'flex-end',
+        };
+        let innerRadiusAddOn = dataType === 0 ? 0 : 20;
         return (
             <View pointerEvents={'none'}>
 
@@ -87,10 +94,16 @@ class BiomechanicsCharts extends PureComponent {
                                 }}
                                 tickCount={20}
                                 tickFormat={t =>
-                                    t % 2 === 0 ?
-                                        t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                    richDataYDomain[1] > 20 ?
+                                        t % 20 === 0 ?
+                                            t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                            :
+                                            ''
                                         :
-                                        ''
+                                        t % 2 === 0 ?
+                                            t < 0 ? `${(t * -1)}\u00B0` : `${t}\u00B0`
+                                            :
+                                            ''
                                 }
                             />
                             {/* X-Axis */}
@@ -123,7 +136,7 @@ class BiomechanicsCharts extends PureComponent {
                                 />
                             }
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                {_.map(selectedSession.asymmetry.apt.detail_legend, (legend, i) => (
+                                {_.map(selectedSession.asymmetry[asymmetryIndex].detail_legend, (legend, i) => (
                                     <View
                                         key={i}
                                         style={[
@@ -161,16 +174,17 @@ class BiomechanicsCharts extends PureComponent {
                     <View style={{flexDirection: 'row',}}>
                         <ImageBackground
                             imageStyle={{borderRadius: 12,}}
-                            source={require('../../../../assets/images/standard/apt_notilt.png')}
-                            style={{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}}
+                            source={dataType === 0 ? require('../../../../assets/images/standard/apt_notilt.png') : require('../../../../assets/images/standard/ankle_pitch.png')}
+                            style={[{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}, extraImageBackgroundStyles,]}
                         >
-                            <View style={{transform: [{rotate: rotateDeg,}]}}>
+                            <View style={[{transform: [{rotate: rotateDeg,}]}, extraPieStyles,]}>
                                 <V.VictoryPie
                                     cornerRadius={7}
                                     data={largerPieData}
                                     height={pieDetails.pieLeftWrapperWidth}
-                                    innerRadius={pieDetails.rightPieInnerRadius}
+                                    innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
                                     labels={d => ''}
+                                    padding={dataType === 0 ? 50 : 30}
                                     style={{
                                         data: { fill: d => d.color},
                                     }}
@@ -181,8 +195,9 @@ class BiomechanicsCharts extends PureComponent {
                                         cornerRadius={7}
                                         data={smallerPieData}
                                         height={pieDetails.pieLeftWrapperWidth}
-                                        innerRadius={pieDetails.rightPieInnerRadius}
+                                        innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
                                         labels={d => ''}
+                                        padding={dataType === 0 ? 50 : 30}
                                         style={{
                                             data: { fill: d => d.color},
                                         }}
@@ -192,34 +207,39 @@ class BiomechanicsCharts extends PureComponent {
                             </View>
                         </ImageBackground>
                         <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
-                            <View style={{flex: showTitle ? 9 : 1, justifyContent: 'space-between',}}>
+                            <View
+                                style={{
+                                    flex:           showTitle ? 9 : 1,
+                                    justifyContent: showDetails && selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ? 'flex-end' : 'space-between',
+                                }}
+                            >
                                 { showDetails ?
                                     <View>
                                         { showTitle &&
                                             <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
                                         }
-                                        { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                        { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                                style={{height: 35, tintColor: AppColors.zeplin.successLight, width: 35,}}
+                                                style={{height: 55, tintColor: AppColors.zeplin.successLight, width: 55,}}
                                             />
                                             :
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
-                                                {`${_.round(selectedSession.asymmetry.apt.summary_percentage)}%`}
+                                                {`${_.round(selectedSession.asymmetry[asymmetryIndex].summary_percentage)}%`}
                                             </Text>
                                         }
                                         <ParsedText
                                             parse={parsedSummaryData}
                                             style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
                                         >
-                                            {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt ? selectedSession.asymmetry.apt.summary_text : ''}
+                                            {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] ? selectedSession.asymmetry[asymmetryIndex].summary_text : ''}
                                         </ParsedText>
                                     </View>
                                     :
                                     <View />
                                 }
-                                { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt && _.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 ?
+                                { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
                                     <View>
                                         <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
                                             <View
@@ -246,7 +266,9 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Left side ROM'}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                {dataType === 0 ? 'Left side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y ? _.round(pieDetails.pieData.left_y) : ''}\u00B0 Left ROM`}
+                                            </Text>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                             <View
@@ -258,7 +280,9 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'Right side ROM'}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                {dataType === 0 ? 'Right side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y ? _.round(pieDetails.pieData.right_y) : ''}\u00B0 Right ROM`}
+                                            </Text>
                                         </View>
                                     </View>
                                 }

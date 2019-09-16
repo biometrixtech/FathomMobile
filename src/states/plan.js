@@ -30,6 +30,7 @@ const defaultPlanState = {
     isPostSessionSurveyModalOpen:         false,
     isPrepareSessionsCompletionModalOpen: false,
     isReadinessSurveyModalOpen:           false,
+    isStartSensorSessionModalOpen:        false,
     isTrainSessionsCompletionModalOpen:   false,
     loading:                              false,
     page0:                                {},

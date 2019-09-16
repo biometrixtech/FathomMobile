@@ -179,7 +179,7 @@ const Placement = ({ currentPage, handleAlertPress, onBack, onClose, nextBtn, pa
                         null
                 }
                 <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
-                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                             {content.subtitle}
                         </View>
@@ -493,12 +493,12 @@ const Battery = ({ currentPage, onBack, nextBtn, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentPage, onBack, onClose, nextBtn, showTopNavStep = true, }) => (
+const Complete = ({ currentPage, isLoading, onBack, onClose, nextBtn, showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
-        <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 4 : false} />
+        <TopNav darkColor={true} onBack={isLoading ? null : () => onBack()} onClose={isLoading ? null : () => onClose()} step={showTopNavStep ? 4 : false} />
         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
             <Text oswaldRegular style={[styles.titleStyle,]}>{'TUTORIAL COMPLETE!'}</Text>
-            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access this tutorial again, tap the Sensor icon in your Plan.'}</Text>
+            <Text robotoLight style={[styles.smallerText, {textAlign: 'center', paddingTop: AppSizes.paddingLrg,}]}>{'To access the tutorial, navigate through Settings to Manage Fathom PRO Kit'}</Text>
         </View>
         <View style={{flex: 1,}}>
             <View style={{alignSelf: 'center', flex: 1, width: AppSizes.screen.widthFourFifths,}}>
@@ -518,6 +518,11 @@ const Complete = ({ currentPage, onBack, onClose, nextBtn, showTopNavStep = true
             <Button
                 buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
                 containerStyle={{width: '100%',}}
+                disabled={isLoading}
+                disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                loading={isLoading}
+                loadingProps={{color: AppColors.zeplin.yellow,}}
                 onPress={() => nextBtn()}
                 title={'End Tutorial'}
                 titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
@@ -576,7 +581,7 @@ const Connect = ({
                                 </View>
                             }
                             { page === 5 &&
-                                <Text onPress={() => handleNotInRange()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), marginVertical: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{'Is your Wifi LED off or blinking red?'}</Text>
+                                <Text onPress={() => handleNotInRange()} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(14), marginVertical: AppSizes.paddingLrg, paddingHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>{'Is your Wifi LED off?'}</Text>
                             }
                         </View>
                         { (content.buttonText && nextBtn) &&

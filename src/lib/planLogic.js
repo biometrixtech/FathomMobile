@@ -1073,7 +1073,7 @@ const PlanLogic = {
             let newCompletedActivity = _.cloneDeep(activity);
             let newTitle = title;
             if(activity.sport_name) {
-                newTitle = `${_.filter(MyPlanConstants.teamSports, ['index', activity.sport_name])[0].label.toUpperCase()}`;
+                newTitle = `${_.filter(MyPlanConstants.teamSports, ['index', activity.sport_name])[0].label}`;
             }
             newCompletedActivity.title = newTitle;
             if(subtitle) {
@@ -1210,7 +1210,7 @@ const PlanLogic = {
         let imageId = 'prepareCareActivate';
         let imageSource = require('../../assets/images/standard/mobilize.png');
         let pageSubtitle = 'Anytime before training';
-        let pageTitle = 'MOBILIZE';
+        let pageTitle = 'Mobilize';
         let recoveryObj = dailyPlanObj.pre_active_rest ? dailyPlanObj.pre_active_rest[index] : {};
         let recoveryType = 'pre_active_rest';
         let sceneId = 'prepareScene';
@@ -1219,7 +1219,7 @@ const PlanLogic = {
             goals = plan.activeRestGoals;
             imageId = 'recoverCareActivate';
             pageSubtitle = 'Anytime';
-            pageTitle = 'MOBILIZE';
+            pageTitle = 'Mobilize';
             recoveryObj = dailyPlanObj.post_active_rest[index];
             recoveryType = 'post_active_rest';
             sceneId = 'recoverScene';
@@ -1229,7 +1229,7 @@ const PlanLogic = {
             imageId = 'warmUp';
             // imageSource = require('../../assets/images/standard/warm_up.png');
             pageSubtitle = 'Anytime before training';
-            pageTitle = 'WARM UP';
+            pageTitle = 'Warm Up';
             recoveryObj = dailyPlanObj.warm_up[index];
             recoveryType = 'warm_up';
             sceneId = 'warmUpScene';
@@ -1239,7 +1239,7 @@ const PlanLogic = {
             imageId = 'coolDown';
             imageSource = require('../../assets/images/standard/active_recovery.png');
             pageSubtitle = 'Immediately after training';
-            pageTitle = 'ACTIVE RECOVERY';
+            pageTitle = 'Active Recovery';
             recoveryObj = dailyPlanObj.cool_down[index];
             recoveryType = 'cool_down';
             sceneId = 'coolDownScene';
@@ -1290,7 +1290,7 @@ const PlanLogic = {
         let imageSource = require('../../assets/images/standard/heat.png');
         let pageSubtitle = '30 minutes before training';
         let pageText = 'Heat increases circulation & loosens up soft tissues to improve the benefits of foam rolling, stretching, & dynamic warmup.';
-        let pageTitle = 'HEAT';
+        let pageTitle = 'Heat';
         let recoveryObj = dailyPlanObj.heat;
         let sceneId = 'heatScene';
         let textId = 'heat';
@@ -1302,7 +1302,7 @@ const PlanLogic = {
             imageSource = require('../../assets/images/standard/ice.png');
             pageSubtitle = 'After all training is complete';
             pageText = 'Ice can help minimize swelling due to a minor injury & reduce inflammation in your tissues, muscle spasms, & pain.';
-            pageTitle = 'ICE';
+            pageTitle = 'Ice';
             recoveryObj = dailyPlanObj.ice;
             sceneId = 'iceScene';
             textId = 'ice';
@@ -1314,7 +1314,7 @@ const PlanLogic = {
             imageSource = require('../../assets/images/standard/cwi.png');
             pageSubtitle = 'After all training is complete';
             pageText = 'A Cold Water Bath (CWB) after exercise can help reduce exercise-induced inflammation and muscle damage that causes discomfort.';
-            pageTitle = 'COLD WATER BATH';
+            pageTitle = 'Cold Water Bath';
             recoveryObj = dailyPlanObj.cold_water_immersion;
             sceneId = 'cwiScene';
             textId = 'cwi';
@@ -1370,54 +1370,51 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleMyPlanRenderLogic: dailyPlanObj => {
-        let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'HEAT', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
-        let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest, MyPlanConstants.preExerciseListOrder), false, MyPlanConstants.preExerciseListOrder);
+    handleMyPlanRenderLogic: (dailyPlanObj, userObj) => {
+        let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'Heat', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
+        let completedPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_pre_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.completed_pre_active_rest, MyPlanConstants.preExerciseListOrder), false, MyPlanConstants.preExerciseListOrder);
         let completedWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_warm_up, '');
         let filteredTrainingSessions = dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 ?
             _.filter(dailyPlanObj.training_sessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
-        let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'ACTIVE RECOVERY');
-        let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'HEAT', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
-        let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
-        let completedCurrentWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', '', true);
+        let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'Active Recovery');
+        let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
+        let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
+        let completedCurrentWarmUp = []; // PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', '', true);
+        let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
+        let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'Active Recovery', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
+        let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
+        let completedPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_post_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.completed_post_active_rest, MyPlanConstants.postExerciseListOrder), false, MyPlanConstants.postExerciseListOrder);
+        let completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', PlanLogic.handleFindGoals([dailyPlanObj.cold_water_immersion]), true);
+        let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'Active Recovery', PlanLogic.handleFindGoals(dailyPlanObj.cool_down, MyPlanConstants.coolDownExerciseListOrder), true, MyPlanConstants.coolDownExerciseListOrder);
+        let completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', PlanLogic.handleFindGoals([dailyPlanObj.ice]), true);
+        let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest, MyPlanConstants.postExerciseListOrder), true, MyPlanConstants.postExerciseListOrder);
         let beforeCompletedLockedModalities = _.concat(
-            completedHeat,
-            completedPreActiveRest,
-            completedWarmUp,
-            completedTrainingSessions,
-            completedCurrentHeat,
-            completedCurrentPreActiveRest,
-            completedCurrentWarmUp,
-        );
-        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['created_date'], ['asc']);
-        let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'COLD WATER BATH', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
-        let completedCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.completed_cool_down, MyPlanConstants.coolDownExerciseListOrder), false, MyPlanConstants.coolDownExerciseListOrder);
-        let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'ICE', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
-        let completedPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.completed_post_active_rest, MyPlanConstants.postExerciseListOrder), false, MyPlanConstants.postExerciseListOrder);
-        let completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', PlanLogic.handleFindGoals([dailyPlanObj.cold_water_immersion]), true);
-        let completedCurrentCoolDown = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', PlanLogic.handleFindGoals(dailyPlanObj.cool_down, MyPlanConstants.coolDownExerciseListOrder), true, MyPlanConstants.coolDownExerciseListOrder);
-        let completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'ICE', PlanLogic.handleFindGoals([dailyPlanObj.ice]), true);
-        let completedCurrentPostActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', PlanLogic.handleFindGoals(dailyPlanObj.post_active_rest, MyPlanConstants.postExerciseListOrder), true, MyPlanConstants.postExerciseListOrder);
-        let afterCompletedLockedModalities = _.concat(
             completedCWI,
             completedCoolDown,
-            completedIce,
-            completedPostActiveRest,
             completedCurrentCWI,
             completedCurrentCoolDown,
+            completedCurrentHeat,
             completedCurrentIce,
             completedCurrentPostActiveRest,
+            completedCurrentPreActiveRest,
+            completedCurrentWarmUp,
+            completedHeat,
+            completedIce,
+            completedPostActiveRest,
+            completedPreActiveRest,
+            completedTrainingSessions,
+            completedWarmUp,
         );
-        afterCompletedLockedModalities = _.orderBy(afterCompletedLockedModalities, ['created_date'], ['asc']);
-        let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
-        let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'HEAT', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
+        beforeCompletedLockedModalities = _.orderBy(beforeCompletedLockedModalities, ['completed_date_time'], ['asc']);
+        let activePreActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
+        let activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'Heat', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         let activeBeforeModalities = _.concat(activePreActiveRest, activeHeat);
-        let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../assets/images/standard/active_recovery_tab.png'));
-        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'MOBILIZE', 'anytime', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize_tab.png'));
-        let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'ICE', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
-        let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'COLD WATER BATH', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi_tab.png'));
+        let activeCoolDown = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.cool_down, 'Active Recovery', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../assets/images/standard/active_recovery_tab.png'));
+        let activePostActiveRest = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.post_active_rest, 'Mobilize', 'anytime', MyPlanConstants.postExerciseListOrder, 'recover', require('../../assets/images/standard/mobilize_tab.png'));
+        let activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'Ice', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
+        let activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi_tab.png'));
         let activeAfterModalities = _.concat(activeCoolDown, activePostActiveRest, activeIce, activeCWI);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let offDaySelected = !dailyPlanObj.sessions_planned;
@@ -1435,8 +1432,8 @@ const PlanLogic = {
                     :
                     false;
         // logic to 'hide' before mobilize if after is active
-        let indexOfLockedBeforeModality = _.findIndex(beforeCompletedLockedModalities, { isLocked: true, title: 'MOBILIZE', });
-        let indexOfActiveAfterModality = _.findIndex(activeAfterModalities, { active: true, title: 'MOBILIZE', });
+        let indexOfLockedBeforeModality = _.findIndex(beforeCompletedLockedModalities, { isLocked: true, title: 'Mobilize', });
+        let indexOfActiveAfterModality = _.findIndex(activeAfterModalities, { active: true, title: 'Mobilize', });
         if(indexOfLockedBeforeModality !== -1 && indexOfActiveAfterModality !== -1) {
             beforeCompletedLockedModalities = _.filter(beforeCompletedLockedModalities, (o, key) => key !== indexOfLockedBeforeModality);
         }
@@ -1454,16 +1451,23 @@ const PlanLogic = {
         }
         let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
         let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
+        let trainingSessionsIds = _.map(completedTrainingSessions, o => o.session_id);
+        let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ?
+            userObj.sensor_data.sessions
+            :
+            [];
+        sensorSessions = _.orderBy(sensorSessions, ['event_date'], ['asc']);
+        sensorSessions = _.filter(sensorSessions, u => !trainingSessionsIds.includes(u.id) && (u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')));
         return {
             activeAfterModalities,
             activeBeforeModalities,
-            afterCompletedLockedModalities,
             askForNewMobilize,
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
+            sensorSessions,
             trendCategories,
             trendDashboardCategories,
             triggerStep,
@@ -1548,10 +1552,12 @@ const PlanLogic = {
         let bodyResponse = trends && trends.body_response ? trends.body_response : [];
         let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
         let workload = trends && trends.workload ? trends.workload : [];
-        let biomechanics = trends && trends.biomechanics_summary ? trends.biomechanics_summary : [];
+        let biomechanicsAnklePitch = trends && trends.biomechanics_ankle_pitch ? trends.biomechanics_ankle_pitch : {};
+        let biomechanicsApt = trends && trends.biomechanics_apt ? trends.biomechanics_apt : {};
         let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
         let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsLocked = trends && trends.biomechanics_summary && trends.biomechanics_summary.sessions.length === 0;
+        let isBiomechanicsAnklePitchLocked = biomechanicsAnklePitch && biomechanicsAnklePitch.sessions && biomechanicsAnklePitch.sessions.length > 0 ? false : true;
+        let isBiomechanicsAptLocked = biomechanicsApt && biomechanicsApt.sessions && biomechanicsApt.sessions.length > 0 ? false : true;
         let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
         let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
         let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
@@ -1559,7 +1565,8 @@ const PlanLogic = {
         let trendCategories = trends && trends.dashboard && trends.dashboard.trend_categories && trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(trends.dashboard.trend_categories) : [];
         trendCategories.push({});
         return {
-            biomechanics,
+            biomechanicsAnklePitch,
+            biomechanicsApt,
             bodyResponse,
             currentBiomechanicsAlert,
             currentBodyResponseAlert,
@@ -1567,7 +1574,8 @@ const PlanLogic = {
             currentStressAlert,
             currentWorkloadAlert,
             extraBottomPadding,
-            isBiomechanicsLocked,
+            isBiomechanicsAnklePitchLocked,
+            isBiomechanicsAptLocked,
             isBodyResponseLocked,
             isResponseLocked,
             isStressLocked,
@@ -2035,11 +2043,11 @@ const PlanLogic = {
     },
 
     /**
-      * Handle Biomechanics Render Logic
+      * Handle Biomechanics APT Render Logic
       * - Biomechanics
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsRenderLogic: (plan, currentIndex, step) => {
+    handleBiomechanicsAptRenderLogic: (plan, currentIndex, step) => {
         let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
         let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
         let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
@@ -2053,50 +2061,50 @@ const PlanLogic = {
             return {
                 leftPieInnerRadius,
                 leftPieWidth,
-                pieData:         { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
+                pieData:            { right_y: 0, right_start_angle: 0, left_y: 0, left_start_angle: 0, },
                 pieLeftWrapperWidth,
                 pieRightWrapperWidth,
                 rightPieInnerRadius,
                 rightPieWidth,
-                selectedSession: {},
+                selectedAptSession: {},
             };
         }
         let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
-        let biomechanicsSummary = dailyPlan ? dailyPlan.trends.biomechanics_summary : {};
-        let selectedSession = biomechanicsSummary.sessions[currentIndex];
-        let sessionSportName = selectedSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name).label : '';
-        let sessionHours = _.floor(selectedSession.duration / 3600);
-        let updatedTime = selectedSession.duration - sessionHours * 3600;
+        let biomechanicsAptSummary = dailyPlan ? dailyPlan.trends.biomechanics_apt : {};
+        let selectedAptSession = biomechanicsAptSummary.sessions[currentIndex];
+        let sessionSportName = selectedAptSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedAptSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedAptSession.duration / 3600);
+        let updatedTime = selectedAptSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedSession ? `${moment(selectedSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
-        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
-        let pieData = selectedSession.asymmetry.apt.summary_data;
-        let chartData = selectedSession.asymmetry.apt.detail_data;
+        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+        let pieData = selectedAptSession.asymmetry.apt.summary_data;
+        let chartData = selectedAptSession.asymmetry.apt.detail_data;
         let updatedChartData = _.map(chartData, (data, index) => {
             let newDataObjLeft = {};
             newDataObjLeft.x = data.x;
             newDataObjLeft.y = data.y1;
-            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 10 : 8);
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 10);
             let newDataObjRight = {};
             newDataObjRight.x = data.x;
             newDataObjRight.y = data.y2;
-            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 4 : 9);
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 9 : 4);
             return [newDataObjLeft, newDataObjRight];
         });
         let parsedData = [];
         if(
-            selectedSession &&
-            selectedSession.asymmetry &&
-            selectedSession.asymmetry.apt &&
-            selectedSession.asymmetry.apt.detail_text
+            selectedAptSession &&
+            selectedAptSession.asymmetry &&
+            selectedAptSession.asymmetry.apt &&
+            selectedAptSession.asymmetry.apt.detail_text
         ) {
-            _.map(selectedSession.asymmetry.apt.detail_bold_text, (prop, i) => {
+            _.map(selectedAptSession.asymmetry.apt.detail_bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 1 ?
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
+                let sessionColor = _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 1 ?
                     10
-                    : _.toInteger(selectedSession.asymmetry.apt.detail_bold_side) === 2 ?
+                    : _.toInteger(selectedAptSession.asymmetry.apt.detail_bold_side) === 2 ?
                         4
                         :
                         13;
@@ -2113,12 +2121,142 @@ const PlanLogic = {
             pieRightWrapperWidth,
             rightPieInnerRadius,
             rightPieWidth,
-            selectedSession,
+            selectedAptSession,
             sessionDuration,
             sessionSportName,
             sessionStartTimeDuration,
-            sessions:         biomechanicsSummary.sessions,
+            sessions:         biomechanicsAptSummary.sessions,
             updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
+    /**
+      * Handle Biomechanics Ankle Pitch Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsAnklePitchRenderLogic: (plan, currentIndex, step) => {
+        let pieWrapperWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
+        let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
+        let leftPieWidth = (pieLeftWrapperWidth - 35);
+        let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
+        let rightPieWidth = pieLeftWrapperWidth;
+        let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
+        let extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+        rightPieInnerRadius = (rightPieInnerRadius - extraInnerRadiusToRemove);
+        if(currentIndex === -1) {
+            return {
+                leftPieInnerRadius,
+                leftPieWidth,
+                pieLeftWrapperWidth,
+                pieRightWrapperWidth,
+                rightPieInnerRadius,
+                rightPieWidth,
+                selectedAnklePitchSession: {},
+            };
+        }
+        let dailyPlan = plan && plan.dailyPlan && plan.dailyPlan[0] ? plan.dailyPlan[0] : false;
+        let biomechanicsAnklePitchSummary = dailyPlan ? dailyPlan.trends.biomechanics_ankle_pitch : {};
+        let selectedAnklePitchSession = biomechanicsAnklePitchSummary && biomechanicsAnklePitchSummary.sessions[currentIndex];
+        let sessionSportName = selectedAnklePitchSession ? _.find(MyPlanConstants.teamSports, o => o.index === selectedAnklePitchSession.sport_name).label : '';
+        let sessionHours = _.floor(selectedAnklePitchSession.duration / 3600);
+        let updatedTime = selectedAnklePitchSession.duration - sessionHours * 3600;
+        let sessionMinutes = _.floor(updatedTime / 60);
+        let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
+        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+        let pieData = selectedAnklePitchSession.asymmetry.ankle_pitch.summary_data;
+        let chartData = selectedAnklePitchSession.asymmetry.ankle_pitch.detail_data;
+        let updatedChartData = _.map(chartData, (data, index) => {
+            let newDataObjLeft = {};
+            newDataObjLeft.x = data.x;
+            newDataObjLeft.y = data.y1;
+            newDataObjLeft.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 8 : 10);
+            let newDataObjRight = {};
+            newDataObjRight.x = data.x;
+            newDataObjRight.y = data.y2;
+            newDataObjRight.color = PlanLogic.returnInsightColorString(data.flag === 1 ? 9 : 4);
+            return [newDataObjLeft, newDataObjRight];
+        });
+        let parsedData = [];
+        if(
+            selectedAnklePitchSession &&
+            selectedAnklePitchSession.asymmetry &&
+            selectedAnklePitchSession.asymmetry.ankle_pitch &&
+            selectedAnklePitchSession.asymmetry.ankle_pitch.detail_text
+        ) {
+            _.map(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
+                let sessionColor = _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 1 ?
+                    10
+                    : _.toInteger(selectedAnklePitchSession.asymmetry.ankle_pitch.detail_bold_side) === 2 ?
+                        4
+                        :
+                        13;
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedData.push(newParsedData);
+            });
+        }
+        return {
+            leftPieInnerRadius,
+            leftPieWidth,
+            parsedData,
+            pieData,
+            pieLeftWrapperWidth,
+            pieRightWrapperWidth,
+            rightPieInnerRadius,
+            rightPieWidth,
+            sessionDuration,
+            sessionSportName,
+            sessionStartTimeDuration,
+            selectedAnklePitchSession,
+            sessions:         biomechanicsAnklePitchSummary.sessions,
+            updatedChartData: _.flatten(updatedChartData),
+        };
+    },
+
+    /**
+      * Handle Biomechanics Selected Session Render Logic
+      * - Biomechanics
+      */
+    // TODO: UNIT TEST ME
+    handleBiomechanicsSelectedSessionRenderLogic: (selectedSession, dataType) => {
+        let biomechanicsAlertText = '';
+        let parsedBiomechanicsData = [];
+        let sessionSport = false;
+        let sessionColor = 11;
+        if(
+            selectedSession &&
+            selectedSession.asymmetry &&
+            (
+                (dataType === 0 && selectedSession.asymmetry.apt) ||
+                (dataType === 1 && selectedSession.asymmetry.ankle_pitch)
+            )
+        ) {
+            sessionColor = _.toInteger(dataType === 0 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.ankle_pitch.summary_side) === 1 ?
+                10
+                : _.toInteger(dataType === 0 ? selectedSession.asymmetry.apt.summary_side : selectedSession.asymmetry.ankle_pitch.summary_side) === 2 ?
+                    4
+                    :
+                    11;
+            sessionSport = selectedSession && _.find(MyPlanConstants.teamSports, o => o.index === selectedSession.sport_name);
+            biomechanicsAlertText = dataType === 0 ? `${selectedSession.asymmetry.apt.summary_percentage === '' ? '' : `${selectedSession.asymmetry.apt.summary_percentage}%`} ${selectedSession.asymmetry.apt.summary_text}` : `${selectedSession.asymmetry.ankle_pitch.summary_percentage === '' ? '' : `${selectedSession.asymmetry.ankle_pitch.summary_percentage}%`} ${selectedSession.asymmetry.ankle_pitch.summary_text}`;
+            let boldedText = dataType === 0 ? selectedSession.asymmetry.apt.summary_bold_text : selectedSession.asymmetry.ankle_pitch.summary_bold_text;
+            boldedText.push({color: null, text: `${dataType === 0 ? selectedSession.asymmetry.apt.summary_percentage : selectedSession.asymmetry.ankle_pitch.summary_percentage}% more`});
+            _.map(boldedText, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
+                parsedBiomechanicsData.push(newParsedData);
+            });
+        }
+        return {
+            biomechanicsAlertText,
+            parsedBiomechanicsData,
+            sessionColor,
+            sessionSport,
         };
     },
 
@@ -2127,8 +2265,9 @@ const PlanLogic = {
       * - BiomechanicsCharts
       */
     // TODO: UNIT TEST ME
-    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData) => {
-        const PIE_CHART_TOTAL = 60;
+    handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData, dataType) => {
+        const asymmetryIndex = dataType === 0 ? 'apt' : 'ankle_pitch';
+        const APT_CHART_TOTAL = 60;
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
             {color: AppColors.transparent, x: 0, y: 0,},
@@ -2147,6 +2286,7 @@ const PlanLogic = {
             maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
             maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
             return {
+                asymmetryIndex,
                 largerPieData,
                 richDataYDomain: [-maxDomain, maxDomain],
                 rotateDeg,
@@ -2156,34 +2296,75 @@ const PlanLogic = {
         const isLeftDataEmpty = newPieData.left_y === 0;
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
-            if(_.toInteger(selectedSession.asymmetry.apt.summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL, true);
-                smallerPieData = emptyPieData;
-                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
-            } else if(newPieData.left_y > newPieData.right_y) {
-                let ratio = (newPieData.left_y / newPieData.right_y);
-                newPieData.right_y = 5;
-                newPieData.left_y  = (5 * ratio);
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
-                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
-                rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
-            } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                let ratio = (newPieData.right_y / newPieData.left_y);
-                newPieData.left_y = 5;
-                newPieData.right_y = (5 * ratio);
-                largerPieData = PlanLogic.returnPieChartCleanedData(newPieData.right_y, newPieData.left_y, false, PIE_CHART_TOTAL);
-                smallerPieData = PlanLogic.returnPieChartCleanedData(newPieData.left_y, newPieData.right_y, true, PIE_CHART_TOTAL);
-                rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+            if(dataType === 0) {
+                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL, true);
+                    smallerPieData = emptyPieData;
+                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                } else if(newPieData.left_y > newPieData.right_y) {
+                    let ratio = (newPieData.left_y / newPieData.right_y);
+                    newPieData.right_y = 5;
+                    newPieData.left_y  = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
+                } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                    let ratio = (newPieData.right_y / newPieData.left_y);
+                    newPieData.left_y = 5;
+                    newPieData.right_y = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                }
+            } else {
+                const ANKLE_PITCH_CART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
+                    40
+                    :
+                    360;
+                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
+                    largerPieData = [
+                        { color: AppColors.zeplin.successLight, x: 0, y: newPieData.right_y, },
+                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                    ];
+                    smallerPieData = emptyPieData;
+                } else if(newPieData.left_y > newPieData.right_y) {
+                    let largerValue = newPieData.left_y;
+                    let smallerValue = newPieData.right_y;
+                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    largerPieData = [
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
+                        { color: AppColors.transparent, x: 1, y: largerFullValue, },
+                    ];
+                    smallerPieData = [
+                        { color: AppColors.zeplin.splashLight, x: 0, y: smallerValue, },
+                        { color: AppColors.transparent, x: 1, y: smallerFullValue, },
+                    ];
+                } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
+                    let largerValue = newPieData.right_y;
+                    let smallerValue = newPieData.left_y;
+                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    largerPieData = [
+                        { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
+                        { color: AppColors.transparent, x: 1, y: largerFullValue, },
+                    ];
+                    smallerPieData = [
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: smallerValue, },
+                        { color: AppColors.transparent, x: 1, y: smallerFullValue, },
+                    ];
+                }
             }
         }
         let parsedSummaryData = [];
-        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry.apt) {
-            _.map(selectedSession.asymmetry.apt.summary_bold_text, (prop, i) => {
+        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex]) {
+            _.map(selectedSession.asymmetry[asymmetryIndex].summary_bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry.apt.summary_side) === 1 ?
+                let sessionColor = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 1 ?
                     10
-                    : _.toInteger(selectedSession.asymmetry.apt.summary_side) === 2 ?
+                    : _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 2 ?
                         4
                         :
                         null;
@@ -2192,15 +2373,16 @@ const PlanLogic = {
             });
         }
         return {
+            asymmetryIndex,
             largerPieData,
             parsedSummaryData,
             richDataYDomain,
-            rotateDeg,
+            rotateDeg: dataType === 0 ? rotateDeg : '150deg',
             smallerPieData,
         };
     },
 
-    returnPieChartCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
+    returnPieChartAptCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
         let color = isSymmetry ?
             AppColors.zeplin.successLight
             :
@@ -2297,6 +2479,68 @@ const PlanLogic = {
         let hex = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
         return hex;
     },
+
+    /**
+      * Handle Single Sensor Session Card Render Logic
+      * - MyPlan
+      */
+    // TODO: UNIT TEST ME
+    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
+        let title =  activity.status === 'PROCESSING_COMPLETE' ?
+            'Analysis Complete'
+            : activity.status === 'UPLOAD_IN_PROGRESS' ?
+                'Uploading Workout...'
+                : activity.status === 'UPLOAD_PAUSED' ?
+                    'Upload paused'
+                    : activity.status === 'PROCESSING_IN_PROGRESS' ?
+                        'Analyzing Workout...'
+                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                            'Calibration error'
+                            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                                'Placement error'
+                                :
+                                'Analysis failed';
+        let iconName = activity.status === 'PROCESSING_COMPLETE' ?
+            false
+            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                'sync'
+                :
+                'alert-circle-outline';
+        let iconType = activity.status === 'PROCESSING_COMPLETE' ?
+            false
+            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                'material'
+                :
+                'material-community';
+        let iconColor = activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
+        let actionText = activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            'Tap to refresh'
+            : activity.status === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
+                'Tap to access tutorial'
+                :
+                false;
+        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : '';
+        let subtext = activity.status === 'UPLOAD_PAUSED' ?
+            ['Return your Kit to wifi network ', networkName, ' to finish uploading.']
+            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                'We can\'t analyze this data because you may have missed a step in calibration. Tap to review calibration for next time.'
+                : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                    'We can\'t analyze this data because your sensors were in the wrong position. Tap to review placement for next time.'
+                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
+                        'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
+                        :
+                        false;
+        let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
+        return {
+            actionText,
+            eventDate,
+            iconColor,
+            iconName,
+            iconType,
+            subtext,
+            title,
+        };
+    }
 
 };
 
