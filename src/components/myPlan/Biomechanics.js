@@ -243,7 +243,7 @@ class Biomechanics extends PureComponent {
                         </View>
 
                         <View style={{marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Asymmetry Timeline'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Workout Symmetry Timeline'}</Text>
                             <BiomechanicsCharts
                                 chartData={updatedChartData}
                                 dataType={dataType}
@@ -467,7 +467,7 @@ class Biomechanics extends PureComponent {
                         </View>
 
                         <View style={{marginBottom: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Asymmetry Timeline'}</Text>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Workout Symmetry Timeline'}</Text>
                             <BiomechanicsCharts
                                 chartData={updatedChartData}
                                 dataType={dataType}
