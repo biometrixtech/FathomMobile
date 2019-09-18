@@ -1270,6 +1270,7 @@ class MyPlan extends Component {
                         handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
                         healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
                         soreBodyParts={plan.soreBodyParts}
+                        trainingSessions={dailyPlanObj.training_sessions}
                         typicalSessions={plan.typicalSessions}
                         user={user}
                     />
@@ -1287,6 +1288,7 @@ class MyPlan extends Component {
                         healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
                         postSession={postSession}
                         soreBodyParts={plan.soreBodyParts}
+                        trainingSessions={dailyPlanObj.training_sessions}
                         typicalSessions={plan.typicalSessions}
                         user={user}
                     />

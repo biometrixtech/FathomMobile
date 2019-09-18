@@ -11,6 +11,7 @@
         handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
         healthKitWorkouts={this.state.healthData.workouts.length > 0 ? this.state.healthData.workouts : null}
         soreBodyParts={this.state.soreBodyParts}
+        trainingSessions={dailyPlanObj.training_sessions}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
     />
@@ -321,6 +322,7 @@ class ReadinessSurvey extends Component {
             handleUpdateFirstTimeExperience,
             healthKitWorkouts,
             soreBodyParts,
+            trainingSessions,
             typicalSessions,
             user,
         } = this.props;
@@ -396,6 +398,7 @@ class ReadinessSurvey extends Component {
                                 handleNextStep={(isHealthKitValid, isHKNextStep) => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, isHealthKitValid, isHKNextStep)}
                                 handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
                                 resetFirstPage={resetHealthKitFirstPage}
+                                trainingSessions={trainingSessions}
                                 workouts={healthKitWorkouts}
                             />
                         }
@@ -792,12 +795,14 @@ ReadinessSurvey.propTypes = {
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
     healthKitWorkouts:               PropTypes.array,
     soreBodyParts:                   PropTypes.object.isRequired,
+    trainingSessions:                PropTypes.array,
     typicalSessions:                 PropTypes.array,
     user:                            PropTypes.object.isRequired,
 };
 
 ReadinessSurvey.defaultProps = {
     healthKitWorkouts: null,
+    trainingSessions:  [],
     typicalSession:    [],
 };
 

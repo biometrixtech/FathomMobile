@@ -868,27 +868,58 @@ const PlanLogic = {
       * - HealthKitWorkouts
       */
     handleHealthKitWorkoutPageRenderLogic: workout => {
-        let hourOfDay = workout && workout.event_date ? moment(workout.event_date).utc().get('hour') : moment().utc().get('hour');
-        let split_afternoon = 12; // 24hr time to split the afternoon
-        let split_evening = 17; // 24hr time to split the evening
-        let cutoffForNewDay = 3;
-        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'afternoon' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'evening' : 'morning';
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
-        let sportDuration = workout.duration ? workout.duration : 0;
-        let sportName = selectedSport ? selectedSport.label : '';
+        let sportName = selectedSport ?
+            workout.source === 0 ?
+                `Fathom ${selectedSport.label}`
+                : workout.source === 3 ?
+                    selectedSport.label
+                    :
+                    `${workout.apple_health_kit_source_names[0]} ${selectedSport.label}`
+            :
+            '';
         let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
-        let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
-        let sportImage = selectedSport ? selectedSport.imagePath : '';
-        if(selectedSport && sportName === 'High Intensity Interval Training') {
-            sportName = 'HIIT';
-            sportText = `${sportStartTime} ${sportName} workout`;
+        if(selectedSport && selectedSport.label === 'High Intensity Interval Training') {
+            sportName = workout.source === 0 ? 'Fathom HIIT' : workout.source === 3 ? 'HIIT' : `${workout.apple_health_kit_source_names[0]} HIIT`;
         }
         return {
-            partOfDay,
-            sportDuration,
-            sportImage,
             sportName,
+            sportStartTime,
+        };
+    },
+
+    /**
+      * HealthKit Single Workout Page Render Logic
+      * - HealthKitWorkouts
+      */
+    // TODO: UNIT TEST ME
+    handleSingleHealthKitWorkoutPageRenderLogic: workouts => {
+        if(workouts.length > 1) {
+            return {
+                sportImage: '',
+                sportText:  '',
+            }
+        }
+        let workout = workouts[0];
+        let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportText = workout.apple_health_kit_source_names[0] ?
+            [
+                `How was your ${sportStartTime} `,
+                `${workout.apple_health_kit_source_names[0]} workout?`,
+                ''
+            ]
+            :
+            [
+                'How was your ',
+                'Run with Fathom Pro',
+                ` at ${sportStartTime}?`
+            ];
+        let sportImage = selectedSport ? selectedSport.imagePath : '';
+        return {
+            sportImage,
             sportStartTime,
             sportText,
         };

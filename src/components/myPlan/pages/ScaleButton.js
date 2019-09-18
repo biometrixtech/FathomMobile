@@ -55,7 +55,7 @@ const ScaleButton = ({
                     AppStyles.scaleButtonShadowEffect,
                     {
                         alignSelf:       'flex-end',
-                        backgroundColor: isSelected ? AppColors.zeplin.yellow : AppColors.zeplin.superLight,
+                        backgroundColor: isSelected ? AppColors.zeplin.yellow : AppColors.white,
                     }
                 ]}
                 underlayColor={AppColors.transparent}
@@ -75,8 +75,8 @@ const ScaleButton = ({
             </TouchableHighlight>
         </View>
         <View style={[customStyles.textWrapper,]}>
-            <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{scale.label}</Text>
-            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(11),}}>{scale.subtitle}</Text>
+            <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{scale.label}</Text>
+            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{scale.subtitle}</Text>
         </View>
     </View>
 );

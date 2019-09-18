@@ -11,6 +11,7 @@
         healthKitWorkouts={healthData.workouts.length > 0 ? healthData.workouts : null}
         postSession={this.state.postSession}
         soreBodyParts={this.state.soreBodyParts}
+        trainingSessions={dailyPlanObj.training_sessions}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
     />
@@ -219,6 +220,7 @@ class PostSessionSurvey extends Component {
             healthKitWorkouts,
             postSession,
             soreBodyParts,
+            trainingSessions,
             typicalSessions,
             user,
         } = this.props;
@@ -253,6 +255,7 @@ class PostSessionSurvey extends Component {
                                 handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
                                 isPostSession={true}
                                 resetFirstPage={resetHealthKitFirstPage}
+                                trainingSessions={trainingSessions}
                                 workouts={healthKitWorkouts}
                             />
                         }
@@ -571,12 +574,14 @@ PostSessionSurvey.propTypes = {
     healthKitWorkouts:             PropTypes.array,
     postSession:                   PropTypes.object.isRequired,
     soreBodyParts:                 PropTypes.object.isRequired,
+    trainingSessions:              PropTypes.array,
     typicalSessions:               PropTypes.array.isRequired,
     user:                          PropTypes.object.isRequired,
 };
 
 PostSessionSurvey.defaultProps = {
     healthKitWorkouts: null,
+    trainingSessions:  [],
 };
 
 PostSessionSurvey.componentName = 'PostSessionSurvey';
