@@ -2517,53 +2517,71 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
-        let title =  activity.status === 'PROCESSING_COMPLETE' ?
+        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
+        let activityStatus = networkName ? activity.status : 'NO_WIFI_SETUP';
+        let title =  activityStatus === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
-            : activity.status === 'UPLOAD_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' ?
                 'Uploading Workout...'
-                : activity.status === 'UPLOAD_PAUSED' ?
+                : activityStatus === 'UPLOAD_PAUSED' ?
                     'Upload paused'
-                    : activity.status === 'PROCESSING_IN_PROGRESS' ?
+                    : activityStatus === 'PROCESSING_IN_PROGRESS' ?
                         'Analyzing Workout...'
-                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                             'Calibration error'
-                            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                            : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                                 'Placement error'
-                                :
-                                'Analysis failed';
-        let iconName = activity.status === 'PROCESSING_COMPLETE' ?
+                                : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                                    false
+                                    : activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                                        'Workout Complete'
+                                        : activityStatus === 'NO_DATA' ?
+                                            'No workout data found'
+                                            :
+                                            'Analysis failed';
+        let iconName = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
-            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
                 'sync'
-                :
-                'alert-circle-outline';
-        let iconType = activity.status === 'PROCESSING_COMPLETE' ?
+                : activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                    'wifi-strength-off'
+                    :
+                    'alert-circle-outline';
+        let iconType = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
-            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
                 'material'
                 :
                 'material-community';
-        let iconColor = activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
-        let actionText = activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+        let iconColor = activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
+        let actionText = activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
             'Tap to refresh'
-            : activity.status === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
+            : activityStatus === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
                 'Tap to access tutorial'
                 :
                 false;
-        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : '';
-        let subtext = activity.status === 'UPLOAD_PAUSED' ?
+        let subtext = activityStatus === 'UPLOAD_PAUSED' ?
             ['Return your Kit to wifi network ', networkName, ' to finish uploading.']
-            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+            : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                 'We can\'t analyze this data because you may have missed a step in calibration. Tap to review calibration for next time.'
-                : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                     'We can\'t analyze this data because your sensors were in the wrong position. Tap to review placement for next time.'
-                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
+                    : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
                         'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
-                        :
-                        false;
+                        : activityStatus === 'NO_WIFI_SETUP' ?
+                            'Finish setting up your kit when you are in range of your home wifi network.'
+                            : activityStatus === 'TOO_SHORT' ?
+                                'We do not have enough data to analyze your session. 3 Sensor workouts must be longer than 5 minutes.'
+                                : activityStatus === 'NO_DATA' ?
+                                    'No data form workout.'
+                                    : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                                        `Bring kit in range of ${networkName || ''} to see your unique biometrics from this workout.`
+                                        :
+                                        false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
         return {
             actionText,
+            activityStatus,
             eventDate,
             iconColor,
             iconName,

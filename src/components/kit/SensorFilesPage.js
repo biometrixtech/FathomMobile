@@ -637,28 +637,28 @@ class SensorFilesPage extends Component {
                                     <Placement
                                         currentPage={pageIndex === 0}
                                         nextBtn={this._renderNextPage}
-                                        page={3}
+                                        page={4}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 1}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={4}
+                                        page={5}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 2}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={5}
+                                        page={6}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 3}
                                         nextBtn={() => Actions.pop()}
                                         onBack={this._renderPreviousPage}
-                                        page={6}
+                                        page={7}
                                         showTopNavStep={false}
                                     />
                                 </Pages>

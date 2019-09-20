@@ -6,6 +6,7 @@
         isModalOpen={isStartSensorSessionModalOpen}
         onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
         updateSensorSession={updateSensorSession}
+        updateUser={updateUser}
         user={user}
     />
  *
@@ -13,11 +14,29 @@
 /* global fetch console */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, StyleSheet, View, } from 'react-native';
+import { Alert, Platform, StyleSheet, View, } from 'react-native';
+
+// Compoenents
+import { Calibration, ExtraPages, Placement, TopNav, } from '../../kit/ConnectScreens';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Button, FathomModal, TabIcon, Text, } from '../../custom';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
+import { Button, FathomModal, Spacer, TabIcon, Text, } from '../../custom';
+import { store, } from '../../../store';
+
+// import third-party libraries
+import { Pages, } from 'react-native-pages';
+import _ from 'lodash';
+import Accordion from 'react-native-collapsible/Accordion';
+import LinearGradient from 'react-native-linear-gradient';
+import LottieView from 'lottie-react-native';
+import Video from 'react-native-video';
+
+const ACCORDION_SECTIONS = [
+    { index: 1, sectionEndTime: 3, sectionStartTime: 1, time: 3, title: 'Adjust Posture', },
+    { index: 2, sectionEndTime: 8, sectionStartTime: 4, time: 5, title: 'Stand Very Still', },
+    { index: 3, sectionEndTime: 16, sectionStartTime: 9, time: 8, title: 'March in Place', },
+];
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({});
@@ -28,16 +47,23 @@ class StartSensorSessionModal extends PureComponent {
         super(props);
         this.state = {
             createError: null,
+            pageIndex:   9, // TODO: FIX ME BRO 0,
             sessionId:   null,
             timer:       0,
         };
+        this._pages = {};
         this.timerId = null;
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isMounted) {
+        if(prevState.timer !== this.state.timer && this.state.timer > 16) {
             clearInterval(this.timerId);
-            this.setState({ timer: 0, });
+            this.setState(
+                { timer: 0, },
+                () => {
+                    this.timerId = _.delay(this._renderNextPage, 500);
+                },
+            );
         }
         if(prevState.timer !== this.state.timer && this.state.timer === 16 && this.state.createError) {
             Alert.alert(
@@ -64,119 +90,330 @@ class StartSensorSessionModal extends PureComponent {
         const { sessionId, } = this.state;
         onClose();
         if(patchSession) {
-            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-            const timesyncResponse = await timesyncApiCall.json();
-            let dateTimeReturned = timesyncResponse.utc_datetime;
-            let indexOfDot = dateTimeReturned.indexOf('.');
-            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-            updateSensorSession(dateTimeReturned, false, sessionId)
-                .then(res => {
-                    console.log('res',res);
-                })
-                .catch(err => {
-                    console.log('err',err);
-                });
+            updateSensorSession(false, patchSession, sessionId)
+                .then(res => console.log('res',res))
+                .catch(err => console.log('err',err));
         }
     }
 
+    _onPageScrollEnd = currentPage => {
+        console.log('currentPage',currentPage);
+        if(currentPage === 10) {
+            this.timerId = _.delay(this._renderNextPage, 2000);
+        } else if(currentPage === 11) {
+            this.timerId = setInterval(() => {
+                let newTimerValue = parseInt((this.state.timer + 1), 10);
+                this.setState({ timer: newTimerValue, },);
+            }, 1000);
+        }
+        // const checkpointPages = [0, 1, 8, 11, 14];
+        // if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+        //     this._updateUserCheckpoint(currentPage);
+        // }
+    }
+
+    _renderAccordionHeader = section => {
+        const { timer, } = this.state;
+        let isActive = section.sectionStartTime <= timer || timer >= section.sectionEndTime;
+        let widthValue = (timer - section.sectionStartTime) * (100 / (section.sectionEndTime - section.sectionStartTime));
+        let animatedStyles = {
+            backgroundColor: AppColors.zeplin.slateXLight,
+            flex:            1,
+            width:           widthValue >= 0 ? `${widthValue}%` : '0%',
+        };
+        let specificTextColor = isActive ? AppColors.zeplin.splash : AppColors.zeplin.slateLight;
+        let specificCircleColor = isActive ? AppColors.zeplin.splashXLight : AppColors.zeplin.slateXLight;
+        return (
+            <View
+                style={[
+                    section.index === 3 ? {borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 2,} : {},
+                    {
+                        alignItems:      'center',
+                        backgroundColor: AppColors.white,
+                        borderTopColor:  AppColors.zeplin.slateXLight,
+                        borderTopWidth:  2,
+                        flexDirection:   'row',
+                        justifyContent:  'space-between',
+                        padding:         AppSizes.padding,
+                    }
+                ]}
+            >
+                <View style={[StyleSheet.absoluteFill, animatedStyles,]} />
+                <View style={{alignItems: 'center', flexDirection: 'row',}}>
+                    <View
+                        style={{
+                            alignItems:      'center',
+                            backgroundColor: specificCircleColor,
+                            borderRadius:    (45 / 2),
+                            height:          45,
+                            justifyContent:  'center',
+                            marginRight:     AppSizes.paddingSml,
+                            width:           45,
+                        }}
+                    >
+                        <Text robotoRegular style={{color: specificTextColor, fontSize: AppFonts.scaleFont(26),}}>{section.index}</Text>
+                    </View>
+                    <Text robotoBold={isActive} robotoRegular={!isActive} style={{color: specificTextColor, fontSize: AppFonts.scaleFont(25),}}>{section.title}</Text>
+                </View>
+                <Text robotoBold={isActive} robotoRegular={!isActive} style={{color: specificTextColor, fontSize: AppFonts.scaleFont(22),}}>{`${section.time} sec`}</Text>
+            </View>
+        );
+    };
+
+    _renderNextPage = (numberOfPages = 1) => {
+        let nextPageIndex = (this.state.pageIndex + numberOfPages);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
+    _renderPreviousPage = (numberOfPages = 1) => {
+        let nextPageIndex = (this.state.pageIndex - numberOfPages);
+        this._pages.scrollToPage(nextPageIndex);
+        this.setState({ pageIndex: nextPageIndex, });
+    }
+
     _startCalibration = async () => {
-        const { createSensorSession, user, } = this.props;
+        const { createSensorSession, getSensorFiles, user, } = this.props;
         const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
         const timesyncResponse = await timesyncApiCall.json();
         let dateTimeReturned = timesyncResponse.utc_datetime;
         let indexOfDot = dateTimeReturned.indexOf('.');
         dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
         createSensorSession(dateTimeReturned, user)
-            .then(res => {
-                console.log('res',res);
-                this.setState({ sessionId: res.session.id, });
-            })
-            .catch(err => {
-                console.log('err',err);
-                this.setState({ createError: err.message, });
-            });
-        this.timerId = setInterval(() => {
-            let newTimerValue = parseInt((this.state.timer + 1), 10);
-            this.setState({ timer: newTimerValue, },);
-        }, 1000);
+            .then(res => this.setState({ sessionId: res.session.id, }))
+            .then(() => getSensorFiles(user))
+            .catch(err => this.setState({ createError: err.message, }));
     }
 
-    _startOver = () => {
-        const { sessionId, timer, } = this.state;
+    _startOver = (numberOfPagesBack, patchSession) => {
+        const { sessionId, } = this.state;
         const { updateSensorSession, } = this.props;
-        if(timer > 0 && timer <= 16) {
-            clearInterval(this.timerId);
-            this.setState({ timer: 0, });
-        }
-        updateSensorSession(false, 'CREATE_ATTEMPT_FAILED', sessionId)
-            .then(res => {
-                console.log('res',res);
-            })
-            .catch(err => {
-                console.log('err',err);
+        clearInterval(this.timerId);
+        this.setState(
+            { timer: 0, },
+            () => {
+                if(patchSession) {
+                    updateSensorSession(false, patchSession, sessionId)
+                        .then(res => console.log('res',res))
+                        .catch(err => console.log('err',err));
+                }
+                this._renderPreviousPage(numberOfPagesBack);
+            }
+        );
+    }
+
+    _updateUserCheckpoint = page => {
+        const { updateUser, user, } = this.props;
+        // setup variables
+        let value = `${FIRST_TIME_EXPERIENCE_PREFIX}${page}`;
+        if(!user.first_time_experience.includes(value)) {
+            let newUserPayloadObj = {};
+            newUserPayloadObj.first_time_experience = [value];
+            let newUserObj = _.cloneDeep(user);
+            newUserObj.first_time_experience.push(value);
+            // update reducer as API might take too long to return a value
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: newUserObj
             });
+            // update user object
+            updateUser(newUserPayloadObj, user.id, false);
+        }
     }
 
     render = () => {
         const { isModalOpen, } = this.props;
-        const { timer, } = this.state;
+        const { pageIndex, } = this.state;
         return(
             <FathomModal
                 isVisible={isModalOpen}
             >
-                <View style={{backgroundColor: AppColors.white, alignItems: 'center', flex: 1, justifyContent: 'center',}}>
-                    { (timer > 16) &&
-                        <TabIcon
-                            color={AppColors.zeplin.slateLight}
-                            containerStyle={[StyleSheet.absoluteFill, {top: AppSizes.statusBarHeight > 0 ? AppSizes.statusBarHeight : AppSizes.padding, right: AppSizes.padding,}]}
-                            icon={'close'}
-                            onPress={() => this._onClose()}
-                            size={20}
-                        />
-                    }
-                    <Text>{`TIMER: ${this.state.timer}`}</Text>
-                    <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(30), textAlign: 'center',}}>{'Calibrate to Start Your Workout'}</Text>
-                    { (timer === 0) &&
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
-                            containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
-                            onPress={() => this._startCalibration()}
-                            raised={true}
-                            title={'Start Calibration'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                        />
-                    }
-                    { (timer > 0 && timer < 31) &&
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthThird,}}
-                            containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthThird,}}
-                            onPress={() => this._startOver()}
-                            raised={true}
-                            title={'Start over'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
-                    }
-                    { (timer > 120) &&
+
+                <Pages
+                    containerStyle={{backgroundColor: AppColors.white, flex: 1,}}
+                    indicatorPosition={'none'}
+                    onScrollEnd={currentPage => this._onPageScrollEnd(currentPage)}
+                    ref={pages => { this._pages = pages; }}
+                    scrollEnabled={false}
+                    startPage={pageIndex}
+                >
+
+                    {/* Placement - page 0-6 */}
+                    <Placement
+                        currentPage={pageIndex === 0}
+                        handleAlertPress={() => this._renderNextPage()}
+                        nextBtn={() => this._renderNextPage(2)}
+                        onClose={this._onClose}
+                        page={1}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 1}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={2}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 2}
+                        nextBtn={this._renderNextPage}
+                        onBack={() => this._renderPreviousPage(2)}
+                        onClose={this._onClose}
+                        page={3}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 3}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={4}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 4}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={5}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 5}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={6}
+                        showTopNavStep={false}
+                    />
+                    <Placement
+                        currentPage={pageIndex === 6}
+                        nextBtn={this._renderNextPage}
+                        nextBtnText={'Next'}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={7}
+                        showTopNavStep={false}
+                    />
+
+                    <ExtraPages
+                        nextBtn={this._renderNextPage}
+                        nextBtnText={'Start Workout'}
+                        onBack={this._renderPreviousPage}
+                        onClose={this._onClose}
+                        page={'start-workout'}
+                    />
+
+                    <ExtraPages
+                        nextBtn={this._renderNextPage}
+                        nextBtnText={'Confirm Placement'}
+                        onClose={this._onClose}
+                        page={'confirm-placement'}
+                    />
+
+                    {/* Calibration - page 9 */}
+                    <Calibration
+                        currentPage={pageIndex === 9}
+                        nextBtn={() => { this._renderNextPage(); this._startCalibration(); }}
+                        nextBtnText={'Start Calibration'}
+                        onClose={this._onClose}
+                        page={1}
+                        showTopNavStep={false}
+                    />
+
+                    {/* Start Session - pages 10-12 */}
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                        <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Follow along to calibrate'}</Text>
+                    </View>
+
+                    <View style={{alignItems: 'center', flex: 1,}}>
                         <View>
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
-                                containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() => this._onClose()}
-                                raised={true}
-                                title={'Start Workout'}
-                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
+                                icon={'close'}
+                                onPress={() => this._onClose('CREATE_ATTEMPT_FAILED')}
+                                reverse={false}
+                                size={30}
                             />
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
-                                containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthTwoThirds,}}
-                                onPress={() => this._onClose(true)}
-                                raised={true}
-                                title={'End Workout'}
-                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(23), width: '100%',}}
+                            <Video
+                                muted={true}
+                                paused={pageIndex !== 11}
+                                repeat={true}
+                                resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
+                                style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightHalf, width: AppSizes.screen.width,}]}
                             />
                         </View>
-                    }
-                </View>
+                        <View style={{flex: 1, justifyContent: 'space-between', width: AppSizes.screen.width,}}>
+                            <Accordion
+                                activeSections={[]}
+                                onChange={activeSections => console.log('activeSections',activeSections)}
+                                renderContent={section => <View />}
+                                renderHeader={this._renderAccordionHeader}
+                                sections={ACCORDION_SECTIONS}
+                            />
+                            <LinearGradient
+                                colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.75)', 'rgba(255, 255, 255, 1)']}
+                                style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingTop: AppSizes.paddingXLrg,}}
+                            >
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthThird,}}
+                                    containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthThird,}}
+                                    onPress={() => this._startOver(2, 'CREATE_ATTEMPT_FAILED')}
+                                    raised={true}
+                                    title={'Start over'}
+                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                />
+                            </LinearGradient>
+                        </View>
+                    </View>
+
+                    <View style={{flex: 1,}}>
+                        <TopNav darkColor={true} onClose={this._onClose} step={false} />
+                        <View style={{flex: 1, justifyContent: 'space-between',}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={true}
+                                    source={require('../../../../assets/animation/calibrationalert.json')} // TODO: NEEDS TO BE UPDATED
+                                    style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
+                                />
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>{'Calibration done!'}</Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
+                                    {'If you '}
+                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textDecorationLine: 'underline',}}>{'missed or delayed'}</Text>
+                                    {' a step, we may not be able to analyze your data.'}
+                                </Text>
+                                <Spacer size={AppSizes.padding} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'If needed, tap "start over" to re-do calibration.'}</Text>
+                            </View>
+                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingSml,}}>
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: '100%',}}
+                                    containerStyle={{marginTop: AppSizes.padding, marginRight: AppSizes.paddingMed, width: AppSizes.screen.widthThird,}}
+                                    onPress={() => this._startOver(3, 'CREATE_ATTEMPT_FAILED')}
+                                    raised={true}
+                                    title={'Start over'}
+                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                />
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: '100%',}}
+                                    containerStyle={{marginTop: AppSizes.padding, width: AppSizes.screen.widthHalf,}}
+                                    onPress={() => this._onClose()}
+                                    raised={true}
+                                    title={'Start Workout'}
+                                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                />
+                            </View>
+                        </View>
+                    </View>
+
+                </Pages>
+
             </FathomModal>
         )
     }
@@ -184,9 +421,11 @@ class StartSensorSessionModal extends PureComponent {
 
 StartSensorSessionModal.propTypes = {
     createSensorSession: PropTypes.func.isRequired,
+    getSensorFiles:      PropTypes.func.isRequired,
     isModalOpen:         PropTypes.bool.isRequired,
     onClose:             PropTypes.func.isRequired,
     updateSensorSession: PropTypes.func.isRequired,
+    updateUser:          PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
 };
 

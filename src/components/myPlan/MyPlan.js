@@ -22,8 +22,10 @@
           user={user}
       />
  */
+/* global fetch console */
 import React, { Component, } from 'react';
 import {
+    Alert,
     AppState,
     BackHandler,
     Image,
@@ -204,9 +206,10 @@ const ActivityTab = ({
     </View>
 );
 
-const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, userSesnorData, }) => {
+const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, updateSensorSession, userSesnorData, }) => {
     let {
         actionText,
+        activityStatus,
         eventDate,
         iconColor,
         iconName,
@@ -218,109 +221,137 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
         <TouchableOpacity
             activeOpacity={1}
             onPress={
-                activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                     () => handeRefresh()
-                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                    : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                         () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
-                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                             () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
-                            : activity.status === 'PROCESSING_COMPLETE' ?
+                            : activityStatus === 'PROCESSING_COMPLETE' ?
                                 () => handleGetMobilize()
-                                :
-                                () => {}
+                                : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                                    () => updateSensorSession(activity)
+                                    : activityStatus === 'NO_WIFI_SETUP' ?
+                                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
+                                        :
+                                        () => {}
             }
             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
         >
-            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
-                <View style={{flexDirection: 'row',}}>
-                    { iconName && iconType ?
-                        <TabIcon
-                            color={iconColor}
-                            icon={iconName}
-                            size={AppFonts.scaleFont(24)}
-                            type={iconType}
-                        />
-                        :
-                        <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
-                            <LottieView
-                                autoPlay={false}
-                                loop={false}
-                                progress={1}
-                                source={require('../../../assets/animation/checkmark-circle.json')}
-                            />
-                        </View>
+            { activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: AppSizes.paddingMed,}}>
+                    { eventDate &&
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
                     }
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
                 </View>
-                { eventDate &&
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
-                }
-            </View>
+                :
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
+                    <View style={{flexDirection: 'row',}}>
+                        { iconName && iconType ?
+                            <TabIcon
+                                color={iconColor}
+                                icon={iconName}
+                                size={AppFonts.scaleFont(24)}
+                                type={iconType}
+                            />
+                            :
+                            <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
+                                <LottieView
+                                    autoPlay={false}
+                                    loop={false}
+                                    progress={1}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                        }
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
+                    </View>
+                    { eventDate &&
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
+                    }
+                </View>
+            }
             <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
-                    <Image
-                        resizeMode={'contain'}
-                        source={require('../../../assets/images/standard/kitactive.png')}
-                        style={{height: 25, width: 45,}}
-                    />
-                    { activity.status === 'UPLOAD_IN_PROGRESS' ?
-                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                            <LottieView
-                                autoPlay={true}
-                                loop={true}
-                                progress={1}
-                                source={require('../../../assets/animation/sensorloading.json')}
-                            />
-                        </View>
-                        :
+                { activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
                         <Image
                             resizeMode={'contain'}
-                            source={
-                                activity.status === 'UPLOAD_PAUSED' ?
-                                    require('../../../assets/images/standard/dotsdisabled.png')
-                                    :
-                                    require('../../../assets/images/standard/dotscompleted.png')
-                            }
-                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            source={require('../../../assets/images/standard/kitactive.png')}
+                            style={{height: 25, tintColor: AppColors.zeplin.yellow, width: 45,}}
                         />
-                    }
-                    <TabIcon
-                        color={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
-                        icon={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? 'cloud' : 'cloud-done'}
-                        size={30}
-                        type={'material'}
-                    />
-                    { activity.status === 'PROCESSING_IN_PROGRESS' ?
-                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                            <LottieView
-                                autoPlay={true}
-                                loop={true}
-                                progress={1}
-                                source={require('../../../assets/animation/sensorloading.json')}
-                            />
-                        </View>
-                        :
+                    </View>
+                    :
+                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
                         <Image
                             resizeMode={'contain'}
-                            source={
-                                activity.status === 'PROCESSING_FAILED' ?
-                                    require('../../../assets/images/standard/dotserror.png')
-                                    : activity.status === 'PROCESSING_COMPLETE' ?
-                                        require('../../../assets/images/standard/dotscompleted.png')
-                                        :
+                            source={activityStatus === 'TOO_SHORT' ?
+                                require('../../../assets/images/standard/kitpaused.png')
+                                :
+                                require('../../../assets/images/standard/kitactive.png')
+                            }
+                            style={{height: 25, width: 45,}}
+                        />
+                        { activityStatus === 'UPLOAD_IN_PROGRESS' ?
+                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={true}
+                                    progress={1}
+                                    source={require('../../../assets/animation/sensorloading.json')}
+                                />
+                            </View>
+                            :
+                            <Image
+                                resizeMode={'contain'}
+                                source={
+                                    activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                                         require('../../../assets/images/standard/dotsdisabled.png')
-                            }
-                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                        : activityStatus === 'TOO_SHORT' ?
+                                            require('../../../assets/images/standard/dotserror.png')
+                                            :
+                                            require('../../../assets/images/standard/dotscompleted.png')
+                                }
+                                style={{height: activityStatus === 'PROCESSING_FAILED' || activityStatus === 'TOO_SHORT' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            />
+                        }
+                        <TabIcon
+                            color={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
+                            icon={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? 'cloud' : 'cloud-done'}
+                            size={30}
+                            type={'material'}
                         />
-                    }
-                    <TabIcon
-                        color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
-                        icon={'clipboard-text'}
-                        size={30}
-                        type={'material-community'}
-                    />
-                </View>
-                { (subtext && activity.status === 'UPLOAD_PAUSED') ?
+                        { activityStatus === 'PROCESSING_IN_PROGRESS' ?
+                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={true}
+                                    progress={1}
+                                    source={require('../../../assets/animation/sensorloading.json')}
+                                />
+                            </View>
+                            :
+                            <Image
+                                resizeMode={'contain'}
+                                source={
+                                    activityStatus === 'PROCESSING_FAILED' ?
+                                        require('../../../assets/images/standard/dotserror.png')
+                                        : activityStatus === 'PROCESSING_COMPLETE' ?
+                                            require('../../../assets/images/standard/dotscompleted.png')
+                                            :
+                                            require('../../../assets/images/standard/dotsdisabled.png')
+                                }
+                                style={{height: activityStatus === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            />
+                        }
+                        <TabIcon
+                            color={activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
+                            icon={'clipboard-text'}
+                            size={30}
+                            type={'material-community'}
+                        />
+                    </View>
+                }
+                { (subtext && activityStatus === 'UPLOAD_PAUSED') ?
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
                         {subtext[0]}
                         <Text robotoBold>{subtext[1]}</Text>
@@ -334,7 +365,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                         null
                 }
             </View>
-            { activity.status === 'PROCESSING_COMPLETE' ?
+            { activityStatus === 'PROCESSING_COMPLETE' ?
                 <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                     <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
                 </View>
@@ -342,8 +373,16 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                     <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
                     </View>
-                    :
-                    null
+                    : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                        <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'End Workout'}</Text>
+                        </View>
+                        : activityStatus === 'NO_WIFI_SETUP' ?
+                            <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to configure'}</Text>
+                            </View>
+                            :
+                            null
             }
         </TouchableOpacity>
     );
@@ -575,6 +614,9 @@ class MyPlan extends Component {
         ) {
             AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
         }
+        if(nextAppState === 'background') {
+            this.setState({ isStartSensorSessionModalOpen: false, });
+        }
     }
 
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
@@ -747,7 +789,7 @@ class MyPlan extends Component {
                             isReadinessSurveyModalOpen: !response.daily_plans[0].daily_readiness_survey_completed,
                         });
                     })
-                    .catch(error => this.setState({ isPageLoading: false, }));
+                    .catch(error => this.setState({ isPageCalculating: false, isPageLoading: false, }));
             }
         );
     }
@@ -914,6 +956,48 @@ class MyPlan extends Component {
             });
     }
 
+    _handleUpdateSensorSession = activity => {
+        const { updateSensorSession, } = this.props;
+        let startTime = moment(activity.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
+        if(moment().diff(startTime, 'minutes', true) >= 5) {
+            return this.setState(
+                { isPageCalculating: true, },
+                async () => {
+                    const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                    const timesyncResponse = await timesyncApiCall.json();
+                    let dateTimeReturned = timesyncResponse.utc_datetime;
+                    let indexOfDot = dateTimeReturned.indexOf('.');
+                    dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+                    updateSensorSession(dateTimeReturned, false, activity.id)
+                        .then(res => this._handleExerciseListRefresh(false, true))
+                        .catch(err => this.setState ({isPageCalculating: false ,}))
+                },
+            );
+        }
+        return Alert.alert(
+            '',
+            'Are you sure you want to end your session? We will not be able to process your data since your session is less than 5 minutes.',
+            [
+                {
+                    text:    'End Now',
+                    onPress: () =>
+                        this.setState(
+                            { isPageCalculating: true, },
+                            () =>
+                                updateSensorSession(false, 'TOO_SHORT', activity.id)
+                                    .then(res => this._handleExerciseListRefresh(false, true))
+                                    .catch(err => this.setState({ isPageCalculating: false, })),
+                        )
+                },
+                {
+                    text:  'Continue Run',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     _handleUpdateUserHealthKitFlag = (flag, callback) => {
         const { updateUser, user, } = this.props;
         // setup variables
@@ -1012,7 +1096,7 @@ class MyPlan extends Component {
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { createSensorSession, handleReadInsight, plan, updateSensorSession, user, } = this.props;
+        let { createSensorSession, getSensorFiles, handleReadInsight, plan, updateSensorSession, updateUser, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1028,6 +1112,7 @@ class MyPlan extends Component {
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
+        const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -1082,6 +1167,7 @@ class MyPlan extends Component {
                                             handleGetMobilize={this._handleGetMobilize}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
+                                            updateSensorSession={this._handleUpdateSensorSession}
                                             userSesnorData={user.sensor_data}
                                         />
                                     )}
@@ -1228,14 +1314,7 @@ class MyPlan extends Component {
                                 />
                             </ActionButton.Item>
                         }
-                        {/* (
-                            user && user.personal_data && user.personal_data.email &&
-                            (
-                                /gabby[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
-                                /dipesh[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
-                                /mazen[+]mvp@fathomai.com/g.test(user.personal_data.email)
-                            )
-                        ) &&
+                        { userHas3SensorSystem &&
                             <ActionButton.Item
                                 activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
@@ -1245,15 +1324,16 @@ class MyPlan extends Component {
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'Start Sensor Session'}
+                                title={'Start a run with PRO'}
                                 useNativeFeedback={false}
                             >
                                 <Image
-                                    source={require('../../../assets/images/sports_images/icons8-kitesurfing-200.png')}
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/kitpaused.png')}
                                     style={{height: 32, tintColor: AppColors.white, width: 32,}}
                                 />
                             </ActionButton.Item>
-                        */}
+                        }
                     </ActionButton>
                 }
 
@@ -1303,13 +1383,17 @@ class MyPlan extends Component {
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
                 />
-                <StartSensorSessionModal
-                    createSensorSession={createSensorSession}
-                    isModalOpen={isStartSensorSessionModalOpen}
-                    onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
-                    updateSensorSession={updateSensorSession}
-                    user={user}
-                />
+                { isStartSensorSessionModalOpen &&
+                    <StartSensorSessionModal
+                        createSensorSession={createSensorSession}
+                        getSensorFiles={getSensorFiles}
+                        isModalOpen={isStartSensorSessionModalOpen}
+                        onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                        updateSensorSession={updateSensorSession}
+                        updateUser={updateUser}
+                        user={user}
+                    />
+                }
                 { loading ?
                     <Loading
                         text={showLoadingText ? trainLoadingScreenText : null}

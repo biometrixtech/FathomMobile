@@ -24,7 +24,7 @@ import {
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, } from '../../constants';
 import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
-import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, } from './ConnectScreens';
+import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, Train, } from './ConnectScreens';
 import { Loading, } from '../general';
 import { ble, } from '../../actions';
 import { store, } from '../../store';
@@ -38,7 +38,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // setup consts
 const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
-const WIFI_PAGE_NUMBER = 16;
+const WIFI_PAGE_NUMBER = 16; // TODO: UPDATE ME
 
 /* Component ==================================================================== */
 class BluetoothConnect extends Component {
@@ -416,33 +416,34 @@ class BluetoothConnect extends Component {
     }
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [0, 1, 8, 11, 14, WIFI_PAGE_NUMBER];
-        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
-            this._updateUserCheckpoint(currentPage);
-        }
-        if(currentPage === 15) { // turn on BLE & connect to accessory
-            if (Platform.OS === 'android') {
-                ble.enable();
-            }
-            if (Platform.OS === 'android' && Platform.Version >= 23) {
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-                    if (result) {
-                        console.log('Permission is OK');
-                    } else {
-                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
-                            .then(res =>
-                                this.setState({
-                                    bleState: res === 'granted' ? 'PoweredOn' : res,
-                                })
-                            );
-                    }
-                });
-            }
-        } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
-            this._timer = _.delay(() => this._handleWifiScan(), 2000);
-        } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
-            this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
-        }
+        // TODO: UPDATE ME ENTIRELY AND CONFIRM NO OTHER PAGES NEED HELP
+        // const checkpointPages = [0, 1, 8, 11, 14, WIFI_PAGE_NUMBER];
+        // if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+        //     this._updateUserCheckpoint(currentPage);
+        // }
+        // if(currentPage === 15) { // turn on BLE & connect to accessory
+        //     if (Platform.OS === 'android') {
+        //         ble.enable();
+        //     }
+        //     if (Platform.OS === 'android' && Platform.Version >= 23) {
+        //         PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
+        //             if (result) {
+        //                 console.log('Permission is OK');
+        //             } else {
+        //                 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+        //                     .then(res =>
+        //                         this.setState({
+        //                             bleState: res === 'granted' ? 'PoweredOn' : res,
+        //                         })
+        //                     );
+        //             }
+        //         });
+        //     }
+        // } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
+        //     this._timer = _.delay(() => this._handleWifiScan(), 2000);
+        // } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
+        //     this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
+        // }
     }
 
     _renderNextPage = () => {
@@ -578,10 +579,39 @@ class BluetoothConnect extends Component {
 
                     {/* Welcome Screen - page 0 */}
                     <CVP
+                        currentPage={pageIndex === 0}
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Placement Tutorial - pages 1-7 */}
+                    {/* Owner - page 1-5 */}
+
+
+                    {/* Wifi - page 6-9 */}
+
+
+                    {/* Success - page 10 */}
+                    <Complete
+                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
+                        currentPage={pageIndex === 1} // TODO: UPDATE ME PLS 10}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                    />
+
+                    {/* Train - page 11-12 */}
+                    <Train
+                        currentPage={pageIndex === 2} // TODO: UPDATE ME PLS 11}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Train
+                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 12}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+
+                    {/* Placement Tutorial - pages 1-7 *}
                     <Placement
                         currentPage={pageIndex === 1}
                         nextBtn={this._renderNextPage}
@@ -626,7 +656,7 @@ class BluetoothConnect extends Component {
                         page={6}
                     />
 
-                    {/* Calibration - pages 8-10 */}
+                    {/* Calibration - pages 8-10 *}
                     <Calibration
                         currentPage={pageIndex === 8}
                         nextBtn={this._renderNextPage}
@@ -648,7 +678,7 @@ class BluetoothConnect extends Component {
                         page={2}
                     />
 
-                    {/* Session - pages 11-13 */}
+                    {/* Session - pages 11-13 *}
                     <Session
                         currentPage={pageIndex === 11}
                         nextBtn={this._renderNextPage}
@@ -671,7 +701,7 @@ class BluetoothConnect extends Component {
                         page={2}
                     />
 
-                    {/* Connect - pages 14-17 */}
+                    {/* Connect - pages 14-17 *}
                     <Connect
                         currentPage={pageIndex === 14}
                         nextBtn={this._renderNextPage}
@@ -715,19 +745,19 @@ class BluetoothConnect extends Component {
                         page={4}
                     />
 
-                    {/* Battery - page 18 */}
+                    {/* Battery - page 18 *}
                     <Battery
                         currentPage={pageIndex === 18}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                     />
 
-                    {/* End - page 19 */}
+                    {/* End - page 19
                     <Complete
                         currentPage={pageIndex === 19}
                         nextBtn={() => Actions.pop()}
                         onBack={this._renderPreviousPage}
-                    />
+                    />*/}
 
                 </Pages>
 

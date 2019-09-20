@@ -397,7 +397,7 @@ class Settings extends Component {
                                 name:  'chevron-right',
                                 size:  ICON_SIZE,
                             }}
-                            title={has3SensorConnected ? 'Manage Fathom PRO Kit' : 'Set up Fathom PRO Kit'}
+                            title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
