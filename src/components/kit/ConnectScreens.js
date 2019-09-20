@@ -296,7 +296,7 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, nextBtn, n
     }
     return (
         <View style={{flex: 1,}}>
-            <TopNav darkColor={true} onBack={onBack} step={showTopNavStep ? 2 : false} />
+            <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 2 : false} />
             <View style={{flex: 1, justifyContent: 'space-between',}}>
                 { page === 1 ?
                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
@@ -556,7 +556,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
     </View>
 );
 
-const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, page, showTopNavStep = false, }) => {
+const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showTopNavStep = false, }) => {
     if(page === 'start-workout') {
         return (
             <ImageBackground
@@ -634,6 +634,14 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, page, showTopNavSte
                                     size={20}
                                 />
                                 <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'LEDs Green on Sensors'}</Text>
+                                <TabIcon
+                                    color={AppColors.white}
+                                    containerStyle={[{marginLeft: AppSizes.paddingSml}]}
+                                    icon={'help-circle-outline'}
+                                    onPress={() => onHelp('sensor-led')}
+                                    size={30}
+                                    type={'material-community'}
+                                />
                             </View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                                 <TabIcon
@@ -644,6 +652,14 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, page, showTopNavSte
                                     size={22}
                                 />
                                 <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Proper Sensor Placement'}</Text>
+                                <TabIcon
+                                    color={AppColors.white}
+                                    containerStyle={[{marginLeft: AppSizes.paddingSml}]}
+                                    icon={'help-circle-outline'}
+                                    onPress={() => onHelp('sensor-placement')}
+                                    size={30}
+                                    type={'material-community'}
+                                />
                             </View>
                         </View>
                         <Button

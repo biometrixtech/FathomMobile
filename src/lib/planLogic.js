@@ -867,6 +867,7 @@ const PlanLogic = {
       * HealthKit Workout Page Render Logic
       * - HealthKitWorkouts
       */
+    // TODO: UNIT TEST ME - lines 1890-1940
     handleHealthKitWorkoutPageRenderLogic: workout => {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
