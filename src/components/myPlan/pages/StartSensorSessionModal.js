@@ -34,11 +34,13 @@ import Video from 'react-native-video';
 
 // setup consts
 const ACCORDION_SECTIONS = [
-    { index: 1, sectionEndTime: 3, sectionStartTime: 1, time: 3, title: 'Adjust Posture', },
-    { index: 2, sectionEndTime: 8, sectionStartTime: 4, time: 5, title: 'Stand Very Still', },
-    { index: 3, sectionEndTime: 16, sectionStartTime: 9, time: 8, title: 'March in Place', },
+    { index: 1, sectionEndTime: 14, sectionStartTime: 16, time: 3, title: 'Adjust Posture', },
+    { index: 2, sectionEndTime: 9, sectionStartTime: 13, time: 5, title: 'Stand Very Still', },
+    { index: 3, sectionEndTime: 1, sectionStartTime: 8, time: 8, title: 'March in Place', },
 ];
 const START_SESSION_FIRST_TIME_EXPERIENCE = 'Start-Session-Tutorial';
+const ERROR_HEADER = 'Poor connection!';
+const ERROR_STRING = 'We weren\'t able to connect to your sensors.\n\nMake srue your mobile device is connected to a reliable network to start your workout.';
 
 /* Component ==================================================================== */
 const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, }) => (
@@ -141,33 +143,32 @@ class StartSensorSessionModal extends PureComponent {
             sessionId:             null,
             showLEDPage:           false,
             showPlacementPages:    false,
-            timer:                 0,
+            timer:                 17,
         };
         this._pages = {};
         this.timerId = null;
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if(prevState.timer !== this.state.timer && this.state.timer > 16) {
+        if(prevState.timer !== this.state.timer && this.state.timer === -1) {
             clearInterval(this.timerId);
-            this.setState(
-                { timer: 0, },
-                () => {
-                    this.timerId = _.delay(this._renderNextPage, 500);
-                },
-            );
+            this._renderNextPage(1, () => this.setState({ timer: 17, }));
         }
-        if(prevState.timer !== this.state.timer && this.state.timer === 16 && this.state.createError) {
-            Alert.alert(
-                'Error creating session',
-                this.state.createError,
-                [
-                    {
-                        text:  'OK',
-                        style: 'cancel',
-                    },
-                ],
-                { cancelable: false, }
+        if(prevState.timer !== this.state.timer && this.state.timer === 0 && this.state.createError) {
+            this._pages.scrollToPage(1);
+            this.setState(
+                { pageIndex: 1, },
+                () => Alert.alert(
+                    ERROR_HEADER,
+                    this.state.createError,
+                    [
+                        {
+                            text:  'OK',
+                            style: 'cancel',
+                        },
+                    ],
+                    { cancelable: false, }
+                ),
             );
         }
     }
@@ -175,7 +176,7 @@ class StartSensorSessionModal extends PureComponent {
     componentWillUnmount = () => {
         this._pages = {};
         clearInterval(this.timerId);
-        this.setState({ timer: 0, });
+        this.setState({ timer: 17, });
     }
 
     _onClose = async patchSession => {
@@ -193,20 +194,20 @@ class StartSensorSessionModal extends PureComponent {
         const { user, } = this.props;
         const { showLEDPage, showPlacementPages, } = this.state;
         if(
-            currentPage === 2 &&
+            (currentPage === 2 || currentPage === 9) &&
             !showLEDPage &&
             !showPlacementPages &&
             user.first_time_experience.includes(START_SESSION_FIRST_TIME_EXPERIENCE)
         ) {
             this.timerId = _.delay(this._renderNextPage, 2000);
         } else if(
-            currentPage === 3 &&
+            (currentPage === 3 || currentPage === 10) &&
             !showLEDPage &&
             !showPlacementPages &&
             user.first_time_experience.includes(START_SESSION_FIRST_TIME_EXPERIENCE)
         ) {
             this.timerId = setInterval(() => {
-                let newTimerValue = parseInt((this.state.timer + 1), 10);
+                let newTimerValue = parseInt((this.state.timer - 1), 10);
                 this.setState({ timer: newTimerValue, },);
             }, 1000);
         }
@@ -218,7 +219,7 @@ class StartSensorSessionModal extends PureComponent {
 
     _renderAccordionHeader = section => {
         const { timer, } = this.state;
-        let isActive = section.sectionStartTime <= timer || timer >= section.sectionEndTime;
+        let isActive = section.sectionStartTime >= timer || timer <= section.sectionEndTime;
         let widthValue = (timer - section.sectionStartTime) * (100 / (section.sectionEndTime - section.sectionStartTime));
         let animatedStyles = {
             backgroundColor: AppColors.zeplin.slateXLight,
@@ -227,6 +228,8 @@ class StartSensorSessionModal extends PureComponent {
         };
         let specificTextColor = isActive ? AppColors.zeplin.splash : AppColors.zeplin.slateLight;
         let specificCircleColor = isActive ? AppColors.zeplin.splashXLight : AppColors.zeplin.slateXLight;
+        let countdownTimer = ((timer - section.sectionEndTime) + 1);
+        let updatedTimer = countdownTimer <= 0 ? 'Done!' : countdownTimer >= section.time ? `${section.time} sec` : `${countdownTimer} sec`;
         return (
             <View
                 style={[
@@ -259,15 +262,18 @@ class StartSensorSessionModal extends PureComponent {
                     </View>
                     <Text robotoBold={isActive} robotoRegular={!isActive} style={{color: specificTextColor, fontSize: AppFonts.scaleFont(25),}}>{section.title}</Text>
                 </View>
-                <Text robotoBold={isActive} robotoRegular={!isActive} style={{color: specificTextColor, fontSize: AppFonts.scaleFont(22),}}>{`${section.time} sec`}</Text>
+                <Text robotoBold={isActive} robotoRegular={!isActive} style={{color: specificTextColor, fontSize: AppFonts.scaleFont(22),}}>{updatedTimer}</Text>
             </View>
         );
     };
 
-    _renderNextPage = (numberOfPages = 1) => {
+    _renderNextPage = (numberOfPages = 1, callback) => {
         let nextPageIndex = (this.state.pageIndex + numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
-        this.setState({ pageIndex: nextPageIndex, });
+        this.setState(
+            { pageIndex: nextPageIndex, },
+            () => callback && callback()
+        );
     }
 
     _renderPreviousPage = (numberOfPages = 1, callback, animate = true) => {
@@ -281,26 +287,30 @@ class StartSensorSessionModal extends PureComponent {
 
     _startCalibration = async () => {
         const { createSensorSession, getSensorFiles, user, } = this.props;
-        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-        const timesyncResponse = await timesyncApiCall.json();
-        let dateTimeReturned = timesyncResponse.utc_datetime;
-        let indexOfDot = dateTimeReturned.indexOf('.');
-        dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-        createSensorSession(dateTimeReturned, user)
-            .then(res => this.setState({ sessionId: res.session.id, }))
-            .then(() => _.delay(() => getSensorFiles(user), 5000))
-            .catch(err => this.setState({ createError: err.message, }));
+        try {
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncResponse = await timesyncApiCall.json();
+            let dateTimeReturned = timesyncResponse.utc_datetime;
+            let indexOfDot = dateTimeReturned.indexOf('.');
+            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+            createSensorSession(dateTimeReturned, user)
+                .then(res => this.setState({ sessionId: res.session.id, }))
+                .then(() => _.delay(() => getSensorFiles(user), 5000))
+                .catch(err => this.setState({ createError: ERROR_STRING, }));
+        } catch (e) {
+            this.setState({ createError: ERROR_STRING, });
+        }
     }
 
     _startOver = (numberOfPagesBack, patchSession) => {
         const { sessionId, } = this.state;
-        const { updateSensorSession, } = this.props;
+        const { updateSensorSession, user, } = this.props;
         clearInterval(this.timerId);
         this.setState(
             { timer: 0, },
             () => {
                 if(patchSession) {
-                    updateSensorSession(false, patchSession, sessionId)
+                    updateSensorSession(false, patchSession, sessionId, user)
                         .then(res => console.log('res',res))
                         .catch(err => console.log('err',err));
                 }

@@ -73,6 +73,22 @@ const styles = StyleSheet.create({
     completedTitle: {
         fontSize: AppFonts.scaleFont(18),
     },
+    disabledFABBtn: {
+        alignItems:      'center',
+        backgroundColor: AppColors.zeplin.slateXLight,
+        borderRadius:    (65 / 2),
+        bottom:          30,
+        elevation:       2,
+        height:          65,
+        justifyContent:  'center',
+        position:        'absolute',
+        right:           30,
+        shadowColor:     AppColors.zeplin.slateXLight,
+        shadowOffset:    { height: 3, width: 0, },
+        shadowOpacity:   1,
+        shadowRadius:    6,
+        width:           65,
+    },
     lockedSubtitle: {
         fontSize: AppFonts.scaleFont(12),
         opacity:  0.4,
@@ -957,7 +973,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateSensorSession = activity => {
-        const { updateSensorSession, } = this.props;
+        const { updateSensorSession, user, } = this.props;
         let startTime = moment(activity.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
         if(moment().diff(startTime, 'minutes', true) >= 5) {
             return this.setState(
@@ -968,7 +984,7 @@ class MyPlan extends Component {
                     let dateTimeReturned = timesyncResponse.utc_datetime;
                     let indexOfDot = dateTimeReturned.indexOf('.');
                     dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-                    updateSensorSession(dateTimeReturned, false, activity.id)
+                    updateSensorSession(dateTimeReturned, false, activity.id, user)
                         .then(res => this._handleExerciseListRefresh(false, true))
                         .catch(err => this.setState ({isPageCalculating: false ,}))
                 },
@@ -984,7 +1000,7 @@ class MyPlan extends Component {
                         this.setState(
                             { isPageCalculating: true, },
                             () =>
-                                updateSensorSession(false, 'TOO_SHORT', activity.id)
+                                updateSensorSession(false, 'TOO_SHORT', activity.id, user)
                                     .then(res => this._handleExerciseListRefresh(false, true))
                                     .catch(err => this.setState({ isPageCalculating: false, })),
                         )
@@ -1112,6 +1128,7 @@ class MyPlan extends Component {
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
+        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -1237,7 +1254,7 @@ class MyPlan extends Component {
                     )}
                 </Placeholder>
 
-                { isReadinessSurveyCompleted && !isPageCalculating &&
+                { (isReadinessSurveyCompleted && !isPageCalculating && !hasActive3SensorSession) ?
                     <ActionButton
                         activeOpacity={1}
                         bgColor={'rgba(15, 19, 32, 0.8)'}
@@ -1335,6 +1352,16 @@ class MyPlan extends Component {
                             </ActionButton.Item>
                         }
                     </ActionButton>
+                    : (isReadinessSurveyCompleted && !isPageCalculating && hasActive3SensorSession) ?
+                        <View style={[styles.disabledFABBtn,]}>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'add'}
+                                size={40}
+                            />
+                        </View>
+                        :
+                        null
                 }
 
                 <FathomModal

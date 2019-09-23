@@ -2538,8 +2538,10 @@ const PlanLogic = {
                                         'Workout Complete'
                                         : activityStatus === 'NO_DATA' ?
                                             'No workout data found'
-                                            :
-                                            'Analysis failed';
+                                            : activityStatus === 'TOO_SHORT' ?
+                                                'Workout too short'
+                                                :
+                                                'Analysis failed';
         let iconName = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
             : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?

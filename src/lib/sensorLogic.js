@@ -363,22 +363,15 @@ const SensorLogic = {
                 buttonText: 'Next',
                 image:      false,
                 subtitle:   [
-                    <Text key={0} robotoBold style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Hold'}
-                        <Text robotoLight>{' the '}</Text>
-                        {'Button'}
-                        <Text robotoLight>{' until the '}</Text>
-                        {'Battery LED'}
-                        <Text robotoLight style={[styles.subtitleStyle,]}>
-                            {' turns solid '}
-                            <Text robotoBold style={{color: 'blue',}}>{'blue.'}</Text>
-                        </Text>
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
+                        {'Hold the button for 3 sec until battery LED turns '}
+                        <Text robotoBold style={{color: AppColors.blue,}}>{'solid blue'}</Text>
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(All sensors must be in the Kit with the lid firmly closed & your phone\'s bluetooth must be "ON")'}
+                        {'(make sure your phone\'s bluetooth is "on")'}
                     </Text>
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'TURN ON BLUETOOTH'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Turn on Bluetooth'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_on.mp4',
             },
             {
@@ -393,7 +386,7 @@ const SensorLogic = {
                 buttonText: false,
                 image:      false,
                 subtitle:   <Text robotoLight style={[styles.smallerText, {textAlign: 'center',}]}>{'You\'ll need wifi to upload data after your workout. Select the wifi network that you\'ll have access to most reliably after training.'}</Text>,
-                title:      <Text robotoMedium style={[styles.titleStyle,]}>{'CONNECT TO WIFI'}</Text>,
+                title:      <Text robotoMedium style={[styles.titleStyle,]}>{'Connect to Wifi'}</Text>,
                 video:      false,
             },
             {

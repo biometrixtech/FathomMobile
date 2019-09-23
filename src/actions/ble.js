@@ -251,7 +251,7 @@ const createSensorSession = (dateTime, userObj) => {
     });
 };
 
-const updateSensorSession = (endDate, sessionStatus, sessionId) => {
+const updateSensorSession = (endDate, sessionStatus, sessionId, userObj) => {
     if(!sessionId) {
         return dispatch => new Promise((resolve, reject) => {
             reject('Session not found, please try again!');
@@ -266,7 +266,21 @@ const updateSensorSession = (endDate, sessionStatus, sessionId) => {
     }
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
-            .then(response => resolve(response))
+            .then(response => {
+                let newUserObj = _.cloneDeep(userObj);
+                let newSensorSessions = _.cloneDeep(newUserObj.sensor_data.sessions);
+                let sessionIndex = _.findIndex(newSensorSessions, { id: response.session.id, });
+                if(sessionIndex >= 0) {
+                    newSensorSessions.splice(sessionIndex, 1, response.session);
+                    newSensorSessions = _.filter(newSensorSessions, o => o.status !== 'CREATE_ATTEMPT_FAILED');
+                    newUserObj.sensor_data.sessions = newSensorSessions;
+                    dispatch({
+                        type: Actions.USER_REPLACE,
+                        data: newUserObj,
+                    });
+                }
+                return resolve(response);
+            })
             .catch(error => reject(error));
     });
 };

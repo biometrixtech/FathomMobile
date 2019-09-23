@@ -22,9 +22,10 @@ import {
 } from 'react-native';
 
 // Consts and Libs
-import { Actions as DispatchActions, AppColors, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
 import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
-import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, Train, } from './ConnectScreens';
+import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, TopNav, Train, } from './ConnectScreens';
+import { Button, Text, } from '../custom';
 import { Loading, } from '../general';
 import { ble, } from '../../actions';
 import { store, } from '../../store';
@@ -34,6 +35,7 @@ import { Actions, } from 'react-native-router-flux';
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
 import DialogInput from 'react-native-dialog-input';
+import LottieView from 'lottie-react-native';
 import Toast, { DURATION } from 'react-native-easy-toast';
 
 // setup consts
@@ -583,134 +585,16 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Owner - page 1-5 */}
-
-
-                    {/* Wifi - page 6-9 */}
-
-
-                    {/* Success - page 10 */}
-                    <Complete
-                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
-                        currentPage={pageIndex === 1} // TODO: UPDATE ME PLS 10}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                    />
-
-                    {/* Train - page 11-12 */}
-                    <Train
-                        currentPage={pageIndex === 2} // TODO: UPDATE ME PLS 11}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={0}
-                    />
-                    <Train
-                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 12}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={1}
-                    />
-
-                    {/* Placement Tutorial - pages 1-7 *}
-                    <Placement
-                        currentPage={pageIndex === 1}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={0}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 2}
-                        handleAlertPress={() => this._handleAlertPress()}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={1}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 3}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={2}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 4}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={3}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 5}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={4}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 6}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={5}
-                    />
-                    <Placement
-                        currentPage={pageIndex === 7}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={6}
-                    />
-
-                    {/* Calibration - pages 8-10 *}
-                    <Calibration
-                        currentPage={pageIndex === 8}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={0}
-                    />
-                    <Calibration
-                        currentPage={pageIndex === 9}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={1}
-                    />
-                    <Calibration
-                        currentPage={pageIndex === 10}
-                        handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
-                        isVideoMuted={isVideoMuted}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        page={2}
-                    />
-
-                    {/* Session - pages 11-13 *}
-                    <Session
-                        currentPage={pageIndex === 11}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
-                        page={0}
-                    />
-                    <Session
-                        currentPage={pageIndex === 12}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
-                        page={1}
-                    />
-                    <Session
-                        currentPage={pageIndex === 13}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'after training to end your workout & sync your data! Tap here.', true)}
-                        page={2}
-                    />
-
-                    {/* Connect - pages 14-17 *}
+                    {/* Owner - page 1-4 */}
                     <Connect
-                        currentPage={pageIndex === 14}
+                        currentPage={pageIndex === 1}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
                     />
-                    <Connect
-                        currentPage={pageIndex === 15}
+                    {/*<Connect
+                        currentPage={pageIndex === 2}
                         isLoading={isConnectingToSensor}
                         isNextDisabled={bleState !== 'PoweredOn'}
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
@@ -719,7 +603,58 @@ class BluetoothConnect extends Component {
                             this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true))
                         }
                         page={1}
+                    />*/}
+                    <View style={{flex: 1,}}>
+                        <TopNav darkColor={true} onBack={this._renderPreviousPage} onClose={() => Actions.pop()} step={1} />
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>
+                                {'Success, you\'re connected!'}
+                            </Text>
+                            <LottieView
+                                autoPlay={true}
+                                loop={false}
+                                source={require('../../../assets/animation/bluetoothloading.json')}
+                                style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
+                            />
+                            <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                    containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
+                                    onPress={this._renderNextPage}
+                                    raised={true}
+                                    title={'Next'}
+                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                    
+
+                    {/* Wifi - page 4-5 */}
+
+
+                    {/* Success - page 6 */}
+                    <Complete
+                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
+                        currentPage={pageIndex === 2} // TODO: UPDATE ME PLS 6}
+                        nextBtn={this._renderNextPage}
                     />
+
+                    {/* Train - pages 7-8 */}
+                    <Train
+                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 7}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Train
+                        currentPage={pageIndex === 8} // TODO: UPDATE ME PLS 8}
+                        nextBtn={() => Actions.pop()}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
+
+                    {/* Connect - pages 14-17 *}
                     <Connect
                         availableNetworks={availableNetworks}
                         currentPage={pageIndex === WIFI_PAGE_NUMBER}
@@ -743,20 +678,6 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                         onClose={() => Actions.pop()}
                         page={4}
-                    />
-
-                    {/* Battery - page 18 *}
-                    <Battery
-                        currentPage={pageIndex === 18}
-                        nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
-                    />
-
-                    {/* End - page 19
-                    <Complete
-                        currentPage={pageIndex === 19}
-                        nextBtn={() => Actions.pop()}
-                        onBack={this._renderPreviousPage}
                     />*/}
 
                 </Pages>
