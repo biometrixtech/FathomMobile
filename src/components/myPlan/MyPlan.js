@@ -58,7 +58,7 @@ import defaultPlanState from '../../states/plan';
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
-import { Loading, } from '../general';
+import { ContactUsModal, Loading, } from '../general';
 
 // global constants
 const numberOfPlaceholders = 8;
@@ -222,7 +222,16 @@ const ActivityTab = ({
     </View>
 );
 
-const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, updateSensorSession, userSesnorData, }) => {
+const SensorSession = ({
+    activity,
+    askForNewMobilize,
+    handleGetMobilize,
+    handeRefresh,
+    onLayout,
+    toggleContactUsWebView,
+    updateSensorSession,
+    userSesnorData,
+}) => {
     let {
         actionText,
         activityStatus,
@@ -236,6 +245,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
     return (
         <TouchableOpacity
             activeOpacity={1}
+            onLayout={onLayout ? event => onLayout(event) : null}
             onPress={
                 activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                     () => handeRefresh()
@@ -249,8 +259,10 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                                     () => updateSensorSession(activity)
                                     : activityStatus === 'NO_WIFI_SETUP' ?
                                         () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
-                                        :
-                                        () => {}
+                                        : activityStatus === 'NO_DATA' ?
+                                            () => toggleContactUsWebView()
+                                            :
+                                            () => {}
             }
             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
         >
@@ -289,7 +301,13 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
             }
             <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
                 { activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
-                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
+                    <View style={{alignItems: 'center', flexDirection: 'row', height: (25 + (AppSizes.paddingMed * 2)), justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
+                        <LottieView
+                            autoPlay={true}
+                            loop={true}
+                            source={require('../../../assets/animation/workoutongoing.json')}
+                            style={{position: 'absolute', height: (2.5 * (25 + (AppSizes.paddingMed * 2))),}}
+                        />
                         <Image
                             resizeMode={'contain'}
                             source={require('../../../assets/images/standard/kitactive.png')}
@@ -302,8 +320,10 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                             resizeMode={'contain'}
                             source={activityStatus === 'TOO_SHORT' ?
                                 require('../../../assets/images/standard/kitpaused.png')
-                                :
-                                require('../../../assets/images/standard/kitactive.png')
+                                : activityStatus === 'NO_DATA' ?
+                                    require('../../../assets/images/standard/kiterror.png')
+                                    :
+                                    require('../../../assets/images/standard/kitactive.png')
                             }
                             style={{height: 25, width: 45,}}
                         />
@@ -395,7 +415,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                         </View>
                         : activityStatus === 'NO_WIFI_SETUP' ?
                             <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to configure'}</Text>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to connect wifi'}</Text>
                             </View>
                             :
                             null
@@ -979,20 +999,26 @@ class MyPlan extends Component {
             return this.setState(
                 { isPageCalculating: true, },
                 async () => {
-                    const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-                    const timesyncResponse = await timesyncApiCall.json();
-                    let dateTimeReturned = timesyncResponse.utc_datetime;
-                    let indexOfDot = dateTimeReturned.indexOf('.');
-                    dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-                    updateSensorSession(dateTimeReturned, false, activity.id, user)
-                        .then(res => this._handleExerciseListRefresh(false, true))
-                        .catch(err => this.setState ({isPageCalculating: false ,}))
+                    try {
+                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                        const timesyncResponse = await timesyncApiCall.json();
+                        let dateTimeReturned = timesyncResponse.utc_datetime;
+                        let indexOfDot = dateTimeReturned.indexOf('.');
+                        dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+                        updateSensorSession(dateTimeReturned, false, activity.id, user)
+                            .then(res => this._handleExerciseListRefresh(false, true))
+                            .catch(err => this.setState({ isPageCalculating: false, }))
+                    } catch (e) {
+                        updateSensorSession(false, false, activity.id, user, true)
+                            .then(res => this._handleExerciseListRefresh(false, true))
+                            .catch(err => this.setState({ isPageCalculating: false, }));
+                    }
                 },
             );
         }
         return Alert.alert(
-            '',
-            'Are you sure you want to end your session? We will not be able to process your data since your session is less than 5 minutes.',
+            'Are you sure you want to end?',
+            'Workouts less than 5 min don\'t have enough data to properly process.',
             [
                 {
                     text:    'End Now',
@@ -1049,6 +1075,8 @@ class MyPlan extends Component {
         }
     }
 
+    _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
+
     _togglePostSessionSurveyModal = () => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
         const { isPostSessionSurveyModalOpen, } = this.state;
@@ -1100,6 +1128,7 @@ class MyPlan extends Component {
             expandNotifications,
             healthData,
             isCoachModalOpen,
+            isContactUsOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -1128,7 +1157,8 @@ class MyPlan extends Component {
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
-        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
+        // TODO: FIX ME
+        const hasActive3SensorSession = false;//_.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
@@ -1184,6 +1214,8 @@ class MyPlan extends Component {
                                             handleGetMobilize={this._handleGetMobilize}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
+                                            onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
+                                            toggleContactUsWebView={this._toggleContactUsWebView}
                                             updateSensorSession={this._handleUpdateSensorSession}
                                             userSesnorData={user.sensor_data}
                                         />
@@ -1496,6 +1528,11 @@ class MyPlan extends Component {
                         </TouchableOpacity>
                     </View>
                 </FathomModal>
+
+                <ContactUsModal
+                    handleModalToggle={this._toggleContactUsWebView}
+                    isModalOpen={isContactUsOpen}
+                />
 
             </View>
         );

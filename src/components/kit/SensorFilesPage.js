@@ -75,7 +75,7 @@ class SensorFilesPage extends Component {
             currentWifiConnection: false,
             isConnectingToSensor:  false,
             isDialogVisible:       false,
-            isVideoMuted:          false,
+            isVideoPaused:         false,
             isWifiScanDone:        false,
             loading:               false,
             pageIndex:             0,
@@ -551,7 +551,7 @@ class SensorFilesPage extends Component {
             isConnectingToSensor,
             isDialogVisible,
             isSubmittingDetails,
-            isVideoMuted,
+            isVideoPaused,
             isWifiScanDone,
             pageIndex,
         } = this.state;
@@ -612,16 +612,9 @@ class SensorFilesPage extends Component {
                             >
                                 <Calibration
                                     currentPage={pageIndex === 0}
-                                    nextBtn={this._renderNextPage}
-                                    page={1}
-                                    showTopNavStep={false}
-                                />
-                                <Calibration
-                                    currentPage={pageIndex === 1}
-                                    handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
-                                    isVideoMuted={isVideoMuted}
+                                    handleUpdatePauseState={() => this.setState({ isVideoPaused: !this.state.isVideoPaused, })}
+                                    isVideoPaused={isVideoPaused}
                                     nextBtn={() => Actions.pop()}
-                                    onBack={this._renderPreviousPage}
                                     page={2}
                                     showTopNavStep={false}
                                 />

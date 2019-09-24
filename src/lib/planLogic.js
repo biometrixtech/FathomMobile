@@ -2557,12 +2557,16 @@ const PlanLogic = {
                 :
                 'material-community';
         let iconColor = activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
-        let actionText = activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
+        let actionText = activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
             'Tap to refresh'
             : activityStatus === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
                 'Tap to access tutorial'
-                :
-                false;
+                : activityStatus === 'NO_DATA' ?
+                    'Tap to Contact Fathom'
+                    : (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
+                        'Tap to update wifi preferences '
+                        :
+                        false;
         let subtext = activityStatus === 'UPLOAD_PAUSED' ?
             ['Return your Kit to wifi network ', networkName, ' to finish uploading.']
             : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
@@ -2572,13 +2576,13 @@ const PlanLogic = {
                     : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
                         'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
                         : activityStatus === 'NO_WIFI_SETUP' ?
-                            'Finish setting up your kit when you are in range of your home wifi network.'
+                            'Bring your Fathom PRO kit in range of your home wifi network to connect wifi and upload your workout.'
                             : activityStatus === 'TOO_SHORT' ?
-                                'We do not have enough data to analyze your session. 3 Sensor workouts must be longer than 5 minutes.'
+                                'Unfortunately, workouts less than 5 min long don\'t have enough data to properly process.'
                                 : activityStatus === 'NO_DATA' ?
-                                    'No data form workout.'
+                                    'We didn\'t find any running data in this workout. If you did a run with your sensors in the proper position and believe this is a mistake, please let us know!'
                                     : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
-                                        `Bring kit in range of ${networkName || ''} to see your unique biometrics from this workout.`
+                                        `Bring kit in range of ${networkName || ''} to upload, update your recovery and review your performance.`
                                         :
                                         false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;

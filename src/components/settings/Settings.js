@@ -386,8 +386,8 @@ class Settings extends Component {
                                 <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
                                     <Image
                                         resizeMode={'contain'}
-                                        source={require('../../../assets/images/sensor/sensor_slate.png')}
-                                        style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
                                     />
                                 </View>
                             }

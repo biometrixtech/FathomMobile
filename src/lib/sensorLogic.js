@@ -229,14 +229,14 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Please sensors back in kit, and firmly shut the lid.'}
+                        {'Place sensors back in kit. Firmly close the lid.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle,]}>
-                        {'Sensors will be ready for your workout when they stop breathing green.'}
+                        {'Wait for Sensor LEDs for turn off. Open lid & remove sensors/Wait for sensor LEDs to turn green.'}
                     </Text>
                 ],
                 title: <Text robotoMedium style={[styles.titleStyle,]}>{'Sensor LEDs Blue?'}</Text>,
-                video: 'https://d2xll36aqjtmhz.cloudfront.net/adhesive_f_sensor.mp4', // TODO: NEEDS TO BE UPDATED
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/ledsblue.mp4',
             },
             {
                 buttonText: 'Next',
@@ -274,10 +274,14 @@ const SensorLogic = {
                 buttonText: 'Next',
                 image:      false,
                 subtitle:   [
-                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>{'Remove lotion and sweat from lower back & outside ankles'}</Text>,
-                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>{'This is where we\'ll place the Sensors'}</Text>,
+                    <Text key={0} robotoLight style={[styles.subtitleStyle,]}>
+                        {'Remove '}
+                        <Text robotoBold>{'ALL'}</Text>
+                        {' lotion, dirt & sweat from lower back & outside ankles'}
+                    </Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15), textDecorationLine: 'underline',}]}>{'This is critical to your sensors sticking'}</Text>,
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Remove lotion & moisture'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Clean Your Skin'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/skin_prep.mp4',
             },
             {
@@ -330,7 +334,7 @@ const SensorLogic = {
                         {' will turn OFF when your workout has ended)'}
                     </Text>
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'END WORKOUT'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'End Workout'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/end_session.mp4',
             },
             {
@@ -347,7 +351,7 @@ const SensorLogic = {
                         {' when fully closed)'}
                     </Text>
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'RETURN SENSORS'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Return Sensors'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/return_sensors.mp4',
             },
         ];
@@ -379,7 +383,7 @@ const SensorLogic = {
                 buttonText:    false,
                 image:         {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_kit.png'},
                 subtitle:      false,
-                title:         <Text robotoMedium style={[styles.titleStyle,]}>{'BRING THE PHONE NEAR YOUR KIT TO PAIR'}</Text>,
+                title:         <Text robotoMedium style={[styles.titleStyle,]}>{'Bring The Phone Near Your Kit to Pair'}</Text>,
                 video:         false,
             },
             {
@@ -400,7 +404,7 @@ const SensorLogic = {
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle,]}>{'Don\'t remove your Kit from wifi while uploading.'}</Text>,
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'SUCCESS, YOU\'RE CONNECTED'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Success, you\'re connected!'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
             },
             {
@@ -421,7 +425,7 @@ const SensorLogic = {
                         <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(14), marginLeft: AppSizes.paddingSml,}]}>{'LED will turn green when data upload begins. Data upload should take 10-12 minutes.'}</Text>
                     </View>,
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'BRING KIT TO WIFI'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Bring Kit to Wifi'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
             },
         ];

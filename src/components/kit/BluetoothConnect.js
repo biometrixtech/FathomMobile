@@ -48,7 +48,7 @@ class BluetoothConnect extends Component {
     constructor(props) {
         super(props);
         const { user, } = this.props;
-        const updatedPageIndex = SensorLogic.handleFirstPageIndexRenderLogic(user, WIFI_PAGE_NUMBER);
+        const updatedPageIndex = SensorLogic.handleFirstPageIndexRenderLogic(user, WIFI_PAGE_NUMBER); // TODO: FIX ME
         this.state = {
             availableNetworks:     [],
             bleState:              '',
@@ -607,7 +607,7 @@ class BluetoothConnect extends Component {
                     <View style={{flex: 1,}}>
                         <TopNav darkColor={true} onBack={this._renderPreviousPage} onClose={() => Actions.pop()} step={1} />
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
-                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
                                 {'Success, you\'re connected!'}
                             </Text>
                             <LottieView
@@ -628,7 +628,7 @@ class BluetoothConnect extends Component {
                             </View>
                         </View>
                     </View>
-                    
+
 
                     {/* Wifi - page 4-5 */}
 
@@ -642,7 +642,7 @@ class BluetoothConnect extends Component {
 
                     {/* Train - pages 7-8 */}
                     <Train
-                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 7}
+                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 7 - IM A CHECKPOINT!}
                         nextBtn={this._renderNextPage}
                         onBack={this._renderPreviousPage}
                         page={0}

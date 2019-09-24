@@ -184,7 +184,7 @@ const Placement = ({ currentPage, handleAlertPress, nextBtn, onBack, onClose, ne
                     </View>
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                        containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '45%',}}
+                        containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '60%',}}
                         onPress={() => nextBtn()}
                         raised={true}
                         title={nextBtnText ? nextBtnText : content.buttonText}
@@ -266,7 +266,7 @@ const Placement = ({ currentPage, handleAlertPress, nextBtn, onBack, onClose, ne
     );
 };
 
-const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, nextBtn, nextBtnText, onBack, onClose, page, showTopNavStep = true, }) => {
+const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextBtn, nextBtnText, onBack, onClose, page, showTopNavStep = true, }) => {
     if(page === 0) {
         return (
             <ImageBackground
@@ -309,30 +309,28 @@ const Calibration = ({ currentPage, handleUpdateVolume, isVideoMuted, nextBtn, n
                             style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                         />
                         <Spacer size={AppSizes.padding} />
-                        <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>{'Calibrate to start your run'}</Text>
+                        <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>{'Calibrate before your daily run'}</Text>
                         <Spacer size={AppSizes.padding} />
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>
-                            {'You will need to calibrate '}
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textDecorationLine: 'underline',}}>{'every time'}</Text>
-                            {' before you train.'}
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textDecorationLine: 'underline',}}>
+                                {'Stand up'}
+                            </Text>
+                            {' in neutral posture, then tap "Start Calibration".'}
                         </Text>
-                        <Spacer size={AppSizes.padding} />
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'center',}}>{'Stand up in neutral posture\nThen tap start.'}</Text>
                     </View>
                     :
                     <View>
-                        <Text oswaldRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'CALIBRATE & START WORKOUT'}</Text>
+                        <Text oswaldRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
                         <View>
                             <TabIcon
                                 color={AppColors.zeplin.slateLight}
                                 containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
-                                icon={isVideoMuted ? 'volume-off' : 'volume-up'}
-                                onPress={() => handleUpdateVolume()}
+                                icon={isVideoPaused ? 'pause' : 'play-arrow'}
+                                onPress={() => handleUpdatePauseState()}
                                 size={20}
                             />
                             <Video
-                                muted={isVideoMuted}
-                                paused={!currentPage}
+                                paused={isVideoPaused}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                                 source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
@@ -513,7 +511,7 @@ const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nex
         <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
             <View style={{flex: 6, justifyContent: 'center',}}>
-                <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'Success, You\'re Connected!'}</Text>
+                <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'Success, you\'re connected!'}</Text>
                 <Spacer size={AppSizes.paddingMed} />
                 <Video
                     paused={!currentPage}
@@ -556,10 +554,10 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
     if(page === 0) {
         return (
             <ImageBackground
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_tutorial.png'}} // TODO: NEEDS TO BE UPDATED
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/traincheckpoint10.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
-                <TopNav darkColor={false} onBack={onBack} step={showTopNavStep ? 3 : false} />
+                <TopNav darkColor={false} onBack={onBack} showClose={false} step={showTopNavStep ? 3 : false} />
                 <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <LinearGradient
                         colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
@@ -571,24 +569,25 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
                         <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'access-time'}
-                                    reverse={false}
-                                    size={20}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.padding,}}>{'Mobile Device'}</Text>
+                                <View style={{alignItems: 'center', height: 20, justifyContent: 'center', width: 40,}}>
+                                    <TabIcon
+                                        color={AppColors.zeplin.yellow}
+                                        icon={'phone-iphone'}
+                                        reverse={false}
+                                        size={20}
+                                    />
+                                </View>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Mobile Device'}</Text>
                             </View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'directions-run'}
-                                    reverse={false}
-                                    size={22}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.padding,}}>{'Fathom PRO'}</Text>
+                                <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 20, tintColor: AppColors.zeplin.yellow, width: 40,}}
+                                    />
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Fathom PRO'}</Text>
+                                </View>
                             </View>
                         </View>
                         <Button
@@ -606,7 +605,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
     }
     return (
         <View style={{flex: 1,}}>
-            <TopNav darkColor={false} onBack={onBack} showClose={false} step={showTopNavStep ? 3 : false} />
+            <TopNav darkColor={true} onBack={onBack} showClose={false} step={showTopNavStep ? 3 : false} />
             <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <Text robotoMedium style={[styles.titleStyle,]}>{'Start a Workout'}</Text>
             </View>
@@ -614,7 +613,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
                 paused={!currentPage}
                 repeat={true}
                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/adhesive_f_sensor.mp4'}}  // TODO: NEEDS TO BE UPDATED
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4'}}
                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
             />
             <View style={{alignItems: 'center', flex: 1, paddingTop: AppSizes.padding,}}>
@@ -640,7 +639,7 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
     if(page === 'start-workout') {
         return (
             <ImageBackground
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_training.png'}} // TODO: UPDATE IMAGE
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/placement18.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
@@ -655,24 +654,25 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
                         <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'access-time'} // TODO: UPDATE ICON
-                                    reverse={false}
-                                    size={20}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Mobile Device with service'}</Text>
+                                <View style={{alignItems: 'center', height: 20, justifyContent: 'center', width: 40,}}>
+                                    <TabIcon
+                                        color={AppColors.zeplin.yellow}
+                                        icon={'phone-iphone'}
+                                        reverse={false}
+                                        size={20}
+                                    />
+                                </View>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Smart Phone with wifi or service'}</Text>
                             </View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'directions-run'} // TODO: UPDATE ICON
-                                    reverse={false}
-                                    size={22}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Fathom PRO Sensors Placed'}</Text>
+                                <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
+                                    <Image
+                                        resizeMode={'contain'}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 20, tintColor: AppColors.zeplin.yellow, width: 40,}}
+                                    />
+                                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Fathom PRO Sensors placed'}</Text>
+                                </View>
                             </View>
                         </View>
                         <Button
@@ -691,57 +691,34 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
     if(page === 'confirm-placement') {
         return (
             <ImageBackground
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/start_training.png'}} // TODO: UPDATE IMAGE
+                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/placement18.png'}}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
-                <View style={{flex: 1, justifyContent: 'flex-end',}}>
-                    <LinearGradient
-                        colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
-                        style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
-                    >
-                        <View>
-                            <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(30), marginBottom: AppSizes.paddingSml,}}>{'Place PRO Sensors'}</Text>
-                        </View>
-                        <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
-                            <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'access-time'} // TODO: UPDATE ICON
-                                    reverse={false}
-                                    size={20}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'LEDs Green on Sensors'}</Text>
-                                <TabIcon
-                                    color={AppColors.white}
-                                    containerStyle={[{marginLeft: AppSizes.paddingSml}]}
-                                    icon={'help-circle-outline'}
-                                    onPress={() => onHelp('sensor-led')}
-                                    size={30}
-                                    type={'material-community'}
-                                />
-                            </View>
-                            <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                                <TabIcon
-                                    color={AppColors.zeplin.yellow}
-                                    containerStyle={[{padding: AppSizes.paddingXSml,}]}
-                                    icon={'directions-run'} // TODO: UPDATE ICON
-                                    reverse={false}
-                                    size={22}
-                                />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.padding,}}>{'Proper Sensor Placement'}</Text>
-                                <TabIcon
-                                    color={AppColors.white}
-                                    containerStyle={[{marginLeft: AppSizes.paddingSml}]}
-                                    icon={'help-circle-outline'}
-                                    onPress={() => onHelp('sensor-placement')}
-                                    size={30}
-                                    type={'material-community'}
-                                />
-                            </View>
-                        </View>
+                <View style={{flex: 1, justifyContent: 'space-between',}}>
+                    <View style={{alignItems: 'center', marginHorizontal: AppSizes.padding,}}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>{'Place PRO Sensors'}</Text>
+                        <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'Before starting your workout, make sure your sensors are on correctly and the LEDs are green.'}</Text>
+                    </View>
+                    <View style={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
+                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{'Need Help?'}</Text>
+                        <Spacer size={AppSizes.paddingMed} />
+                        <Text
+                            onPress={() => onHelp('sensor-led')}
+                            robotoRegular
+                            style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        >
+                            {'What do I do if my LEDs are Blue?'}
+                        </Text>
+                        <Spacer size={AppSizes.paddingMed} />
+                        <Text
+                            onPress={() => onHelp('sensor-placement')}
+                            robotoRegular
+                            style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                        >
+                            {'Remind me how to place the sensors.'}
+                        </Text>
+                        <Spacer size={AppSizes.paddingLrg} />
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
@@ -750,7 +727,7 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
                             title={nextBtnText}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
-                    </LinearGradient>
+                    </View>
                 </View>
             </ImageBackground>
         );
@@ -908,22 +885,24 @@ const Connect = ({
                     <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
-                            <TabIcon
-                                color={AppColors.zeplin.yellow}
-                                icon={'bluetooth'}
-                                reverse={false}
-                                size={20}
-                            />
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.padding,}}>{'Mobile Bluetooth ON'}</Text>
+                            <View style={{alignItems: 'center', height: 20, justifyContent: 'center', width: 40,}}>
+                                <TabIcon
+                                    color={AppColors.zeplin.yellow}
+                                    icon={'bluetooth'}
+                                    reverse={false}
+                                    size={20}
+                                />
+                            </View>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{'Mobile Bluetooth ON'}</Text>
                         </View>
                         <View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                                 <Image
                                     resizeMode={'contain'}
-                                    source={require('../../../assets/images/sensor/sensor_yellow.png')}
-                                    style={{height: 20, width: 20,}}
+                                    source={require('../../../assets/images/standard/kitactive.png')}
+                                    style={{height: 20, tintColor: AppColors.zeplin.yellow, width: 40,}}
                                 />
-                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.padding,}}>{'Fathom PRO'}</Text>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{'Fathom PRO'}</Text>
                             </View>
                         </View>
                     </View>

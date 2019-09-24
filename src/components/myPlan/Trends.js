@@ -528,7 +528,7 @@ class Trends extends PureComponent {
 
                 <ContactUsModal
                     handleModalToggle={this._toggleContactUsWebView}
-                    isPrivacyPolicyOpen={isContactUsOpen}
+                    isModalOpen={isContactUsOpen}
                 />
 
             </View>

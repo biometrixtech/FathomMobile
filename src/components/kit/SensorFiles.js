@@ -52,8 +52,8 @@ class SensorFiles extends Component {
         super(props);
         const { user, } = this.props;
         this.state = {
-            isTooltipOpen:       false,
-            isTutorialModalOpen: !user.first_time_experience.includes('3Sensor-Onboarding-Tutorial-User-Complete'),
+            isTooltipOpen: false,
+            // isTutorialModalOpen: !user.first_time_experience.includes('3Sensor-Onboarding-Tutorial-User-Complete'),
         };
     }
 
@@ -123,7 +123,7 @@ class SensorFiles extends Component {
             >
                 <View>
                     <TopNavBar />
-                    <Text oswaldRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${_.toUpper(user.personal_data.first_name)}\'S FATHOM PRO KIT`}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{`${user.personal_data.first_name}\'s Fathom PRO Kit`}</Text>
                     <View style={{flexDirection: 'row', paddingVertical: (AppSizes.paddingLrg + AppSizes.paddingXSml),}}>
                         <View style={{flex: 1,}} />
                         <TouchableOpacity
@@ -136,7 +136,7 @@ class SensorFiles extends Component {
                                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{`Last sync: ${lastSyncString}`}</Text>
                                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingTop: AppSizes.paddingSml,}}>
                                         <TabIcon {...batteryIconProps} />
-                                        <Text oswaldRegular style={{...batteryTextProps}}>{batteryTextString}</Text>
+                                        <Text robotoRegular style={{...batteryTextProps}}>{batteryTextString}</Text>
                                     </View>
                                 </View>
                                 <TabIcon
@@ -178,7 +178,7 @@ class SensorFiles extends Component {
                                             source={require('../../../assets/images/sensor/sensor_slate.png')}
                                             style={{height: 20, marginRight: AppSizes.paddingXSml, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, width: 20,}}
                                         />
-                                        <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), marginRight: AppSizes.paddingSml,}}>{sensorData && sensorData.accessory && sensorData.accessory.firmware_version ? sensorData.accessory.firmware_version : ''}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), marginRight: AppSizes.paddingSml,}}>{sensorData && sensorData.accessory && sensorData.accessory.firmware_version ? sensorData.accessory.firmware_version : ''}</Text>
                                         { sensorData && sensorData.accessory && sensorData.accessory.firmware_up_to_date ?
                                             <TabIcon
                                                 color={AppColors.zeplin.success}
@@ -216,9 +216,9 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={`WIFI: ${sensorData.sensor_networks[0] || 'NO NETWORK DEFINED'}`}
+                        title={`Wifi: ${sensorData.sensor_networks && sensorData.sensor_networks[0] ? sensorData.sensor_networks[0] : 'No network defined'}`}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
-                        titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
                     <Spacer isDivider />
                     <ListItem
@@ -235,9 +235,9 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'RECORDED WORKOUTS'}
+                        title={'Recorded workouts'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
-                        titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
                     <View style={{backgroundColor: AppColors.zeplin.superLight, paddingLeft: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'Tutorial'}</Text>
@@ -257,9 +257,9 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'WEAR SENSORS'}
+                        title={'Wear Sensors'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
-                        titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.padding,}}
                     />
                     <Spacer isDivider />
                     <ListItem
@@ -276,28 +276,9 @@ class SensorFiles extends Component {
                             name:  'chevron-right',
                             size:  ICON_SIZE,
                         }}
-                        title={'CALIBRATE & START WORKOUT'}
+                        title={'Calibrate & start workout'}
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
-                        titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
-                    />
-                    <Spacer isDivider />
-                    <ListItem
-                        containerStyle={{paddingVertical: AppSizes.padding,}}
-                        leftIcon={{
-                            color:     AppColors.zeplin.splash,
-                            iconStyle: { paddingLeft: AppSizes.padding, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
-                            name:      'cloud-upload',
-                            size:      ICON_SIZE,
-                        }}
-                        onPress={() => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'end', })}
-                        rightIcon={{
-                            color: AppColors.zeplin.slateLight,
-                            name:  'chevron-right',
-                            size:  ICON_SIZE,
-                        }}
-                        title={'END WORKOUT'}
-                        titleProps={{allowFontScaling: false, numberOfLines: 1,}}
-                        titleStyle={{...AppStyles.oswaldRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
                     <Spacer isDivider />
                 </View>
@@ -313,10 +294,10 @@ class SensorFiles extends Component {
                 >
                     {`Hardware ID: ${sensorData.sensor_pid}`}
                 </Text>
-                <SensorBackUpTutorial
+                {/*<SensorBackUpTutorial
                     handleOnClose={this._handleBackUpTutorialOnClose}
                     isVisible={isTutorialModalOpen}
-                />
+                />*/}
             </ScrollView>
         );
     }

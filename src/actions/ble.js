@@ -244,6 +244,7 @@ const createSensorSession = (dateTime, userObj) => {
     payload.event_date = dateTime;
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     payload.sensors = [];
+    payload.user_id = userObj.id;
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.create_session.post(false, payload)
             .then(response => resolve(response))
@@ -251,7 +252,7 @@ const createSensorSession = (dateTime, userObj) => {
     });
 };
 
-const updateSensorSession = (endDate, sessionStatus, sessionId, userObj) => {
+const updateSensorSession = (endDate, sessionStatus, sessionId, userObj, backendPatch) => {
     if(!sessionId) {
         return dispatch => new Promise((resolve, reject) => {
             reject('Session not found, please try again!');
@@ -260,13 +261,15 @@ const updateSensorSession = (endDate, sessionStatus, sessionId, userObj) => {
     let payload = {};
     if(endDate) {
         payload.end_date = endDate;
-    }
-    if(sessionStatus) {
+    } else if(sessionStatus) {
         payload.session_status = sessionStatus;
+    } else if(backendPatch) {
+        payload.set_end_date = true;
     }
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
             .then(response => {
+                response.session.status = response.session.session_status;
                 let newUserObj = _.cloneDeep(userObj);
                 let newSensorSessions = _.cloneDeep(newUserObj.sensor_data.sessions);
                 let sessionIndex = _.findIndex(newSensorSessions, { id: response.session.id, });

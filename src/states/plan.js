@@ -25,6 +25,7 @@ const defaultPlanState = {
         workouts:        [],
     },
     isCoachModalOpen:                     false,
+    isContactUsOpen:                      false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
