@@ -1157,8 +1157,7 @@ class MyPlan extends Component {
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
-        // TODO: FIX ME
-        const hasActive3SensorSession = false;//_.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
+        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
