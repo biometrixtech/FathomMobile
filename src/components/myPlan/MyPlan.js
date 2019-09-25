@@ -991,6 +991,7 @@ class MyPlan extends Component {
             clearCompletedCoolDownExercises,
             clearCompletedExercises,
             clearHealthKitWorkouts,
+            getSensorFiles,
             postSessionSurvey,
             updateSensorSession,
             user,
@@ -1038,6 +1039,7 @@ class MyPlan extends Component {
             updateSensorSession(dateTimeReturned, false, savedSensorSession.id, user)
                 .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
                 .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(() => getSensorFiles(user))
                 .then(response => {
                     this.setState({ isPageCalculating: false, });
                     clearCompletedExercises();
@@ -1059,6 +1061,7 @@ class MyPlan extends Component {
             updateSensorSession(false, false, savedSensorSession.id, user, true)
                 .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
                 .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(() => getSensorFiles(user))
                 .then(response => {
                     this.setState({ isPageCalculating: false, });
                     clearCompletedExercises();

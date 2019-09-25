@@ -320,7 +320,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                     </View>
                     :
                     <View>
-                        <Text oswaldRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
+                        <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
                         <View>
                             <TabIcon
                                 color={AppColors.zeplin.slateLight}
@@ -333,34 +333,18 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                                 paused={isVideoPaused}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
+                                source={require('../../../assets/videos/calibration.mp4')}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
                         <View style={{marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
-                            <View style={{flexDirection: 'row', marginBottom: AppSizes.padding,}}>
-                                <Text robotoLight style={[styles.smallerText, {paddingRight: AppSizes.paddingSml,}]}>
-                                    {'1.'}
-                                </Text>
-                                <Text robotoBold style={[styles.smallerText, {flex: 1,}]}>
-                                    {'Stand'}
-                                    <Text robotoLight>{' in neutral posture'}</Text>
-                                </Text>
-                            </View>
-                            <View style={{flexDirection: 'row', marginBottom: AppSizes.padding,}}>
-                                <Text robotoLight style={[styles.smallerText, {paddingRight: AppSizes.paddingSml,}]}>
-                                    {'2.'}
-                                </Text>
-                                <Text robotoBold style={[styles.smallerText, {flex: 1,}]}>
-                                    {'Click Button'}
-                                    <Text robotoLight>{' & '}</Text>
-                                    {'March'}
-                                </Text>
-                            </View>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
+                                {'Start a Workout by tapping the "+" button on the Plan page & follow calibration.\n\nStand up. Stand still. Then March. After that, your workout has started.'}
+                            </Text>
                         </View>
                     </View>
                 }
-                { page !== 1 &&
+                {/* page !== 1 &&
                     <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',}}>
                         <Text robotoLight style={[styles.smallerText, {fontSize: AppFonts.scaleFont(15),}]}>
                             {'(Workout started when '}
@@ -368,7 +352,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                             {' is solid green)'}
                         </Text>
                     </View>
-                }
+                */}
                 { page === 1 ?
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
@@ -379,13 +363,16 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                     :
-                    <Button
-                        buttonStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.yellow, borderRadius: 0, paddingHorizontal: AppSizes.padding, width: '100%',}])}
-                        containerStyle={{justifyContent: 'flex-end', width: '100%',}}
-                        onPress={() => nextBtn()}
-                        title={nextBtnText ? nextBtnText : page === 1 ? 'Next' : 'Finish Calibration'}
-                        titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                    />
+                    <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={nextBtnText ? nextBtnText : page === 1 ? 'Next' : 'Done'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
+                    </View>
                 }
             </View>
         </View>
@@ -639,7 +626,8 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
     if(page === 'start-workout') {
         return (
             <ImageBackground
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/placement18.png'}}
+                imageStyle={{resizeMode: 'cover',}}
+                source={require('../../../assets/images/standard/placement18.png')}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
@@ -691,7 +679,8 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
     if(page === 'confirm-placement') {
         return (
             <ImageBackground
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/placement18.png'}}
+                imageStyle={{resizeMode: 'cover',}}
+                source={require('../../../assets/images/standard/placement18.png')}
                 style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
             >
                 <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />

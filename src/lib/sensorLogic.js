@@ -232,7 +232,7 @@ const SensorLogic = {
                         {'Place sensors back in kit. Firmly close the lid.'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle,]}>
-                        {'Wait for Sensor LEDs for turn off. Open lid & remove sensors/Wait for sensor LEDs to turn green.'}
+                        {'Wait for Sensor LEDs to turn off. Open lid & remove sensors. Wait for sensor LEDs to turn green.'}
                     </Text>
                 ],
                 title: <Text robotoMedium style={[styles.titleStyle,]}>{'Sensor LEDs Blue?'}</Text>,

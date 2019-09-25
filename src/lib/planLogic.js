@@ -1436,6 +1436,15 @@ const PlanLogic = {
             _.filter(dailyPlanObj.training_sessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
+        if(dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 && filteredTrainingSessions.length > 0) {
+            filteredTrainingSessions = _.map(filteredTrainingSessions, o =>
+                o.source === 3 && !o.asymmetry ?
+                    null
+                    :
+                    o
+            );
+            filteredTrainingSessions = _.filter(filteredTrainingSessions, o => o && o.event_date);
+        }
         let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'Active Recovery');
         let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
         let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
@@ -2545,7 +2554,12 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
         let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
-        let activityStatus =  activity.status === 'CREATE_COMPLETE' && activity.end_date ? activity.status : networkName ? activity.status : 'NO_WIFI_SETUP';
+        let activityStatus =  activity.status === 'CREATE_COMPLETE' && !activity.end_date ?
+            activity.status
+            : networkName ?
+                activity.status
+                :
+                'NO_WIFI_SETUP';
         let title =  activityStatus === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
             : activityStatus === 'UPLOAD_IN_PROGRESS' ?
@@ -2606,7 +2620,7 @@ const PlanLogic = {
                             : activityStatus === 'TOO_SHORT' ?
                                 'Unfortunately, workouts less than 5 min long don\'t have enough data to properly process.'
                                 : activityStatus === 'NO_DATA' ?
-                                    'We did not find data on your Fathom PRO Kit. Be sure to keep your kit charged, and wear your sensors in running.'
+                                    'We did not find data on your Fathom PRO Kit. Be sure to keep your kit charged, and wear your sensors while running.'
                                     : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
                                         `Return your sensors to your kit and bring the kit in range of wifi network ${networkName || ''} to upload.`
                                         :

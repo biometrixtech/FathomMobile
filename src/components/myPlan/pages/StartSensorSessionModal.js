@@ -35,9 +35,9 @@ import Video from 'react-native-video';
 
 // setup consts
 const ACCORDION_SECTIONS = [
-    { index: 1, sectionEndTime: 14, sectionStartTime: 16, time: 3, title: 'Adjust posture', },
-    { index: 2, sectionEndTime: 9, sectionStartTime: 13, time: 5, title: 'Stand still', },
-    { index: 3, sectionEndTime: 1, sectionStartTime: 8, time: 8, title: 'March', },
+    { index: 1, sectionEndTime: 10, sectionStartTime: 12, time: 3, title: 'Adjust posture', },
+    { index: 2, sectionEndTime: 7, sectionStartTime: 9, time: 3, title: 'Stand still', },
+    { index: 3, sectionEndTime: 1, sectionStartTime: 6, time: 6, title: 'March', },
 ];
 const START_SESSION_FIRST_TIME_EXPERIENCE = 'Start-Session-Tutorial';
 const ERROR_HEADER = 'Poor connection!';
@@ -60,7 +60,7 @@ const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, vid
                 repeat={true}
                 ref={ref => videoEvents(ref)}
                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
+                source={require('../../../../assets/videos/calibration.mp4')}
                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightHalf, width: AppSizes.screen.width,}]}
             />
         </View>
@@ -74,7 +74,17 @@ const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, vid
             />
             <LinearGradient
                 colors={['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.75)', 'rgba(255, 255, 255, 1)']}
-                style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingTop: AppSizes.paddingXLrg,}}
+                style={{
+                    alignItems:     'center',
+                    bottom:         0,
+                    flexDirection:  'row',
+                    justifyContent: 'center',
+                    left:           0,
+                    paddingBottom:  AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,
+                    paddingTop:     AppSizes.paddingXLrg,
+                    position:       'absolute',
+                    right:          0,
+                }}
             >
                 <Button
                     buttonStyle={{alignItems: 'center', backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, justifyContent: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: '100%',}}
@@ -167,7 +177,7 @@ class StartSensorSessionModal extends PureComponent {
             sessionId:             null,
             showLEDPage:           false,
             showPlacementPages:    false,
-            timer:                 17,
+            timer:                 13,
         };
         this._pages = {};
         this._video = {};
@@ -178,12 +188,12 @@ class StartSensorSessionModal extends PureComponent {
     componentDidUpdate = (prevProps, prevState) => {
         if(prevState.timer !== this.state.timer && this.state.timer === -1 && !this.state.createError) {
             clearInterval(this.timerId);
-            this._renderNextPage(1, () => this.setState({ timer: 17, }, () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}));
+            this._renderNextPage(1, () => this.setState({ timer: 13, }, () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}));
         }
         if(prevState.timer !== this.state.timer && this.state.timer === 0 && this.state.createError) {
             this._pages.scrollToPage(0);
             this.setState(
-                { pageIndex: 0, timer: 17, },
+                { pageIndex: 0, timer: 13, },
                 () => {
                     this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
                     Alert.alert(
@@ -191,8 +201,9 @@ class StartSensorSessionModal extends PureComponent {
                         this.state.createError,
                         [
                             {
-                                text:  'OK',
-                                style: 'cancel',
+                                onPress: () => this.props.onClose(),
+                                style:   'cancel',
+                                text:    'OK',
                             },
                         ],
                         { cancelable: false, }
@@ -206,7 +217,7 @@ class StartSensorSessionModal extends PureComponent {
         this._pages = {};
         clearInterval(this.timerId);
         this.setState(
-            { timer: 17, },
+            { timer: 13, },
             () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}
         );
     }
@@ -375,7 +386,7 @@ class StartSensorSessionModal extends PureComponent {
         const { updateSensorSession, user, } = this.props;
         clearInterval(this.timerId);
         this.setState(
-            { timer: 17, },
+            { timer: 13, },
             () => {
                 this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
                 if(patchSession) {
