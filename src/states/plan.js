@@ -45,6 +45,7 @@ const defaultPlanState = {
     },
     prepare:         {},
     recover:         {},
+    sensorSession:   null,
     showLoadingText: false,
     train:           {
         postPracticeSurveys: [],

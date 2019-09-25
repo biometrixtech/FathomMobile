@@ -18,6 +18,7 @@ import ReadinessSurvey from './ReadinessSurvey';
 import ScaleButton from './ScaleButton';
 import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
+import SingleSensorSession from './SingleSensorSession';
 import SoreBodyPart from './SoreBodyPart';
 import SoreBodyPartScaleButton from './SoreBodyPartScaleButton';
 import SportBlock from './SportBlock';
@@ -43,6 +44,7 @@ export {
     ScaleButton,
     SessionsCompletionModal,
     SingleExerciseItem,
+    SingleSensorSession,
     SoreBodyPart,
     SoreBodyPartScaleButton,
     SportBlock,

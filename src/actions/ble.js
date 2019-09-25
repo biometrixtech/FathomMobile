@@ -267,23 +267,22 @@ const updateSensorSession = (endDate, sessionStatus, sessionId, userObj, backend
         payload.set_end_date = true;
     }
     return dispatch => new Promise((resolve, reject) => {
+        if(sessionStatus && sessionStatus === 'CREATE_ATTEMPT_FAILED') {
+            let newUserObj = _.cloneDeep(userObj);
+            let newSensorSessions = _.cloneDeep(newUserObj.sensor_data.sessions);
+            let sessionIndex = _.findIndex(newSensorSessions, { id: sessionId, });
+            if(sessionIndex >= 0) {
+                newSensorSessions.splice(sessionIndex, 1);
+                newSensorSessions = _.filter(newSensorSessions, o => o.status !== 'CREATE_ATTEMPT_FAILED');
+                newUserObj.sensor_data.sessions = newSensorSessions;
+                dispatch({
+                    type: Actions.USER_REPLACE,
+                    data: newUserObj,
+                });
+            }
+        }
         return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
-            .then(response => {
-                response.session.status = response.session.session_status;
-                let newUserObj = _.cloneDeep(userObj);
-                let newSensorSessions = _.cloneDeep(newUserObj.sensor_data.sessions);
-                let sessionIndex = _.findIndex(newSensorSessions, { id: response.session.id, });
-                if(sessionIndex >= 0) {
-                    newSensorSessions.splice(sessionIndex, 1, response.session);
-                    newSensorSessions = _.filter(newSensorSessions, o => o.status !== 'CREATE_ATTEMPT_FAILED');
-                    newUserObj.sensor_data.sessions = newSensorSessions;
-                    dispatch({
-                        type: Actions.USER_REPLACE,
-                        data: newUserObj,
-                    });
-                }
-                return resolve(response);
-            })
+            .then(response => resolve(response))
             .catch(error => reject(error));
     });
 };

@@ -867,8 +867,34 @@ const PlanLogic = {
       * HealthKit Workout Page Render Logic
       * - HealthKitWorkouts
       */
-    // TODO: UNIT TEST ME - lines 1890-1940
     handleHealthKitWorkoutPageRenderLogic: workout => {
+        let hourOfDay = workout && workout.event_date ? moment(workout.event_date).utc().get('hour') : moment().utc().get('hour');
+        let split_afternoon = 12; // 24hr time to split the afternoon
+        let split_evening = 17; // 24hr time to split the evening
+        let cutoffForNewDay = 3;
+        let partOfDay = hourOfDay >= split_afternoon && hourOfDay <= split_evening ? 'afternoon' : hourOfDay >= split_evening || hourOfDay < cutoffForNewDay ? 'evening' : 'morning';
+        let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportDuration = workout.duration ? workout.duration : 0;
+        let sportName = selectedSport ? selectedSport.label : '';
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportText = selectedSport ? `${sportStartTime} ${selectedSport.label.toLowerCase()} workout` : '';
+        let sportImage = selectedSport ? selectedSport.imagePath : '';
+        if(selectedSport && sportName === 'High Intensity Interval Training') {
+            sportName = 'HIIT';
+            sportText = `${sportStartTime} ${sportName} workout`;
+        }
+        return {
+            partOfDay,
+            sportDuration,
+            sportImage,
+            sportName,
+            sportStartTime,
+            sportText,
+        };
+    },
+    // TODO: UNIT TEST ME - lines 1890-1940
+    handleHealthKitWorkoutPageRenderLogicNEW: workout => {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportName = selectedSport ?
@@ -906,7 +932,7 @@ const PlanLogic = {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
         let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
-        let sportText = workout.apple_health_kit_source_names[0] ?
+        let sportText = workout.apple_health_kit_source_names && workout.apple_health_kit_source_names[0] ?
             [
                 `How was your ${sportStartTime} `,
                 `${workout.apple_health_kit_source_names[0]} workout?`,
@@ -2519,7 +2545,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
         let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
-        let activityStatus = networkName ? activity.status : 'NO_WIFI_SETUP';
+        let activityStatus =  activity.status === 'CREATE_COMPLETE' && activity.end_date ? activity.status : networkName ? activity.status : 'NO_WIFI_SETUP';
         let title =  activityStatus === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
             : activityStatus === 'UPLOAD_IN_PROGRESS' ?
@@ -2534,22 +2560,22 @@ const PlanLogic = {
                                 'Placement error'
                                 : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
                                     false
-                                    : activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
-                                        'Workout Complete'
-                                        : activityStatus === 'NO_DATA' ?
-                                            'No workout data found'
-                                            : activityStatus === 'TOO_SHORT' ?
-                                                'Workout too short'
-                                                :
-                                                'Analysis failed';
+                                    : activityStatus === 'NO_WIFI_SETUP' ?
+                                        'Finish PRO Kit Setup'
+                                        : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                                            'Workout Complete'
+                                            : activityStatus === 'NO_DATA' ?
+                                                'No workout data found'
+                                                : activityStatus === 'TOO_SHORT' ?
+                                                    'Workout too short'
+                                                    :
+                                                    'Analysis failed';
         let iconName = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
             : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
                 'sync'
-                : activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
-                    'wifi-strength-off'
-                    :
-                    'alert-circle-outline';
+                :
+                'alert-circle-outline';
         let iconType = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
             : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
@@ -2562,9 +2588,9 @@ const PlanLogic = {
             : activityStatus === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
                 'Tap to access tutorial'
                 : activityStatus === 'NO_DATA' ?
-                    'Tap to Contact Fathom'
+                    false // 'Tap to Contact Fathom'
                     : (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
-                        'Tap to update wifi preferences '
+                        'Tap to refresh'
                         :
                         false;
         let subtext = activityStatus === 'UPLOAD_PAUSED' ?
@@ -2580,9 +2606,9 @@ const PlanLogic = {
                             : activityStatus === 'TOO_SHORT' ?
                                 'Unfortunately, workouts less than 5 min long don\'t have enough data to properly process.'
                                 : activityStatus === 'NO_DATA' ?
-                                    'We didn\'t find any running data in this workout. If you did a run with your sensors in the proper position and believe this is a mistake, please let us know!'
+                                    'We did not find data on your Fathom PRO Kit. Be sure to keep your kit charged, and wear your sensors in running.'
                                     : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
-                                        `Bring kit in range of ${networkName || ''} to upload, update your recovery and review your performance.`
+                                        `Return your sensors to your kit and bring the kit in range of wifi network ${networkName || ''} to upload.`
                                         :
                                         false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;

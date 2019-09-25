@@ -44,7 +44,7 @@ const ERROR_HEADER = 'Poor connection!';
 const ERROR_STRING = 'We were unable to start your workout due to poor wifi or network connection.\n\nMake sure your mobile device is connected to a reliable wifi or cellular network to start your workout.';
 
 /* Component ==================================================================== */
-const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, }) => (
+const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, videoEvents, }) => (
     <View style={{alignItems: 'center', flex: 1,}}>
         <View>
             <TabIcon
@@ -56,9 +56,9 @@ const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, }) 
                 size={30}
             />
             <Video
-                muted={true}
-                paused={pageIndex}
+                paused={!pageIndex}
                 repeat={true}
+                ref={ref => videoEvents(ref)}
                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                 source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightHalf, width: AppSizes.screen.width,}]}
@@ -147,7 +147,7 @@ const CalibrationComplete = ({ onClose, pageIndex, startOver, }) => (
                     }}
                     onPress={onClose}
                     raised={true}
-                    title={'Continue Workout'}
+                    title={'Continue'}
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}
                 />
             </View>
@@ -170,6 +170,7 @@ class StartSensorSessionModal extends PureComponent {
             timer:                 17,
         };
         this._pages = {};
+        this._video = {};
         this.timerId = null;
         this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
     }
@@ -224,6 +225,7 @@ class StartSensorSessionModal extends PureComponent {
     _onPageScrollEnd = currentPage => {
         const { user, } = this.props;
         const { showLEDPage, showPlacementPages, } = this.state;
+        this._video.seek(0);
         if(
             (currentPage === 2 || currentPage === 9) &&
             !showLEDPage &&
@@ -506,7 +508,7 @@ class StartSensorSessionModal extends PureComponent {
 
                         {/* Start Session - page 9 (Follow Along) */}
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Follow along to calibrate'}</Text>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Prepare to follow along'}</Text>
                             <View style={{alignItems: 'center', justifyContent: 'center', marginTop: AppSizes.paddingLrg,}}>
                                 <AnimatedProgressBar
                                     backgroundColor={AppColors.zeplin.splashLight}
@@ -526,6 +528,7 @@ class StartSensorSessionModal extends PureComponent {
                             pageIndex={pageIndex === 10}
                             renderAccordionHeader={this._renderAccordionHeader}
                             startOver={() => this._startOver(2, 'CREATE_ATTEMPT_FAILED')}
+                            videoEvents={ev => {this._video = ev;}}
                         />
 
                         {/* Start Session - pages 11 (Calibration Complete) */}
@@ -631,7 +634,7 @@ class StartSensorSessionModal extends PureComponent {
                 showTopNavStep={false}
             />,
             <View key={7} style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Follow along to calibrate'}</Text>
+                <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Prepare to follow along'}</Text>
                 <View style={{alignItems: 'center', justifyContent: 'center', marginTop: AppSizes.paddingLrg,}}>
                     <AnimatedProgressBar
                         backgroundColor={AppColors.zeplin.splashLight}
@@ -650,6 +653,7 @@ class StartSensorSessionModal extends PureComponent {
                 pageIndex={showPlacementPages ? pageIndex === 7 : showLEDPage ? pageIndex === 4 : pageIndex === 3}
                 renderAccordionHeader={this._renderAccordionHeader}
                 startOver={() => this._startOver(2, 'CREATE_ATTEMPT_FAILED')}
+                videoEvents={ev => {this._video = ev;}}
             />,
             <CalibrationComplete
                 key={9}

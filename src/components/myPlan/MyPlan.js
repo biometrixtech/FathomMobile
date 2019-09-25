@@ -260,7 +260,7 @@ const SensorSession = ({
                                     : activityStatus === 'NO_WIFI_SETUP' ?
                                         () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
                                         : activityStatus === 'NO_DATA' ?
-                                            () => toggleContactUsWebView()
+                                            () => {} // toggleContactUsWebView()
                                             :
                                             () => {}
             }
@@ -414,7 +414,7 @@ const SensorSession = ({
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'End Workout'}</Text>
                         </View>
                         : activityStatus === 'NO_WIFI_SETUP' ?
-                            <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                            <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                                 <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to connect wifi'}</Text>
                             </View>
                             :
@@ -971,6 +971,114 @@ class MyPlan extends Component {
         );
     }
 
+    _handleSingleSensorSessionFormChange = (name, value, callback) => {
+        const { sensorSession, } = this.state;
+        let newSensorData = _.cloneDeep(sensorSession);
+        let newFormFields = _.update(newSensorData, name, () => value);
+        if(name === 'deleted' && value === true) {
+            newFormFields = _.update(newSensorData, 'post_session_survey.RPE', () => null);
+        }
+        newSensorData = newFormFields;
+        this.setState({
+            sensorSession: newSensorData,
+        }, () => {
+            if(callback) { callback(); }
+        });
+    }
+
+    _handleSingleSensorPostSessionSurveySubmit = async () => {
+        const {
+            clearCompletedCoolDownExercises,
+            clearCompletedExercises,
+            clearHealthKitWorkouts,
+            postSessionSurvey,
+            updateSensorSession,
+            user,
+        } = this.props;
+        const { healthData, postSession, recover, sensorSession, train, } = this.state;
+        let updatedPostSession = _.cloneDeep(postSession);
+        updatedPostSession.sessions.push(sensorSession);
+        let savedSensorSession = _.cloneDeep(sensorSession);
+        let {
+            landingScreen,
+            newPostSession,
+            newPostSessionSessions,
+            newRecoverObject,
+            newTrainObject,
+        } = PlanLogic.handlePostSessionSurveySubmitLogic(updatedPostSession, train, recover, healthData, user);
+        this.setState(
+            {
+                expandNotifications:          false,
+                goToScreen:                   landingScreen,
+                healthData:                   [],
+                train:                        newTrainObject,
+                isPageCalculating:            true,
+                isPostSessionSurveyModalOpen: false,
+                postSession:                  {
+                    description: '',
+                    sessions:    newPostSessionSessions,
+                    soreness:    [],
+                },
+                recover:       newRecoverObject,
+                sensorSession: null,
+            },
+            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: true, }), 500); }
+        );
+        try {
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncResponse = await timesyncApiCall.json();
+            let dateTimeReturned = timesyncResponse.utc_datetime;
+            let indexOfDot = dateTimeReturned.indexOf('.');
+            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+            let endDateTime = moment(timesyncResponse.utc_datetime.replace('Z', ''));
+            let startDateTime = moment(newPostSession.sessions[0].event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
+            let duration = endDateTime.diff(startDateTime, 'minutes', true);
+            newPostSession.sessions[0].duration = _.round(duration, 2);
+            newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            updateSensorSession(dateTimeReturned, false, savedSensorSession.id, user)
+                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(response => {
+                    this.setState({ isPageCalculating: false, });
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    // scroll to first active activity tab
+                    this._scrollToFirstActiveActivityTab();
+                    // handle Coach related items
+                    if(!this.state.isTrainSessionsCompletionModalOpen) {
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                    }
+                })
+                .catch(error =>
+                    this.setState(
+                        { isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                );
+        } catch (e) {
+            updateSensorSession(false, false, savedSensorSession.id, user, true)
+                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(response => {
+                    this.setState({ isPageCalculating: false, });
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    // scroll to first active activity tab
+                    this._scrollToFirstActiveActivityTab();
+                    // handle Coach related items
+                    if(!this.state.isTrainSessionsCompletionModalOpen) {
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                    }
+                })
+                .catch(error =>
+                    this.setState(
+                        { isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                );
+        }
+    }
+
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
         // setup variables
@@ -996,24 +1104,20 @@ class MyPlan extends Component {
         const { updateSensorSession, user, } = this.props;
         let startTime = moment(activity.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
         if(moment().diff(startTime, 'minutes', true) >= 5) {
+            let newSensorSession = _.cloneDeep(activity);
+            newSensorSession.hr_data = [];
+            newSensorSession.session_type = 6;
+            newSensorSession.source = 3;
+            newSensorSession.sport_name = 17;
+            newSensorSession.post_session_survey = {
+                clear_candidates: [],
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              null,
+                soreness:         [],
+            };
             return this.setState(
-                { isPageCalculating: true, },
-                async () => {
-                    try {
-                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-                        const timesyncResponse = await timesyncApiCall.json();
-                        let dateTimeReturned = timesyncResponse.utc_datetime;
-                        let indexOfDot = dateTimeReturned.indexOf('.');
-                        dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-                        updateSensorSession(dateTimeReturned, false, activity.id, user)
-                            .then(res => this._handleExerciseListRefresh(false, true))
-                            .catch(err => this.setState({ isPageCalculating: false, }))
-                    } catch (e) {
-                        updateSensorSession(false, false, activity.id, user, true)
-                            .then(res => this._handleExerciseListRefresh(false, true))
-                            .catch(err => this.setState({ isPageCalculating: false, }));
-                    }
-                },
+                { sensorSession: newSensorSession, },
+                () => this._togglePostSessionSurveyModal(),
             );
         }
         return Alert.alert(
@@ -1081,45 +1185,49 @@ class MyPlan extends Component {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
         const { isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
-        this.setState({ loading: isLoading, showLoadingText: true, });
-        if (!isPostSessionSurveyModalOpen) {
-            getSoreBodyParts(user.id)
-                .then(soreBodyParts => {
-                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
-                    newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
-                    this.goToPageTimer = _.delay(() =>
-                        this.setState({
-                            isPostSessionSurveyModalOpen: true,
-                            loading:                      false,
-                            postSession:                  newPostSession,
-                            showLoadingText:              false,
+        this.setState(
+            { loading: isLoading, showLoadingText: true, },
+            () => {
+                if (!isPostSessionSurveyModalOpen) {
+                    getSoreBodyParts(user.id)
+                        .then(soreBodyParts => {
+                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
+                            this.goToPageTimer = _.delay(() =>
+                                this.setState({
+                                    isPostSessionSurveyModalOpen: true,
+                                    loading:                      false,
+                                    postSession:                  newPostSession,
+                                    showLoadingText:              false,
+                                })
+                            , 500);
                         })
-                    , 500);
-                })
-                .catch(err => {
-                    // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
-                    newPostSession.soreness = [];
-                    this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newPostSession,
-                        showLoadingText:              false,
-                    });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
-                });
-        } else {
-            clearCompletedExercises();
-            clearCompletedCoolDownExercises();
-            this.goToPageTimer = _.delay(() => {
-                this.setState({
-                    isPostSessionSurveyModalOpen: false,
-                    loading:                      false,
-                    postSession:                  _.cloneDeep(defaultPlanState.postSession),
-                    showLoadingText:              false,
-                });
-            }, 500);
-        }
+                        .catch(err => {
+                            // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            newPostSession.soreness = [];
+                            this.setState({
+                                isPostSessionSurveyModalOpen: true,
+                                loading:                      false,
+                                postSession:                  newPostSession,
+                                showLoadingText:              false,
+                            });
+                            AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+                        });
+                } else {
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    this.goToPageTimer = _.delay(() => {
+                        this.setState({
+                            isPostSessionSurveyModalOpen: false,
+                            loading:                      false,
+                            postSession:                  _.cloneDeep(defaultPlanState.postSession),
+                            showLoadingText:              false,
+                        });
+                    }, 500);
+                }
+            }
+        );
     }
 
     render = () => {
@@ -1138,6 +1246,7 @@ class MyPlan extends Component {
             isTrainSessionsCompletionModalOpen,
             loading,
             postSession,
+            sensorSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
@@ -1419,12 +1528,14 @@ class MyPlan extends Component {
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleFormSubmit={areAllDeleted => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted)}
                         handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleSingleSensorSessionFormChange={this._handleSingleSensorSessionFormChange}
                         handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                         healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
                         postSession={postSession}
+                        sensorSession={sensorSession}
                         soreBodyParts={plan.soreBodyParts}
                         trainingSessions={dailyPlanObj.training_sessions}
                         typicalSessions={plan.typicalSessions}
