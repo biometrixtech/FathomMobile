@@ -292,14 +292,6 @@ class Settings extends Component {
           })
       }
       )
-      // Submit Password change request to backend API.
-      //let newUserObj = _.cloneDeep(this.props.user);
-      // update reducer as API might take too long to return a value
-      // store.dispatch({
-      //     type: DispatchActions.USER_REPLACE,
-      //     data: newUserObj
-      // });
-      //this.props.updateUser(newUserPayloadObj, this.props.user.id);
     }
 
     render = () => {
