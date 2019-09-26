@@ -25,6 +25,7 @@ const defaultPlanState = {
         workouts:        [],
     },
     isCoachModalOpen:                     false,
+    isContactUsOpen:                      false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
@@ -44,6 +45,7 @@ const defaultPlanState = {
     },
     prepare:         {},
     recover:         {},
+    sensorSession:   null,
     showLoadingText: false,
     train:           {
         postPracticeSurveys: [],

@@ -488,6 +488,8 @@ const UTIL = {
                         return null;
                     })
                         .filter(a => a);
+                    // TODO: 'updatedCleanedWorkoutValues' needs to include 3sensor sessions from 'trainingSessionsState'!
+                    //    source === 3 && !post_session_survey.RPE
                     let updatedCleanedWorkoutValues = _.filter(cleanedWorkoutValues, o =>
                         !_.some(trainingSessionsState, item =>
                             o.sport_name === item.sport_name && o.end_date === item.end_date && o.event_date === item.event_date
@@ -496,6 +498,7 @@ const UTIL = {
                             o.sport_name === item.sport_name && item.source === 0 && UTIL._lessThanTwoHoursAgo(o.end_date, item.created_date)
                         )
                     );
+                    updatedCleanedWorkoutValues = _.orderBy(updatedCleanedWorkoutValues, ['source', 'event_date'], ['desc', 'asc']);
                     // store in reducer
                     store.dispatch({
                         type:               DispatchActions.SET_HEALTH_DATA,
@@ -525,6 +528,9 @@ const UTIL = {
                 filteredHeartRateValues = _.filter(heartRates, hr => moment(workout.start) <= moment(hr.startDate) && moment(workout.end) >= moment(hr.endDate));
                 let otherIndex = _.filter(MyPlanConstants.teamSports, ['label', 'Other'])[0].index;
                 let sportName = _.filter(MyPlanConstants.teamSports, (sport, i) => workout.activityName.toLowerCase() === sport.label.toLowerCase().replace(' ', '').replace(' ', '').replace(' ', '').replace('&', 'and'));
+                newWorkout.apple_health_kit_source_names = [workout.sourceName];
+                newWorkout.apple_health_kit_id = workout.uuid;
+                newWorkout.is_merged_with = [];
                 newWorkout.sport_name = sportName[0] ? sportName[0].index : otherIndex;
                 newWorkout.event_date = `${workout.start.split('.')[0]}Z`;
                 newWorkout.end_date = `${workout.end.split('.')[0]}Z`;

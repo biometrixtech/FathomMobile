@@ -3,7 +3,7 @@
  *
     <ContactUsModal
         handleModalToggle={this._togglePrivacyPolicyWebView}
-        isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
+        isModalOpen={this.state.isModalOpen}
     />
  *
  */
@@ -20,12 +20,12 @@ import { FathomModal, Text, WebViewPage, } from '../custom';
 /* Component ==================================================================== */
 const ContactUsModal = ({
     handleModalToggle,
-    isPrivacyPolicyOpen,
+    isModalOpen,
 }) => (
     <FathomModal
         backdropColor={AppColors.white}
         backdropOpacity={1}
-        isVisible={isPrivacyPolicyOpen}
+        isVisible={isModalOpen}
     >
         <WebViewPage
             source={'https://www.fathomai.com/contact/'}
@@ -41,8 +41,8 @@ const ContactUsModal = ({
 )
 
 ContactUsModal.propTypes = {
-    handleModalToggle:   PropTypes.func.isRequired,
-    isPrivacyPolicyOpen: PropTypes.bool.isRequired,
+    handleModalToggle: PropTypes.func.isRequired,
+    isModalOpen:       PropTypes.bool.isRequired,
 };
 
 ContactUsModal.defaultProps = {};

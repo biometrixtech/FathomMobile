@@ -43,6 +43,7 @@ class Root extends Component {
         super(props);
         this.state = {
             hasError: false,
+            isTablet: DeviceInfo.isTablet() || DeviceInfo.getDeviceId().includes('iPad'),
         };
         this._networkMonitor = new NetworkMonitor(this.props.store);
         this._dropdown = null;
@@ -169,7 +170,8 @@ class Root extends Component {
     }
 
     render = () => {
-        if(this.state.hasError || DeviceInfo.isTablet()) {
+        const { hasError, isTablet, } = this.state;
+        if(hasError || isTablet) {
             return(
                 <View style={{flex: 1, justifyContent: 'space-between', marginTop: AppSizes.statusBarHeight,}}>
                     <View style={{alignItems: 'center', flex: 1,}}>
@@ -193,7 +195,7 @@ class Root extends Component {
                                 <Spacer size={AppSizes.padding} />
                                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
                                     {
-                                        this.state.hasError ?
+                                        hasError ?
                                             'We\'ve encountered an error. Please restart the app and try again.'
                                             :
                                             'Sorry, the Fathom mobile app is not compatible on this device.'

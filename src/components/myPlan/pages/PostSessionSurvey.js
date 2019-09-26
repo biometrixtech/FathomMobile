@@ -6,11 +6,14 @@
         handleFormChange={this._handleFormChange}
         handleFormSubmit={this._handlePostSessionSurveySubmit}
         handleHealthDataFormChange={this._handleHealthDataFormChange}
+        handleSingleSensorSessionFormChange={this._handleSingleSensorSessionFormChange}
         handleTogglePostSessionSurvey={this._handleTogglePostSessionSurvey}
         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
         healthKitWorkouts={healthData.workouts.length > 0 ? healthData.workouts : null}
         postSession={this.state.postSession}
+        sensorSession={sensorSession}
         soreBodyParts={this.state.soreBodyParts}
+        trainingSessions={dailyPlanObj.training_sessions}
         typicalSessions={this.props.plan.typicalSessions}
         user={user}
     />
@@ -31,6 +34,7 @@ import {
     BackNextButtons,
     HealthKitWorkouts,
     ProgressPill,
+    SingleSensorSession,
     SoreBodyPart,
     SportScheduleBuilder,
     SurveySlideUpPanel,
@@ -45,13 +49,13 @@ import ActionButton from 'react-native-action-button';
 class PostSessionSurvey extends Component {
     constructor(props) {
         super(props);
-        const { healthKitWorkouts, } = this.props;
+        const { healthKitWorkouts, sensorSession, } = this.props;
         this.state = {
             isActionButtonVisible:      false,
             isSlideUpPanelExpanded:     true,
             isSlideUpPanelOpen:         false,
             lockTrainLaterBtn:          false,
-            pageIndex:                  healthKitWorkouts && healthKitWorkouts.length > 0 ? 0 : 1,
+            pageIndex:                  sensorSession || (healthKitWorkouts && healthKitWorkouts.length > 0) ? 0 : 1,
             resetHealthKitFirstPage:    false,
             resetSportBuilderFirstPage: false,
         };
@@ -214,11 +218,14 @@ class PostSessionSurvey extends Component {
             handleFormChange,
             handleFormSubmit,
             handleHealthDataFormChange,
+            handleSingleSensorSessionFormChange,
             handleTogglePostSessionSurvey,
             handleUpdateFirstTimeExperience,
             healthKitWorkouts,
             postSession,
+            sensorSession,
             soreBodyParts,
+            trainingSessions,
             typicalSessions,
             user,
         } = this.props;
@@ -245,16 +252,25 @@ class PostSessionSurvey extends Component {
                 >
 
                     <View style={{flex: 1,}}>
-                        { healthKitWorkouts && healthKitWorkouts.length > 0 &&
-                            <HealthKitWorkouts
-                                handleHealthDataFormChange={handleHealthDataFormChange}
+                        { sensorSession ?
+                            <SingleSensorSession
+                                handleFormChange={handleSingleSensorSessionFormChange}
                                 handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
-                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
-                                handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
-                                isPostSession={true}
-                                resetFirstPage={resetHealthKitFirstPage}
-                                workouts={healthKitWorkouts}
+                                session={sensorSession}
                             />
+                            : healthKitWorkouts && healthKitWorkouts.length > 0 ?
+                                <HealthKitWorkouts
+                                    handleHealthDataFormChange={handleHealthDataFormChange}
+                                    handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
+                                    handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
+                                    handleToggleSurvey={areAllDeleted => handleFormSubmit(areAllDeleted)}
+                                    isPostSession={true}
+                                    resetFirstPage={resetHealthKitFirstPage}
+                                    trainingSessions={trainingSessions}
+                                    workouts={healthKitWorkouts}
+                                />
+                                :
+                                null
                         }
                     </View>
 
@@ -291,7 +307,7 @@ class PostSessionSurvey extends Component {
                     <View style={{flex: 1,}}>
                         <ProgressPill
                             currentStep={2}
-                            onBack={() => this._renderPreviousPage(2)}
+                            onBack={sensorSession ? null : () => this._renderPreviousPage(2)}
                             totalSteps={3}
                         />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
@@ -564,19 +580,25 @@ class PostSessionSurvey extends Component {
 }
 
 PostSessionSurvey.propTypes = {
-    handleAreaOfSorenessClick:     PropTypes.func.isRequired,
-    handleFormChange:              PropTypes.func.isRequired,
-    handleFormSubmit:              PropTypes.func.isRequired,
-    handleTogglePostSessionSurvey: PropTypes.func.isRequired,
-    healthKitWorkouts:             PropTypes.array,
-    postSession:                   PropTypes.object.isRequired,
-    soreBodyParts:                 PropTypes.object.isRequired,
-    typicalSessions:               PropTypes.array.isRequired,
-    user:                          PropTypes.object.isRequired,
+    handleAreaOfSorenessClick:           PropTypes.func.isRequired,
+    handleFormChange:                    PropTypes.func.isRequired,
+    handleFormSubmit:                    PropTypes.func.isRequired,
+    handleHealthDataFormChange:          PropTypes.func.isRequired,
+    handleSingleSensorSessionFormChange: PropTypes.func.isRequired,
+    handleTogglePostSessionSurvey:       PropTypes.func.isRequired,
+    healthKitWorkouts:                   PropTypes.array,
+    postSession:                         PropTypes.object.isRequired,
+    sensorSession:                       PropTypes.object,
+    soreBodyParts:                       PropTypes.object.isRequired,
+    trainingSessions:                    PropTypes.array,
+    typicalSessions:                     PropTypes.array.isRequired,
+    user:                                PropTypes.object.isRequired,
 };
 
 PostSessionSurvey.defaultProps = {
     healthKitWorkouts: null,
+    sensorSession:     null,
+    trainingSessions:  [],
 };
 
 PostSessionSurvey.componentName = 'PostSessionSurvey';

@@ -75,7 +75,7 @@ class SensorFilesPage extends Component {
             currentWifiConnection: false,
             isConnectingToSensor:  false,
             isDialogVisible:       false,
-            isVideoMuted:          false,
+            isVideoPaused:         false,
             isWifiScanDone:        false,
             loading:               false,
             pageIndex:             0,
@@ -281,8 +281,8 @@ class SensorFilesPage extends Component {
                         if(!this._isMounted) {
                             return '';
                         }
-                        // let errorObj = await ble.handleError(err, device);
                         // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        // let errorObj = await ble.handleError(err, device);
                         // let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
                         // let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
                         // AppUtil.handleAPIErrorAlert(message, header);
@@ -553,7 +553,7 @@ class SensorFilesPage extends Component {
             isConnectingToSensor,
             isDialogVisible,
             isSubmittingDetails,
-            isVideoMuted,
+            isVideoPaused,
             isWifiScanDone,
             pageIndex,
         } = this.state;
@@ -614,16 +614,9 @@ class SensorFilesPage extends Component {
                             >
                                 <Calibration
                                     currentPage={pageIndex === 0}
-                                    nextBtn={this._renderNextPage}
-                                    page={1}
-                                    showTopNavStep={false}
-                                />
-                                <Calibration
-                                    currentPage={pageIndex === 1}
-                                    handleUpdateVolume={() => this.setState({ isVideoMuted: !this.state.isVideoMuted, })}
-                                    isVideoMuted={isVideoMuted}
+                                    handleUpdatePauseState={() => this.setState({ isVideoPaused: !this.state.isVideoPaused, })}
+                                    isVideoPaused={isVideoPaused}
                                     nextBtn={() => Actions.pop()}
-                                    onBack={this._renderPreviousPage}
                                     page={2}
                                     showTopNavStep={false}
                                 />
@@ -639,28 +632,28 @@ class SensorFilesPage extends Component {
                                     <Placement
                                         currentPage={pageIndex === 0}
                                         nextBtn={this._renderNextPage}
-                                        page={3}
+                                        page={4}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 1}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={4}
+                                        page={5}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 2}
                                         nextBtn={this._renderNextPage}
                                         onBack={this._renderPreviousPage}
-                                        page={5}
+                                        page={6}
                                         showTopNavStep={false}
                                     />
                                     <Placement
                                         currentPage={pageIndex === 3}
                                         nextBtn={() => Actions.pop()}
                                         onBack={this._renderPreviousPage}
-                                        page={6}
+                                        page={7}
                                         showTopNavStep={false}
                                     />
                                 </Pages>

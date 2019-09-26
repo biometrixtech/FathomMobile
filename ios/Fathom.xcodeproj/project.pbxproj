@@ -2278,6 +2278,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -2316,6 +2317,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom App Store Provisioning Profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -2510,6 +2512,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "Fathom Ad Hoc Provisioning Profile";
 				SWIFT_OBJC_BRIDGING_HEADER = "Fathom-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging;

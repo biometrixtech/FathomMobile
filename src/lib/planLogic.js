@@ -893,6 +893,64 @@ const PlanLogic = {
             sportText,
         };
     },
+    // TODO: UNIT TEST ME - lines 1890-1940
+    handleHealthKitWorkoutPageRenderLogicNEW: workout => {
+        let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportName = selectedSport ?
+            workout.source === 0 ?
+                `Fathom ${selectedSport.label}`
+                : workout.source === 3 ?
+                    selectedSport.label
+                    :
+                    `${workout.apple_health_kit_source_names[0]} ${selectedSport.label}`
+            :
+            '';
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        if(selectedSport && selectedSport.label === 'High Intensity Interval Training') {
+            sportName = workout.source === 0 ? 'Fathom HIIT' : workout.source === 3 ? 'HIIT' : `${workout.apple_health_kit_source_names[0]} HIIT`;
+        }
+        return {
+            sportName,
+            sportStartTime,
+        };
+    },
+
+    /**
+      * HealthKit Single Workout Page Render Logic
+      * - HealthKitWorkouts
+      */
+    // TODO: UNIT TEST ME
+    handleSingleHealthKitWorkoutPageRenderLogic: workouts => {
+        if(workouts.length > 1) {
+            return {
+                sportImage: '',
+                sportText:  '',
+            }
+        }
+        let workout = workouts[0];
+        let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
+        let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportText = workout.apple_health_kit_source_names && workout.apple_health_kit_source_names[0] ?
+            [
+                `How was your ${sportStartTime} `,
+                `${workout.apple_health_kit_source_names[0]} workout?`,
+                ''
+            ]
+            :
+            [
+                'How was your ',
+                'Run with Fathom Pro',
+                ` at ${sportStartTime}?`
+            ];
+        let sportImage = selectedSport ? selectedSport.imagePath : '';
+        return {
+            sportImage,
+            sportStartTime,
+            sportText,
+        };
+    },
 
     /**
       * Function Strength Modal Render Logic
@@ -1378,6 +1436,15 @@ const PlanLogic = {
             _.filter(dailyPlanObj.training_sessions, o => !o.deleted && !o.ignored && (o.sport_name !== null || o.strength_and_conditioning_type !== null))
             :
             [];
+        if(dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 && filteredTrainingSessions.length > 0) {
+            filteredTrainingSessions = _.map(filteredTrainingSessions, o =>
+                o.source === 3 && !o.asymmetry ?
+                    null
+                    :
+                    o
+            );
+            filteredTrainingSessions = _.filter(filteredTrainingSessions, o => o && o.event_date);
+        }
         let completedTrainingSessions = PlanLogic.addTitleToCompletedModalitiesHelper(filteredTrainingSessions, 'Active Recovery');
         let completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', PlanLogic.handleFindGoals([dailyPlanObj.heat]), true);
         let completedCurrentPreActiveRest = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.pre_active_rest, 'Mobilize', PlanLogic.handleFindGoals(dailyPlanObj.pre_active_rest, MyPlanConstants.preExerciseListOrder), true, MyPlanConstants.preExerciseListOrder);
@@ -2317,12 +2384,12 @@ const PlanLogic = {
                     rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
                 }
             } else {
-                const ANKLE_PITCH_CART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
+                const ANKLE_PITCH_CHART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
                     40
                     :
                     360;
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CART_RATIO);
+                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CHART_RATIO);
                     largerPieData = [
                         { color: AppColors.zeplin.successLight, x: 0, y: newPieData.right_y, },
                         { color: AppColors.transparent, x: 1, y: largerValue, },
@@ -2331,8 +2398,8 @@ const PlanLogic = {
                 } else if(newPieData.left_y > newPieData.right_y) {
                     let largerValue = newPieData.left_y;
                     let smallerValue = newPieData.right_y;
-                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
-                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
                         { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
@@ -2344,8 +2411,8 @@ const PlanLogic = {
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
                     let largerValue = newPieData.right_y;
                     let smallerValue = newPieData.left_y;
-                    let largerFullValue = (ANKLE_PITCH_CART_RATIO - largerValue);
-                    let smallerFullValue = (ANKLE_PITCH_CART_RATIO - smallerValue);
+                    let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
+                    let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
                         { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
@@ -2486,53 +2553,82 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
-        let title =  activity.status === 'PROCESSING_COMPLETE' ?
+        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
+        let activityStatus =  activity.status === 'CREATE_COMPLETE' && !activity.end_date ?
+            activity.status
+            : networkName ?
+                activity.status
+                :
+                'NO_WIFI_SETUP';
+        let title =  activityStatus === 'PROCESSING_COMPLETE' ?
             'Analysis Complete'
-            : activity.status === 'UPLOAD_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' ?
                 'Uploading Workout...'
-                : activity.status === 'UPLOAD_PAUSED' ?
+                : activityStatus === 'UPLOAD_PAUSED' ?
                     'Upload paused'
-                    : activity.status === 'PROCESSING_IN_PROGRESS' ?
+                    : activityStatus === 'PROCESSING_IN_PROGRESS' ?
                         'Analyzing Workout...'
-                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                             'Calibration error'
-                            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                            : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                                 'Placement error'
-                                :
-                                'Analysis failed';
-        let iconName = activity.status === 'PROCESSING_COMPLETE' ?
+                                : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                                    false
+                                    : activityStatus === 'NO_WIFI_SETUP' ?
+                                        'Finish PRO Kit Setup'
+                                        : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                                            'Workout Complete'
+                                            : activityStatus === 'NO_DATA' ?
+                                                'No workout data found'
+                                                : activityStatus === 'TOO_SHORT' ?
+                                                    'Workout too short'
+                                                    :
+                                                    'Analysis failed';
+        let iconName = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
-            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
                 'sync'
                 :
                 'alert-circle-outline';
-        let iconType = activity.status === 'PROCESSING_COMPLETE' ?
+        let iconType = (activityStatus === 'PROCESSING_COMPLETE') || ( activityStatus === 'CREATE_COMPLETE' && !activity.end_date) ?
             false
-            : activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+            : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
                 'material'
                 :
                 'material-community';
-        let iconColor = activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
-        let actionText = activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+        let iconColor = activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight;
+        let actionText = activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' ?
             'Tap to refresh'
-            : activity.status === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
+            : activityStatus === 'PROCESSING_FAILED' && (activity.cause_of_failure === 'CALIBRATION' || activity.cause_of_failure === 'PLACEMENT') ?
                 'Tap to access tutorial'
-                :
-                false;
-        let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : '';
-        let subtext = activity.status === 'UPLOAD_PAUSED' ?
-            ['Return your Kit to wifi network ', networkName, ' to finish uploading.']
-            : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
-                'We can\'t analyze this data because you may have missed a step in calibration. Tap to review calibration for next time.'
-                : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
-                    'We can\'t analyze this data because your sensors were in the wrong position. Tap to review placement for next time.'
-                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
-                        'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
+                : activityStatus === 'NO_DATA' ?
+                    false // 'Tap to Contact Fathom'
+                    : (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
+                        'Tap to refresh'
                         :
                         false;
+        let subtext = activityStatus === 'UPLOAD_PAUSED' ?
+            ['Return your Kit to wifi network ', networkName, ' to finish uploading.']
+            : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                'We can\'t analyze this data because you may have missed a step in calibration. Tap to review calibration for next time.'
+                : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                    'We can\'t analyze this data because your sensors were in the wrong position. Tap to review placement for next time.'
+                    : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'ERROR' ?
+                        'Something went wrong in analyzing this workout. Our team will take a look and will try to fix the problem!'
+                        : activityStatus === 'NO_WIFI_SETUP' ?
+                            'Bring your Fathom PRO kit in range of your home wifi network to connect wifi and upload your workout.'
+                            : activityStatus === 'TOO_SHORT' ?
+                                'Unfortunately, workouts less than 5 min long don\'t have enough data to properly process.'
+                                : activityStatus === 'NO_DATA' ?
+                                    'We did not find data on your Fathom PRO Kit. Be sure to keep your kit charged, and wear your sensors while running.'
+                                    : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
+                                        `Return your sensors to your kit and bring the kit in range of wifi network ${networkName || ''} to upload.`
+                                        :
+                                        false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
         return {
             actionText,
+            activityStatus,
             eventDate,
             iconColor,
             iconName,

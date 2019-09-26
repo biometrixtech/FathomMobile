@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Platform, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
@@ -74,10 +74,9 @@ const BackNextButtons = ({
 }) => (
     <View style={[showAddBtn && showSubmitBtn ? styles.addSubmitWrapper : styles.backNextWrapper,]}>
         { showAddBtn ?
-            <TouchableHighlight
+            <TouchableOpacity
                 onPress={() => isValid && onBackClick ? onBackClick() : null}
                 style={[AppStyles.paddingVerticalSml, styles.addBtn, showAddBtnDisabledStyle ? {borderColor: AppColors.zeplin.slateXLight,} : {}]}
-                underlayColor={AppColors.transparent}
             >
                 <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
                     { showBackIcon ?
@@ -103,9 +102,9 @@ const BackNextButtons = ({
                         {addBtnText}
                     </Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
             : showBackBtn ?
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={onBackClick}
                     style={[AppStyles.backNextCircleButtons, {
                         backgroundColor: AppColors.white,
@@ -113,7 +112,6 @@ const BackNextButtons = ({
                         borderWidth:     1,
                         marginLeft:      AppSizes.paddingMed,
                     }]}
-                    underlayColor={AppColors.transparent}
                 >
                     <Text
                         robotoMedium
@@ -127,12 +125,12 @@ const BackNextButtons = ({
                     >
                         {'Back'}
                     </Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
                 :
                 <View style={{flex: 1,}} />
         }
         { showSubmitBtn ?
-            <TouchableHighlight
+            <TouchableOpacity
                 onPress={() => isValid && handleFormSubmit ? handleFormSubmit() : null}
                 style={[
                     AppStyles.paddingVerticalSml,
@@ -144,7 +142,6 @@ const BackNextButtons = ({
                         borderWidth:     1,
                     }
                 ]}
-                underlayColor={AppColors.transparent}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                     { (Platform.OS === 'ios' && isSubmitBtnSubmitting) &&
@@ -168,9 +165,9 @@ const BackNextButtons = ({
                         {submitBtnText}
                     </Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
             :
-            <TouchableHighlight
+            <TouchableOpacity
                 onPress={isValid ? onNextClick : null}
                 style={[AppStyles.backNextCircleButtons, {
                     backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
@@ -178,7 +175,6 @@ const BackNextButtons = ({
                     borderWidth:     1,
                     marginRight:     AppSizes.paddingMed,
                 }]}
-                underlayColor={AppColors.transparent}
             >
                 <Text
                     robotoMedium
@@ -194,7 +190,7 @@ const BackNextButtons = ({
                 >
                     {'Next'}
                 </Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
         }
     </View>
 );

@@ -386,8 +386,8 @@ class Settings extends Component {
                                 <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
                                     <Image
                                         resizeMode={'contain'}
-                                        source={require('../../../assets/images/sensor/sensor_slate.png')}
-                                        style={{height: 20, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 20,}}
+                                        source={require('../../../assets/images/standard/kitactive.png')}
+                                        style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
                                     />
                                 </View>
                             }
@@ -397,7 +397,7 @@ class Settings extends Component {
                                 name:  'chevron-right',
                                 size:  ICON_SIZE,
                             }}
-                            title={has3SensorConnected ? 'Manage Fathom PRO Kit' : 'Set up Fathom PRO Kit'}
+                            title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                         />
                         <Spacer isDivider />
