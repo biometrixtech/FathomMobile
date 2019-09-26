@@ -49,6 +49,7 @@ class Settings extends Component {
         updateUser:      PropTypes.func.isRequired,
         userJoinAccount: PropTypes.func.isRequired,
         user:            PropTypes.object.isRequired,
+        changePassword:  PropTypes.func.isRequired
     }
 
     static defaultProps = {}
@@ -248,15 +249,19 @@ class Settings extends Component {
 
     _validateNewPassword = (oldPassword, newPassword, newPasswordConfirm) => {
       if (oldPassword === newPassword) {
+        this._handleUpdateResultMsg('error', 'New Password must be different from old password. Please try again.');
         return false
       }
       if (newPassword.length < 8 || oldPassword.length < 8){
+        this._handleUpdateResultMsg('error', 'New Password must be 8 character or longer. Please try again.');
         return false
       }
       if (!this._hasNumber(newPassword)){
+        this._handleUpdateResultMsg('error', 'New Password must contain a number. Please try again.');
         return false
       }
       if (newPassword != newPasswordConfirm){
+        this._handleUpdateResultMsg('error', 'New Password fields do not match. Please try again.');
         return false
       }
       return true
@@ -264,12 +269,37 @@ class Settings extends Component {
 
     _handleChangePasswordFormSubmit = () => {
       let { oldPassword, newPassword, newPasswordConfirm } = this.state.form_values;
-      console.log(this.state.form_values);
       if (!this._validateNewPassword(oldPassword, newPassword, newPasswordConfirm)){
-        this._handleUpdateResultMsg('error', 'Error changing password. Please try again.');
         return
       }
+      this.setState({isChangePasswordFormSubmitting: true},
+        () => {
+          this.props.changePassword(this.props.user.id, {
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                sessionToken: this.props.sessionToken
+          }).then(res => {
+                this.setState({
+                  isChangePasswordFormSubmitting: false,
+                  isChangePasswordSuccessful: true
+                })
+          }).catch(err => {
+                this._handleUpdateResultMsg('error', 'Error changing password. Please try again.');
+                this.setState({
+                  isChangePasswordFormSubmitting: false,
+                  isChangePasswordSuccessful: false
+                })
+          })
+      }
+      )
       // Submit Password change request to backend API.
+      //let newUserObj = _.cloneDeep(this.props.user);
+      // update reducer as API might take too long to return a value
+      // store.dispatch({
+      //     type: DispatchActions.USER_REPLACE,
+      //     data: newUserObj
+      // });
+      //this.props.updateUser(newUserPayloadObj, this.props.user.id);
     }
 
     render = () => {

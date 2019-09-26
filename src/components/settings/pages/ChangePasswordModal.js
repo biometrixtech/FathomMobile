@@ -128,7 +128,7 @@ const ModalData = ({
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, justifyContent: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}
                     containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
                     onPress={() => handleFormSubmit()}
-                    title={'Finish'}
+                    title={'Submit'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center', width: '100%',}}
                 />
                 <Spacer size={50} />
