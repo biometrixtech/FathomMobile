@@ -244,6 +244,7 @@ const createSensorSession = (dateTime, userObj) => {
     payload.event_date = dateTime;
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     payload.sensors = [];
+    payload.user_id = userObj.id;
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.create_session.post(false, payload)
             .then(response => resolve(response))
@@ -251,7 +252,7 @@ const createSensorSession = (dateTime, userObj) => {
     });
 };
 
-const updateSensorSession = (endDate, sessionStatus, sessionId) => {
+const updateSensorSession = (endDate, sessionStatus, sessionId, userObj, backendPatch) => {
     if(!sessionId) {
         return dispatch => new Promise((resolve, reject) => {
             reject('Session not found, please try again!');
@@ -260,11 +261,26 @@ const updateSensorSession = (endDate, sessionStatus, sessionId) => {
     let payload = {};
     if(endDate) {
         payload.end_date = endDate;
-    }
-    if(sessionStatus) {
+    } else if(sessionStatus) {
         payload.session_status = sessionStatus;
+    } else if(backendPatch) {
+        payload.set_end_date = true;
     }
     return dispatch => new Promise((resolve, reject) => {
+        if(sessionStatus && sessionStatus === 'CREATE_ATTEMPT_FAILED') {
+            let newUserObj = _.cloneDeep(userObj);
+            let newSensorSessions = _.cloneDeep(newUserObj.sensor_data.sessions);
+            let sessionIndex = _.findIndex(newSensorSessions, { id: sessionId, });
+            if(sessionIndex >= 0) {
+                newSensorSessions.splice(sessionIndex, 1);
+                newSensorSessions = _.filter(newSensorSessions, o => o.status !== 'CREATE_ATTEMPT_FAILED');
+                newUserObj.sensor_data.sessions = newSensorSessions;
+                dispatch({
+                    type: Actions.USER_REPLACE,
+                    data: newUserObj,
+                });
+            }
+        }
         return AppAPI.preprocessing.update_session.patch({sessionId}, payload)
             .then(response => resolve(response))
             .catch(error => reject(error));

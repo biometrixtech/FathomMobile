@@ -76,6 +76,7 @@ class SensorBackUpTutorial extends Component {
 
                         {/* Welcome Screen - page 0 */}
                         <CVP
+                            currentPage={pageIndex === 0}
                             nextBtn={this._renderNextPage}
                             onClose={() => handleOnClose()}
                             showTopNavStep={false}

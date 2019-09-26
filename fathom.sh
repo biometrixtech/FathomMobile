@@ -250,7 +250,7 @@ androidBuild() {
             else
                 echo "Unit testing passed, proceeding.."
                 yarn bundle-android
-                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi
+                rm -rf android/app/src/main/res/drawable-xxxhdpi android/app/src/main/res/drawable-xxhdpi android/app/src/main/res/drawable-xhdpi android/app/src/main/res/drawable-mdpi android/app/src/main/res/drawable-hdpi android/app/src/main/res/raw
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..

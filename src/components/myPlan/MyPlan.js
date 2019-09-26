@@ -22,8 +22,10 @@
           user={user}
       />
  */
+/* global fetch console */
 import React, { Component, } from 'react';
 import {
+    Alert,
     AppState,
     BackHandler,
     Image,
@@ -56,7 +58,7 @@ import defaultPlanState from '../../states/plan';
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
-import { Loading, } from '../general';
+import { ContactUsModal, Loading, } from '../general';
 
 // global constants
 const numberOfPlaceholders = 8;
@@ -70,6 +72,22 @@ const styles = StyleSheet.create({
     },
     completedTitle: {
         fontSize: AppFonts.scaleFont(18),
+    },
+    disabledFABBtn: {
+        alignItems:      'center',
+        backgroundColor: AppColors.zeplin.slateXLight,
+        borderRadius:    (65 / 2),
+        bottom:          30,
+        elevation:       2,
+        height:          65,
+        justifyContent:  'center',
+        position:        'absolute',
+        right:           30,
+        shadowColor:     AppColors.zeplin.slateXLight,
+        shadowOffset:    { height: 3, width: 0, },
+        shadowOpacity:   1,
+        shadowRadius:    6,
+        width:           65,
     },
     lockedSubtitle: {
         fontSize: AppFonts.scaleFont(12),
@@ -204,9 +222,19 @@ const ActivityTab = ({
     </View>
 );
 
-const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRefresh, userSesnorData, }) => {
+const SensorSession = ({
+    activity,
+    askForNewMobilize,
+    handleGetMobilize,
+    handeRefresh,
+    onLayout,
+    toggleContactUsWebView,
+    updateSensorSession,
+    userSesnorData,
+}) => {
     let {
         actionText,
+        activityStatus,
         eventDate,
         iconColor,
         iconName,
@@ -217,110 +245,149 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
     return (
         <TouchableOpacity
             activeOpacity={1}
+            onLayout={onLayout ? event => onLayout(event) : null}
             onPress={
-                activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' || activity.status === 'PROCESSING_IN_PROGRESS' ?
+                activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                     () => handeRefresh()
-                    : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                    : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
                         () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
-                        : activity.status === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                             () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
-                            : activity.status === 'PROCESSING_COMPLETE' ?
+                            : activityStatus === 'PROCESSING_COMPLETE' ?
                                 () => handleGetMobilize()
-                                :
-                                () => {}
+                                : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                                    () => updateSensorSession(activity)
+                                    : activityStatus === 'NO_WIFI_SETUP' ?
+                                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
+                                        : activityStatus === 'NO_DATA' ?
+                                            () => {} // toggleContactUsWebView()
+                                            :
+                                            () => {}
             }
             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
         >
-            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
-                <View style={{flexDirection: 'row',}}>
-                    { iconName && iconType ?
-                        <TabIcon
-                            color={iconColor}
-                            icon={iconName}
-                            size={AppFonts.scaleFont(24)}
-                            type={iconType}
-                        />
-                        :
-                        <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
-                            <LottieView
-                                autoPlay={false}
-                                loop={false}
-                                progress={1}
-                                source={require('../../../assets/animation/checkmark-circle.json')}
-                            />
-                        </View>
+            { activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginBottom: AppSizes.paddingMed,}}>
+                    { eventDate &&
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
                     }
-                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
                 </View>
-                { eventDate &&
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
-                }
-            </View>
+                :
+                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.paddingMed,}}>
+                    <View style={{flexDirection: 'row',}}>
+                        { iconName && iconType ?
+                            <TabIcon
+                                color={iconColor}
+                                icon={iconName}
+                                size={AppFonts.scaleFont(24)}
+                                type={iconType}
+                            />
+                            :
+                            <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
+                                <LottieView
+                                    autoPlay={false}
+                                    loop={false}
+                                    progress={1}
+                                    source={require('../../../assets/animation/checkmark-circle.json')}
+                                />
+                            </View>
+                        }
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
+                    </View>
+                    { eventDate &&
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
+                    }
+                </View>
+            }
             <View style={{flex: 1, marginHorizontal: AppSizes.paddingMed,}}>
-                <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
-                    <Image
-                        resizeMode={'contain'}
-                        source={require('../../../assets/images/standard/kitactive.png')}
-                        style={{height: 25, width: 45,}}
-                    />
-                    { activity.status === 'UPLOAD_IN_PROGRESS' ?
-                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                            <LottieView
-                                autoPlay={true}
-                                loop={true}
-                                progress={1}
-                                source={require('../../../assets/animation/sensorloading.json')}
-                            />
-                        </View>
-                        :
+                { activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                    <View style={{alignItems: 'center', flexDirection: 'row', height: (25 + (AppSizes.paddingMed * 2)), justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
+                        <LottieView
+                            autoPlay={true}
+                            loop={true}
+                            source={require('../../../assets/animation/workoutongoing.json')}
+                            style={{position: 'absolute', height: (2.5 * (25 + (AppSizes.paddingMed * 2))),}}
+                        />
                         <Image
                             resizeMode={'contain'}
-                            source={
-                                activity.status === 'UPLOAD_PAUSED' ?
-                                    require('../../../assets/images/standard/dotsdisabled.png')
+                            source={require('../../../assets/images/standard/kitactive.png')}
+                            style={{height: 25, tintColor: AppColors.zeplin.yellow, width: 45,}}
+                        />
+                    </View>
+                    :
+                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
+                        <Image
+                            resizeMode={'contain'}
+                            source={activityStatus === 'TOO_SHORT' ?
+                                require('../../../assets/images/standard/kitpaused.png')
+                                : activityStatus === 'NO_DATA' ?
+                                    require('../../../assets/images/standard/kiterror.png')
                                     :
-                                    require('../../../assets/images/standard/dotscompleted.png')
+                                    require('../../../assets/images/standard/kitactive.png')
                             }
-                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            style={{height: 25, width: 45,}}
                         />
-                    }
-                    <TabIcon
-                        color={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
-                        icon={activity.status === 'UPLOAD_IN_PROGRESS' || activity.status === 'UPLOAD_PAUSED' ? 'cloud' : 'cloud-done'}
-                        size={30}
-                        type={'material'}
-                    />
-                    { activity.status === 'PROCESSING_IN_PROGRESS' ?
-                        <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                            <LottieView
-                                autoPlay={true}
-                                loop={true}
-                                progress={1}
-                                source={require('../../../assets/animation/sensorloading.json')}
-                            />
-                        </View>
-                        :
-                        <Image
-                            resizeMode={'contain'}
-                            source={
-                                activity.status === 'PROCESSING_FAILED' ?
-                                    require('../../../assets/images/standard/dotserror.png')
-                                    : activity.status === 'PROCESSING_COMPLETE' ?
-                                        require('../../../assets/images/standard/dotscompleted.png')
-                                        :
+                        { activityStatus === 'UPLOAD_IN_PROGRESS' ?
+                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={true}
+                                    progress={1}
+                                    source={require('../../../assets/animation/sensorloading.json')}
+                                />
+                            </View>
+                            :
+                            <Image
+                                resizeMode={'contain'}
+                                source={
+                                    activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                                         require('../../../assets/images/standard/dotsdisabled.png')
-                            }
-                            style={{height: activity.status === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                        : activityStatus === 'TOO_SHORT' ?
+                                            require('../../../assets/images/standard/dotserror.png')
+                                            :
+                                            require('../../../assets/images/standard/dotscompleted.png')
+                                }
+                                style={{height: activityStatus === 'PROCESSING_FAILED' || activityStatus === 'TOO_SHORT' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            />
+                        }
+                        <TabIcon
+                            color={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
+                            icon={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? 'cloud' : 'cloud-done'}
+                            size={30}
+                            type={'material'}
                         />
-                    }
-                    <TabIcon
-                        color={activity.status === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
-                        icon={'clipboard-text'}
-                        size={30}
-                        type={'material-community'}
-                    />
-                </View>
-                { (subtext && activity.status === 'UPLOAD_PAUSED') ?
+                        { activityStatus === 'PROCESSING_IN_PROGRESS' ?
+                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                <LottieView
+                                    autoPlay={true}
+                                    loop={true}
+                                    progress={1}
+                                    source={require('../../../assets/animation/sensorloading.json')}
+                                />
+                            </View>
+                            :
+                            <Image
+                                resizeMode={'contain'}
+                                source={
+                                    activityStatus === 'PROCESSING_FAILED' ?
+                                        require('../../../assets/images/standard/dotserror.png')
+                                        : activityStatus === 'PROCESSING_COMPLETE' ?
+                                            require('../../../assets/images/standard/dotscompleted.png')
+                                            :
+                                            require('../../../assets/images/standard/dotsdisabled.png')
+                                }
+                                style={{height: activityStatus === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                            />
+                        }
+                        <TabIcon
+                            color={activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
+                            icon={'clipboard-text'}
+                            size={30}
+                            type={'material-community'}
+                        />
+                    </View>
+                }
+                { (subtext && activityStatus === 'UPLOAD_PAUSED') ?
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
                         {subtext[0]}
                         <Text robotoBold>{subtext[1]}</Text>
@@ -334,7 +401,7 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                         null
                 }
             </View>
-            { activity.status === 'PROCESSING_COMPLETE' ?
+            { activityStatus === 'PROCESSING_COMPLETE' ?
                 <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                     <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
                 </View>
@@ -342,8 +409,16 @@ const SensorSession = ({ activity, askForNewMobilize, handleGetMobilize, handeRe
                     <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
                     </View>
-                    :
-                    null
+                    : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                        <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'End Workout'}</Text>
+                        </View>
+                        : activityStatus === 'NO_WIFI_SETUP' ?
+                            <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to connect wifi'}</Text>
+                            </View>
+                            :
+                            null
             }
         </TouchableOpacity>
     );
@@ -575,6 +650,9 @@ class MyPlan extends Component {
         ) {
             AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
         }
+        if(nextAppState === 'background') {
+            this.setState({ isStartSensorSessionModalOpen: false, });
+        }
     }
 
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
@@ -747,7 +825,7 @@ class MyPlan extends Component {
                             isReadinessSurveyModalOpen: !response.daily_plans[0].daily_readiness_survey_completed,
                         });
                     })
-                    .catch(error => this.setState({ isPageLoading: false, }));
+                    .catch(error => this.setState({ isPageCalculating: false, isPageLoading: false, }));
             }
         );
     }
@@ -893,6 +971,117 @@ class MyPlan extends Component {
         );
     }
 
+    _handleSingleSensorSessionFormChange = (name, value, callback) => {
+        const { sensorSession, } = this.state;
+        let newSensorData = _.cloneDeep(sensorSession);
+        let newFormFields = _.update(newSensorData, name, () => value);
+        if(name === 'deleted' && value === true) {
+            newFormFields = _.update(newSensorData, 'post_session_survey.RPE', () => null);
+        }
+        newSensorData = newFormFields;
+        this.setState({
+            sensorSession: newSensorData,
+        }, () => {
+            if(callback) { callback(); }
+        });
+    }
+
+    _handleSingleSensorPostSessionSurveySubmit = async () => {
+        const {
+            clearCompletedCoolDownExercises,
+            clearCompletedExercises,
+            clearHealthKitWorkouts,
+            getSensorFiles,
+            postSessionSurvey,
+            updateSensorSession,
+            user,
+        } = this.props;
+        const { healthData, postSession, recover, sensorSession, train, } = this.state;
+        let updatedPostSession = _.cloneDeep(postSession);
+        updatedPostSession.sessions.push(sensorSession);
+        let savedSensorSession = _.cloneDeep(sensorSession);
+        let {
+            landingScreen,
+            newPostSession,
+            newPostSessionSessions,
+            newRecoverObject,
+            newTrainObject,
+        } = PlanLogic.handlePostSessionSurveySubmitLogic(updatedPostSession, train, recover, healthData, user);
+        this.setState(
+            {
+                expandNotifications:          false,
+                goToScreen:                   landingScreen,
+                healthData:                   [],
+                train:                        newTrainObject,
+                isPageCalculating:            true,
+                isPostSessionSurveyModalOpen: false,
+                postSession:                  {
+                    description: '',
+                    sessions:    newPostSessionSessions,
+                    soreness:    [],
+                },
+                recover:       newRecoverObject,
+                sensorSession: null,
+            },
+            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: true, }), 500); }
+        );
+        try {
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncResponse = await timesyncApiCall.json();
+            let dateTimeReturned = timesyncResponse.utc_datetime;
+            let indexOfDot = dateTimeReturned.indexOf('.');
+            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+            let endDateTime = moment(timesyncResponse.utc_datetime.replace('Z', ''));
+            let startDateTime = moment(newPostSession.sessions[0].event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
+            let duration = endDateTime.diff(startDateTime, 'minutes', true);
+            newPostSession.sessions[0].duration = _.round(duration, 2);
+            newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
+            updateSensorSession(dateTimeReturned, false, savedSensorSession.id, user)
+                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(() => getSensorFiles(user))
+                .then(response => {
+                    this.setState({ isPageCalculating: false, });
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    // scroll to first active activity tab
+                    this._scrollToFirstActiveActivityTab();
+                    // handle Coach related items
+                    if(!this.state.isTrainSessionsCompletionModalOpen) {
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                    }
+                })
+                .catch(error =>
+                    this.setState(
+                        { isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                );
+        } catch (e) {
+            updateSensorSession(false, false, savedSensorSession.id, user, true)
+                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                .then(() => postSessionSurvey(newPostSession, user.id))
+                .then(() => getSensorFiles(user))
+                .then(response => {
+                    this.setState({ isPageCalculating: false, });
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    // scroll to first active activity tab
+                    this._scrollToFirstActiveActivityTab();
+                    // handle Coach related items
+                    if(!this.state.isTrainSessionsCompletionModalOpen) {
+                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                    }
+                })
+                .catch(error =>
+                    this.setState(
+                        { isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                );
+        }
+    }
+
     _handleUpdateFirstTimeExperience = (value, callback) => {
         const { updateUser, user, } = this.props;
         // setup variables
@@ -912,6 +1101,50 @@ class MyPlan extends Component {
                     callback();
                 }
             });
+    }
+
+    _handleUpdateSensorSession = activity => {
+        const { updateSensorSession, user, } = this.props;
+        let startTime = moment(activity.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
+        if(moment().diff(startTime, 'minutes', true) >= 5) {
+            let newSensorSession = _.cloneDeep(activity);
+            newSensorSession.hr_data = [];
+            newSensorSession.session_type = 6;
+            newSensorSession.source = 3;
+            newSensorSession.sport_name = 17;
+            newSensorSession.post_session_survey = {
+                clear_candidates: [],
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              null,
+                soreness:         [],
+            };
+            return this.setState(
+                { sensorSession: newSensorSession, },
+                () => this._togglePostSessionSurveyModal(),
+            );
+        }
+        return Alert.alert(
+            'Are you sure you want to end?',
+            'Workouts less than 5 min don\'t have enough data to properly process.',
+            [
+                {
+                    text:    'End Now',
+                    onPress: () =>
+                        this.setState(
+                            { isPageCalculating: true, },
+                            () =>
+                                updateSensorSession(false, 'TOO_SHORT', activity.id, user)
+                                    .then(res => this._handleExerciseListRefresh(false, true))
+                                    .catch(err => this.setState({ isPageCalculating: false, })),
+                        )
+                },
+                {
+                    text:  'Continue Run',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
     }
 
     _handleUpdateUserHealthKitFlag = (flag, callback) => {
@@ -949,49 +1182,55 @@ class MyPlan extends Component {
         }
     }
 
+    _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
+
     _togglePostSessionSurveyModal = () => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
         const { isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
-        this.setState({ loading: isLoading, showLoadingText: true, });
-        if (!isPostSessionSurveyModalOpen) {
-            getSoreBodyParts(user.id)
-                .then(soreBodyParts => {
-                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
-                    newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
-                    this.goToPageTimer = _.delay(() =>
-                        this.setState({
-                            isPostSessionSurveyModalOpen: true,
-                            loading:                      false,
-                            postSession:                  newPostSession,
-                            showLoadingText:              false,
+        this.setState(
+            { loading: isLoading, showLoadingText: true, },
+            () => {
+                if (!isPostSessionSurveyModalOpen) {
+                    getSoreBodyParts(user.id)
+                        .then(soreBodyParts => {
+                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
+                            this.goToPageTimer = _.delay(() =>
+                                this.setState({
+                                    isPostSessionSurveyModalOpen: true,
+                                    loading:                      false,
+                                    postSession:                  newPostSession,
+                                    showLoadingText:              false,
+                                })
+                            , 500);
                         })
-                    , 500);
-                })
-                .catch(err => {
-                    // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                    let newPostSession = _.cloneDeep(defaultPlanState.postSession);
-                    newPostSession.soreness = [];
-                    this.setState({
-                        isPostSessionSurveyModalOpen: true,
-                        loading:                      false,
-                        postSession:                  newPostSession,
-                        showLoadingText:              false,
-                    });
-                    AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
-                });
-        } else {
-            clearCompletedExercises();
-            clearCompletedCoolDownExercises();
-            this.goToPageTimer = _.delay(() => {
-                this.setState({
-                    isPostSessionSurveyModalOpen: false,
-                    loading:                      false,
-                    postSession:                  _.cloneDeep(defaultPlanState.postSession),
-                    showLoadingText:              false,
-                });
-            }, 500);
-        }
+                        .catch(err => {
+                            // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
+                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            newPostSession.soreness = [];
+                            this.setState({
+                                isPostSessionSurveyModalOpen: true,
+                                loading:                      false,
+                                postSession:                  newPostSession,
+                                showLoadingText:              false,
+                            });
+                            AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
+                        });
+                } else {
+                    clearCompletedExercises();
+                    clearCompletedCoolDownExercises();
+                    this.goToPageTimer = _.delay(() => {
+                        this.setState({
+                            isPostSessionSurveyModalOpen: false,
+                            loading:                      false,
+                            postSession:                  _.cloneDeep(defaultPlanState.postSession),
+                            showLoadingText:              false,
+                        });
+                    }, 500);
+                }
+            }
+        );
     }
 
     render = () => {
@@ -1000,6 +1239,7 @@ class MyPlan extends Component {
             expandNotifications,
             healthData,
             isCoachModalOpen,
+            isContactUsOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -1009,10 +1249,11 @@ class MyPlan extends Component {
             isTrainSessionsCompletionModalOpen,
             loading,
             postSession,
+            sensorSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { createSensorSession, handleReadInsight, plan, updateSensorSession, user, } = this.props;
+        let { createSensorSession, getSensorFiles, handleReadInsight, plan, updateSensorSession, updateUser, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1028,6 +1269,8 @@ class MyPlan extends Component {
             trendDashboardCategories,
             triggerStep,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
+        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
+        const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -1082,6 +1325,9 @@ class MyPlan extends Component {
                                             handleGetMobilize={this._handleGetMobilize}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
+                                            onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
+                                            toggleContactUsWebView={this._toggleContactUsWebView}
+                                            updateSensorSession={this._handleUpdateSensorSession}
                                             userSesnorData={user.sensor_data}
                                         />
                                     )}
@@ -1151,7 +1397,7 @@ class MyPlan extends Component {
                     )}
                 </Placeholder>
 
-                { isReadinessSurveyCompleted && !isPageCalculating &&
+                { (isReadinessSurveyCompleted && !isPageCalculating && !hasActive3SensorSession) ?
                     <ActionButton
                         activeOpacity={1}
                         bgColor={'rgba(15, 19, 32, 0.8)'}
@@ -1228,14 +1474,7 @@ class MyPlan extends Component {
                                 />
                             </ActionButton.Item>
                         }
-                        {/* (
-                            user && user.personal_data && user.personal_data.email &&
-                            (
-                                /gabby[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
-                                /dipesh[+]mvp@fathomai.com/g.test(user.personal_data.email) ||
-                                /mazen[+]mvp@fathomai.com/g.test(user.personal_data.email)
-                            )
-                        ) &&
+                        { userHas3SensorSystem &&
                             <ActionButton.Item
                                 activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
@@ -1245,16 +1484,27 @@ class MyPlan extends Component {
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'Start Sensor Session'}
+                                title={'Start a run with PRO'}
                                 useNativeFeedback={false}
                             >
                                 <Image
-                                    source={require('../../../assets/images/sports_images/icons8-kitesurfing-200.png')}
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/kitpaused.png')}
                                     style={{height: 32, tintColor: AppColors.white, width: 32,}}
                                 />
                             </ActionButton.Item>
-                        */}
+                        }
                     </ActionButton>
+                    : (isReadinessSurveyCompleted && !isPageCalculating && hasActive3SensorSession) ?
+                        <View style={[styles.disabledFABBtn,]}>
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'add'}
+                                size={40}
+                            />
+                        </View>
+                        :
+                        null
                 }
 
                 <FathomModal
@@ -1270,6 +1520,7 @@ class MyPlan extends Component {
                         handleUpdateUserHealthKitFlag={this._handleUpdateUserHealthKitFlag}
                         healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
                         soreBodyParts={plan.soreBodyParts}
+                        trainingSessions={dailyPlanObj.training_sessions}
                         typicalSessions={plan.typicalSessions}
                         user={user}
                     />
@@ -1280,13 +1531,16 @@ class MyPlan extends Component {
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={areAllDeleted => this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleFormSubmit={areAllDeleted => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted)}
                         handleHealthDataFormChange={this._handleHealthDataFormChange}
+                        handleSingleSensorSessionFormChange={this._handleSingleSensorSessionFormChange}
                         handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}
                         handleUpdateFirstTimeExperience={this._handleUpdateFirstTimeExperience}
                         healthKitWorkouts={healthData && healthData.workouts && healthData.workouts.length > 0 ? healthData.workouts : null}
                         postSession={postSession}
+                        sensorSession={sensorSession}
                         soreBodyParts={plan.soreBodyParts}
+                        trainingSessions={dailyPlanObj.training_sessions}
                         typicalSessions={plan.typicalSessions}
                         user={user}
                     />
@@ -1301,13 +1555,17 @@ class MyPlan extends Component {
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
                 />
-                <StartSensorSessionModal
-                    createSensorSession={createSensorSession}
-                    isModalOpen={isStartSensorSessionModalOpen}
-                    onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
-                    updateSensorSession={updateSensorSession}
-                    user={user}
-                />
+                { isStartSensorSessionModalOpen &&
+                    <StartSensorSessionModal
+                        createSensorSession={createSensorSession}
+                        getSensorFiles={getSensorFiles}
+                        isModalOpen={isStartSensorSessionModalOpen}
+                        onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                        updateSensorSession={updateSensorSession}
+                        updateUser={updateUser}
+                        user={user}
+                    />
+                }
                 { loading ?
                     <Loading
                         text={showLoadingText ? trainLoadingScreenText : null}
@@ -1383,6 +1641,11 @@ class MyPlan extends Component {
                         </TouchableOpacity>
                     </View>
                 </FathomModal>
+
+                <ContactUsModal
+                    handleModalToggle={this._toggleContactUsWebView}
+                    isModalOpen={isContactUsOpen}
+                />
 
             </View>
         );
