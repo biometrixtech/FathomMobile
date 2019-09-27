@@ -260,7 +260,7 @@ class Settings extends Component {
         this._handleUpdateResultMsg('error', 'New Password must contain a number. Please try again.');
         return false
       }
-      if (newPassword != newPasswordConfirm){
+      if (newPassword !== newPasswordConfirm){
         this._handleUpdateResultMsg('error', 'New Password fields do not match. Please try again.');
         return false
       }
