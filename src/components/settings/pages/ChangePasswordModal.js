@@ -41,14 +41,14 @@ const ModalData = ({
             indeterminate={true}
             showsText={true}
             size={AppSizes.screen.widthTwoThirds}
-            textStyle={{...AppStyles.oswaldMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
+            textStyle={{...AppStyles.robotoMedium, color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}}
         />
         <Spacer size={50} />
     </View>
 )
     : isSuccessful ? (
         <View style={[AppStyles.containerCentered]}>
-            <Text oswaldMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
+            <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(40),}]}>{'Success!'}</Text>
             <Spacer size={40} />
             <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(14),}]}>{'Return to App'}</Text>
             <Spacer size={10} />
