@@ -22,7 +22,7 @@ import { user as UserActions, } from '../../actions';
 import { store, } from '../../store';
 
 // Components
-import { JoinATeamModal, } from './pages';
+import { JoinATeamModal, ChangePasswordModal } from './pages';
 
 const ICON_SIZE = 24;
 
@@ -49,6 +49,7 @@ class Settings extends Component {
         updateUser:      PropTypes.func.isRequired,
         userJoinAccount: PropTypes.func.isRequired,
         user:            PropTypes.object.isRequired,
+        changePassword:  PropTypes.func.isRequired
     }
 
     static defaultProps = {}
@@ -56,6 +57,9 @@ class Settings extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isChangePasswordFormSubmitting: false,
+            isChangePasswordSuccessful: false,
+            isChangePasswordModalOpen: false,
             isJoinATeamFormSubmitting: false,
             isJoinATeamModalOpen:      false,
             isLogoutBtnDisabled:       false,
@@ -68,10 +72,16 @@ class Settings extends Component {
             },
             form_values: {
                 code: '',
+                oldPassword: '',
+                newPassword: '',
+                newPasswordConfirm: ''
             },
             teamName: false,
         };
         this.defaultState = {
+            isChangePasswordFormSubmitting: false,
+            isChangePasswordSuccessful: false,
+            isChangePasswordModalOpen: false,
             isJoinATeamFormSubmitting: false,
             isJoinATeamModalOpen:      false,
             isUnpairing:               false,
@@ -82,6 +92,9 @@ class Settings extends Component {
             },
             form_values: {
                 code: '',
+                oldPassword: '',
+                newPassword: '',
+                newPasswordConfirm: ''
             },
             teamName: false,
         };
@@ -189,6 +202,12 @@ class Settings extends Component {
         this.setState(newState);
     }
 
+    _toggleChangePasswordModal = () => {
+        let newState = _.cloneDeep(this.defaultState);
+        newState.isChangePasswordModalOpen = !this.state.isChangePasswordModalOpen;
+        this.setState(newState);
+    }
+
     _handleFormChange = (name, value) => {
         let newFormFields = _.update( this.state.form_values, name, () => value);
         this.setState({
@@ -222,6 +241,57 @@ class Settings extends Component {
         } else {
             this._handleUpdateResultMsg('error', 'please enter a valid code');
         }
+    }
+
+    _hasNumber = (myString) => {
+      return /\d/.test(myString);
+    }
+
+    _validateNewPassword = (oldPassword, newPassword, newPasswordConfirm) => {
+      if (oldPassword === newPassword) {
+        this._handleUpdateResultMsg('error', 'New Password must be different from old password. Please try again.');
+        return false
+      }
+      if (newPassword.length < 8 || oldPassword.length < 8){
+        this._handleUpdateResultMsg('error', 'New Password must be 8 character or longer. Please try again.');
+        return false
+      }
+      if (!this._hasNumber(newPassword)){
+        this._handleUpdateResultMsg('error', 'New Password must contain a number. Please try again.');
+        return false
+      }
+      if (newPassword !== newPasswordConfirm){
+        this._handleUpdateResultMsg('error', 'New Password fields do not match. Please try again.');
+        return false
+      }
+      return true
+    }
+
+    _handleChangePasswordFormSubmit = () => {
+      let { oldPassword, newPassword, newPasswordConfirm } = this.state.form_values;
+      if (!this._validateNewPassword(oldPassword, newPassword, newPasswordConfirm)){
+        return
+      }
+      this.setState({isChangePasswordFormSubmitting: true},
+        () => {
+          this.props.changePassword(this.props.user.id, {
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+                sessionToken: this.props.sessionToken
+          }).then(res => {
+                this.setState({
+                  isChangePasswordFormSubmitting: false,
+                  isChangePasswordSuccessful: true
+                })
+          }).catch(err => {
+                this._handleUpdateResultMsg('error', 'Error changing password. Please try again.');
+                this.setState({
+                  isChangePasswordFormSubmitting: false,
+                  isChangePasswordSuccessful: false
+                })
+          })
+      }
+      )
     }
 
     render = () => {
@@ -404,6 +474,25 @@ class Settings extends Component {
                     </View>
                 }
                 <ListItem
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
+                    leftIcon={{
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'textbox-password',
+                        size:      ICON_SIZE,
+                        type:      'material-community',
+                    }}
+                    onPress={() => this._toggleChangePasswordModal()}
+                    rightIcon={{
+                        color: AppColors.zeplin.slate,
+                        name:  'chevron-right',
+                        size:  ICON_SIZE,
+                    }}
+                    title={'Change Password'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                />
+                <Spacer isDivider />
+                <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     leftIcon={{
                         color:     AppColors.zeplin.splash,
@@ -471,6 +560,18 @@ class Settings extends Component {
                     isFormSubmitting={this.state.isJoinATeamFormSubmitting}
                     isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isOpen={this.state.isJoinATeamModalOpen}
+                    resultMsg={this.state.resultMsg}
+                />
+                <ChangePasswordModal
+                    oldPassword={this.state.form_values.oldPassword}
+                    newPassword={this.state.form_values.newPassword}
+                    newPasswordConfirm={this.state.form_values.newPasswordConfirm}
+                    handleFormChange={this._handleFormChange}
+                    handleFormSubmit={() => this._handleChangePasswordFormSubmit()}
+                    handleToggleModal={() => this._toggleChangePasswordModal()}
+                    isFormSubmitting={this.state.isChangePasswordFormSubmitting}
+                    isFormSuccessful={this.state.isChangePasswordSuccessful}
+                    isOpen={this.state.isChangePasswordModalOpen}
                     resultMsg={this.state.resultMsg}
                 />
                 <PrivacyPolicyModal

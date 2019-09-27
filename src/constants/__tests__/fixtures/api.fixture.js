@@ -36,6 +36,7 @@ export default {
         ['check_account_code', `${usersAPIVersion}/account`], // GET
         ['create_user',        `${usersAPIVersion}/user`],
         ['forgot_password',    `${usersAPIVersion}/user/forgot_password`],
+        ['change_password',    `${usersAPIVersion}/user/{userId}/change_password`],
         ['get_user',           `${usersAPIVersion}/user/{userId}`],
         ['join_account',       `${usersAPIVersion}/user/{userId}/join_account`], // POST
         ['login',              `${usersAPIVersion}/user/login`], // If you change the key, update the reference below

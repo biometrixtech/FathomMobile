@@ -93,7 +93,7 @@ import Survey from '../src/components/onboarding/Survey';
 import Tutorial from '../src/components/onboarding/Tutorial';
 import Settings from '../src/components/settings/Settings';
 import {
-    JoinATeamModal,
+    JoinATeamModal, ChangePasswordModal
 } from '../src/components/settings/pages';
 // import CircularProgress from '../src/components/ui/CircularProgress'; // NOTE: react-native-svg isn't installed, not needed
 
@@ -375,6 +375,9 @@ describe('Testing Render of Settings Pages', () => {
     });
     it('Join A Team Modal', () => {
         renderer.create(<JoinATeamModal code={''} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleToggleModal={jest.fn()} isFormSubmitting={false} isFormSuccessful={false} isOpen={false} resultMsg={{status: '', success: '', error: ['ooops!'],}} />);
+    });
+    it('Change Password Modal', () => {
+        renderer.create(<ChangePasswordModal oldPassword={''} newPassword={''} newPasswordConfirm={''} handleFormChange={jest.fn()} handleFormSubmit={jest.fn()} handleToggleModal={jest.fn()} isFormSubmitting={false} isFormSuccessful={false} isOpen={false} resultMsg={{status: '', success: '', error: ['ooops!'],}} />);
     });
 });
 

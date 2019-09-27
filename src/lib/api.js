@@ -255,9 +255,9 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     // reached limit, reset timer, send fabric error, and show generic error message
                     retryCounter = 0;
                     if(Platform.OS === 'ios') {
-                        Crashlytics.recordError(`${endpoint} - ${rawRes.message.toString()}`);
+                        Crashlytics.recordError(`${endpoint} - ${rawRes.message ? rawRes.message.toString() : ''}`);
                     } else {
-                        Crashlytics.logException(`${endpoint} - ${rawRes.message.toString()}`);
+                        Crashlytics.logException(`${endpoint} - ${rawRes.message ? rawRes.message.toString() : ''}`);
                     }
                     throw handleError({ message: ErrorMessages.systemError, });
                 }
