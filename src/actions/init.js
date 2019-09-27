@@ -255,6 +255,33 @@ const forgotPassword = email => {
 };
 
 /**
+  * POST Change Password form data
+  */
+const changePassword = (userId, dataObj) => {
+    let payload = {
+      old_password: dataObj.oldPassword,
+      password: dataObj.newPassword,
+      session_token: dataObj.sessionToken
+    };
+    return dispatch => AppAPI.change_password.post({userId},  payload)
+        .then(result => {
+            dispatch({
+                type: Actions.CHANGE_PASSWORD_SUCCESS,
+                data: result,
+            });
+            return Promise.resolve(result);
+        })
+        .catch(err => {
+            //console.log(err)
+            dispatch({
+                type: Actions.CHANGE_PASSWORD_FAILED,
+                data: err,
+            });
+            return Promise.reject(err);
+        });
+};
+
+/**
   * POST Reset Password form data
   */
 const resetPassword = dataObj => {
@@ -329,6 +356,7 @@ const sendDeviceToken = token => {
 export default {
     forgotPassword,
     resetPassword,
+    changePassword,
     getMaintenanceWindow,
     registerDevice,
     authorizeUser,

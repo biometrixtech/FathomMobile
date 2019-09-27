@@ -23,6 +23,8 @@ const Settings = ({
     user,
     updateUser,
     userJoinAccount,
+    changePassword,
+    sessionToken
 }) => (
     <Layout
         accessoryData={accessoryData}
@@ -31,6 +33,8 @@ const Settings = ({
         user={user}
         updateUser={updateUser}
         userJoinAccount={userJoinAccount}
+        sessionToken={sessionToken}
+        changePassword={changePassword}
     />
 );
 
@@ -51,12 +55,14 @@ const mapStateToProps = state => ({
     accessoryData: state.ble.accessoryData || {},
     network:       state.network,
     user:          state.user || {},
+    sessionToken:  state.init.session_token || null,
 });
 
 const mapDispatchToProps = {
     logout:          init.logout,
     updateUser:      userActions.updateUser,
     userJoinAccount: userActions.userJoinAccount,
+    changePassword:  init.changePassword
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);
