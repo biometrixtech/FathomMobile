@@ -377,7 +377,11 @@ class StartSensorSessionModal extends PureComponent {
                 .then(() => getSensorFiles(user))
                 .catch(err => this.setState({ createError: ERROR_STRING, }));
         } catch (e) {
-            this.setState({ createError: ERROR_STRING, });
+            let dateErrorString = 'ERROR';
+            createSensorSession(dateErrorString, user)
+                .then(res => this.setState({ sessionId: res.session.id, }))
+                .then(() => getSensorFiles(user))
+                .catch(err => this.setState({ createError: ERROR_STRING, }));
         }
     }
 
