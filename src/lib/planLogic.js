@@ -853,7 +853,7 @@ const PlanLogic = {
       * Exercises Timer Logic
       * - Exercises
       */
-    handleExercisesTimerLogic: (exercise) => {
+    handleExercisesTimerLogic: exercise => {
         return {
             number_of_sets:    exercise.bilateral ? 2 : 1,
             pre_start_time:    5,
@@ -893,6 +893,7 @@ const PlanLogic = {
             sportText,
         };
     },
+
     // TODO: UNIT TEST ME - lines 1890-1940
     handleHealthKitWorkoutPageRenderLogicNEW: workout => {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
@@ -1438,7 +1439,7 @@ const PlanLogic = {
             [];
         if(dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 && filteredTrainingSessions.length > 0) {
             filteredTrainingSessions = _.map(filteredTrainingSessions, o =>
-                o.source === 3 && !o.asymmetry ?
+                o.source === 3 && (!o.asymmetry || (o.asymmetry && o.last_updated && o.last_updated > dailyPlanObj.last_updated)) ?
                     null
                     :
                     o
