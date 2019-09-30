@@ -675,7 +675,7 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postReadinessSurvey, user, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
             newDailyReadiness,
@@ -701,6 +701,7 @@ class MyPlan extends Component {
             },
         );
         postReadinessSurvey(newDailyReadiness, user.id)
+            .then(() => getSensorFiles(user))
             .then(response => {
                 this.setState(
                     { isPageCalculating: false, },
@@ -878,7 +879,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postSessionSurvey, user, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
             landingScreen,
@@ -906,6 +907,7 @@ class MyPlan extends Component {
         );
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession, user.id))
+            .then(() => getSensorFiles(user))
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
