@@ -1058,7 +1058,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
-        const { updateUser, user, } = this.props;
+        const { getSensorFiles, updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
@@ -1071,6 +1071,7 @@ class MyPlan extends Component {
         });
         // update user object
         updateUser(newUserPayloadObj, user.id)
+            .then(() => getSensorFiles(user))
             .then(res => {
                 if(callback) {
                     callback();
@@ -1148,7 +1149,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateUserHealthKitFlag = (flag, callback) => {
-        const { updateUser, user, } = this.props;
+        const { getSensorFiles, updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
@@ -1161,6 +1162,7 @@ class MyPlan extends Component {
         });
         // update user object
         updateUser(newUserPayloadObj, user.id)
+            .then(() => getSensorFiles(user))
             .then(res => {
                 if(callback) {
                     callback();

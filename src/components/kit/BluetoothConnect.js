@@ -567,6 +567,7 @@ class BluetoothConnect extends Component {
             isVideoMuted,
             isWifiScanDone,
         } = this.state;
+        console.log('HIII',pageIndex,pageIndex === 2);
         return(
             <View style={{flex: 1,}}>
 
@@ -611,7 +612,7 @@ class BluetoothConnect extends Component {
                                 {'Success, you\'re connected!'}
                             </Text>
                             <LottieView
-                                autoPlay={true}
+                                autoPlay={pageIndex === 2} // TODO: UPDATE ME TO 3
                                 loop={false}
                                 source={require('../../../assets/animation/bluetoothloading.json')}
                                 style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
@@ -629,9 +630,7 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
 
-
                     {/* Wifi - page 4-5 */}
-
 
                     {/* Success - page 6 */}
                     <Complete
