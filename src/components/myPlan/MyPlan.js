@@ -1055,7 +1055,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
-        const { getSensorFiles, updateUser, user, } = this.props;
+        const { updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.first_time_experience = [value];
@@ -1068,7 +1068,6 @@ class MyPlan extends Component {
         });
         // update user object
         updateUser(newUserPayloadObj, user.id)
-            .then(() => getSensorFiles(user))
             .then(res => {
                 if(callback) {
                     callback();
@@ -1146,7 +1145,7 @@ class MyPlan extends Component {
     }
 
     _handleUpdateUserHealthKitFlag = (flag, callback) => {
-        const { getSensorFiles, updateUser, user, } = this.props;
+        const { updateUser, user, } = this.props;
         // setup variables
         let newUserPayloadObj = {};
         newUserPayloadObj.health_enabled = flag;
@@ -1159,7 +1158,6 @@ class MyPlan extends Component {
         });
         // update user object
         updateUser(newUserPayloadObj, user.id)
-            .then(() => getSensorFiles(user))
             .then(res => {
                 if(callback) {
                     callback();
@@ -1577,7 +1575,7 @@ class MyPlan extends Component {
                     isVisible={isCoachModalOpen}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
-                        { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                        { (this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2')) &&
                             <View style={{flex: 1,}}>
                                 <View style={{backgroundColor: AppColors.transparent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                                 <View style={{
@@ -1605,14 +1603,14 @@ class MyPlan extends Component {
                         <TouchableOpacity
                             activeOpacity={1}
                             onPress={() => {
-                                this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
-                                if(user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
+                                this._handleUpdateFirstTimeExperience(!this.props.user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
+                                if(this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2')) {
                                     this.setState({ isCoachModalOpen: false, });
                                 }
                             }}
                             style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
                         >
-                            { user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ?
+                            { this.props.user && this.props.user.first_time_experience && !this.props.user.first_time_experience.includes('plan_coach_1') ?
                                 <View>
                                     <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Plan'}</Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
@@ -1630,8 +1628,8 @@ class MyPlan extends Component {
                                     </Text>
                                 </View>
                                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    <View style={{backgroundColor: user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
-                                    <View style={{backgroundColor: user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
+                                    <View style={{backgroundColor: this.props.user && this.props.user.first_time_experience && !this.props.user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                    <View style={{backgroundColor: this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
                                 </View>
                                 <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
                                     {'GOT IT'}

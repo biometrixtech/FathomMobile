@@ -14,6 +14,7 @@ import { AppAPI, AppUtil, } from '../lib';
 import { store } from '../store';
 
 // import third-party libraries
+import _ from 'lodash';
 import moment from 'moment';
 
 /**
@@ -43,6 +44,7 @@ const getUser = userId => {
   * - Receives complete user data in return
   */
 const updateUser = (payload, userId, updateLogin = true) => {
+    let userSensorData = _.cloneDeep(store.getState().user.sensor_data);
     return dispatch => AppAPI.update_user.patch({userId}, payload)
         .then(userData => {
             if(updateLogin) {
@@ -52,9 +54,11 @@ const updateUser = (payload, userId, updateLogin = true) => {
                     password: userData.user.password || store.getState().init.password,
                 });
             }
+            let newUserObj = _.cloneDeep(userData.user);
+            newUserObj.sensor_data = userSensorData;
             dispatch({
                 type: Actions.USER_REPLACE,
-                data: userData.user
+                data: newUserObj
             });
             return Promise.resolve(userData);
         })

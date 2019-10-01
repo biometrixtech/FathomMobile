@@ -184,6 +184,18 @@ class ChangePasswordModal extends Component {
         };
     }
 
+    _handleToggleModal = () => {
+        const { handleToggleModal, } = this.props;
+        this.setState(
+            {
+                isConfirmNewPasswordSecure: true,
+                isCurrentPasswordSecure:    true,
+                isNewPasswordSecure:        true,
+            },
+            () => handleToggleModal(),
+        );
+    }
+
     _toggleShowPassword = whatField => {
         if(whatField && whatField === 'confirm-password') {
             this.setState({ isConfirmNewPasswordSecure: !this.state.isConfirmNewPasswordSecure, });
@@ -222,7 +234,7 @@ class ChangePasswordModal extends Component {
                         containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
                         icon={'close'}
                         iconStyle={[{color: AppColors.black, opacity: 0.5,}]}
-                        onPress={isFormSubmitting ? null : handleToggleModal}
+                        onPress={isFormSubmitting ? () => null : () => this._handleToggleModal()}
                         reverse={false}
                         size={30}
                         type={'material-community'}

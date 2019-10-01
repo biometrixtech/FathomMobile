@@ -146,7 +146,7 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
-                            contentContainerStyle={Platform.OS === 'ios' ? {} : {flex: 1,}}
+                            contentContainerStyle={Platform.OS === 'ios' || (Platform.OS === 'android' && sessions.length >= 5) ? {} : {flex: 1,}}
                             horizontal={true}
                             ref={scrollView => {this.scrollView = scrollView;}}
                             scrollEventThrottle={10}
@@ -364,20 +364,14 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
-                            contentContainerStyle={{flex: 1,}}
-                            contentInset={{
-                                bottom: 0,
-                                left:   AppSizes.padding,
-                                right:  AppSizes.padding,
-                                top:    0,
-                            }}
+                            contentContainerStyle={Platform.OS === 'ios' || (Platform.OS === 'android' && sessions.length >= 5) ? {} : {flex: 1,}}
                             horizontal={true}
                             ref={scrollView => {this.scrollView = scrollView;}}
                             scrollEventThrottle={10}
                             showsHorizontalScrollIndicator={false}
                             snapToInterval={AppSizes.screen.width}
                         >
-                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml, paddingHorizontal: AppSizes.paddingMed,}}>
                                 { _.map(sessions, (session, index) => {
                                     // let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
                                     // let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;

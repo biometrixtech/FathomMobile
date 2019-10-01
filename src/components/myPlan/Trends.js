@@ -15,7 +15,7 @@ import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { BiomechanicsCharts, FathomCharts, InsightsCharts, } from './graphs';
+import { BiomechanicsCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { FathomModal, ParsedText, SVGImage, Spacer, TabIcon, Text, } from '../custom';
 import { ContactUsModal, } from '../general';
