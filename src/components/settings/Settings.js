@@ -276,9 +276,9 @@ class Settings extends Component {
             { isChangePasswordFormSubmitting: true, },
             () => {
                 this.props.changePassword(this.props.user.id, {
-                    currentPassword: currentPassword,
-                    newPassword:     newPassword,
-                    sessionToken:    this.props.sessionToken,
+                    newPassword:  newPassword,
+                    oldPassword:  currentPassword,
+                    sessionToken: this.props.sessionToken,
                 }).then(res => {
                     this.setState({
                         isChangePasswordFormSubmitting: false,
@@ -287,9 +287,9 @@ class Settings extends Component {
                 }).catch(err => {
                     this._handleUpdateResultMsg(
                         'error',
-                        err.status === 'NotAuthorizedException' ?
+                        err.status && err.status === 'NotAuthorizedException' ?
                             'The current password is incorrect. Please try again.' // incorrect password
-                            : err.status === 'LimitExceededException' ?
+                            : err.status && err.status === 'LimitExceededException' ?
                                 'You’ve exceeded the password reset limit. Please try again later.' // exceeded attempts
                                 :
                                 'Error changing password. Please try again.'
