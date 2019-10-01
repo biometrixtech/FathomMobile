@@ -37,8 +37,7 @@
   launchScreenView.frame = self.window.bounds;
   rootView.loadingView = launchScreenView;
 
-//  [RNSplashScreen show];
-  [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
+  [RNSplashScreen show];
   [Fabric with:@[[Crashlytics class]]];
   return YES;
 }
