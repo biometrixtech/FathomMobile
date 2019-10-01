@@ -703,24 +703,21 @@ class MyPlan extends Component {
         postReadinessSurvey(newDailyReadiness, user.id)
             .then(() => getSensorFiles(user))
             .then(response => {
-                this.setState(
-                    { isPageCalculating: false, },
-                    () => {
-                        clearHealthKitWorkouts();
-                        clearCompletedExercises();
-                        clearCompletedCoolDownExercises();
-                        // do we need to open 3-Sensor banner
-                        AppUtil._handle3SensorBanner(user, response[0]);
-                        // handle Coach related items
-                        if(!this.state.isPrepareSessionsCompletionModalOpen) {
-                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                        }
-                        // udpate RS first_time_experience
-                        if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
-                            this._handleUpdateFirstTimeExperience('rs_begin_page');
-                        }
-                    }
-                );
+                clearHealthKitWorkouts();
+                clearCompletedExercises();
+                clearCompletedCoolDownExercises();
+                // do we need to open 3-Sensor banner
+                AppUtil._handle3SensorBanner(user, response[0]);
+                // handle Coach related items
+                if(!this.state.isPrepareSessionsCompletionModalOpen) {
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                }
+                // udpate RS first_time_experience
+                if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
+                    this._handleUpdateFirstTimeExperience('rs_begin_page', () => this.setState({ isPageCalculating: false, }));
+                } else {
+                    this.setState({ isPageCalculating: false, });
+                }
             })
             .catch(error => {
                 this.setState(
