@@ -18,6 +18,7 @@ import * as Fabric from 'react-native-fabric';
 import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
+import SplashScreen from 'react-native-splash-screen';
 
 // setup consts
 const Crashlytics = Fabric.Crashlytics;
@@ -73,6 +74,10 @@ class Root extends Component {
         AppUtil.getMaintenanceWindow();
         // clear PN flag
         PushNotification.setApplicationIconBadgeNumber(0);
+        // if error or tablet, hide splash screen
+        if(this.state.isTablet || this.state.hasError) {
+            SplashScreen.hide();
+        }
     }
 
     componentWillMount = () => {
@@ -172,7 +177,7 @@ class Root extends Component {
     render = () => {
         const { hasError, isTablet, } = this.state;
         if(hasError || isTablet) {
-            return(
+            return (
                 <View style={{flex: 1, justifyContent: 'space-between', marginTop: AppSizes.statusBarHeight,}}>
                     <View style={{alignItems: 'center', flex: 1,}}>
                         <Image

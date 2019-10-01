@@ -15,7 +15,7 @@ import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { BiomechanicsCharts, FathomCharts, InsightsCharts, } from './graphs';
+import { BiomechanicsCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, } from '../../lib';
 import { FathomModal, ParsedText, SVGImage, Spacer, TabIcon, Text, } from '../custom';
 import { ContactUsModal, } from '../general';
@@ -273,7 +273,7 @@ class Trends extends PureComponent {
                             >
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
                                     <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Pelvic Tilt'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAptSession.event_date_time).format('M/D, h:mma')}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAptSession.event_date_time.replace('Z', '')).format('M/D, h:mma')}</Text>
                                 </View>
                                 <BiomechanicsCharts
                                     dataType={0}
@@ -319,7 +319,7 @@ class Trends extends PureComponent {
                             >
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
                                     <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Leg Extension'}</Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAnklePitchSession.event_date_time).format('M/D, h:mma')}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedAnklePitchSession.event_date_time.replace('Z', '')).format('M/D, h:mma')}</Text>
                                 </View>
                                 <BiomechanicsCharts
                                     dataType={1}

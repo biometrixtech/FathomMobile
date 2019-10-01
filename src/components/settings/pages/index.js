@@ -2,10 +2,10 @@
  * Settings Elements
  */
 
-import JoinATeamModal from './JoinATeamModal';
 import ChangePasswordModal from './ChangePasswordModal';
+import JoinATeamModal from './JoinATeamModal';
 
 export {
+    ChangePasswordModal,
     JoinATeamModal,
-    ChangePasswordModal
 };

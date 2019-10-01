@@ -115,11 +115,11 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
 };
 
 const CVP = ({ currentPage, nextBtn, onClose, }) => (
-    <View style={{backgroundColor: 'red', flex: 1,}}>
+    <View style={{flex: 1,}}>
         <Video
             paused={!currentPage}
             repeat={true}
-            resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+            resizeMode={'cover'}
             source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/cvp.mp4'}}
             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.black,} : {}, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
         />
