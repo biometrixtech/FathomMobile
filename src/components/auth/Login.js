@@ -126,9 +126,10 @@ class Login extends Component {
         this._focusNextField = this._focusNextField.bind(this);
         this.inputs = {};
         this.state = {
-            isModalVisible: false,
-            loading:        false,
-            resultMsg:      {
+            isModalVisible:   false,
+            isPasswordSecure: true,
+            loading:          false,
+            resultMsg:        {
                 error:   '',
                 status:  '',
                 success: '',
@@ -271,6 +272,10 @@ class Login extends Component {
         }
     }
 
+    _toggleShowPassword = () => {
+        this.setState({ isPasswordSecure: !this.state.isPasswordSecure, });
+    }
+
     render = () => {
         let isLoginBtnDisabled = !onboardingUtils.isEmailValid(this.state.form_values.email).isValid || this.state.form_values.password.length < 8;
         /*eslint no-return-assign: 0*/
@@ -350,7 +355,18 @@ class Login extends Component {
                                 placeholder={'password'}
                                 placeholderTextColor={AppColors.zeplin.slateLight}
                                 returnKeyType={'done'}
-                                secureTextEntry={true}
+                                rightIcon={
+                                    <View style={{flexDirection: 'row',}}>
+                                        <TabIcon
+                                            color={AppColors.zeplin.slateLight}
+                                            containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                            icon={this.state.isPasswordSecure ? 'visibility-off' : 'visibility'}
+                                            onPress={() => this._toggleShowPassword()}
+                                            size={24}
+                                        />
+                                    </View>
+                                }
+                                secureTextEntry={this.state.isPasswordSecure}
                                 textContentType={'password'}
                                 value={this.state.form_values.password}
                             />

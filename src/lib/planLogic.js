@@ -2145,7 +2145,7 @@ const PlanLogic = {
         let updatedTime = selectedAptSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time.replace('Z', '')).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedAptSession.asymmetry.apt.summary_data;
         let chartData = selectedAptSession.asymmetry.apt.detail_data;
@@ -2232,7 +2232,7 @@ const PlanLogic = {
         let updatedTime = selectedAnklePitchSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time.replace('Z', '')).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedAnklePitchSession.asymmetry.ankle_pitch.summary_data;
         let chartData = selectedAnklePitchSession.asymmetry.ankle_pitch.detail_data;

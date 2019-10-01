@@ -191,6 +191,7 @@ const UTIL = {
     _handle3SensorBanner: (user, plan) => {
         if(
             user.id &&
+            plan &&
             plan.daily_readiness_survey_completed &&
             user.first_time_experience.includes('3Sensor-Onboarding-17') &&
             !user.first_time_experience.includes('3Sensor-Onboarding-18')

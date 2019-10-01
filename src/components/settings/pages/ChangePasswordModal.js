@@ -2,18 +2,20 @@
  * ChangePasswordModal
  *
      <ChangePasswordModal
-         code={this.state.form_values.code}
+         currentPassword={this.state.form_values.currentPassword}
          handleFormChange={this._handleFormChange}
          handleFormSubmit={() => this._handleChangePasswordFormSubmit()}
          handleToggleModal={() => this._toggleChangePasswordModal()}
-         isFormSubmitting={this.state.isChangePasswordFormSubmitting}
          isFormSuccessful={this.state.isChangePasswordSuccessful}
+         isFormSubmitting={this.state.isChangePasswordFormSubmitting}
          isOpen={this.state.isChangePasswordModalOpen}
+         newPassword={this.state.form_values.newPassword}
+         newPasswordConfirm={this.state.form_values.newPasswordConfirm}
          resultMsg={this.state.resultMsg}
      />
  *
  */
-import React from 'react';
+import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
 import { View, } from 'react-native';
 
@@ -23,16 +25,20 @@ import { Alerts, Button, FathomModal, FormInput, ProgressCircle, Spacer, TabIcon
 
 /* Component ==================================================================== */
 const ModalData = ({
-    oldPassword,
-    newPassword,
-    newPasswordConfirm,
+    currentPassword,
     handleFormChange,
     handleFormSubmit,
     handleToggleModal,
-    isSubmitting,
+    isConfirmNewPasswordSecure,
+    isCurrentPasswordSecure,
+    isNewPasswordSecure,
     isSuccessful,
+    isSubmitting,
+    newPassword,
+    newPasswordConfirm,
     resultMsg,
-}) =>  isSubmitting ? (
+    toggleShowPassword,
+}) => isSubmitting ? (
     <View style={[AppStyles.containerCentered]}>
         <ProgressCircle
             borderWidth={5}
@@ -66,64 +72,97 @@ const ModalData = ({
         :
         (
             <View style={[AppStyles.containerCentered]}>
-                <Text robotoMedium style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(20),}]}>{'Change Password'}</Text>
+                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}]}>{'Change Password'}</Text>
                 <Spacer size={3} />
                 <Spacer size={resultMsg.error.length > 0 ? 20 : 0} />
                 <Alerts
+                    error={resultMsg.error}
                     status={resultMsg.status}
                     success={resultMsg.success}
-                    error={resultMsg.error}
                 />
                 <Spacer size={resultMsg.error.length > 0 ? 20 : 0} />
                 <FormInput
-                    secureTextEntry={true}
                     autoCapitalize={'none'}
+                    autoCompleteType={'password'}
                     blurOnSubmit={true}
-                    clearButtonMode={'while-editing'}
                     containerStyle={{paddingTop: 25, width: AppSizes.screen.widthTwoThirds,}}
-                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
+                    inputStyle={{color: AppColors.zeplin.slate,}}
                     keyboardType={'default'}
-                    onChangeText={text => handleFormChange('oldPassword', text)}
+                    onChangeText={text => handleFormChange('currentPassword', text)}
                     onSubmitEditing={() => handleFormSubmit()}
-                    placeholder={'old password'}
-                    placeholderTextColor={AppColors.zeplin.yellow}
+                    placeholder={'current password'}
+                    placeholderTextColor={AppColors.zeplin.slate}
                     returnKeyType={'next'}
-                    value={oldPassword}
+                    rightIcon={
+                        <View style={{flexDirection: 'row',}}>
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                icon={isCurrentPasswordSecure ? 'visibility-off' : 'visibility'}
+                                onPress={() => toggleShowPassword('current-password')}
+                                size={24}
+                            />
+                        </View>
+                    }
+                    secureTextEntry={isCurrentPasswordSecure}
+                    value={currentPassword}
                 />
                 <Spacer size={5} />
                 <FormInput
-                    secureTextEntry={true}
                     autoCapitalize={'none'}
                     blurOnSubmit={true}
-                    clearButtonMode={'while-editing'}
                     containerStyle={{paddingTop: 25, width: AppSizes.screen.widthTwoThirds,}}
-                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
+                    inputStyle={{color: AppColors.zeplin.slate,}}
                     keyboardType={'default'}
                     onChangeText={text => handleFormChange('newPassword', text)}
                     onSubmitEditing={() => handleFormSubmit()}
                     placeholder={'new password'}
-                    placeholderTextColor={AppColors.zeplin.yellow}
+                    placeholderTextColor={AppColors.zeplin.slate}
                     returnKeyType={'next'}
+                    rightIcon={
+                        <View style={{flexDirection: 'row',}}>
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                icon={isNewPasswordSecure ? 'visibility-off' : 'visibility'}
+                                onPress={() => toggleShowPassword('new-password')}
+                                size={24}
+                            />
+                        </View>
+                    }
+                    secureTextEntry={isNewPasswordSecure}
                     value={newPassword}
                 />
                 <Spacer size={3} />
-                <Text robotoRegular style={[AppStyles.textCenterAligned, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(12), opacity: 0.5,}]}>{'8 + characters, 1 number'}</Text>
+                <View style={{paddingLeft: (AppSizes.padding + AppSizes.paddingXSml), width: AppSizes.screen.widthTwoThirds,}}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{'8 + characters, 1 number'}</Text>
+                </View>
                 <FormInput
-                    secureTextEntry={true}
                     autoCapitalize={'none'}
                     blurOnSubmit={true}
-                    clearButtonMode={'while-editing'}
                     containerStyle={{paddingTop: 25, width: AppSizes.screen.widthTwoThirds,}}
-                    inputStyle={{color: AppColors.zeplin.yellow, textAlign: 'center',}}
+                    inputStyle={{color: AppColors.zeplin.slate,}}
                     keyboardType={'default'}
                     onChangeText={text => handleFormChange('newPasswordConfirm', text)}
                     onSubmitEditing={() => handleFormSubmit()}
                     placeholder={'confirm new password'}
-                    placeholderTextColor={AppColors.zeplin.yellow}
+                    placeholderTextColor={AppColors.zeplin.slate}
                     returnKeyType={'done'}
+                    rightIcon={
+                        <View style={{flexDirection: 'row',}}>
+                            <TabIcon
+                                color={AppColors.zeplin.slateLight}
+                                containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
+                                icon={isConfirmNewPasswordSecure ? 'visibility-off' : 'visibility'}
+                                onPress={() => toggleShowPassword('confirm-password')}
+                                size={24}
+                            />
+                        </View>
+                    }
+                    secureTextEntry={isConfirmNewPasswordSecure}
                     value={newPasswordConfirm}
                 />
-              <Spacer size={40} />
+                <Spacer size={40} />
                 <Button
                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, justifyContent: 'center', paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}
                     containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthHalf,}}
@@ -135,58 +174,91 @@ const ModalData = ({
             </View>
         );
 
-const ChangePasswordModal = ({
-    oldPassword,
-    newPassword,
-    newPasswordConfirm,
-    handleFormChange,
-    handleFormSubmit,
-    handleToggleModal,
-    isFormSubmitting,
-    isFormSuccessful,
-    isOpen,
-    resultMsg,
-}) => (
-    <FathomModal
-        isVisible={isOpen}
-        style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
-    >
-        <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, width: (AppSizes.screen.width * 0.9),}]}>
-            <TabIcon
-                containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
-                icon={'close'}
-                iconStyle={[{color: AppColors.black, opacity: 0.5,}]}
-                onPress={isFormSubmitting ? null : handleToggleModal}
-                reverse={false}
-                size={30}
-                type={'material-community'}
-            />
-            <ModalData
-                oldPassword={oldPassword}
-                newPassword={newPassword}
-                newPasswordConfirm={newPasswordConfirm}
-                handleFormChange={handleFormChange}
-                handleFormSubmit={handleFormSubmit}
-                handleToggleModal={handleToggleModal}
-                isSubmitting={isFormSubmitting}
-                isSuccessful={isFormSuccessful}
-                resultMsg={resultMsg}
-            />
-        </View>
-    </FathomModal>
-);
+class ChangePasswordModal extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isConfirmNewPasswordSecure: true,
+            isCurrentPasswordSecure:    true,
+            isNewPasswordSecure:        true,
+        };
+    }
+
+    _toggleShowPassword = whatField => {
+        if(whatField && whatField === 'confirm-password') {
+            this.setState({ isConfirmNewPasswordSecure: !this.state.isConfirmNewPasswordSecure, });
+        } else if(whatField && whatField === 'new-password') {
+            this.setState({ isNewPasswordSecure: !this.state.isNewPasswordSecure, });
+        } else if(whatField && whatField === 'current-password') {
+            this.setState({ isCurrentPasswordSecure: !this.state.isCurrentPasswordSecure, });
+        }
+    }
+
+    render = () => {
+        const {
+            currentPassword,
+            handleFormChange,
+            handleFormSubmit,
+            handleToggleModal,
+            isFormSuccessful,
+            isFormSubmitting,
+            isOpen,
+            newPassword,
+            newPasswordConfirm,
+            resultMsg,
+        } = this.props;
+        const {
+            isConfirmNewPasswordSecure,
+            isCurrentPasswordSecure,
+            isNewPasswordSecure,
+        } = this.state;
+        return (
+            <FathomModal
+                isVisible={isOpen}
+                style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
+            >
+                <View style={[AppStyles.containerCentered, AppStyles.paddingVerticalSml, AppStyles.modalShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, width: (AppSizes.screen.width * 0.9),}]}>
+                    <TabIcon
+                        containerStyle={[{alignSelf: 'flex-end', paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding, paddingTop: (AppSizes.paddingSml),}]}
+                        icon={'close'}
+                        iconStyle={[{color: AppColors.black, opacity: 0.5,}]}
+                        onPress={isFormSubmitting ? null : handleToggleModal}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
+                    <ModalData
+                        currentPassword={currentPassword}
+                        handleFormChange={handleFormChange}
+                        handleFormSubmit={handleFormSubmit}
+                        handleToggleModal={handleToggleModal}
+                        isConfirmNewPasswordSecure={isConfirmNewPasswordSecure}
+                        isCurrentPasswordSecure={isCurrentPasswordSecure}
+                        isNewPasswordSecure={isNewPasswordSecure}
+                        isSuccessful={isFormSuccessful}
+                        isSubmitting={isFormSubmitting}
+                        newPassword={newPassword}
+                        newPasswordConfirm={newPasswordConfirm}
+                        resultMsg={resultMsg}
+                        toggleShowPassword={this._toggleShowPassword}
+                    />
+                </View>
+            </FathomModal>
+        );
+    }
+}
 
 ChangePasswordModal.propTypes = {
-    oldPassword:          PropTypes.string.isRequired,
-    newPassword:          PropTypes.string.isRequired,
-    newPasswordConfirm:   PropTypes.string.isRequired,
-    handleFormChange:     PropTypes.func.isRequired,
-    handleFormSubmit:     PropTypes.func.isRequired,
-    handleToggleModal:    PropTypes.func.isRequired,
-    isFormSubmitting:     PropTypes.bool.isRequired,
-    isFormSuccessful:     PropTypes.bool.isRequired,
-    isOpen:               PropTypes.bool.isRequired,
-    resultMsg:            PropTypes.object.isRequired,
+    currentPassword:    PropTypes.string.isRequired,
+    handleFormChange:   PropTypes.func.isRequired,
+    handleFormSubmit:   PropTypes.func.isRequired,
+    handleToggleModal:  PropTypes.func.isRequired,
+    isFormSuccessful:   PropTypes.bool.isRequired,
+    isFormSubmitting:   PropTypes.bool.isRequired,
+    isOpen:             PropTypes.bool.isRequired,
+    newPassword:        PropTypes.string.isRequired,
+    newPasswordConfirm: PropTypes.string.isRequired,
+    resultMsg:          PropTypes.object.isRequired,
 };
 
 ChangePasswordModal.defaultProps = {};

@@ -259,7 +259,11 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     } else {
                         Crashlytics.logException(`${endpoint} - ${rawRes.message ? rawRes.message.toString() : ''}`);
                     }
-                    throw handleError({ message: ErrorMessages.systemError, });
+                    let errorMessage = handleError({ message: ErrorMessages.systemError, });
+                    throw {
+                        message: errorMessage,
+                        status:  rawRes.headers && rawRes.headers.map && rawRes.headers.map.status ? rawRes.headers.map.status : false,
+                    };
                 }
                 // error reset counters and send message
                 unauthorizedCounter = 0;

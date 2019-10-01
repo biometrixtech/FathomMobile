@@ -259,9 +259,9 @@ const forgotPassword = email => {
   */
 const changePassword = (userId, dataObj) => {
     let payload = {
-      old_password: dataObj.oldPassword,
-      password: dataObj.newPassword,
-      session_token: dataObj.sessionToken
+        old_password:  dataObj.oldPassword,
+        password:      dataObj.newPassword,
+        session_token: dataObj.sessionToken
     };
     return dispatch => AppAPI.change_password.post({userId},  payload)
         .then(result => {
