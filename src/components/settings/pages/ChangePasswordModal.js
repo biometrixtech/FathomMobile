@@ -32,8 +32,8 @@ const ModalData = ({
     isConfirmNewPasswordSecure,
     isCurrentPasswordSecure,
     isNewPasswordSecure,
-    isSuccessful,
     isSubmitting,
+    isSuccessful,
     newPassword,
     newPasswordConfirm,
     resultMsg,
@@ -212,8 +212,8 @@ class ChangePasswordModal extends Component {
             handleFormChange,
             handleFormSubmit,
             handleToggleModal,
-            isFormSuccessful,
             isFormSubmitting,
+            isFormSuccessful,
             isOpen,
             newPassword,
             newPasswordConfirm,
@@ -247,8 +247,8 @@ class ChangePasswordModal extends Component {
                         isConfirmNewPasswordSecure={isConfirmNewPasswordSecure}
                         isCurrentPasswordSecure={isCurrentPasswordSecure}
                         isNewPasswordSecure={isNewPasswordSecure}
-                        isSuccessful={isFormSuccessful}
                         isSubmitting={isFormSubmitting}
+                        isSuccessful={isFormSuccessful}
                         newPassword={newPassword}
                         newPasswordConfirm={newPasswordConfirm}
                         resultMsg={resultMsg}
@@ -265,8 +265,8 @@ ChangePasswordModal.propTypes = {
     handleFormChange:   PropTypes.func.isRequired,
     handleFormSubmit:   PropTypes.func.isRequired,
     handleToggleModal:  PropTypes.func.isRequired,
-    isFormSuccessful:   PropTypes.bool.isRequired,
     isFormSubmitting:   PropTypes.bool.isRequired,
+    isFormSuccessful:   PropTypes.bool.isRequired,
     isOpen:             PropTypes.bool.isRequired,
     newPassword:        PropTypes.string.isRequired,
     newPasswordConfirm: PropTypes.string.isRequired,

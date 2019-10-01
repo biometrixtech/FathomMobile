@@ -253,7 +253,7 @@ class Settings extends Component {
             return false;
         }
         if (newPassword.length < 8 || currentPassword.length < 8) {
-            this._handleUpdateResultMsg('error', 'New Password must be 8 character or longer. Please try again.');
+            this._handleUpdateResultMsg('error', 'New Password must be 8 characters or longer. Please try again.');
             return false;
         }
         if (!this._hasNumber(newPassword)) {
@@ -576,8 +576,8 @@ class Settings extends Component {
                     handleFormChange={this._handleFormChange}
                     handleFormSubmit={() => this._handleChangePasswordFormSubmit()}
                     handleToggleModal={() => this._toggleChangePasswordModal()}
-                    isFormSuccessful={this.state.isChangePasswordSuccessful}
                     isFormSubmitting={this.state.isChangePasswordFormSubmitting}
+                    isFormSuccessful={this.state.isChangePasswordSuccessful}
                     isOpen={this.state.isChangePasswordModalOpen}
                     newPassword={this.state.form_values.newPassword}
                     newPasswordConfirm={this.state.form_values.newPasswordConfirm}
