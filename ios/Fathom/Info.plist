@@ -26,11 +26,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>41</string>
+	<string>42</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.7.2-beta.0</string>
+	<string>3.7.3-beta.4</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -60,6 +60,8 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSBluetoothAlwaysUsageDescription</key>
+  <string>Bluetooth is used to retrieve your Fathom PRO hardware’s serial number and configure WiFi</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app requires Bluetooth to connect to our hardware.</string>
 	<key>NSLocationAlwaysUsageDescription</key>

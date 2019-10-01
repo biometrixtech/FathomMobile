@@ -675,7 +675,7 @@ class MyPlan extends Component {
     }
 
     _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postReadinessSurvey, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postReadinessSurvey, user, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
             newDailyReadiness,
@@ -701,25 +701,23 @@ class MyPlan extends Component {
             },
         );
         postReadinessSurvey(newDailyReadiness, user.id)
+            .then(() => getSensorFiles(user))
             .then(response => {
-                this.setState(
-                    { isPageCalculating: false, },
-                    () => {
-                        clearHealthKitWorkouts();
-                        clearCompletedExercises();
-                        clearCompletedCoolDownExercises();
-                        // do we need to open 3-Sensor banner
-                        AppUtil._handle3SensorBanner(user, response[0]);
-                        // handle Coach related items
-                        if(!this.state.isPrepareSessionsCompletionModalOpen) {
-                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                        }
-                        // udpate RS first_time_experience
-                        if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
-                            this._handleUpdateFirstTimeExperience('rs_begin_page');
-                        }
-                    }
-                );
+                clearHealthKitWorkouts();
+                clearCompletedExercises();
+                clearCompletedCoolDownExercises();
+                // do we need to open 3-Sensor banner
+                AppUtil._handle3SensorBanner(user, response[0]);
+                // handle Coach related items
+                if(!this.state.isPrepareSessionsCompletionModalOpen) {
+                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                }
+                // udpate RS first_time_experience
+                if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
+                    this._handleUpdateFirstTimeExperience('rs_begin_page', () => this.setState({ isPageCalculating: false, }));
+                } else {
+                    this.setState({ isPageCalculating: false, });
+                }
             })
             .catch(error => {
                 this.setState(
@@ -878,7 +876,7 @@ class MyPlan extends Component {
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
-        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, postSessionSurvey, user, } = this.props;
+        const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postSessionSurvey, user, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
             landingScreen,
@@ -906,6 +904,7 @@ class MyPlan extends Component {
         );
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession, user.id))
+            .then(() => getSensorFiles(user))
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
@@ -1025,61 +1024,34 @@ class MyPlan extends Component {
             },
             () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: true, }), 500); }
         );
-        try {
-            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-            const timesyncResponse = await timesyncApiCall.json();
-            let dateTimeReturned = timesyncResponse.utc_datetime;
-            let indexOfDot = dateTimeReturned.indexOf('.');
-            dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
-            let endDateTime = moment(timesyncResponse.utc_datetime.replace('Z', ''));
-            let startDateTime = moment(newPostSession.sessions[0].event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
-            let duration = endDateTime.diff(startDateTime, 'minutes', true);
-            newPostSession.sessions[0].duration = _.round(duration, 2);
-            newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
-            updateSensorSession(dateTimeReturned, false, savedSensorSession.id, user)
-                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
-                .then(() => postSessionSurvey(newPostSession, user.id))
-                .then(() => getSensorFiles(user))
-                .then(response => {
-                    this.setState({ isPageCalculating: false, });
-                    clearCompletedExercises();
-                    clearCompletedCoolDownExercises();
-                    // scroll to first active activity tab
-                    this._scrollToFirstActiveActivityTab();
-                    // handle Coach related items
-                    if(!this.state.isTrainSessionsCompletionModalOpen) {
-                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                    }
-                })
-                .catch(error =>
-                    this.setState(
-                        { isPageCalculating: false, },
-                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
-                    )
+        updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
+            .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+            .then(() => {
+                newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
+                return postSessionSurvey(newPostSession, user.id);
+            })
+            .then(() => getSensorFiles(user))
+            .then(response => {
+                this.setState(
+                    { isPageCalculating: false, },
+                    () => {
+                        clearCompletedExercises();
+                        clearCompletedCoolDownExercises();
+                        // scroll to first active activity tab
+                        this._scrollToFirstActiveActivityTab();
+                        // handle Coach related items
+                        if(!this.state.isTrainSessionsCompletionModalOpen) {
+                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        }
+                    },
                 );
-        } catch (e) {
-            updateSensorSession(false, false, savedSensorSession.id, user, true)
-                .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
-                .then(() => postSessionSurvey(newPostSession, user.id))
-                .then(() => getSensorFiles(user))
-                .then(response => {
-                    this.setState({ isPageCalculating: false, });
-                    clearCompletedExercises();
-                    clearCompletedCoolDownExercises();
-                    // scroll to first active activity tab
-                    this._scrollToFirstActiveActivityTab();
-                    // handle Coach related items
-                    if(!this.state.isTrainSessionsCompletionModalOpen) {
-                        this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                    }
-                })
-                .catch(error =>
-                    this.setState(
-                        { isPageCalculating: false, },
-                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
-                    )
-                );
-        }
+            })
+            .catch(error =>
+                this.setState(
+                    { isPageCalculating: false, },
+                    () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                )
+            );
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -1103,24 +1075,49 @@ class MyPlan extends Component {
             });
     }
 
-    _handleUpdateSensorSession = activity => {
+    _handleUpdateSensorSession = async activity => {
         const { updateSensorSession, user, } = this.props;
         let startTime = moment(activity.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
         if(moment().diff(startTime, 'minutes', true) >= 5) {
-            let newSensorSession = _.cloneDeep(activity);
-            newSensorSession.hr_data = [];
-            newSensorSession.session_type = 6;
-            newSensorSession.source = 3;
-            newSensorSession.sport_name = 17;
-            newSensorSession.post_session_survey = {
-                clear_candidates: [],
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                RPE:              null,
-                soreness:         [],
-            };
             return this.setState(
-                { sensorSession: newSensorSession, },
-                () => this._togglePostSessionSurveyModal(),
+                { loading: true, showLoadingText: true, },
+                async () => {
+                    let newSensorSession = _.cloneDeep(activity);
+                    newSensorSession.hr_data = [];
+                    newSensorSession.session_type = 6;
+                    newSensorSession.source = 3;
+                    newSensorSession.sport_name = 17;
+                    newSensorSession.post_session_survey = {
+                        clear_candidates: [],
+                        event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                        RPE:              null,
+                        soreness:         [],
+                    };
+                    try {
+                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                        const timesyncResponse = await timesyncApiCall.json();
+                        let dateTimeReturned = timesyncResponse.utc_datetime;
+                        let indexOfDot = dateTimeReturned.indexOf('.');
+                        dateTimeReturned = dateTimeReturned.substr(0, (indexOfDot + 3)) + 'Z';
+                        let endDateTime = moment(timesyncResponse.utc_datetime.replace('Z', ''));
+                        let startDateTime = moment(newSensorSession.event_date.replace('Z', ''), 'YYYY-MM-DDTHH:mm:ssZ');
+                        let duration = endDateTime.diff(startDateTime, 'minutes', true);
+                        newSensorSession.duration = _.round(duration, 2);
+                        newSensorSession.end_date = dateTimeReturned;
+                        newSensorSession.set_end_date = false;
+                        return this.setState(
+                            { sensorSession: newSensorSession, },
+                            () => this._togglePostSessionSurveyModal(),
+                        );
+                    } catch (e) {
+                        newSensorSession.set_end_date = true;
+                        newSensorSession.end_date = null;
+                        return this.setState(
+                            { sensorSession: newSensorSession, },
+                            () => this._togglePostSessionSurveyModal(),
+                        );
+                    }
+                },
             );
         }
         return Alert.alert(
@@ -1578,7 +1575,7 @@ class MyPlan extends Component {
                     isVisible={isCoachModalOpen}
                 >
                     <View style={{flex: 1, flexDirection: 'column', justifyContent: 'flex-end',}}>
-                        { (user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) &&
+                        { (this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2')) &&
                             <View style={{flex: 1,}}>
                                 <View style={{backgroundColor: AppColors.transparent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                                 <View style={{
@@ -1606,14 +1603,14 @@ class MyPlan extends Component {
                         <TouchableOpacity
                             activeOpacity={1}
                             onPress={() => {
-                                this._handleUpdateFirstTimeExperience(!user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
-                                if(user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2')) {
+                                this._handleUpdateFirstTimeExperience(!this.props.user.first_time_experience.includes('plan_coach_1') ? 'plan_coach_1' : 'plan_coach_2');
+                                if(this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2')) {
                                     this.setState({ isCoachModalOpen: false, });
                                 }
                             }}
                             style={{backgroundColor: AppColors.white, elevation: 4, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingLrg, shadowColor: 'rgba(0, 0, 0, 0.16)', shadowOffset: { height: 3, width: 0, }, shadowOpacity: 1, shadowRadius: 20,}}
                         >
-                            { user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ?
+                            { this.props.user && this.props.user.first_time_experience && !this.props.user.first_time_experience.includes('plan_coach_1') ?
                                 <View>
                                     <Text robotoMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml,}}>{'Welcome to your Plan'}</Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginBottom: AppSizes.padding,}}>{'Your activities & exercises will update here as we learn more about your body & training!'}</Text>
@@ -1631,8 +1628,8 @@ class MyPlan extends Component {
                                     </Text>
                                 </View>
                                 <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                    <View style={{backgroundColor: user && user.first_time_experience && !user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
-                                    <View style={{backgroundColor: user && user.first_time_experience && user.first_time_experience.includes('plan_coach_1') && !user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
+                                    <View style={{backgroundColor: this.props.user && this.props.user.first_time_experience && !this.props.user.first_time_experience.includes('plan_coach_1') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
+                                    <View style={{backgroundColor: this.props.user && this.props.user.first_time_experience && this.props.user.first_time_experience.includes('plan_coach_1') && !this.props.user.first_time_experience.includes('plan_coach_2') ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight, borderRadius: (10 / 2), height: 10, width: 10,}} />
                                 </View>
                                 <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
                                     {'GOT IT'}

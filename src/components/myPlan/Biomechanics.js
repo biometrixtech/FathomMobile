@@ -9,7 +9,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -146,20 +146,14 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
-                            contentContainerStyle={{flex: 1,}}
-                            contentInset={{
-                                bottom: 0,
-                                left:   AppSizes.padding,
-                                right:  AppSizes.padding,
-                                top:    0,
-                            }}
+                            contentContainerStyle={Platform.OS === 'ios' || (Platform.OS === 'android' && sessions.length >= 5) ? {} : {flex: 1,}}
                             horizontal={true}
                             ref={scrollView => {this.scrollView = scrollView;}}
                             scrollEventThrottle={10}
                             showsHorizontalScrollIndicator={false}
                             snapToInterval={AppSizes.screen.width}
                         >
-                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml, paddingHorizontal: AppSizes.paddingMed,}}>
                                 { _.map(sessions, (session, index) => {
                                     // let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
                                     // let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;
@@ -179,10 +173,10 @@ class Biomechanics extends PureComponent {
                                         >
                                             <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(circleSize),]}>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
-                                                    {moment(session.event_date_time).format('M/D')}
+                                                    {moment(session.event_date_time.replace('Z', '')).format('M/D')}
                                                 </Text>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
-                                                    {moment(session.event_date_time).format('h:mma')}
+                                                    {moment(session.event_date_time.replace('Z', '')).format('h:mma')}
                                                 </Text>
                                             </View>
                                             { index === currentIndex ?
@@ -370,20 +364,14 @@ class Biomechanics extends PureComponent {
 
                         <ScrollView
                             centerContent={true}
-                            contentContainerStyle={{flex: 1,}}
-                            contentInset={{
-                                bottom: 0,
-                                left:   AppSizes.padding,
-                                right:  AppSizes.padding,
-                                top:    0,
-                            }}
+                            contentContainerStyle={Platform.OS === 'ios' || (Platform.OS === 'android' && sessions.length >= 5) ? {} : {flex: 1,}}
                             horizontal={true}
                             ref={scrollView => {this.scrollView = scrollView;}}
                             scrollEventThrottle={10}
                             showsHorizontalScrollIndicator={false}
                             snapToInterval={AppSizes.screen.width}
                         >
-                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml,}}>
+                            <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.paddingXSml, paddingHorizontal: AppSizes.paddingMed,}}>
                                 { _.map(sessions, (session, index) => {
                                     // let remainingWidth = AppSizes.screen.width - (AppSizes.padding * 2);
                                     // let size = (remainingWidth - (AppSizes.paddingMed * (sessions.length - 1))) / sessions.length;
@@ -403,10 +391,10 @@ class Biomechanics extends PureComponent {
                                         >
                                             <View style={[AppStyles.scaleButtonShadowEffect, styles.circleStyle(circleSize),]}>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
-                                                    {moment(session.event_date_time).format('M/D')}
+                                                    {moment(session.event_date_time.replace('Z', '')).format('M/D')}
                                                 </Text>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'center',}}>
-                                                    {moment(session.event_date_time).format('h:mma')}
+                                                    {moment(session.event_date_time.replace('Z', '')).format('h:mma')}
                                                 </Text>
                                             </View>
                                             { index === currentIndex ?

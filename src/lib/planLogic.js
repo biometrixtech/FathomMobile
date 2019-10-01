@@ -853,7 +853,7 @@ const PlanLogic = {
       * Exercises Timer Logic
       * - Exercises
       */
-    handleExercisesTimerLogic: (exercise) => {
+    handleExercisesTimerLogic: exercise => {
         return {
             number_of_sets:    exercise.bilateral ? 2 : 1,
             pre_start_time:    5,
@@ -893,6 +893,7 @@ const PlanLogic = {
             sportText,
         };
     },
+
     // TODO: UNIT TEST ME - lines 1890-1940
     handleHealthKitWorkoutPageRenderLogicNEW: workout => {
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
@@ -1438,7 +1439,7 @@ const PlanLogic = {
             [];
         if(dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 && filteredTrainingSessions.length > 0) {
             filteredTrainingSessions = _.map(filteredTrainingSessions, o =>
-                o.source === 3 && !o.asymmetry ?
+                o.source === 3 && (!o.asymmetry || (o.asymmetry && o.last_updated && o.last_updated > dailyPlanObj.last_updated)) ?
                     null
                     :
                     o
@@ -2019,10 +2020,11 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(6);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = Platform.OS === 'ios' ?
-                    d.pain_value && d.pain_value > 0 ? d.pain_value : null
-                    :
-                    d.pain_value;
+                newObj.y = d.pain_value && d.pain_value > 0 ? d.pain_value : null;
+                // Platform.OS === 'ios' ?
+                //     d.pain_value && d.pain_value > 0 ? d.pain_value : null
+                //     :
+                //     d.pain_value;
                 return newObj;
             });
             let sorenessLineGraphData = _.map(data, (d, i) => {
@@ -2030,10 +2032,11 @@ const PlanLogic = {
                 newObj.color = PlanLogic.returnInsightColorString(5);
                 newObj.key = i;
                 newObj.x = d.day_of_week;
-                newObj.y = Platform.OS === 'ios' ?
-                    d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null
-                    :
-                    d.soreness_value;
+                newObj.y = d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null;
+                // Platform.OS === 'ios' ?
+                //     d.soreness_value && d.soreness_value > 0 ? d.soreness_value : null
+                //     :
+                //     d.soreness_value;
                 return newObj;
             });
             currentLineGraphData.pain = painLineGraphData;
@@ -2144,7 +2147,7 @@ const PlanLogic = {
         let updatedTime = selectedAptSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedAptSession ? `${moment(selectedAptSession.event_date_time.replace('Z', '')).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedAptSession.asymmetry.apt.summary_data;
         let chartData = selectedAptSession.asymmetry.apt.detail_data;
@@ -2231,7 +2234,7 @@ const PlanLogic = {
         let updatedTime = selectedAnklePitchSession.duration - sessionHours * 3600;
         let sessionMinutes = _.floor(updatedTime / 60);
         let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
+        let sessionStartTimeDuration = selectedAnklePitchSession ? `${moment(selectedAnklePitchSession.event_date_time.replace('Z', '')).format('h:mma')}, ${sessionHours > 0 ? `${sessionHours}hr ` : ''}${sessionMinutes}min` : '';
         let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
         let pieData = selectedAnklePitchSession.asymmetry.ankle_pitch.summary_data;
         let chartData = selectedAnklePitchSession.asymmetry.ankle_pitch.detail_data;

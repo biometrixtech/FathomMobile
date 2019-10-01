@@ -18,23 +18,23 @@ import { ble, init, user as userActions, } from '../../actions';
 const Settings = ({
     Layout,
     accessoryData,
+    changePassword,
     logout,
     network,
+    sessionToken,
     user,
     updateUser,
     userJoinAccount,
-    changePassword,
-    sessionToken
 }) => (
     <Layout
         accessoryData={accessoryData}
+        changePassword={changePassword}
         logout={logout}
         network={network}
+        sessionToken={sessionToken}
         user={user}
         updateUser={updateUser}
         userJoinAccount={userJoinAccount}
-        sessionToken={sessionToken}
-        changePassword={changePassword}
     />
 );
 
@@ -48,21 +48,20 @@ Settings.propTypes = {
     userJoinAccount: PropTypes.func.isRequired,
 };
 
-Settings.defaultProps = {
-};
+Settings.defaultProps = {};
 
 const mapStateToProps = state => ({
     accessoryData: state.ble.accessoryData || {},
     network:       state.network,
-    user:          state.user || {},
     sessionToken:  state.init.session_token || null,
+    user:          state.user || {},
 });
 
 const mapDispatchToProps = {
+    changePassword:  init.changePassword,
     logout:          init.logout,
     updateUser:      userActions.updateUser,
     userJoinAccount: userActions.userJoinAccount,
-    changePassword:  init.changePassword
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);
