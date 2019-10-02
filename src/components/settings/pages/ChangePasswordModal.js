@@ -226,6 +226,7 @@ class ChangePasswordModal extends Component {
         } = this.state;
         return (
             <FathomModal
+                avoidKeyboard={true}
                 isVisible={isOpen}
                 style={[AppStyles.containerCentered, {backgroundColor: AppColors.transparent,}]}
             >

@@ -551,7 +551,7 @@ class Settings extends Component {
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
-                <View style={{justifyContent: 'flex-end', flex: 1,}}>
+                <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
                         {`Version ${Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion()}`}
                     </Text>
