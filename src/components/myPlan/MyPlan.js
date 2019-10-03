@@ -314,78 +314,80 @@ const SensorSession = ({
                             style={{height: 25, tintColor: AppColors.zeplin.yellow, width: 45,}}
                         />
                     </View>
-                    :
-                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
-                        <Image
-                            resizeMode={'contain'}
-                            source={activityStatus === 'TOO_SHORT' ?
-                                require('../../../assets/images/standard/kitpaused.png')
-                                : activityStatus === 'NO_DATA' ?
-                                    require('../../../assets/images/standard/kiterror.png')
-                                    :
-                                    require('../../../assets/images/standard/kitactive.png')
-                            }
-                            style={{height: 25, width: 45,}}
-                        />
-                        { activityStatus === 'UPLOAD_IN_PROGRESS' ?
-                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                                <LottieView
-                                    autoPlay={true}
-                                    loop={true}
-                                    progress={1}
-                                    source={require('../../../assets/animation/sensorloading.json')}
-                                />
-                            </View>
-                            :
+                    : activity.isNoWifiOrSessionsState ?
+                        <View />
+                        :
+                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: AppSizes.paddingMed,}}>
                             <Image
                                 resizeMode={'contain'}
-                                source={
-                                    activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
-                                        require('../../../assets/images/standard/dotsdisabled.png')
-                                        : activityStatus === 'TOO_SHORT' ?
-                                            require('../../../assets/images/standard/dotserror.png')
-                                            :
-                                            require('../../../assets/images/standard/dotscompleted.png')
+                                source={activityStatus === 'TOO_SHORT' ?
+                                    require('../../../assets/images/standard/kitpaused.png')
+                                    : activityStatus === 'NO_DATA' ?
+                                        require('../../../assets/images/standard/kiterror.png')
+                                        :
+                                        require('../../../assets/images/standard/kitactive.png')
                                 }
-                                style={{height: activityStatus === 'PROCESSING_FAILED' || activityStatus === 'TOO_SHORT' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                style={{height: 25, width: 45,}}
                             />
-                        }
-                        <TabIcon
-                            color={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
-                            icon={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? 'cloud' : 'cloud-done'}
-                            size={30}
-                            type={'material'}
-                        />
-                        { activityStatus === 'PROCESSING_IN_PROGRESS' ?
-                            <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
-                                <LottieView
-                                    autoPlay={true}
-                                    loop={true}
-                                    progress={1}
-                                    source={require('../../../assets/animation/sensorloading.json')}
-                                />
-                            </View>
-                            :
-                            <Image
-                                resizeMode={'contain'}
-                                source={
-                                    activityStatus === 'PROCESSING_FAILED' ?
-                                        require('../../../assets/images/standard/dotserror.png')
-                                        : activityStatus === 'PROCESSING_COMPLETE' ?
-                                            require('../../../assets/images/standard/dotscompleted.png')
-                                            :
+                            { activityStatus === 'UPLOAD_IN_PROGRESS' ?
+                                <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={true}
+                                        progress={1}
+                                        source={require('../../../assets/animation/sensorloading.json')}
+                                    />
+                                </View>
+                                :
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={
+                                        activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                                             require('../../../assets/images/standard/dotsdisabled.png')
-                                }
-                                style={{height: activityStatus === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                            : activityStatus === 'TOO_SHORT' ?
+                                                require('../../../assets/images/standard/dotserror.png')
+                                                :
+                                                require('../../../assets/images/standard/dotscompleted.png')
+                                    }
+                                    style={{height: activityStatus === 'PROCESSING_FAILED' || activityStatus === 'TOO_SHORT' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                />
+                            }
+                            <TabIcon
+                                color={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? AppColors.zeplin.slateXLight : AppColors.zeplin.splashLight}
+                                icon={activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'NO_WIFI_SETUP' || activityStatus === 'TOO_SHORT' || activityStatus === 'NO_DATA' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ? 'cloud' : 'cloud-done'}
+                                size={30}
+                                type={'material'}
                             />
-                        }
-                        <TabIcon
-                            color={activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
-                            icon={'clipboard-text'}
-                            size={30}
-                            type={'material-community'}
-                        />
-                    </View>
+                            { activityStatus === 'PROCESSING_IN_PROGRESS' ?
+                                <View style={{height: 50, marginHorizontal: AppSizes.paddingMed, width: 50,}}>
+                                    <LottieView
+                                        autoPlay={true}
+                                        loop={true}
+                                        progress={1}
+                                        source={require('../../../assets/animation/sensorloading.json')}
+                                    />
+                                </View>
+                                :
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={
+                                        activityStatus === 'PROCESSING_FAILED' ?
+                                            require('../../../assets/images/standard/dotserror.png')
+                                            : activityStatus === 'PROCESSING_COMPLETE' ?
+                                                require('../../../assets/images/standard/dotscompleted.png')
+                                                :
+                                                require('../../../assets/images/standard/dotsdisabled.png')
+                                    }
+                                    style={{height: activityStatus === 'PROCESSING_FAILED' ? 15 : 5, marginHorizontal: AppSizes.paddingMed, width: 50,}}
+                                />
+                            }
+                            <TabIcon
+                                color={activityStatus === 'PROCESSING_COMPLETE' ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight}
+                                icon={'clipboard-text'}
+                                size={30}
+                                type={'material-community'}
+                            />
+                        </View>
                 }
                 { (subtext && activityStatus === 'UPLOAD_PAUSED') ?
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), marginLeft: 10,}}>
@@ -1258,6 +1260,7 @@ class MyPlan extends Component {
             askForNewMobilize,
             beforeCompletedLockedModalities,
             filteredTrainingSessions,
+            hasActive3SensorSession,
             isReadinessSurveyCompleted,
             newInsights,
             offDaySelected,
@@ -1265,9 +1268,8 @@ class MyPlan extends Component {
             trendCategories,
             trendDashboardCategories,
             triggerStep,
+            userHas3SensorSystem,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
-        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
-        const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? true : false;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -1296,6 +1298,13 @@ class MyPlan extends Component {
                                     }}
                                     ref={ref => {this._scrollViewRef = ref;}}
                                 >
+
+                                    { (userHas3SensorSystem && sensorSessions.length === 0) &&
+                                        <SensorSession
+                                            activity={{ status: 'NO_WIFI_SETUP', isNoWifiOrSessionsState: true, }}
+                                            userSesnorData={user.sensor_data}
+                                        />
+                                    }
 
                                     { offDaySelected &&
                                         <ActivityTab

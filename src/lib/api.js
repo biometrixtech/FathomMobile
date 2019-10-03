@@ -212,7 +212,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
         // Make the request
         return fetch(thisUrl, req)
-            .then(async (rawRes) => {
+            .then(async rawRes => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
                 // run through logic
@@ -226,18 +226,40 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                     if(unauthorizedCounter === 0 && currentState && currentState.user && currentState.user.id) {
                         // update counter and re-authorize user
                         unauthorizedCounter += 1;
-                        let userIdObj = {userId: currentState.user.id};
-                        let sessionTokenObj = {session_token: currentState.init.session_token};
-                        return await fetcher('POST', APIConfig.endpoints.get('authorize'), userIdObj, sessionTokenObj, 0)
-                            .then(async res => {
+                        let reAuthorizeParam = { userId: currentState.user.id, };
+                        let sessionTokenObj = { session_token: currentState.init.session_token, };
+                        let reAuthorizeEndpoint = APIConfig.endpoints.get('authorize');
+                        Object.keys(reAuthorizeParam).forEach((param) => {
+                            if (reAuthorizeEndpoint.includes(`{${param}}`)) {
+                                reAuthorizeEndpoint = reAuthorizeEndpoint.split(`{${param}}`).join(reAuthorizeParam[param]);
+                                delete reAuthorizeParam[param];
+                            }
+                        });
+                        let reAuthorizeUrl = `${hostname}${reAuthorizeEndpoint}`;
+                        let reAuthorizeReqs = {
+                            body:    JSON.stringify(sessionTokenObj),
+                            headers: {
+                                'Accept':        'application/json',
+                                'Authorization': jwt,
+                                'Content-Type':  'application/json',
+                                'User-Agent':    AppConfig.deviceInfo,
+                            },
+                            method: 'POST',
+                        };
+                        requestCounter += 1;
+                        debug('', `API Request #${requestCounter} to ${reAuthorizeUrl} @ ${moment()}`);
+                        return await fetch(reAuthorizeUrl, reAuthorizeReqs)
+                            .then(res => res.json())
+                            .then(cleanedRes => {
+                                debug(cleanedRes, `API Response #${requestCounter} from ${reAuthorizeUrl} @ ${moment()}`);
                                 // successfully fetched, reset counter, update reducer, and resend API
                                 unauthorizedCounter = 0;
                                 store.dispatch({
                                     type:    DispatchActions.LOGIN,
-                                    jwt:     res.authorization.jwt,
-                                    expires: res.authorization.expires,
+                                    jwt:     cleanedRes.authorization.jwt,
+                                    expires: cleanedRes.authorization.expires,
                                 });
-                                return await fetcher(method, endpoint, params, body, api_enum);
+                                return fetcher(method, endpoint, params, body, api_enum);
                             });
                     }
                     // reached limit, reset timer and log user out
