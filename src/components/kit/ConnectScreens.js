@@ -789,6 +789,7 @@ const Connect = ({
                                     disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                     loading={isLoading}
                                     loadingProps={{color: AppColors.zeplin.yellow,}}
+                                    loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
                                     onPress={() => nextBtn()}
                                     raised={true}
                                     title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}

@@ -249,7 +249,17 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         requestCounter += 1;
                         debug('', `API Request #${requestCounter} to ${reAuthorizeUrl} @ ${moment()}`);
                         return await fetch(reAuthorizeUrl, reAuthorizeReqs)
-                            .then(res => res.json())
+                            .then(res => {
+                                if(rawRes && /20[012]/.test(`${rawRes.status}`)) {
+                                    return res.json();
+                                }
+                                // reached limit, reset timer and log user out
+                                unauthorizedCounter = 0;
+                                store.dispatch({
+                                    type: DispatchActions.LOGOUT
+                                });
+                                throw {};
+                            })
                             .then(cleanedRes => {
                                 debug(cleanedRes, `API Response #${requestCounter} from ${reAuthorizeUrl} @ ${moment()}`);
                                 // successfully fetched, reset counter, update reducer, and resend API

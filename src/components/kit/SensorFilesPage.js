@@ -310,7 +310,7 @@ class SensorFilesPage extends Component {
         if(network.security.toByte !== 0) {
             this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
         } else {
-            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+            let newCurrentWifiConnection = _.cloneDeep(network);
             newCurrentWifiConnection.password = false;
             this.setState(
                 { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },
