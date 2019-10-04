@@ -2457,7 +2457,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData, dataType) => {
         const asymmetryIndex = dataType === 0 ? 'apt' : dataType === 1 ? 'ankle_pitch' : 'hip_drop';
-        const APT_CHART_TOTAL = 60;
+        const APT_CHART_TOTAL = (360 / 6);
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
             {color: AppColors.transparent, x: 0, y: 0,},
@@ -2487,25 +2487,20 @@ const PlanLogic = {
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
             if(dataType === 0) {
-                let roundedRightY = _.round(newPieData.right_y);
-                let roundedLeftY = _.round(newPieData.left_y);
+                let newMultiplier = newPieData.multiplier;
+                let roundedRightY = _.round(newPieData.right_y * newMultiplier);
+                let roundedLeftY = _.round(newPieData.left_y * newMultiplier);
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL, true);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL, true);
                     smallerPieData = emptyPieData;
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 } else if(newPieData.left_y > newPieData.right_y) {
-                    let ratio = (roundedLeftY / roundedRightY);
-                    roundedRightY = 5;
-                    roundedLeftY  = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, newPieData.multiplier, true, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL);
-                    rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, true, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * roundedLeftY))}deg`;
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                    let ratio = (roundedRightY / roundedLeftY);
-                    roundedLeftY = 5;
-                    roundedRightY = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, newPieData.multiplier, true, APT_CHART_TOTAL);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, true, APT_CHART_TOTAL);
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
             } else if(dataType === 1) {
@@ -2589,7 +2584,7 @@ const PlanLogic = {
         };
     },
 
-    returnPieChartAptCleanedData: (y, otherY, multiplier, isLeft, total, isSymmetry) => {
+    returnPieChartAptCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
         let color = isSymmetry ?
             AppColors.zeplin.successLight
             :
