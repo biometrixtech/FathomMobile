@@ -505,8 +505,8 @@ class Settings extends Component {
                     handleFormChange={this._handleFormChange}
                     handleFormSubmit={() => this._handleFormSubmit()}
                     handleToggleModal={() => this._toggleJoinATeamModal()}
-                    isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isFormSubmitting={this.state.isJoinATeamFormSubmitting}
+                    isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isOpen={this.state.isJoinATeamModalOpen}
                     resultMsg={this.state.resultMsg}
                 />
