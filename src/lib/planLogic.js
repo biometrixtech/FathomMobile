@@ -1528,7 +1528,7 @@ const PlanLogic = {
         sensorSessions = _.filter(sensorSessions, u => !trainingSessionsIds.includes(u.id) && (u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')));
         const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
-        const networkName = userObj && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
+        const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
         return {
             activeAfterModalities,
             activeBeforeModalities,

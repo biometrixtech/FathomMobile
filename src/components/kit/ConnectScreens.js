@@ -622,7 +622,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
     );
 };
 
-const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showTopNavStep = false, }) => {
+const ExtraPages = ({ currentPage, nextBtn, nextBtnText, onBack, onClose, onHelp, page, showTopNavStep = false, }) => {
     if(page === 'start-workout') {
         return (
             <ImageBackground
@@ -678,24 +678,27 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
     }
     if(page === 'confirm-placement') {
         return (
-            <ImageBackground
-                imageStyle={{resizeMode: 'cover',}}
-                source={require('../../../assets/images/standard/placement18.png')}
-                style={{height: AppSizes.screen.height, width: AppSizes.screen.width,}}
-            >
-                <TopNav darkColor={false} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
+            <View style={{flex: 1,}}>
+                <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={showTopNavStep ? 3 : false} />
                 <View style={{flex: 1, justifyContent: 'space-between',}}>
                     <View style={{alignItems: 'center', marginHorizontal: AppSizes.padding,}}>
-                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>{'Place PRO Sensors'}</Text>
-                        <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'Before starting your workout, make sure your sensors are on correctly and the LEDs are green.'}</Text>
+                        <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>{'Place PRO Sensors'}</Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'Before starting your workout, make sure your sensors are on correctly and the LEDs are green.'}</Text>
                     </View>
+                    <Video
+                        paused={!currentPage}
+                        repeat={true}
+                        resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                        source={require('../../../assets/videos/placementconfirm.mp4')}
+                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightOneThird,}]}
+                    />
                     <View style={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
-                        <Text robotoBold style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{'Need Help?'}</Text>
+                        <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Need Help?'}</Text>
                         <Spacer size={AppSizes.paddingMed} />
                         <Text
                             onPress={() => onHelp('sensor-led')}
                             robotoRegular
-                            style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                            style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
                         >
                             {'What do I do if my LEDs are Blue?'}
                         </Text>
@@ -703,7 +706,7 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
                         <Text
                             onPress={() => onHelp('sensor-placement')}
                             robotoRegular
-                            style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}
+                            style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}
                         >
                             {'Remind me how to place the sensors.'}
                         </Text>
@@ -718,7 +721,7 @@ const ExtraPages = ({ nextBtn, nextBtnText, onBack, onClose, onHelp, page, showT
                         />
                     </View>
                 </View>
-            </ImageBackground>
+            </View>
         );
     }
     return (

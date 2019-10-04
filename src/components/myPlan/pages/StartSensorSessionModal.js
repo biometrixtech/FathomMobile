@@ -624,6 +624,7 @@ class StartSensorSessionModal extends PureComponent {
             false;
         let children = [
             <ExtraPages
+                currentPage={pageIndex === 0}
                 key={0}
                 nextBtn={this._renderNextPage}
                 nextBtnText={'Next'}
