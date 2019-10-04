@@ -1524,10 +1524,11 @@ const PlanLogic = {
             userObj.sensor_data.sessions
             :
             [];
-        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
-        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         sensorSessions = _.orderBy(sensorSessions, ['event_date'], ['asc']);
         sensorSessions = _.filter(sensorSessions, u => !trainingSessionsIds.includes(u.id) && (u.event_date && moment(u.event_date).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')));
+        const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
+        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
+        const networkName = userObj && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
         return {
             activeAfterModalities,
             activeBeforeModalities,
@@ -1536,6 +1537,7 @@ const PlanLogic = {
             filteredTrainingSessions,
             hasActive3SensorSession,
             isReadinessSurveyCompleted,
+            networkName,
             newInsights,
             offDaySelected,
             sensorSessions,
@@ -2485,35 +2487,35 @@ const PlanLogic = {
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
             if(dataType === 0) {
+                let roundedRightY = _.round(newPieData.right_y);
+                let roundedLeftY = _.round(newPieData.left_y);
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL, true);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL, true);
                     smallerPieData = emptyPieData;
-                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                    rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 } else if(newPieData.left_y > newPieData.right_y) {
-                    let ratio = (newPieData.left_y / newPieData.right_y);
-                    newPieData.right_y = 5;
-                    newPieData.left_y  = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
+                    let ratio = (roundedLeftY / roundedRightY);
+                    roundedRightY = 5;
+                    roundedLeftY  = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, newPieData.multiplier, true, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL);
                     rotateDeg = `${(100 - (3 * newPieData.left_y))}deg`;
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                    let ratio = (newPieData.right_y / newPieData.left_y);
-                    newPieData.left_y = 5;
-                    newPieData.right_y = (5 * ratio);
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.right_y, newPieData.left_y, false, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(newPieData.left_y, newPieData.right_y, true, APT_CHART_TOTAL);
-                    rotateDeg = `${(100 - (3 * newPieData.right_y))}deg`;
+                    let ratio = (roundedRightY / roundedLeftY);
+                    roundedLeftY = 5;
+                    roundedRightY = (5 * ratio);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, newPieData.multiplier, false, APT_CHART_TOTAL);
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, newPieData.multiplier, true, APT_CHART_TOTAL);
+                    rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
             } else if(dataType === 1) {
-                const ANKLE_PITCH_CHART_RATIO = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y) ?
-                    40
-                    :
-                    360;
+                const ANKLE_PITCH_CHART_RATIO = 360;
                 if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
-                    let largerValue = ((100 * newPieData.right_y) / ANKLE_PITCH_CHART_RATIO);
+                    let largerValue = newPieData.right_y;
+                    let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.successLight, x: 0, y: newPieData.right_y, },
-                        { color: AppColors.transparent, x: 1, y: largerValue, },
+                        { color: AppColors.zeplin.successLight, x: 0, y: largerValue, },
+                        { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = emptyPieData;
                 } else if(newPieData.left_y > newPieData.right_y) {
@@ -2548,8 +2550,8 @@ const PlanLogic = {
                 let leftColor = newPieData.right_y === newPieData.left_y ? AppColors.zeplin.successLight: AppColors.zeplin.splashLight;
                 let rightColor = newPieData.right_y === newPieData.left_y ? AppColors.zeplin.successLight: AppColors.zeplin.purpleLight;
                 const ANKLE_PITCH_CHART_RATIO = (360 / 6);
-                let largerValue = (newPieData.right_y * newPieData.multiplier);
-                let smallerValue = (newPieData.left_y * newPieData.multiplier);
+                let largerValue = _.round(newPieData.right_y * newPieData.multiplier);
+                let smallerValue = _.round(newPieData.left_y * newPieData.multiplier);
                 let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                 let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                 largerPieData = [
@@ -2587,7 +2589,7 @@ const PlanLogic = {
         };
     },
 
-    returnPieChartAptCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
+    returnPieChartAptCleanedData: (y, otherY, multiplier, isLeft, total, isSymmetry) => {
         let color = isSymmetry ?
             AppColors.zeplin.successLight
             :

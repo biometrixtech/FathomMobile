@@ -703,7 +703,10 @@ class MyPlan extends Component {
             },
         );
         postReadinessSurvey(newDailyReadiness, user.id)
-            .then(() => getSensorFiles(user))
+            .then(res => {
+                getSensorFiles(user);
+                return res;
+            })
             .then(response => {
                 clearHealthKitWorkouts();
                 clearCompletedExercises();
@@ -721,12 +724,12 @@ class MyPlan extends Component {
                     this.setState({ isPageCalculating: false, });
                 }
             })
-            .catch(error => {
+            .catch(error =>
                 this.setState(
                     { isPageCalculating: false, },
                     () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),
-                );
-            });
+                )
+            );
     }
 
     _handleEnteringApp = callback => {
@@ -1262,6 +1265,7 @@ class MyPlan extends Component {
             filteredTrainingSessions,
             hasActive3SensorSession,
             isReadinessSurveyCompleted,
+            networkName,
             newInsights,
             offDaySelected,
             sensorSessions,
@@ -1299,7 +1303,7 @@ class MyPlan extends Component {
                                     ref={ref => {this._scrollViewRef = ref;}}
                                 >
 
-                                    { (userHas3SensorSystem && sensorSessions.length === 0) &&
+                                    { (userHas3SensorSystem && sensorSessions.length === 0 && !networkName) &&
                                         <SensorSession
                                             activity={{ status: 'NO_WIFI_SETUP', isNoWifiOrSessionsState: true, }}
                                             userSesnorData={user.sensor_data}

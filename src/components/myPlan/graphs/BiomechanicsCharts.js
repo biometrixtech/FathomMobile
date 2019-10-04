@@ -263,7 +263,7 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y ? _.round(pieDetails.pieData.right_y) : ''}\u00B0 Left & Right ROM`}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_transformed ? _.round(pieDetails.pieData.right_y_transformed) : ''}\u00B0 Left & Right ROM`}</Text>
                                         </View>
                                     </View>
                                     :
@@ -279,7 +279,7 @@ class BiomechanicsCharts extends PureComponent {
                                                 }}
                                             />
                                             <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
-                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y ? _.round(pieDetails.pieData.left_y) : ''}\u00B0 Left ROM`}
+                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_transformed ? _.round(pieDetails.pieData.left_y_transformed) : ''}\u00B0 Left ROM`}
                                             </Text>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row',}}>
@@ -293,7 +293,7 @@ class BiomechanicsCharts extends PureComponent {
                                                 }}
                                             />
                                             <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
-                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y ? _.round(pieDetails.pieData.right_y) : ''}\u00B0 Right ROM`}
+                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_transformed ? _.round(pieDetails.pieData.right_y_transformed) : ''}\u00B0 Right ROM`}
                                             </Text>
                                         </View>
                                     </View>

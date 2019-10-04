@@ -829,7 +829,7 @@ const Connect = ({
                                     size={'small'}
                                 />
                                 :
-                                <Text onPress={handleWifiScan} robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textDecorationLine: 'none',}}>{'Search again'}</Text>
+                                <Text onPress={handleWifiScan} robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), textDecorationLine: 'none',}}>{'Search again'}</Text>
                             }
                         </View>
                         <Spacer isDivider />
