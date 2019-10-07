@@ -201,12 +201,16 @@ class SensorFilesPage extends Component {
 
     _handleBLEPair = () => {
         if(!this._timer) {
-            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, () =>
-                ble.startMonitor(state =>
-                    this.setState(
-                        { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, isExit =>
+                _.delay(() => isExit ?
+                    Actions.pop()
+                    :
+                    ble.startMonitor(state =>
+                        this.setState(
+                            { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                        )
                     )
-                )
+                , 500)
             ), 60000);
         }
         ble.startDeviceScan((error, response, device, state) => {
@@ -310,7 +314,7 @@ class SensorFilesPage extends Component {
         if(network.security.toByte !== 0) {
             this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
         } else {
-            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
+            let newCurrentWifiConnection = _.cloneDeep(network);
             newCurrentWifiConnection.password = false;
             this.setState(
                 { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },

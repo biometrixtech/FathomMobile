@@ -185,10 +185,12 @@ class Trends extends PureComponent {
         let {
             biomechanicsAnklePitch,
             biomechanicsApt,
+            biomechanicsHipDrop,
             bodyResponse,
             extraBottomPadding,
             isBiomechanicsAnklePitchLocked,
             isBiomechanicsAptLocked,
+            isBiomechanicsHipDropLocked,
             isBodyResponseLocked,
             isWorkloadLocked,
             workload,
@@ -241,6 +243,22 @@ class Trends extends PureComponent {
             sessionColor:           sessionAnklePitchColor,
             sessionSport:           sessionAnklePitchSport,
         } = PlanLogic.handleBiomechanicsSelectedSessionRenderLogic(selectedAnklePitchSession, 1);
+        let {
+            leftPieInnerRadius:   leftPieInnerRadiusHipDrop,
+            leftPieWidth:         leftPieWidthHipDrop,
+            pieData:              pieDataHipDrop,
+            pieLeftWrapperWidth:  pieLeftWrapperWidthHipDrop,
+            pieRightWrapperWidth: pieRightWrapperWidthHipDrop,
+            rightPieInnerRadius:  rightPieInnerRadiusHipDrop,
+            rightPieWidth:        rightPieWidthHipDrop,
+            selectedHipDropSession,
+        } = PlanLogic.handleBiomechanicsHipDropRenderLogic(plan, _.findLastIndex(biomechanicsHipDrop.sessions))
+        let {
+            biomechanicsAlertText:  biomechanicsHipDropAlertText,
+            parsedBiomechanicsData: parsedBiomechanicsHipDropData,
+            sessionColor:           sessionHipDropColor,
+            sessionSport:           sessionHipDropSport,
+        } = PlanLogic.handleBiomechanicsSelectedSessionRenderLogic(selectedHipDropSession, 2);
         return (
             <View style={{flex: 1,}}>
 
@@ -305,6 +323,52 @@ class Trends extends PureComponent {
                                                 style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
                                             >
                                                 {biomechanicsAptAlertText}
+                                            </ParsedText>
+                                        </View>
+                                    </View>
+                                }
+                            </TouchableOpacity>
+                        }
+                        { !isBiomechanicsHipDropLocked &&
+                            <TouchableOpacity
+                                activeOpacity={0.2}
+                                onPress={() => AppUtil.pushToScene('biomechanics', {dataType: 2,})}
+                                style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect,]}
+                            >
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: AppSizes.padding, paddingHorizontal: AppSizes.padding,}}>
+                                    <Text robotoRegular style={[styles.cardTitle, {paddingHorizontal: 0,}]}>{'Hip Drop'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{moment(selectedHipDropSession.event_date_time.replace('Z', '')).format('M/D, h:mma')}</Text>
+                                </View>
+                                <BiomechanicsCharts
+                                    dataType={2}
+                                    pieDetails={{
+                                        leftPieInnerRadius:   leftPieInnerRadiusHipDrop,
+                                        leftPieWidth:         leftPieWidthHipDrop,
+                                        pieData:              pieDataHipDrop,
+                                        pieLeftWrapperWidth:  pieLeftWrapperWidthHipDrop,
+                                        pieRightWrapperWidth: pieRightWrapperWidthHipDrop,
+                                        rightPieInnerRadius:  rightPieInnerRadiusHipDrop,
+                                        rightPieWidth:        rightPieWidthHipDrop,
+                                    }}
+                                    selectedSession={selectedHipDropSession}
+                                    showDetails={false}
+                                />
+                                { (selectedHipDropSession && selectedHipDropSession.asymmetry && selectedHipDropSession.asymmetry.hip_drop) &&
+                                    <View style={{borderTopColor: AppColors.zeplin.superLight, borderTopWidth: 1, marginTop: AppSizes.paddingSml,}}>
+                                        <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center', marginHorizontal: AppSizes.paddingSml, paddingTop: AppSizes.paddingMed,}}>
+                                            { sessionHipDropSport ?
+                                                <Image
+                                                    source={sessionHipDropSport.imagePath}
+                                                    style={{height: 20, marginRight: AppSizes.paddingSml, tintColor: PlanLogic.returnInsightColorString(sessionHipDropColor), width: 20,}}
+                                                />
+                                                :
+                                                null
+                                            }
+                                            <ParsedText
+                                                parse={parsedBiomechanicsHipDropData}
+                                                style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),},]}
+                                            >
+                                                {biomechanicsHipDropAlertText}
                                             </ParsedText>
                                         </View>
                                     </View>

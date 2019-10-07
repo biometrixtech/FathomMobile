@@ -189,19 +189,21 @@ const UTIL = {
     },
 
     _handle3SensorBanner: (user, plan) => {
-        if(
-            user.id &&
-            plan &&
-            plan.daily_readiness_survey_completed &&
-            user.first_time_experience.includes('3Sensor-Onboarding-17') &&
-            !user.first_time_experience.includes('3Sensor-Onboarding-18')
-        ) {
-            AlertHelper.showDropDown(
-                'custom',
-                'FINISH WIFI SET-UP TO SYNC YOUR DATA.',
-                'Tap here once in range of your preferred wifi.'
-            );
-        }
+        // TODO: FIX ME
+        return;
+        // if(
+        //     user.id &&
+        //     plan &&
+        //     plan.daily_readiness_survey_completed &&
+        //     user.first_time_experience.includes('3Sensor-Onboarding-17') &&
+        //     !user.first_time_experience.includes('3Sensor-Onboarding-18')
+        // ) {
+        //     AlertHelper.showDropDown(
+        //         'custom',
+        //         'FINISH WIFI SET-UP TO SYNC YOUR DATA.',
+        //         'Tap here once in range of your preferred wifi.'
+        //     );
+        // }
     },
 
     _getAppleHealthKitPerms: () => {

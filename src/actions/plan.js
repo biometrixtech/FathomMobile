@@ -729,8 +729,8 @@ const getMobilize = userId => {
   * Get Biomechanics Details
   */
 const getBiomechanicsDetails = (currentPlan, dataType, userId) => {
-    const asymmetryIndex = dataType === 0 ? 'apt' : 'ankle_pitch';
-    const trendsIndex = dataType === 0 ? 'biomechanics_apt' : 'biomechanics_ankle_pitch';
+    const asymmetryIndex = dataType === 0 ? 'apt' : dataType === 1 ? 'ankle_pitch' : 'hip_drop';
+    const trendsIndex = dataType === 0 ? 'biomechanics_apt' : dataType === 1 ? 'biomechanics_ankle_pitch' : 'biomechanics_hip_drop';
     let payload = {};
     payload.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     payload.data_type = dataType;

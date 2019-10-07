@@ -177,12 +177,16 @@ class BluetoothConnect extends Component {
 
     _handleBLEPair = () => {
         if(!this._timer) {
-            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, () =>
-                ble.startMonitor(state =>
-                    this.setState(
-                        { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, isExit =>
+                _.delay(() => isExit ?
+                    Actions.pop()
+                    :
+                    ble.startMonitor(state =>
+                        this.setState(
+                            { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
+                        )
                     )
-                )
+                , 500)
             ), 60000);
         }
         ble.startDeviceScan((error, response, device, state) => {

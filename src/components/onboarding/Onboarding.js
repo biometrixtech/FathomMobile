@@ -358,6 +358,7 @@ class Onboarding extends Component {
         userObj.personal_data = {};
         if(!this.props.user.id) {
             userObj.personal_data.email = _.toLower(newUser.personal_data.email);
+            userObj.personal_data.email = _.trim(newUser.personal_data.email);
         }
         userObj.personal_data.birth_date = newUser.personal_data.birth_date;
         userObj.personal_data.first_name = _.trim(newUser.personal_data.first_name);
