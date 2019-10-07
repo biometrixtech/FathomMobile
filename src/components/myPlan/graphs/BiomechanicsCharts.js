@@ -62,6 +62,12 @@ class BiomechanicsCharts extends PureComponent {
             justifyContent: 'flex-end',
         };
         let innerRadiusAddOn = dataType === 0 ? 0 : 20;
+        let extraLeftStyles = dataType === 2 ?
+            {
+                transform: [{rotate: `-${(_.parseInt(rotateDeg) * 2)}deg`,}],
+            }
+            :
+            {};
         return (
             <View pointerEvents={'none'}>
 
@@ -126,7 +132,7 @@ class BiomechanicsCharts extends PureComponent {
                         <View style={{marginBottom: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
                             <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
                         </View>
-                        <View style={{flexDirection: 'row', justifyContent: showTitle ? 'space-between' : 'center', marginHorizontal: AppSizes.paddingMed, marginBottom: AppSizes.paddingMed,}}>
+                        <View style={{flexDirection: 'row', justifyContent: showTitle ? 'space-between' : 'center', marginHorizontal: AppSizes.paddingMed,}}>
                             { showTitle &&
                                 <TabIcon
                                     color={AppColors.white}
@@ -174,7 +180,13 @@ class BiomechanicsCharts extends PureComponent {
                     <View style={{flexDirection: 'row',}}>
                         <ImageBackground
                             imageStyle={{borderRadius: 12,}}
-                            source={dataType === 0 ? require('../../../../assets/images/standard/apt_notilt.png') : require('../../../../assets/images/standard/ankle_pitch.png')}
+                            source={dataType === 0 ?
+                                require('../../../../assets/images/standard/apt_notilt.png')
+                                : dataType === 1 ?
+                                    require('../../../../assets/images/standard/ankle_pitch.png')
+                                    :
+                                    require('../../../../assets/images/standard/hip_drop.png')
+                            }
                             style={[{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}, extraImageBackgroundStyles,]}
                         >
                             <View style={[{transform: [{rotate: rotateDeg,}]}, extraPieStyles,]}>
@@ -186,11 +198,11 @@ class BiomechanicsCharts extends PureComponent {
                                     labels={d => ''}
                                     padding={dataType === 0 ? 50 : 30}
                                     style={{
-                                        data: { fill: d => d.color},
+                                        data: { fill: d => d.color, },
                                     }}
                                     width={pieDetails.rightPieWidth}
                                 />
-                                <View style={{alignSelf: 'center', position: 'absolute', width: pieDetails.rightPieWidth,}}>
+                                <View style={[{alignSelf: 'center', position: 'absolute', width: pieDetails.rightPieWidth,}, extraLeftStyles,]}>
                                     <V.VictoryPie
                                         cornerRadius={7}
                                         data={smallerPieData}
@@ -199,7 +211,7 @@ class BiomechanicsCharts extends PureComponent {
                                         labels={d => ''}
                                         padding={dataType === 0 ? 50 : 30}
                                         style={{
-                                            data: { fill: d => d.color},
+                                            data: { fill: d => d.color, },
                                         }}
                                         width={pieDetails.rightPieWidth}
                                     />
@@ -222,7 +234,7 @@ class BiomechanicsCharts extends PureComponent {
                                             <Image
                                                 resizeMode={'contain'}
                                                 source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                                style={{height: 55, tintColor: AppColors.zeplin.successLight, width: 55,}}
+                                                style={{height: 55, tintColor: `${AppColors.zeplin.successLight}${PlanLogic.returnHexOpacity(0.6)}`, width: 55,}}
                                             />
                                             :
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
@@ -251,7 +263,7 @@ class BiomechanicsCharts extends PureComponent {
                                                     width:           10,
                                                 }}
                                             />
-                                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{'Left & Right Symmetry'}</Text>
+                                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}</Text>
                                         </View>
                                     </View>
                                     :
@@ -267,7 +279,7 @@ class BiomechanicsCharts extends PureComponent {
                                                 }}
                                             />
                                             <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
-                                                {dataType === 0 ? 'Left side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y ? _.round(pieDetails.pieData.left_y) : ''}\u00B0 Left ROM`}
+                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend ? _.round(pieDetails.pieData.left_y_legend) : '0'}\u00B0 Left ROM`}
                                             </Text>
                                         </View>
                                         <View style={{alignItems: 'center', flexDirection: 'row',}}>
@@ -281,7 +293,7 @@ class BiomechanicsCharts extends PureComponent {
                                                 }}
                                             />
                                             <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
-                                                {dataType === 0 ? 'Right side ROM' : `${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y ? _.round(pieDetails.pieData.right_y) : ''}\u00B0 Right ROM`}
+                                                {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Right ROM`}
                                             </Text>
                                         </View>
                                     </View>

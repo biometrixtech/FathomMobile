@@ -311,6 +311,7 @@ class Settings extends Component {
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
                 <SettingsNavBar />
+                {/* // NOTE: IF THIS PIECE COMES BACK, MAKE PAGE A SCROLLVIEW
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
@@ -329,7 +330,7 @@ class Settings extends Component {
                     title={'Join a team'}
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
-                <Spacer isDivider />
+                <Spacer isDivider />*/}
                 {
                     /hello[+]demo[1-5]@fathomai.com/g.test(userEmail) ||
                     /amina[+]mvp@fathomai.com/g.test(userEmail) ||
@@ -363,68 +364,6 @@ class Settings extends Component {
                                     size:  ICON_SIZE,
                                 }}
                                 title={'Reset account data'}
-                                titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                            />
-                            <Spacer isDivider />
-                            <ListItem
-                                containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                                leftIcon={{
-                                    color:     AppColors.zeplin.splash,
-                                    iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
-                                    name:      'timer-sand',
-                                    size:      ICON_SIZE,
-                                    type:      'material-community',
-                                }}
-                                /*
-                                  1) Button click time
-                                  2) Time request was made to ntpool (if possible)
-                                  3) Ntppool data returned
-                                  4) time request was returned from ntppool
-                                */
-                                onPress={async () => {
-                                    /* global fetch console */
-                                    let btnClickTime = moment().format('hh:kk:ss.SS a');
-                                    try {
-                                        let requestTime = moment().format('hh:kk:ss.SS a');
-                                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
-                                        const timesyncResponse = await timesyncApiCall.json();
-                                        let cleanedDateTime = timesyncResponse.utc_datetime;
-                                        let indexOfDot = cleanedDateTime.indexOf('.');
-                                        cleanedDateTime = cleanedDateTime.substr(0, (indexOfDot + 3)) + 'Z';
-                                        let dataReturned = moment(cleanedDateTime).utc().toISOString();
-                                        let requestReturnTime = moment().format('hh:kk:ss.SS a');
-                                        Alert.alert(
-                                            'Timesync',
-                                            `Button Click Time: ${btnClickTime}\nRequest Start Time: ${requestTime}\nReturn Data: ${dataReturned}\nRequest Return Time: ${requestReturnTime}`,
-                                            [
-                                                {
-                                                    text:  'OK',
-                                                    style: 'cancel',
-                                                },
-                                            ],
-                                            { cancelable: true, }
-                                        );
-                                    } catch(err) {
-                                        console.log('err',err);
-                                        Alert.alert(
-                                            'Timesync',
-                                            'Error making call, please try again!',
-                                            [
-                                                {
-                                                    text:  'OK',
-                                                    style: 'cancel',
-                                                },
-                                            ],
-                                            { cancelable: true, }
-                                        );
-                                    }
-                                }}
-                                rightIcon={{
-                                    color: AppColors.zeplin.slate,
-                                    name:  'chevron-right',
-                                    size:  ICON_SIZE,
-                                }}
-                                title={'Check Timesync (Click and wait)'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                             />
                             <Spacer isDivider />
@@ -551,7 +490,7 @@ class Settings extends Component {
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
                 <Spacer isDivider />
-                <View style={{justifyContent: 'flex-end', flex: 1,}}>
+                <View style={{flex: 1, justifyContent: 'flex-end',}}>
                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
                         {`Version ${Platform.OS === 'ios' ? DeviceInfo.getBuildNumber() : DeviceInfo.getVersion()}`}
                     </Text>
@@ -566,8 +505,8 @@ class Settings extends Component {
                     handleFormChange={this._handleFormChange}
                     handleFormSubmit={() => this._handleFormSubmit()}
                     handleToggleModal={() => this._toggleJoinATeamModal()}
-                    isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isFormSubmitting={this.state.isJoinATeamFormSubmitting}
+                    isFormSuccessful={this.state.teamName && this.state.teamName.length > 0}
                     isOpen={this.state.isJoinATeamModalOpen}
                     resultMsg={this.state.resultMsg}
                 />
