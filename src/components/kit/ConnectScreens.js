@@ -319,27 +319,27 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         </Text>
                     </View>
                     :
-                    <View>
+                    <View style={{flex: 1,}}>
                         <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
                         <View>
-                            <TabIcon
+                            {/*<TabIcon
                                 color={AppColors.zeplin.slateLight}
                                 containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
                                 icon={isVideoPaused ? 'pause' : 'play-arrow'}
                                 onPress={() => handleUpdatePauseState()}
                                 size={20}
-                            />
+                            />*/}
                             <Video
                                 paused={isVideoPaused}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={require('../../../assets/videos/calibration.mp4')}
+                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4'}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
-                        <View style={{marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
+                        <View style={{flex: 1, justifyContent: 'flex-end', marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
-                                {'Start a Workout by tapping the "+" button on the Plan page & follow calibration.\n\nStand up. Stand still. Then March. After that, your workout has started.'}
+                                {'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'}
                             </Text>
                         </View>
                     </View>
@@ -363,7 +363,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                     :
-                    <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
