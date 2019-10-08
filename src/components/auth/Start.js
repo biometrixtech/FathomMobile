@@ -171,6 +171,7 @@ class Start extends Component {
                 if(authorizationResponse && authorizationResponse.authorization) {
                     authorization.expires = authorizationResponse.authorization.expires;
                     authorization.jwt = authorizationResponse.authorization.jwt;
+                    authorization.session_token = authorizationResponse.authorization.session_token;
                 }
                 return this.props.getUser(userObj.id);
             })
@@ -212,10 +213,12 @@ class Start extends Component {
                     });
             })
             .then(() => {
+                let reducerExpiresDateTime = moment.utc(this.props.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                let authorizationExpiresDateTime = moment.utc(authorization.expires, 'YYYY-MM-DDTHH:mm:ssZ');
                 let newAuthorization = {
-                    jwt:           this.props.jwt,
-                    expires:       this.props.expires,
-                    session_token: this.props.sessionToken,
+                    jwt:           reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.jwt : authorization.jwt,
+                    expires:       reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.expires : authorization.expires,
+                    session_token: reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.sessionToken : authorization.session_token,
                 };
                 return this.props.finalizeLogin(userObj, credentials, newAuthorization);
             })

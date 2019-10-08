@@ -228,7 +228,7 @@ class Login extends Component {
                     password: credentials.password,
                 }, false)
                     .then(response => {
-                        let { user, } = response;
+                        let { authorization, user, } = response;
                         return this.props.registerDevice(this.props.certificate, this.props.device, user)
                             .then(() => {
                                 let clearMyPlan = (
@@ -259,10 +259,12 @@ class Login extends Component {
                                     });
                             })
                             .then(() => {
+                                let reducerExpiresDateTime = moment.utc(this.props.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                                let authorizationExpiresDateTime = moment.utc(authorization.expires, 'YYYY-MM-DDTHH:mm:ssZ');
                                 let newAuthorization = {
-                                    jwt:           this.props.jwt,
-                                    expires:       this.props.expires,
-                                    session_token: this.props.sessionToken,
+                                    jwt:           reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.jwt : authorization.jwt,
+                                    expires:       reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.expires : authorization.expires,
+                                    session_token: reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.sessionToken : authorization.session_token,
                                 };
                                 return this.props.finalizeLogin(user, credentials, newAuthorization);
                             })
