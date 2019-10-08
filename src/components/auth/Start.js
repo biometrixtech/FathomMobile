@@ -166,16 +166,14 @@ class Start extends Component {
         if(!userObj || !userObj.id) {
             return this.hideSplash();
         }
-        // return this.props.authorizeUser(authorization, userObj, credentials)
-        //     .then(authorizationResponse => {
-        //         if(authorizationResponse && authorizationResponse.authorization) {
-        //             authorization.expires = authorizationResponse.authorization.expires;
-        //             authorization.jwt = authorizationResponse.authorization.jwt;
-        //         }
-        //         return this.props.getUser(userObj.id);
-        //     })
-        // TODO: UPDATE ME
-        return this.props.getUser(userObj.id)
+        return this.props.authorizeUser(authorization, userObj, credentials)
+            .then(authorizationResponse => {
+                if(authorizationResponse && authorizationResponse.authorization) {
+                    authorization.expires = authorizationResponse.authorization.expires;
+                    authorization.jwt = authorizationResponse.authorization.jwt;
+                }
+                return this.props.getUser(userObj.id);
+            })
             .then(response => {
                 userObj = response.user;
                 if(this.props.certificate && this.props.certificate.id && this.props.device && this.props.device.id) {
