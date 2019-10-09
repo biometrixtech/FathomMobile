@@ -1,6 +1,6 @@
 {
   "name": "fathom",
-  "version": "3.9.0-beta.3",
+  "version": "3.9.0-beta.4",
   "private": true,
   "author": "Mazen Chami",
   "scripts": {
@@ -69,8 +69,9 @@
     "react-native-snap-carousel": "^3.7.5",
     "react-native-sound": "^0.10.12",
     "react-native-splash-screen": "^3.2.0",
-    "react-native-svg": "^9.4.0",
+    "react-native-svg": "^9.11.1",
     "react-native-svg-charts": "^5.2.0",
+    "react-native-switches": "^1.1.2",
     "react-native-vector-icons": "^6.4.2",
     "react-native-video": "^4.4.0",
     "react-native-view-overflow": "^0.0.4",
