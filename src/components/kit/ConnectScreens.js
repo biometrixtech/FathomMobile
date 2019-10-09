@@ -913,6 +913,62 @@ const Connect = ({
     );
 };
 
+const ReturnSensors = ({ currentPage, onBack, onClose, nextBtn, page, }) => {
+    let content = SensorLogic.getReturnSensorsContent(styles)[page];
+    return (
+        <View style={{flex: 1,}}>
+            <TopNav darkColor={true} onBack={onBack} showClose={onClose} step={false} />
+            <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                {content.title}
+            </View>
+            { content.image ?
+                <Image
+                    resizeMode={'contain'}
+                    source={content.image}
+                    style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
+                />
+                : content.video ?
+                    <Video
+                        paused={!currentPage}
+                        repeat={true}
+                        resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                        source={{uri: content.video}}
+                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                    />
+                    :
+                    null
+            }
+            <View style={{alignItems: 'center', flex: 1, paddingTop: AppSizes.padding,}}>
+                <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
+                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
+                        {content.subtitle}
+                    </View>
+                    { page === 3 &&
+                        <View style={{marginHorizontal: AppSizes.paddingXLrg, marginBottom: AppSizes.padding,}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
+                                <View style={[styles.ledStyle, {backgroundColor: 'green', shadowColor: 'green', marginRight: AppSizes.paddingSml,}]} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Green = Charged'}</Text>
+                            </View>
+                            <View style={{alignItems: 'center', flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
+                                <View style={[styles.ledStyle, {backgroundColor: 'blue', shadowColor: 'blue', marginRight: AppSizes.paddingSml,}]} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Blue = Low Battery'}</Text>
+                            </View>
+                        </View>
+                    }
+                </View>
+                <Button
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '60%',}}
+                    onPress={() => nextBtn()}
+                    raised={true}
+                    title={content.buttonText}
+                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                />
+            </View>
+        </View>
+    );
+}
+
 /* Export Components ================================================================= */
 export {
     Battery,
@@ -922,6 +978,7 @@ export {
     Connect,
     ExtraPages,
     Placement,
+    ReturnSensors,
     Session,
     TopNav,
     Train,

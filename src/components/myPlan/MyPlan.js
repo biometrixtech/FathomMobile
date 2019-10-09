@@ -57,7 +57,7 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
+import { PostSessionSurvey, ReadinessSurvey, ReturnSensorsModal, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
 import { ContactUsModal, Loading, } from '../general';
 
 // global constants
@@ -657,16 +657,16 @@ class MyPlan extends Component {
         }
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback) => {
         const { plan, } = this.props;
         const { dailyReadiness, postSession, } = this.state;
         let stateObject = isDailyReadiness ? dailyReadiness : postSession;
-        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections);
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections, side);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
-            this.setState({ dailyReadiness: newFormFields, });
+            this.setState({ dailyReadiness: newFormFields, }, () => callback && callback());
         } else {
-            this.setState({ postSession: newFormFields, });
+            this.setState({ postSession: newFormFields, }, () => callback && callback());
         }
     }
 
@@ -1038,7 +1038,10 @@ class MyPlan extends Component {
             .then(() => getSensorFiles(user))
             .then(response => {
                 this.setState(
-                    { isPageCalculating: false, },
+                    {
+                        isPageCalculating:        false,
+                        isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
+                    },
                     () => {
                         clearCompletedExercises();
                         clearCompletedCoolDownExercises();
@@ -1247,6 +1250,7 @@ class MyPlan extends Component {
             isPostSessionSurveyModalOpen,
             isPrepareSessionsCompletionModalOpen,
             isReadinessSurveyModalOpen,
+            isReturnSensorsModalOpen,
             isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
@@ -1517,9 +1521,7 @@ class MyPlan extends Component {
                         null
                 }
 
-                <FathomModal
-                    isVisible={isReadinessSurveyModalOpen}
-                >
+                <FathomModal isVisible={isReadinessSurveyModalOpen}>
                     <ReadinessSurvey
                         dailyReadiness={dailyReadiness}
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1535,9 +1537,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
-                <FathomModal
-                    isVisible={isPostSessionSurveyModalOpen}
-                >
+                <FathomModal isVisible={isPostSessionSurveyModalOpen}>
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
@@ -1655,6 +1655,13 @@ class MyPlan extends Component {
                 <ContactUsModal
                     handleModalToggle={this._toggleContactUsWebView}
                     isModalOpen={isContactUsOpen}
+                />
+
+                <ReturnSensorsModal
+                    handleModalToggle={() => this.setState({ isReturnSensorsModalOpen: !this.state.isReturnSensorsModalOpen, })}
+                    isModalOpen={isReturnSensorsModalOpen}
+                    updateUser={updateUser}
+                    user={user}
                 />
 
             </View>
