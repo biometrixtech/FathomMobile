@@ -580,7 +580,7 @@ class PostSessionSurvey extends Component {
 
                 </Pages>
 
-                { isFABVisible ?
+                {/* isFABVisible ?
                     <ActionButton
                         buttonColor={AppColors.zeplin.yellow}
                         degrees={0}
@@ -598,7 +598,7 @@ class PostSessionSurvey extends Component {
                     />
                     :
                     null
-                }
+                */}
                 <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelExpanded={isSlideUpPanelExpanded}
