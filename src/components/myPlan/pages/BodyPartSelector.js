@@ -20,8 +20,9 @@ import _ from 'lodash';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
-import { BodyOverlay, FathomSlider, FathomModal, Spacer, Text, } from '../../custom';
+import { BodyOverlay, Spacer, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
+import { SymptomIntake, } from './';
 
 const REMAINING_SCREEN_WIDTH = (AppSizes.screen.width - AppSizes.paddingLrg);
 const NUMBER_OF_OVERLAY_GRIDS_HEIGHT = 30;
@@ -96,97 +97,97 @@ class BodyPartSelector extends Component {
     _getImageString = image => {
         /* eslint-disable indent */
         let imageName = image === 'Abs.svg' ?
-                require('../../../../assets/images/body/body_overlay/Abs.png')
+                require('../../../../assets/images/body/body_overlay_selector/Abs.png')
             : image === 'L_Hip.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Hip.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Hip.png')
             : image === 'R_Hip.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Hip.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Hip.png')
             : image === 'L_Groin.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Groin.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Groin.png')
             : image === 'R_Groin.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Groin.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Groin.png')
             : image === 'L_Quad.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Quad.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Quad.png')
             : image === 'R_Quad.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Quad.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Quad.png')
             : image === 'L_Knee.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Knee.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Knee.png')
             : image === 'R_Knee.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Knee.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Knee.png')
             : image === 'L_Shin.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Shin.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Shin.png')
             : image === 'R_Shin.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Shin.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Shin.png')
             : image === 'L_Ankle.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Ankle.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Ankle.png')
             : image === 'R_Ankle.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Ankle.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Ankle.png')
             : image === 'L_Foot.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Foot.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Foot.png')
             : image === 'R_Foot.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Foot.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Foot.png')
             : image === 'L_ITBand.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_ITBand.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_ITBand.png')
             : image === 'R_ITBand.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_ITBand.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_ITBand.png')
             : image === 'LowBack.svg' ?
-                require('../../../../assets/images/body/body_overlay/LowBack.png')
+                require('../../../../assets/images/body/body_overlay_selector/LowBack.png')
             : image === 'L_Glute.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Glute.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Glute.png')
             : image === 'R_Glute.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Glute.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Glute.png')
             : image === 'L_Hamstring.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Hamstring.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Hamstring.png')
             : image === 'R_Hamstring.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Hamstring.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Hamstring.png')
             : image === 'L_Calf.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Calf.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Calf.png')
             : image === 'R_Calf.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Calf.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Calf.png')
             : image === 'L_Achilles.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Achilles.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Achilles.png')
             : image === 'R_Achilles.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Achilles.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Achilles.png')
             : image === 'UpperBackNeck.svg' ?
-                require('../../../../assets/images/body/body_overlay/UpperBackNeck.png')
+                require('../../../../assets/images/body/body_overlay_selector/UpperBackNeck.png')
             : image === 'L_Shoulder.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Shoulder.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Shoulder.png')
             : image === 'R_Shoulder.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Shoulder.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Shoulder.png')
             : image === 'L_Elbow.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Elbow.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Elbow.png')
             : image === 'R_Elbow.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Elbow.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Elbow.png')
             : image === 'L_Lats.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Lats.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Lats.png')
             : image === 'R_Lats.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Lats.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Lats.png')
             : image === 'L_Wrist.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Wrist.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Wrist.png')
             : image === 'R_Wrist.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Wrist.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Wrist.png')
             : image === 'L_Pec.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Pec.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Pec.png')
             : image === 'R_Pec.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Pec.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Pec.png')
             : image === 'R_Bicep.svg' ?
-                require('../../../../assets/images/body/body_overlay/R_Bicep.png')
+                require('../../../../assets/images/body/body_overlay_selector/R_Bicep.png')
             : image === 'L_Bicep.svg' ?
-                require('../../../../assets/images/body/body_overlay/L_Bicep.png')
+                require('../../../../assets/images/body/body_overlay_selector/L_Bicep.png')
             // : image === 'R_Tricep.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/R_Tricep.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/R_Tricep.png')
             // : image === 'L_Tricep.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/L_Tricep.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/L_Tricep.png')
             // : image === 'L_Forearm.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/L_Forearm.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/L_Forearm.png')
             // : image === 'R_Forearm.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/R_Forearm.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/R_Forearm.png')
             // : image === 'CoreStabilizers.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/CoreStabilizers.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/CoreStabilizers.png')
             // : image === 'ErectorSpinae.svg' ?
-            //     require('../../../../assets/images/body/body_overlay/ErectorSpinae.png')
+            //     require('../../../../assets/images/body/body_overlay_selector/ErectorSpinae.png')
             :
-                require('../../../../assets/images/body/body_overlay/Abs.png');
+                require('../../../../assets/images/body/body_overlay_selector/Abs.png');
         return imageName;
     }
 
@@ -225,7 +226,9 @@ class BodyPartSelector extends Component {
             let mergedBodyParts = _.concat(areaOfSorenessClicked);
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
             let newSelectedBodyPartObj = {
+                bodyImage:  selectedBodyPart.image[clickedBodyPart.side],
                 index:      selectedBodyPart.index,
+                isJoint:    (selectedBodyPart.group === 'joint'),
                 nameString: selectedBodyPart.label,
                 side:       clickedBodyPart.side,
                 sideString: clickedBodyPart.side === 2 ? 'Right' : clickedBodyPart.side === 1 ? 'Left' : '',
@@ -245,9 +248,9 @@ class BodyPartSelector extends Component {
     }
 
     _handleImageSizing = () => {
-        let backImage =  require('../../../../assets/images/body/body_overlay/body_full_back.png');
+        let backImage =  require('../../../../assets/images/body/body_overlay_selector/body_full_back.png');
         let backImageSource = resolveAssetSource(backImage);
-        let frontImage =  require('../../../../assets/images/body/body_overlay/body_full_front.png');
+        let frontImage =  require('../../../../assets/images/body/body_overlay_selector/body_full_front.png');
         let frontImageSource = resolveAssetSource(frontImage);
         let newBackImageHeight = backImageSource.height * (REMAINING_SCREEN_WIDTH / backImageSource.width);
         let newFrontImageHeight = frontImageSource.height * (REMAINING_SCREEN_WIDTH / frontImageSource.width);
@@ -258,7 +261,7 @@ class BodyPartSelector extends Component {
     }
 
     render = () => {
-        const { areaOfSorenessClicked, handleFormChange, } = this.props;
+        const { areaOfSorenessClicked, handleFormChange, isBodyOverlayFront, } = this.props;
         const { front, isModalOpen, selectedBodyPartObj, } = this.state;
         let gridRange = _.range(1, ((NUMBER_OF_OVERLAY_GRIDS_HEIGHT * NUMBER_OF_OVERLAY_GRIDS_WIDTH) + 1));
         const backAnimatedStyle = {
@@ -278,15 +281,15 @@ class BodyPartSelector extends Component {
             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
 
                 <View style={{alignSelf: 'stretch', flex: 1, flexDirection: 'row', justifyContent: 'space-between', left: 0, paddingHorizontal: AppSizes.paddingLrg, position: 'absolute', right: 0, top: AppSizes.padding,}}>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{'Right\nside'}</Text>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{'Left\nside'}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}\nside`}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}\nside`}</Text>
                 </View>
 
                 <View>
                     <Animated.View style={[styles.flipCard, frontAnimatedStyle,]}>
                         <RNImage
                             resizeMode={'contain'}
-                            source={require('../../../../assets/images/body/body_overlay/body_full_front.png')}
+                            source={require('../../../../assets/images/body/body_overlay_selector/body_full_front.png')}
                             style={{height: front.height, tintColor: AppColors.zeplin.slateXLight, width: front.width,}}
                         />
                         <View style={{height: front.height, position: 'absolute', width: front.width,}}>
@@ -352,51 +355,12 @@ class BodyPartSelector extends Component {
 
                 <Spacer size={(AppSizes.padding + AppSizes.paddingXLrg)} />
 
-                <FathomModal
-                    isVisible={isModalOpen}
-                    onBackdropPress={this._handleContinue}
-                    style={{justifyContent: 'flex-end',}}
-                >
-                    <View
-                        style={{
-                            backgroundColor:      AppColors.white,
-                            borderTopLeftRadius:  12,
-                            borderTopRightRadius: 12,
-                            padding:              AppSizes.paddingLrg,
-                            paddingBottom:        AppSizes.iphoneXBottomBarPadding > 0 ? (AppSizes.iphoneXBottomBarPadding + AppSizes.paddingLrg) : AppSizes.paddingLrg,
-                        }}
-                    >
-                        <Text>{`How does your ${selectedBodyPartObj.sideString} ${selectedBodyPartObj.nameString} feel?`}</Text>
-                        <Spacer size={AppSizes.padding} />
-                        <FathomSlider
-                            handleFormChange={value => {
-                                let newValue = value === 2 ? 3 : value === 4 ? 5 : value;
-                                let newSelectedBodyPartObj = _.cloneDeep(this.state.selectedBodyPartObj);
-                                newSelectedBodyPartObj.value = newValue;
-                                this.setState(
-                                    { selectedBodyPartObj: newSelectedBodyPartObj, },
-                                    () => {
-                                        handleFormChange('soreness', newValue, false, selectedBodyPartObj.index, selectedBodyPartObj.side, newValue === 0 ? true : false);
-                                        handleFormChange('soreness', null, false, selectedBodyPartObj.index, selectedBodyPartObj.side, false, true); // set movement to null
-                                    },
-                                );
-                            }}
-                            maximumValue={5}
-                            minimumValue={0}
-                            orientation={'horizontal'}
-                            value={selectedBodyPartObj.value || 0}
-                        />
-                        <Spacer size={AppSizes.padding} />
-                        <View style={{justifyContent: 'flex-end',}}>
-                            <TouchableOpacity
-                                onPress={this._handleContinue}
-                                style={{alignSelf: 'flex-end',}}
-                            >
-                                <Text>{'Continue'}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </FathomModal>
+                <SymptomIntake
+                    handleContinue={this._handleContinue}
+                    handleFormChange={handleFormChange}
+                    isModalOpen={isModalOpen}
+                    selectedBodyPart={selectedBodyPartObj}
+                />
 
             </View>
         );

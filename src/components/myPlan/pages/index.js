@@ -27,6 +27,7 @@ import SportBlock from './SportBlock';
 import SportScheduleBuilder from './SportScheduleBuilder';
 import StartSensorSessionModal from './StartSensorSessionModal';
 import SurveySlideUpPanel from './SurveySlideUpPanel';
+import SymptomIntake from './SymptomIntake';
 import TimedExercise from './TimedExercise';
 
 export {
@@ -55,5 +56,6 @@ export {
     SportScheduleBuilder,
     StartSensorSessionModal,
     SurveySlideUpPanel,
+    SymptomIntake,
     TimedExercise,
 };

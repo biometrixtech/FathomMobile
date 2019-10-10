@@ -723,13 +723,8 @@ class ReadinessSurvey extends Component {
                                         this.setState({ isActionButtonVisible: false, });
                                         this._renderNextPage(6, isFormValidItems, newSoreBodyParts, areaOfSorenessClicked);
                                     }}
-                                    showSubmitBtn={
-                                        (this.areasOfSorenessRef && this.areasOfSorenessRef.state && this.areasOfSorenessRef.state.showWholeArea) ?
-                                            false
-                                            :
-                                            true
-                                    }
-                                    submitBtnText={soreBodyParts.length === 0 ? 'No, All Good!' : 'Submit'}
+                                    showSubmitBtn={true}
+                                    submitBtnText={areaOfSorenessClicked.length === 0 ? 'No, All Good!' : 'Submit'}
                                 />
                             </View>
                         </View>
