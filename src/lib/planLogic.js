@@ -78,7 +78,11 @@ const PlanLogic = {
                 if(isMovementValue) {
                     newSorenessFields[sorenessIndex].movement = value;
                 } else {
-                    newSorenessFields[sorenessIndex].severity = value;
+                    // newSorenessFields[sorenessIndex].severity = value;
+                    newSorenessFields[sorenessIndex].tight = value[0].isSelected ? value[0].value : null;
+                    newSorenessFields[sorenessIndex].knots = value[1].isSelected ? value[1].value : null;
+                    newSorenessFields[sorenessIndex].ache = value[2].isSelected ? value[2].value : null;
+                    newSorenessFields[sorenessIndex].sharp = value[3].isSelected ? value[3].value : null;
                 }
             } else {
                 // doesn't exist, create new object
@@ -88,7 +92,11 @@ const PlanLogic = {
                 if(isMovementValue) {
                     newSorenessPart.movement = value;
                 } else {
-                    newSorenessPart.severity = value;
+                    // newSorenessPart.severity = value;
+                    newSorenessPart.tight = value[0].isSelected ? value[0].value : null;
+                    newSorenessPart.knots = value[1].isSelected ? value[1].value : null;
+                    newSorenessPart.ache = value[2].isSelected ? value[2].value : null;
+                    newSorenessPart.sharp = value[3].isSelected ? value[3].value : null;
                 }
                 newSorenessPart.side = side ? side : 0;
                 newSorenessPart.isClearCandidate = isClearCandidate;
@@ -153,7 +161,11 @@ const PlanLogic = {
                         let newMissingSideSorenessPart = {};
                         newMissingSideSorenessPart.body_part = areaClicked.index;
                         newMissingSideSorenessPart.pain = false;
-                        newMissingSideSorenessPart.severity = null;
+                        // newMissingSideSorenessPart.severity = null;
+                        newMissingSideSorenessPart.tight = null;
+                        newMissingSideSorenessPart.knots = null;
+                        newMissingSideSorenessPart.ache = null;
+                        newMissingSideSorenessPart.sharp = null;
                         newMissingSideSorenessPart.side = currentSelectedSide === 1 ? 2 : 1;
                         newSorenessFields.push(newMissingSideSorenessPart);
                     } else {
@@ -168,7 +180,11 @@ const PlanLogic = {
                     let newLeftSorenessPart = {};
                     newLeftSorenessPart.body_part = areaClicked.index;
                     newLeftSorenessPart.pain = areaClicked.group === 'joint';
-                    newLeftSorenessPart.severity = null;
+                    // newLeftSorenessPart.severity = null;
+                    newLeftSorenessPart.tight = null;
+                    newLeftSorenessPart.knots = null;
+                    newLeftSorenessPart.ache = null;
+                    newLeftSorenessPart.sharp = null;
                     newLeftSorenessPart.side = 1;
                     if(side && side === 1) {
                         newSorenessFields.push(newLeftSorenessPart);
@@ -176,7 +192,11 @@ const PlanLogic = {
                     let newRightSorenessPart = {};
                     newRightSorenessPart.body_part = areaClicked.index;
                     newRightSorenessPart.pain = areaClicked.group === 'joint';
-                    newRightSorenessPart.severity = null;
+                    // newRightSorenessPart.severity = null;
+                    newRightSorenessPart.tight = null;
+                    newRightSorenessPart.knots = null;
+                    newRightSorenessPart.ache = null;
+                    newRightSorenessPart.sharp = null;
                     newRightSorenessPart.side = 2;
                     if(side && side === 2) {
                         newSorenessFields.push(newRightSorenessPart);
@@ -185,7 +205,11 @@ const PlanLogic = {
                     let newSorenessPart = {};
                     newSorenessPart.body_part = areaClicked.index;
                     newSorenessPart.pain = areaClicked.group === 'joint';
-                    newSorenessPart.severity = null;
+                    // newSorenessPart.severity = null;
+                    newSorenessPart.tight = null;
+                    newSorenessPart.knots = null;
+                    newSorenessPart.ache = null;
+                    newSorenessPart.sharp = null;
                     newSorenessPart.side = 0;
                     newSorenessFields.push(newSorenessPart);
                 }
@@ -995,7 +1019,7 @@ const PlanLogic = {
             readiness:                 dailyReadiness.readiness,
             sessions_planned:          dailyReadiness.sessions_planned,
             sleep_quality:             dailyReadiness.sleep_quality,
-            soreness:                  _.filter(dailyReadiness.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+            soreness:                  _.filter(dailyReadiness.soreness, u => !u.isClearCandidate),
             user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
             wants_functional_strength: dailyReadiness.wants_functional_strength,
         };
@@ -1075,7 +1099,7 @@ const PlanLogic = {
                 clear_candidates: _.filter(postSession.soreness, {isClearCandidate: true}),
                 event_date:       eventDate,
                 RPE:              newPostSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
-                soreness:         _.filter(postSession.soreness, u => u.severity && u.severity > 0 && !u.isClearCandidate),
+                soreness:         _.filter(postSession.soreness, u => !u.isClearCandidate),
             };
         }
         let clonedPostPracticeSurveys = _.cloneDeep(train.postPracticeSurveys);

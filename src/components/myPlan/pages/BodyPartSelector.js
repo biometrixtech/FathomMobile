@@ -196,9 +196,13 @@ class BodyPartSelector extends Component {
         const { selectedBodyPartObj, } = this.state;
         let foundSelectedBodyPartInReducer = _.find(areaOfSorenessClicked, ['body_part', selectedBodyPartObj.index]);
         let selectedBodyPart = _.find(MyPlanConstants.bodyPartMapping, ['index', selectedBodyPartObj.index]);
+        let hasSeverity = foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
+            foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ||
+            foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
+            foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0;
         this.setState(
             { isModalOpen: false, selectedBodyPartObj: {}, },
-            () => foundSelectedBodyPartInReducer && (!foundSelectedBodyPartInReducer.severity || foundSelectedBodyPartInReducer.severity === 0) ?
+            () => foundSelectedBodyPartInReducer && !hasSeverity ?
                 handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side)
                 :
                 null,
@@ -225,14 +229,34 @@ class BodyPartSelector extends Component {
         if(selectedBodyPart) {
             let mergedBodyParts = _.concat(areaOfSorenessClicked);
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
+            let severityValue = foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ?
+                foundSelectedBodyPartInReducer.ache
+                : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ?
+                    foundSelectedBodyPartInReducer.knots
+                    : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ?
+                        foundSelectedBodyPartInReducer.sharp
+                        : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0 ?
+                            foundSelectedBodyPartInReducer.tight
+                            :
+                            null;
+            let updatedPills = foundSelectedBodyPartInReducer ?
+              [
+                  { index: 0, isSelected: (foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0) || false, text: 'Tight', value: foundSelectedBodyPartInReducer.tight || null, },
+                  { index: 1, isSelected: (foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0) || false, text: 'Knots', value: foundSelectedBodyPartInReducer.knots || null, },
+                  { index: 2, isSelected: (foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0) || false, text: 'Ache', value: foundSelectedBodyPartInReducer.ache || null, },
+                  { index: 3, isSelected: (foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0) || false, text: 'Sharp', value: foundSelectedBodyPartInReducer.sharp || null, },
+              ]
+              :
+              null;
             let newSelectedBodyPartObj = {
                 bodyImage:  selectedBodyPart.image[clickedBodyPart.side],
                 index:      selectedBodyPart.index,
                 isJoint:    (selectedBodyPart.group === 'joint'),
                 nameString: selectedBodyPart.label,
+                pills:      updatedPills,
                 side:       clickedBodyPart.side,
                 sideString: clickedBodyPart.side === 2 ? 'Right' : clickedBodyPart.side === 1 ? 'Left' : '',
-                value:      foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.severity ? foundSelectedBodyPartInReducer.severity : 0,
+                value:      severityValue,
             };
             if(foundSelectedBodyPartInReducer) {
                 this.setState({ isModalOpen: true, selectedBodyPartObj: newSelectedBodyPartObj, });
@@ -315,7 +339,7 @@ class BodyPartSelector extends Component {
                     <Animated.View style={[backAnimatedStyle, styles.flipCard, styles.flipCardBack,]}>
                         <RNImage
                             resizeMode={'contain'}
-                            source={require('../../../../assets/images/body/body_overlay/body_full_back.png')}
+                            source={require('../../../../assets/images/body/body_overlay_selector/body_full_back.png')}
                             style={{height: front.height, width: front.width,}}
                         />
                         <View style={{height: front.height, position: 'absolute', width: front.width,}}>

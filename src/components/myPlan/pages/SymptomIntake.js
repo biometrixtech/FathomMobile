@@ -67,6 +67,34 @@ class SymptomIntake extends Component {
         };
     }
 
+    componentDidUpdate = prevProps => {
+        const { isModalOpen, selectedBodyPart, } = this.props;
+        if(
+            prevProps.isModalOpen !== isModalOpen && isModalOpen &&
+            prevProps.selectedBodyPart !== selectedBodyPart &&
+            selectedBodyPart.pills
+        ) {
+            let severityValue = selectedBodyPart.pills.ache && selectedBodyPart.pills.ache > 0 ?
+                selectedBodyPart.pills.ache
+                : selectedBodyPart.pills.knots && selectedBodyPart.pills.knots > 0 ?
+                    selectedBodyPart.pills.knots
+                    : selectedBodyPart.pills.sharp && selectedBodyPart.pills.sharp > 0 ?
+                        selectedBodyPart.pills.sharp
+                        : selectedBodyPart.pills.tight && selectedBodyPart.pills.tight > 0 ?
+                            selectedBodyPart.pills.tight
+                            :
+                            null;
+            this.setState(
+                {
+                    isBtnValid:  this._validateForm(true, selectedBodyPart.pills),
+                    isValid:     this._validateForm(false, selectedBodyPart.pills),
+                    pills:       selectedBodyPart.pills,
+                    sliderValue: severityValue,
+                },
+            );
+        }
+    }
+
     _handleContinue = () => {
         const { handleContinue, } = this.props;
         this.setState(
@@ -95,12 +123,7 @@ class SymptomIntake extends Component {
                 pills:       newPillsState.pills,
                 sliderValue: !this._validateForm() ? null : this.state.sliderValue,
             },
-            () => {
-                if(!this._validateForm()) {
-                    handleFormChange('soreness', 0, false, selectedBodyPart.index, selectedBodyPart.side, true);
-                    handleFormChange('soreness', null, false, selectedBodyPart.index, selectedBodyPart.side, false, true); // set movement to null
-                }
-            }
+            () => handleFormChange('soreness', this.state.pills, false, selectedBodyPart.index, selectedBodyPart.side, true),
         );
     }
 
@@ -122,21 +145,17 @@ class SymptomIntake extends Component {
                 pills:       newPillsState.pills,
                 sliderValue: value,
             },
-            () => {
-                // TODO: ACTUALLY SEND OVER PILL DETAILS!
-                handleFormChange('soreness', value, false, selectedBodyPart.index, selectedBodyPart.side, value === 0 ? true : false);
-                handleFormChange('soreness', null, false, selectedBodyPart.index, selectedBodyPart.side, false, true); // set movement to null
-            }
+            () => handleFormChange('soreness', this.state.pills, false, selectedBodyPart.index, selectedBodyPart.side, value === 0 ? true : false),
         );
     }
 
-    _validateForm = validateBtn => {
+    _validateForm = (validateBtn, updatedPills) => {
         const { pills, } = this.state;
         if(validateBtn) {
-            let numberOfPillsWithValue = _.filter(pills, p => p.isSelected && p.value && p.value > 0).length;
+            let numberOfPillsWithValue = _.filter(updatedPills ? updatedPills : pills, p => p.isSelected && p.value && p.value > 0).length;
             return numberOfPillsWithValue > 0;
         }
-        let numberOfSelectedPills = _.filter(pills, ['isSelected', true]).length;
+        let numberOfSelectedPills = _.filter(updatedPills ? updatedPills : pills, ['isSelected', true]).length;
         return numberOfSelectedPills > 0;
     }
 
