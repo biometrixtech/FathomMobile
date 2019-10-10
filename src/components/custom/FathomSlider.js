@@ -41,8 +41,8 @@ const FathomSlider = ({
     thumbTintColor,
     value,
 }) => (
-    <View style={{flex: 1, flexDirection: 'row',}}>
-        <View style={{alignItems: 'flex-end', flex: 4, justifyContent: 'space-between',}}>
+    <View style={{flex: 1, flexDirection: 'row', paddingVertical: AppSizes.padding,}}>
+        {/*<View style={{alignItems: 'flex-end', flex: 4, justifyContent: 'space-between',}}>
             <Text style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{' '}</Text>
             { _.map(MyPlanConstants.postSessionFeel, (val, key) => (
                 <Text
@@ -56,8 +56,8 @@ const FathomSlider = ({
                     {key}
                 </Text>
             ))}
-        </View>
-        <View style={{flex: 2, justifyContent: 'center',}}>
+        </View>*/}
+        <View style={{flex: 1, justifyContent: 'center',}}>
             <Slider
                 maximumValue={maximumValue}
                 minimumTrackTintColor={AppColors.zeplin.yellow}
@@ -73,7 +73,7 @@ const FathomSlider = ({
                 value={value}
             />
         </View>
-        <View style={{flex: 4, justifyContent: 'space-between',}}>
+        {/*<View style={{flex: 4, justifyContent: 'space-between',}}>
             <Text style={{color: AppColors.white, fontSize: AppFonts.scaleFont(12),}}>{' '}</Text>
             { _.map(MyPlanConstants.postSessionFeel, (val, key) => (
                 <Text
@@ -87,7 +87,7 @@ const FathomSlider = ({
                     {val.toUpperCase()}
                 </Text>
             ))}
-        </View>
+        </View>*/}
     </View>
 );
 
@@ -96,7 +96,7 @@ FathomSlider.propTypes = {
     handleFormChange: PropTypes.func.isRequired,
     maximumValue:     PropTypes.number.isRequired,
     minimumValue:     PropTypes.number.isRequired,
-    name:             PropTypes.string.isRequired,
+    name:             PropTypes.string,
     orientation:      PropTypes.string,
     step:             PropTypes.number,
     thumbTintColor:   PropTypes.string,
@@ -104,6 +104,7 @@ FathomSlider.propTypes = {
 };
 
 FathomSlider.defaultProps = {
+    name:           '',
     orientation:    'vertical',
     step:           1,
     thumbTintColor: AppColors.zeplin.yellow,

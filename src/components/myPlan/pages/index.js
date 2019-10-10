@@ -4,6 +4,7 @@
 
 import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
+import BodyPartSelector from './BodyPartSelector';
 import DefaultListGap from './DefaultListGap';
 import ExerciseCompletionModal from './ExerciseCompletionModal';
 import ExerciseList from './ExerciseList';
@@ -15,6 +16,7 @@ import HealthKitWorkouts from './HealthKitWorkouts';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
+import ReturnSensorsModal from './ReturnSensorsModal';
 import ScaleButton from './ScaleButton';
 import SessionsCompletionModal from './SessionsCompletionModal';
 import SingleExerciseItem from './SingleExerciseItem';
@@ -30,6 +32,7 @@ import TimedExercise from './TimedExercise';
 export {
     AreasOfSoreness,
     BackNextButtons,
+    BodyPartSelector,
     DefaultListGap,
     ExerciseCompletionModal,
     ExerciseList,
@@ -41,6 +44,7 @@ export {
     PostSessionSurvey,
     ProgressPill,
     ReadinessSurvey,
+    ReturnSensorsModal,
     ScaleButton,
     SessionsCompletionModal,
     SingleExerciseItem,

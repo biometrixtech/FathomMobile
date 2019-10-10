@@ -3,6 +3,7 @@
  *
       <BackNextButtons
           addBtnText={'Add another session'}
+          addOpacityToSubmitBtn={0.8}
           handleFormSubmit={() => handleFormSubmit()}
           isValid={isFormValidItems.willTrainLaterValid}
           onBackClick={() => this._renderNextPage(8, isFormValidItems, true, isFirstFunctionalStrength, isSecondFunctionalStrength, newSoreBodyParts, null, areaOfSorenessClicked)}
@@ -20,6 +21,7 @@ import { ActivityIndicator, Platform, StyleSheet, TouchableOpacity, View, } from
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { TabIcon, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 const addSubmitBtnWidth = Platform.OS === 'ios' ?
     ((AppSizes.screen.width - ((AppSizes.paddingSml * 2) + (AppSizes.paddingXSml * 2))) / 2)
@@ -60,6 +62,7 @@ const styles = StyleSheet.create({
 /* Component ==================================================================== */
 const BackNextButtons = ({
     addBtnText,
+    addOpacityToSubmitBtn,
     handleFormSubmit,
     isSubmitBtnSubmitting,
     isValid,
@@ -136,11 +139,18 @@ const BackNextButtons = ({
                     AppStyles.paddingVerticalSml,
                     styles.submitBtn,
                     showAddBtn ? {} : { marginRight: AppSizes.paddingMed, },
-                    {
-                        backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
-                        borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
-                        borderWidth:     1,
-                    }
+                    addOpacityToSubmitBtn ?
+                        {
+                            backgroundColor: isValid ? `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(addOpacityToSubmitBtn)}` : `${AppColors.white}${PlanLogic.returnHexOpacity(addOpacityToSubmitBtn)}`,
+                            borderColor:     isValid ? `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(addOpacityToSubmitBtn)}` : `${AppColors.zeplin.slateXLight}${PlanLogic.returnHexOpacity(addOpacityToSubmitBtn)}`,
+                            borderWidth:     1,
+                        }
+                        :
+                        {
+                            backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.white,
+                            borderColor:     isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
+                            borderWidth:     1,
+                        }
                 ]}
             >
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
@@ -154,7 +164,7 @@ const BackNextButtons = ({
                         robotoMedium
                         style={[
                             AppStyles.textCenterAligned,
-                            Platform.OS === 'ios' ? { lineHeight: 20, } : {},
+                            Platform.OS === 'ios' ? { lineHeight: AppSizes.padding, } : {},
                             {
                                 color:      isValid ? AppColors.white : AppColors.zeplin.slateXLight,
                                 fontSize:   AppFonts.scaleFont(14),
@@ -197,6 +207,7 @@ const BackNextButtons = ({
 
 BackNextButtons.propTypes = {
     addBtnText:              PropTypes.string,
+    addOpacityToSubmitBtn:   PropTypes.number,
     handleFormSubmit:        PropTypes.func,
     isSubmitBtnSubmitting:   PropTypes.bool,
     isValid:                 PropTypes.bool.isRequired,
@@ -212,6 +223,7 @@ BackNextButtons.propTypes = {
 
 BackNextButtons.defaultProps = {
     addBtnText:              'Add another session',
+    addOpacityToSubmitBtn:   null,
     handleFormSubmit:        null,
     isSubmitBtnSubmitting:   false,
     onBackClick:             null,
