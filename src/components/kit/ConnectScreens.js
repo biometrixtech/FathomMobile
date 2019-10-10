@@ -103,7 +103,7 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
                         <TabIcon
                             color={color}
                             icon={'close'}
-                            onPress={() => onClose ? onClose() : Actions.pop()}
+                            onPress={onClose ? () => onClose() : () => Actions.pop()}
                             reverse={false}
                             size={30}
                         />
@@ -917,7 +917,7 @@ const ReturnSensors = ({ currentPage, onBack, onClose, nextBtn, page, }) => {
     let content = SensorLogic.getReturnSensorsContent(styles)[page];
     return (
         <View style={{flex: 1,}}>
-            <TopNav darkColor={true} onBack={onBack} showClose={onClose} step={false} />
+            <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={false} />
             <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                 {content.title}
             </View>

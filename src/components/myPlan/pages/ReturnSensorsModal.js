@@ -12,27 +12,18 @@
 /* global fetch console */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-// import { Animated, Alert, Easing, Platform, StyleSheet, View, } from 'react-native';
 
 // Compoenents
 import { ReturnSensors, } from '../../kit/ConnectScreens';
-// import { Calibration, ExtraPages, Placement, TopNav, } from '../../kit/ConnectScreens';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, } from '../../../constants';
-// import { Actions as DispatchActions, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { FathomModal, } from '../../custom';
-// import { AnimatedProgressBar, Button, Spacer, TabIcon, Text, } from '../../custom';
 import { store, } from '../../../store';
-// import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import { Pages, } from 'react-native-pages';
 import _ from 'lodash';
-// import Accordion from 'react-native-collapsible/Accordion';
-// import LinearGradient from 'react-native-linear-gradient';
-// import LottieView from 'lottie-react-native';
-// import Video from 'react-native-video';
 
 /* Component ==================================================================== */
 class ReturnSensorsModal extends PureComponent {
