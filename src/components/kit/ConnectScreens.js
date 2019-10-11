@@ -614,7 +614,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
                     containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '45%',}}
                     onPress={() => nextBtn()}
                     raised={true}
-                    title={'Next'}
+                    title={'Got to your plan'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                 />
             </View>
@@ -743,6 +743,7 @@ const Connect = ({
     onClose,
     nextBtn,
     page,
+    pageFirst,
     showTopNavStep = true,
 }) => {
     let content = SensorLogic.getConnectContent(styles)[page];
@@ -874,19 +875,19 @@ const Connect = ({
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
                     style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                 >
-                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'First, let\'s connect PRO to your account'}</Text>
+                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{pageFirst ? 'First, let\'s connect PRO to your account' : 'Now let\'s Connect Fathom PRO to Wifi!'}</Text>
                     <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                             <View style={{alignItems: 'center', height: 20, justifyContent: 'center', width: 40,}}>
                                 <TabIcon
                                     color={AppColors.zeplin.yellow}
-                                    icon={'bluetooth'}
+                                    icon={pageFirst ? 'bluetooth' : 'wifi'}
                                     reverse={false}
                                     size={20}
                                 />
                             </View>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{'Mobile Bluetooth ON'}</Text>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{pageFirst ? 'Mobile Bluetooth ON' : 'Home Wifi In Range'}</Text>
                         </View>
                         <View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
@@ -899,12 +900,22 @@ const Connect = ({
                             </View>
                         </View>
                     </View>
+                    { !pageFirst &&
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignSelf: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.padding, width: '75%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={'Connect Wifi Now'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
+                    }
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                        containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
-                        onPress={() => nextBtn()}
+                        containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
+                        onPress={() => nextBtn(!pageFirst ? 3 : 1)}
                         raised={true}
-                        title={'Continue'}
+                        title={pageFirst ? 'Continue' : 'Connect Wifi Later'}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 </LinearGradient>

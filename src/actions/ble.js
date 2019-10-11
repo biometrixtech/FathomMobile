@@ -373,6 +373,7 @@ const startConnection = async (device) => {
                     });
                     return resolve(macAddress);
                 } catch(error) {
+                    console.log('error',error);
                     let errorObj = await handleError(error, device);
                     return reject(errorObj);
                 }

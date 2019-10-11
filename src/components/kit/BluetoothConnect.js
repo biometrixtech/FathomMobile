@@ -40,7 +40,7 @@ import Toast, { DURATION } from 'react-native-easy-toast';
 
 // setup consts
 const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
-const WIFI_PAGE_NUMBER = 16; // TODO: UPDATE ME
+const WIFI_PAGE_NUMBER = 5;
 
 /* Component ==================================================================== */
 class BluetoothConnect extends Component {
@@ -90,14 +90,13 @@ class BluetoothConnect extends Component {
 
     _connectSensorToWifi = () => {
         Keyboard.dismiss();
-        const { assignKitIndividual, bluetooth, getSensorFiles, updateUser, user, } = this.props;
+        const { bluetooth, getSensorFiles, updateUser, user, } = this.props;
         const { currentWifiConnection, } = this.state;
         // setup ble write variables
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
         let ssid = currentWifiConnection.ssid;
         let password = currentWifiConnection.password;
         let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
-        let macAddress = bluetooth.accessoryData.wifiMacAddress;
         // setup user variables
         let newUserPayloadObj = {};
         newUserPayloadObj.sensor_data = {};
@@ -116,7 +115,6 @@ class BluetoothConnect extends Component {
         return ble.writeWifiDetailsToSensor(device, ssid, password, securityByte) // 1. write details to sensor
             .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
             .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
-            .then(() => assignKitIndividual({wifiMacAddress: macAddress,}, user)) // 3. PATCH hardware specific endpoint
             .then(() => getSensorFiles(newUserObj)) // 4. grab sensor files as they may have changed
             .then(() =>
                 this.setState(
@@ -144,9 +142,10 @@ class BluetoothConnect extends Component {
                         return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
                     }
                     // TODO: THIS NEEDS TO BE FLUSHED OUT
-                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                    let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                    return AppUtil.handleAPIErrorAlert(message, header);
+                    // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    // let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    // return AppUtil.handleAPIErrorAlert(message, header);
+                    return console.log(err);
                 }, 500));
             });
     }
@@ -175,6 +174,7 @@ class BluetoothConnect extends Component {
     }
 
     _handleBLEPair = () => {
+        const { assignKitIndividual, user, } = this.props;
         if(!this._timer) {
             this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, isExit =>
                 _.delay(() => isExit ?
@@ -209,9 +209,13 @@ class BluetoothConnect extends Component {
                 }
                 return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
             }
-            if(!response.accessory.owner_id) {
+            if(
+                !response.accessory.owner_id || (response.accessory.owner_id === user.id)
+            ) {
                 clearTimeout(this._timer);
-                return this._toggleAlertNotification();
+                return assignKitIndividual({wifiMacAddress: response.accessory.mac_address,}, user)
+                    .then(res => this._toggleAlertNotification())
+                    .catch(err => this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, }))));
             }
             return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
         });
@@ -235,10 +239,10 @@ class BluetoothConnect extends Component {
                             if(!this._isMounted) {
                                 return '';
                             }
-                            // TODO: THIS NEEDS TO BE FLUSHED OUT
-                            let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                            let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                            AppUtil.handleAPIErrorAlert(message, header);
+                            // // TODO: THIS NEEDS TO BE FLUSHED OUT
+                            // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                            // let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                            // AppUtil.handleAPIErrorAlert(message, header);
                             return callback && callback();
                         });
                 }
@@ -254,11 +258,11 @@ class BluetoothConnect extends Component {
                         if(!this._isMounted) {
                             return '';
                         }
-                        let errorObj = await ble.handleError(err, device);
-                        // TODO: THIS NEEDS TO BE FLUSHED OUT
-                        let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
-                        let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
-                        AppUtil.handleAPIErrorAlert(message, header);
+                        // // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        // let errorObj = await ble.handleError(err, device);
+                        // let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
+                        // let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
+                        // AppUtil.handleAPIErrorAlert(message, header);
                         return callback && callback();
                     });
             }
@@ -355,10 +359,10 @@ class BluetoothConnect extends Component {
     _handleWifiNotInRange = () => {
         Alert.alert(
             '',
-            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
+            'To connect wifi, your PRO kit needs to be in range of your home network. If not currently in range, connect to wifi later to sync your training data.',
             [
                 {
-                    text:    'I\'ll do it later',
+                    text:    'Connect Later',
                     onPress: () => {
                         this._handleDisconnection(false, () => {
                             if(this.props.user && this.props.user.sensor_data && (!this.props.user.sensor_data.mobile_udid || !this.props.user.sensor_data.sensor_pid)) {
@@ -370,7 +374,7 @@ class BluetoothConnect extends Component {
                     },
                 },
                 {
-                    text:  'Configure Now',
+                    text:  'Connect Now',
                     style: 'cancel',
                 },
             ],
@@ -414,46 +418,46 @@ class BluetoothConnect extends Component {
                         return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
                     }
                     // TODO: THIS NEEDS TO BE FLUSHED OUT
-                    let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                    let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                    return AppUtil.handleAPIErrorAlert(message, header);
+                    // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                    // let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                    // return AppUtil.handleAPIErrorAlert(message, header);
+                    return console.log(err);
                 });
             });
     }
 
     _onPageScrollEnd = currentPage => {
-        // TODO: UPDATE ME ENTIRELY AND CONFIRM NO OTHER PAGES NEED HELP
-        // const checkpointPages = [0, 1, 8, 11, 14, WIFI_PAGE_NUMBER];
-        // if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
-        //     this._updateUserCheckpoint(currentPage);
-        // }
-        // if(currentPage === 15) { // turn on BLE & connect to accessory
-        //     if (Platform.OS === 'android') {
-        //         ble.enable();
-        //     }
-        //     if (Platform.OS === 'android' && Platform.Version >= 23) {
-        //         PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-        //             if (result) {
-        //                 console.log('Permission is OK');
-        //             } else {
-        //                 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
-        //                     .then(res =>
-        //                         this.setState({
-        //                             bleState: res === 'granted' ? 'PoweredOn' : res,
-        //                         })
-        //                     );
-        //             }
-        //         });
-        //     }
-        // } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
-        //     this._timer = _.delay(() => this._handleWifiScan(), 2000);
-        // } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
-        //     this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
-        // }
+        const checkpointPages = [8];
+        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+            this._updateUserCheckpoint(currentPage);
+        }
+        if(currentPage === 2) { // turn on BLE & connect to accessory
+            if (Platform.OS === 'android') {
+                ble.enable();
+            }
+            if (Platform.OS === 'android') {
+                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
+                    if (result) {
+                        console.log('Permission is OK');
+                    } else {
+                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+                            .then(res =>
+                                this.setState({
+                                    bleState: res === 'granted' ? 'PoweredOn' : res,
+                                })
+                            );
+                    }
+                });
+            }
+        } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
+            this._timer = _.delay(() => this._handleWifiScan(), 2000);
+        } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
+            this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
+        }
     }
 
-    _renderNextPage = () => {
-        let nextPageIndex = (this.state.pageIndex + 1);
+    _renderNextPage = (numberOfPages = 1) => {
+        let nextPageIndex = (this.state.pageIndex + numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
         this.setState({ pageIndex: nextPageIndex, });
     }
@@ -481,14 +485,14 @@ class BluetoothConnect extends Component {
     }
 
     _toggleAlertNotification = () => {
-        if(this.state.pageIndex === (WIFI_PAGE_NUMBER - 1)) {
+        if(this.state.pageIndex === 2) {
             Alert.alert(
                 '',
                 'Did the LED turn green?',
                 [
                     {
                         text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage())),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage(), true)),
                         style:   'cancel',
                     },
                     {
@@ -571,7 +575,6 @@ class BluetoothConnect extends Component {
             isVideoMuted,
             isWifiScanDone,
         } = this.state;
-        console.log('HIII',pageIndex,pageIndex === 2);
         return(
             <View style={{flex: 1,}}>
 
@@ -590,15 +593,16 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Owner - page 1-4 */}
+                    {/* Owner - pages 1-3 */}
                     <Connect
                         currentPage={pageIndex === 1}
-                        nextBtn={this._renderNextPage}
+                        nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
+                        pageFirst={true}
                     />
-                    {/*<Connect
+                    <Connect
                         currentPage={pageIndex === 2}
                         isLoading={isConnectingToSensor}
                         isNextDisabled={bleState !== 'PoweredOn'}
@@ -608,7 +612,7 @@ class BluetoothConnect extends Component {
                             this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true))
                         }
                         page={1}
-                    />*/}
+                    />
                     <View style={{flex: 1,}}>
                         <TopNav darkColor={true} onBack={this._renderPreviousPage} onClose={() => Actions.pop()} step={1} />
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
@@ -616,7 +620,7 @@ class BluetoothConnect extends Component {
                                 {'Success, you\'re connected!'}
                             </Text>
                             <LottieView
-                                autoPlay={pageIndex === 2} // TODO: UPDATE ME TO 3
+                                autoPlay={pageIndex === 3}
                                 loop={false}
                                 source={require('../../../assets/animation/bluetoothloading.json')}
                                 style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
@@ -625,7 +629,7 @@ class BluetoothConnect extends Component {
                                 <Button
                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                     containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
-                                    onPress={this._renderNextPage}
+                                    onPress={() => this._renderNextPage()}
                                     raised={true}
                                     title={'Next'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
@@ -635,29 +639,13 @@ class BluetoothConnect extends Component {
                     </View>
 
                     {/* Wifi - page 4-5 */}
-
-                    {/* Success - page 6 */}
-                    <Complete
-                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
-                        currentPage={pageIndex === 2} // TODO: UPDATE ME PLS 6}
-                        nextBtn={this._renderNextPage}
-                    />
-
-                    {/* Train - pages 7-8 */}
-                    <Train
-                        currentPage={pageIndex === 3} // TODO: UPDATE ME PLS 7 - IM A CHECKPOINT!}
-                        nextBtn={this._renderNextPage}
+                    <Connect
+                        currentPage={pageIndex === 4}
+                        nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
                         onBack={this._renderPreviousPage}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
                     />
-                    <Train
-                        currentPage={pageIndex === 8} // TODO: UPDATE ME PLS 8}
-                        nextBtn={() => Actions.pop()}
-                        onBack={this._renderPreviousPage}
-                        page={1}
-                    />
-
-                    {/* Connect - pages 14-17 *}
                     <Connect
                         availableNetworks={availableNetworks}
                         currentPage={pageIndex === WIFI_PAGE_NUMBER}
@@ -676,12 +664,27 @@ class BluetoothConnect extends Component {
                         }}
                         page={3}
                     />
-                    <Connect
-                        currentPage={pageIndex === 17}
+
+                    {/* Success - page 6 */}
+                    <Complete
+                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
+                        currentPage={pageIndex === 6}
                         nextBtn={this._renderNextPage}
-                        onClose={() => Actions.pop()}
-                        page={4}
-                    />*/}
+                    />
+
+                    {/* Train - pages 7-9 */}
+                    <Train
+                        currentPage={pageIndex === 7}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={0}
+                    />
+                    <Train
+                        currentPage={pageIndex === 8}
+                        nextBtn={() => AppUtil.pushToScene('myPlan')}
+                        onBack={this._renderPreviousPage}
+                        page={1}
+                    />
 
                 </Pages>
 

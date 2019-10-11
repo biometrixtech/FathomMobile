@@ -395,16 +395,16 @@ class SensorFilesPage extends Component {
     _handleWifiNotInRange = () => {
         Alert.alert(
             '',
-            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
+            'To connect wifi, your PRO kit needs to be in range of your home network. If not currently in range, connect to wifi later to sync your training data.',
             [
                 {
-                    text:    'I\'ll do it later',
+                    text:    'Connect Later',
                     onPress: () => {
                         this._handleDisconnection(false, () => Actions.pop(), true);
                     },
                 },
                 {
-                    text:  'Configure Now',
+                    text:  'Connect Now',
                     style: 'cancel',
                 },
             ],
@@ -496,7 +496,7 @@ class SensorFilesPage extends Component {
                 [
                     {
                         text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {})),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {}, true)),
                         style:   'cancel',
                     },
                     {
