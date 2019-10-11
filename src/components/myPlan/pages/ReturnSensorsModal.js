@@ -122,7 +122,7 @@ class ReturnSensorsModal extends PureComponent {
                         currentPage={pageIndex === 3}
                         onBack={this._renderPreviousPage}
                         onClose={handleModalToggle}
-                        nextBtn={this._renderNextPage}
+                        nextBtn={handleModalToggle}
                         page={3}
                     />
 

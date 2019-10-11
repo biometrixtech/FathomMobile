@@ -96,6 +96,16 @@ function getFontStyle(typeOrWeight = '400', family = 'oswald') {
     return fontStyle;
 }
 
+function getTextStyles(color, fontSize, alignment) {
+    let styleObj = {};
+    styleObj.color = color;
+    styleObj.fontSize = scaleFont(fontSize);
+    if(alignment) {
+        styleObj.textAlign = alignment;
+    }
+    return styleObj;
+}
+
 export default {
     base:             { ...base, },
     h0:               { ...base, size: base.size * 4,    lineHeight: lineHeight(base.size * 4.25) },
@@ -130,5 +140,6 @@ export default {
     robotoThin:       { ...getFontStyle('Thin',    'roboto') },
     getFontStyle,
     scaleFont,
-    lineHeight
+    lineHeight,
+    getTextStyles
 };

@@ -4,6 +4,7 @@
     <SymptomIntake
         handleContinue={this._handleContinue}
         handleFormChange={handleFormChange}
+        isBodyOverlayFront={isBodyOverlayFront}
         isModalOpen={isModalOpen}
         selectedBodyPart={selectedBodyPartObj}
     />
@@ -19,6 +20,7 @@ import { FathomModal, FathomSlider, SVGImage, Spacer, TabIcon, Text, } from '../
 
 // import third-party libraries
 import _ from 'lodash';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const DEFAULT_PILLS = [
     { index: 0, isSelected: false, text: 'Tight', value: null, },
@@ -129,6 +131,12 @@ class SymptomIntake extends Component {
 
     _handleSliderChange = value => {
         const { handleFormChange, selectedBodyPart, } = this.props;
+        // regsiter haptics
+        const options = {
+            enableVibrateFallback:       false,
+            ignoreAndroidSystemSettings: false,
+        };
+        ReactNativeHapticFeedback.trigger('impactMedium', options);
         // update values of pills
         let newPills = _.cloneDeep(this.state.pills);
         newPills = _.map(newPills, pill => {
@@ -160,7 +168,7 @@ class SymptomIntake extends Component {
     }
 
     render = () => {
-        const { isModalOpen, selectedBodyPart, } = this.props;
+        const { isBodyOverlayFront, isModalOpen, selectedBodyPart, } = this.props;
         const { isBtnValid, isValid, pills, } = this.state;
         return (
             <FathomModal
@@ -192,6 +200,7 @@ class SymptomIntake extends Component {
                             { (selectedBodyPart && selectedBodyPart.bodyImage) &&
                                 <SVGImage
                                     image={selectedBodyPart.bodyImage}
+                                    isFront={isBodyOverlayFront}
                                     style={{height: (AppSizes.paddingXLrg * 2), width: (AppSizes.paddingXLrg * 2),}}
                                 />
                             }
@@ -216,7 +225,7 @@ class SymptomIntake extends Component {
                                 selectedBodyPart.nameString
                             }
                         </Text>
-                        {' discomfort feels:'}
+                        {' feels:'}
                     </Text>
                     <Spacer size={AppSizes.paddingXSml} />
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>
@@ -237,7 +246,7 @@ class SymptomIntake extends Component {
                         )}
                     </View>
                     <Spacer size={AppSizes.paddingLrg} />
-                    <Text robotoRegular style={{color: isValid ? AppColors.zeplin.slate : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'What\'s the severity of your discomfort?'}</Text>
+                    <Text robotoRegular style={{color: isValid ? AppColors.zeplin.slate : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'Rate the severity'}</Text>
                     <Spacer size={AppSizes.paddingLrg} />
                     <FathomSlider
                         disabled={!isValid}
@@ -264,10 +273,11 @@ class SymptomIntake extends Component {
 }
 
 SymptomIntake.propTypes = {
-    handleContinue:   PropTypes.func.isRequired,
-    handleFormChange: PropTypes.func.isRequired,
-    isModalOpen:      PropTypes.bool.isRequired,
-    selectedBodyPart: PropTypes.object.isRequired,
+    handleContinue:     PropTypes.func.isRequired,
+    handleFormChange:   PropTypes.func.isRequired,
+    isBodyOverlayFront: PropTypes.bool.isRequired,
+    isModalOpen:        PropTypes.bool.isRequired,
+    selectedBodyPart:   PropTypes.object.isRequired,
 };
 
 SymptomIntake.defaultProps = {};

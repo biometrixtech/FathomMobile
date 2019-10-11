@@ -2740,7 +2740,7 @@ const PlanLogic = {
                                     : activityStatus === 'NO_WIFI_SETUP' ?
                                         'Finish PRO Kit Setup'
                                         : activityStatus === 'CREATE_COMPLETE' && activity.end_date ?
-                                            'Workout Complete'
+                                            'Waiting to Upload'
                                             : activityStatus === 'NO_DATA' ?
                                                 'No workout data found'
                                                 : activityStatus === 'TOO_SHORT' ?
@@ -2806,13 +2806,9 @@ const PlanLogic = {
     returnBodyOverlapMapping: newSoreBodyParts => {
         // setup our mapping per click
         let bodyPartMapping = [
-            { cleanedKey: 1, index: [94, 95, 96, 97, 114, 115, 116, 117, 135, 136, 137], isFront: true, side: 1, },
-            { cleanedKey: 1, index: [84, 85, 86, 87, 104, 105, 106, 107, 124, 125, 126], isFront: true, side: 2, },
             { cleanedKey: 2, index: [111, 112, 113, 114, 131, 132, 133, 134, 151, 152, 153, 154], isFront: true, side: 1, },
             { cleanedKey: 2, index: [108, 109, 110, 127, 128, 129, 130, 147, 148, 149, 150], isFront: true, side: 2, },
             { cleanedKey: 3, index: [168, 169, 170, 171, 172, 173, 188, 189, 190, 191, 192, 193, 208, 209, 210, 211, 212, 213, 227, 228, 229, 230, 231, 232, 233, 234, 249, 250, 251, 252], isFront: true, side: 0, },
-            { cleanedKey: 4, index: [253, 254, 255, 273, 274, 275], isFront: true, side: 1, },
-            { cleanedKey: 4, index: [246, 247, 248, 266, 267, 268], isFront: true, side: 2, },
             { cleanedKey: 5, index: [271, 272, 291, 292, 293, 311, 312, 331, 332], isFront: true, side: 1, },
             { cleanedKey: 5, index: [269, 270, 288, 289, 290, 309, 310, 329, 330], isFront: true, side: 2, },
             { cleanedKey: 6, index: [313, 314, 333, 334, 351, 352, 353, 354, 371, 372, 373, 391, 392, 393], isFront: true, side: 1, },
@@ -2823,34 +2819,100 @@ const PlanLogic = {
             { cleanedKey: 8, index: [466, 467, 468, 469, 470, 486, 487, 488, 489, 490, 506, 507, 508, 509, 510, 526, 527, 528, 529, 530], isFront: true, side: 2, },
             { cleanedKey: 9, index: [551, 552, 553, 554], isFront: true, side: 1, },
             { cleanedKey: 9, index: [547, 548, 549, 550], isFront: true, side: 2, },
-            { cleanedKey: 10, index: [571, 572, 573, 574, 591, 592, 593, 594], isFront: true, side: 1, },
-            { cleanedKey: 10, index: [567, 568, 569, 570, 587, 588, 589, 590], isFront: true, side: 2, },
+            { cleanedKey: 10, index: [571, 572, 573, 574, 575, 591, 592, 593, 594, 595], isFront: true, side: 1, },
+            { cleanedKey: 10, index: [566, 567, 568, 569, 570, 587, 586, 588, 589, 590], isFront: true, side: 2, },
             { cleanedKey: 11, index: [294, 295, 296, 315, 316, 335, 336, 337, 355, 356, 357, 374, 375, 376, 394, 395, 396], isFront: true, side: 1, },
             { cleanedKey: 11, index: [285, 286, 287, 305, 306, 307, 324, 325, 326, 344, 345, 346, 365, 366, 367, 385, 386, 387], isFront: true, side: 2, },
             { cleanedKey: 12, index: [210, 211, 227, 228, 229, 230, 231, 232, 233, 247, 248, 249, 250, 251, 252, 253, 254], isFront: false, side: 0, },
             { cleanedKey: 14, index: [266, 267, 268, 269, 270, 286, 287, 288, 289, 290, 306, 307, 308, 309, 310], isFront: false, side: 1, },
             { cleanedKey: 14, index: [271, 272, 273, 274, 275, 291, 291, 293, 294, 295, 311, 312, 313, 314, 315], isFront: false, side: 2, },
             { cleanedKey: 15, index: [326, 327, 328, 329, 330, 346, 347, 348, 349, 350, 366, 367, 368, 369, 370, 386, 387, 388, 389, 390, 407, 408, 409, 410], isFront: false, side: 1, },
-            { cleanedKey: 15, index: [331, 332, 333, 334, 335, 351, 352, 353, 354, 355, 371, 372, 373, 374, 375, 391, 392, 393, 394, 411, 412, 413, 414], isFront: false, side: 2, },
+            { cleanedKey: 15, index: [331, 332, 333, 334, 335, 351, 352, 353, 354, 355, 371, 372, 373, 374, 375, 391, 392, 393, 394, 395, 411, 412, 413, 414], isFront: false, side: 2, },
             { cleanedKey: 16, index: [427, 428, 429, 430, 447, 448, 449, 450, 467, 468, 469, 470, 487, 488, 489, 490, 508, 509, 510, 528, 529, 530, 548, 549, 550], isFront: false, side: 1, },
             { cleanedKey: 16, index: [431, 432, 433, 343, 452, 452, 453, 454, 471, 472, 473, 474, 491, 492, 493, 493, 511, 512, 513, 531, 532, 533, 551, 552, 553], isFront: false, side: 2, },
             { cleanedKey: 17, index: [567, 568, 569, 570, 587, 588, 589, 590], isFront: false, side: 1, },
             { cleanedKey: 17, index: [571, 572, 573, 574, 591, 592, 593, 594], isFront: false, side: 2, },
-            { cleanedKey: 18, index: [68, 69, 70, 71, 72, 73, 88, 89, 90, 91, 92, 93], isFront: false, side: 0, },
+            { cleanedKey: 18, index: [69, 70, 71, 72, 88, 89, 90, 91, 92, 93, 109, 110, 111, 112, 129, 130, 131, 132, 150, 151], isFront: false, side: 0, },
+            { cleanedKey: 18, index: [68, 69, 70, 71, 72, 73, 87, 88, 89, 90, 91, 92, 93, 94], isFront: true, side: 0, },
             { cleanedKey: 19, index: [204, 205, 206, 224, 225, 226], isFront: false, side: 1, },
             { cleanedKey: 19, index: [215, 216, 217, 235, 236, 237], isFront: false, side: 2, },
             { cleanedKey: 20, index: [277, 278, 279, 297, 298, 299], isFront: true, side: 1, },
             { cleanedKey: 20, index: [262, 263, 264, 282, 283, 284], isFront: true, side: 2, },
+            { cleanedKey: 20, index: [277, 278, 279, 297, 298, 299], isFront: false, side: 1, },
+            { cleanedKey: 20, index: [262, 263, 264, 282, 283, 284], isFront: false, side: 2, },
             { cleanedKey: 21, index: [147, 148, 149, 167, 168, 169, 170, 187, 188, 189, 190, 208, 209], isFront: false, side: 1, },
             { cleanedKey: 21, index: [152, 153, 154, 171, 172, 173, 174, 191, 192, 193, 194, 212, 213], isFront: false, side: 2, },
             { cleanedKey: 22, index: [155, 156, 156, 175, 176, 177, 195, 196, 197], isFront: true, side: 1, },
             { cleanedKey: 22, index: [144, 145, 146, 164, 165, 166, 184, 185, 186], isFront: true, side: 2, },
             { cleanedKey: 23, index: [144, 145, 146, 164, 165, 166, 184, 185, 186], isFront: false, side: 1, },
+            { cleanedKey: 23, index: [155, 156, 156, 175, 176, 177, 195, 196, 197], isFront: false, side: 2, },
+            { cleanedKey: 24, index: [223, 242, 243, 244, 245, 262, 263, 264], isFront: false, side: 1, },
+            { cleanedKey: 24, index: [238, 256, 257, 258, 259, 277, 278, 279], isFront: false, side: 2, },
+            { cleanedKey: 24, index: [215, 216, 217, 235, 236, 237, 238, 256, 257, 258], isFront: true, side: 1, },
+            { cleanedKey: 24, index: [204, 205, 206, 223, 224, 225, 226, 243, 244, 245], isFront: true, side: 2, },
+            { cleanedKey: 27, index: [414, 415, 416, 434, 435, 436, 454, 455, 456], isFront: true, side: 1, },
+            { cleanedKey: 27, index: [405, 406, 407, 425, 426, 427, 445, 446, 447], isFront: true, side: 2, },
+            { cleanedKey: 28, index: [253, 254, 255, 273, 274, 275], isFront: true, side: 1, },
+            { cleanedKey: 28, index: [246, 247, 248, 266, 267, 268], isFront: true, side: 2, },
+            { cleanedKey: 29, index: [95, 96, 97, 114, 115, 116, 117, 135, 136, 137], isFront: true, side: 1, },
+            { cleanedKey: 29, index: [84, 85, 86, 104, 105, 106, 107, 124, 125, 126], isFront: true, side: 2, },
+            { cleanedKey: 29, index: [85, 86, 87, 105, 106, 107, 108, 125, 126, 127, 128], isFront: false, side: 1, },
+            { cleanedKey: 29, index: [94, 95, 96, 113, 114, 115, 116, 133, 134, 135, 136], isFront: false, side: 2, },
         ];
         // filter out previous soreness
         let updatedBodyPartMapping = _.filter(bodyPartMapping, o => _.find(newSoreBodyParts, p => o.cleanedKey === p.body_part && o.side === p.side) ? null : o);
         // return cleaned array
         return updatedBodyPartMapping;
+    },
+
+    /**
+      * Handle Body Part Selector Render Logic
+      * - BodyPartSelector
+      */
+    // TODO: UNIT TEST ME
+    handleBodyPartSelectorRenderLogic: (areaOfSorenessClicked, backInterpolate, frontInterpolate, BODY_PART_MAPPING, NUMBER_OF_OVERLAY_GRIDS_HEIGHT = 30, NUMBER_OF_OVERLAY_GRIDS_WIDTH = 20) => {
+        let gridRange = _.range(1, ((NUMBER_OF_OVERLAY_GRIDS_HEIGHT * NUMBER_OF_OVERLAY_GRIDS_WIDTH) + 1));
+        const backAnimatedStyle = { transform: [{ rotateY: backInterpolate, }], };
+        const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate, }], };
+        let mergedBodyParts = _.concat(areaOfSorenessClicked);
+        let backBodyParts = _.filter(mergedBodyParts, o => _.find(BODY_PART_MAPPING, { cleanedKey: o.body_part, isFront: false, }));
+        let frontBodyParts = _.filter(mergedBodyParts, o => _.find(BODY_PART_MAPPING, { cleanedKey: o.body_part, isFront: true, }));
+        return {
+            backAnimatedStyle,
+            backBodyParts,
+            frontAnimatedStyle,
+            frontBodyParts,
+            gridRange,
+        };
+    },
+
+    /**
+      * Handle Single Body Part Selector Render Logic
+      * - BodyPartSelector
+      */
+    // TODO: UNIT TEST ME
+    handleSingleBodyPartSelectorRenderLogic: (areaOfSorenessClicked, selectedBodyPart, body, isBack, _getImageString) => {
+        let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, selectedBodyPart, []);
+        let backSpecificImageStrings = ['Shoulder.svg', 'Forearm.svg', 'UpperBackNeck.svg'];
+        let cleanedImageString = backSpecificImageStrings.includes(areasOfSorenessBodyPart.bodyImage) && isBack ?
+            `${body.side === 2 ? 'R_' : body.side === 1 ? 'L_' : ''}${areasOfSorenessBodyPart.bodyImage.replace('.svg', '')}_Back.svg`
+            :
+            `${body.side === 2 ? 'R_' : body.side === 1 ? 'L_' : ''}${areasOfSorenessBodyPart.bodyImage}`;
+        let bodyImage = _getImageString(cleanedImageString);
+        let severityValue = body.ache && body.ache > 0 ?
+            (body.ache / 10)
+            : body.knots && body.knots > 0 ?
+                (body.knots / 10)
+                : body.sharp && body.sharp > 0 ?
+                    (body.sharp / 10)
+                    : body.tight && body.tight > 0 ?
+                        (body.tight / 10)
+                        :
+                        1.0;
+        return {
+            bodyImage,
+            severityValue,
+        };
     },
 
 };

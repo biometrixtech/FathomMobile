@@ -87,7 +87,7 @@ class AreasOfSoreness extends Component {
             <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center',}}>
                 <View>
                     <Spacer size={AppSizes.padding} />
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.navy, fontSize: AppFonts.scaleFont(32),}]}>{headerTitle}</Text>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25),}]}>{headerTitle}</Text>
                     <Spacer size={AppSizes.padding} />
                     <BodyPartSelector
                         areaOfSorenessClicked={areaOfSorenessClicked}

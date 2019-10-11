@@ -34,7 +34,7 @@ const customStyles = StyleSheet.create({
     }),
     thumbStyle: isValid => ({
         ...AppStyles.scaleButtonShadowEffect,
-        backgroundColor: isValid ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight,
+        backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
         borderRadius:    (THUMB_SIZE / 2),
         height:          THUMB_SIZE,
         width:           THUMB_SIZE,
@@ -62,7 +62,7 @@ const FathomSlider = ({
             disabled={disabled}
             maximumTrackTintColor={AppColors.zeplin.superLight}
             maximumValue={maximumValue}
-            minimumTrackTintColor={`${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.5)}`}
+            minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
             minimumValue={minimumValue}
             onSlidingComplete={val => handleFormChange(val)}
             orientation={orientation}
@@ -70,6 +70,7 @@ const FathomSlider = ({
             thumbTintColor={thumbTintColor}
             thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
             thumbStyle={[customStyles.thumbStyle(!disabled),]}
+            trackStyle={{borderRadius: 10, height: 10,}}
             value={value}
         />
         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingXSml, paddingTop: AppSizes.paddingMed,}}>

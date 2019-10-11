@@ -1027,7 +1027,6 @@ class MyPlan extends Component {
                 recover:       newRecoverObject,
                 sensorSession: null,
             },
-            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: true, }), 500); }
         );
         updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
             .then(() => clearHealthKitWorkouts()) // clear HK workouts right away

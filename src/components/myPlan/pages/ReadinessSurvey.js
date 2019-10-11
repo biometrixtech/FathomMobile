@@ -702,12 +702,13 @@ class ReadinessSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <ButtonGroup
                                     buttons={['Front', 'Back']}
-                                    containerStyle={{backgroundColor: `${AppColors.zeplin.superLight}${PlanLogic.returnHexOpacity(0.8)}`, borderRadius: AppSizes.paddingLrg, borderWidth: 0, marginLeft: 0, marginTop: 0,}}
+                                    containerStyle={{backgroundColor: `${AppColors.zeplin.splashXLight}${PlanLogic.returnHexOpacity(0.8)}`, borderRadius: AppSizes.paddingLrg, borderWidth: 0, marginLeft: 0, marginTop: 0,}}
+                                    innerBorderStyle={{width: 0,}}
                                     onPress={selectedIndex => this.setState({ isBodyOverlayFront: (selectedIndex === 0), })}
-                                    selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
+                                    selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
                                     selectedIndex={isBodyOverlayFront ? 0 : 1}
                                     selectedTextStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
-                                    textStyle={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}
+                                    textStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                                 />
                             </View>
                             <View style={{flex: 1,}}>

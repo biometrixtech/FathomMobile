@@ -54,6 +54,7 @@ class SVGImage extends Component {
         firstTimeExperience:             PropTypes.array,
         handleUpdateFirstTimeExperience: PropTypes.func,
         isBlue:                          PropTypes.bool,
+        isFront:                         PropTypes.bool,
         image:                           PropTypes.string.isRequired,
         overlay:                         PropTypes.bool,
         overlayText:                     PropTypes.string,
@@ -65,6 +66,7 @@ class SVGImage extends Component {
         firstTimeExperience:             [],
         handleUpdateFirstTimeExperience: null,
         isBlue:                          false,
+        isFront:                         true,
         overlay:                         false,
         overlayText:                     null,
         selected:                        false,
@@ -79,7 +81,7 @@ class SVGImage extends Component {
 
     imageString = () => {
         // Defaults
-        const { isBlue, image, } = this.props;
+        const { isBlue, isFront, image, } = this.props;
         if(isBlue) {
             /* eslint-disable indent */
             let imageName = image === 'Abs.svg' ?
@@ -284,13 +286,22 @@ class SVGImage extends Component {
             : image === 'R_Achilles.svg' ?
                 require('../../../assets/images/body/R_Achilles.png')
             : image === 'UpperBackNeck.svg' ?
-                require('../../../assets/images/body/UpperBackNeck.png')
+                isFront ?
+                    require('../../../assets/images/body/UpperBackNeck.png')
+                    :
+                    require('../../../assets/images/body/UpperBackNeck_Back.png')
             : image === 'Shoulder.svg' ?
                 require('../../../assets/images/body/Shoulder.png')
             : image === 'L_Shoulder.svg' ?
-                require('../../../assets/images/body/L_Shoulder.png')
+                isFront ?
+                    require('../../../assets/images/body/L_Shoulder.png')
+                    :
+                    require('../../../assets/images/body/L_Shoulder_Back.png')
             : image === 'R_Shoulder.svg' ?
-                require('../../../assets/images/body/R_Shoulder.png')
+                isFront ?
+                    require('../../../assets/images/body/R_Shoulder.png')
+                    :
+                    require('../../../assets/images/body/R_Shoulder_Back.png')
             : image === 'Elbow.svg' ?
                 require('../../../assets/images/body/Elbow.png')
             : image === 'L_Elbow.svg' ?
@@ -315,6 +326,28 @@ class SVGImage extends Component {
                 require('../../../assets/images/body/L_Pec.png')
             : image === 'R_Pec.svg' ?
                 require('../../../assets/images/body/R_Pec.png')
+            : image === 'R_Bicep.svg' ?
+                require('../../../assets/images/body/R_Bicep.png')
+            : image === 'L_Bicep.svg' ?
+                require('../../../assets/images/body/L_Bicep.png')
+            : image === 'R_Tricep.svg' ?
+                require('../../../assets/images/body/R_Tricep.png')
+            : image === 'L_Tricep.svg' ?
+                require('../../../assets/images/body/L_Tricep.png')
+            : image === 'L_Forearm.svg' ?
+                isFront ?
+                    require('../../../assets/images/body/L_Forearm.png')
+                    :
+                    require('../../../assets/images/body/L_Forearm_Back.png')
+            : image === 'R_Forearm.svg' ?
+                isFront ?
+                    require('../../../assets/images/body/R_Forearm.png')
+                    :
+                    require('../../../assets/images/body/R_Forearm_Back.png')
+            : image === 'L_OutsideKnee.svg' ?
+                require('../../../assets/images/body/L_OutsideKnee.png')
+            : image === 'R_OutsideKnee.svg' ?
+                require('../../../assets/images/body/R_OutsideKnee.png')
             :
                 require('../../../assets/images/body/Abs.png');
         return imageName;

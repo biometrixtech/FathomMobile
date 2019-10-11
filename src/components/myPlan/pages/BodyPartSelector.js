@@ -17,6 +17,7 @@ import resolveAssetSource from 'resolveAssetSource';
 
 // import third-party libraries
 import _ from 'lodash';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, MyPlan as MyPlanConstants, } from '../../../constants';
@@ -37,11 +38,22 @@ const styles = StyleSheet.create({
     },
     flipCardBack: {
         position: 'absolute',
-    }
+    },
+    leftRightHeader: {
+        alignSelf:         'stretch',
+        flex:              1,
+        flexDirection:     'row',
+        justifyContent:    'space-between',
+        left:              0,
+        paddingHorizontal: AppSizes.paddingLrg,
+        position:          'absolute',
+        right:             0,
+    },
 });
 
 /* Component ==================================================================== */
 class BodyPartSelector extends Component {
+
     constructor(props) {
         super(props);
         BODY_PART_MAPPING = PlanLogic.returnBodyOverlapMapping(props.newSoreBodyParts);
@@ -150,10 +162,16 @@ class BodyPartSelector extends Component {
                 require('../../../../assets/images/body/body_overlay_selector/R_Achilles.png')
             : image === 'UpperBackNeck.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/UpperBackNeck.png')
+            : image === 'UpperBackNeck_Back.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/UpperBackNeck_Back.png')
             : image === 'L_Shoulder.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/L_Shoulder.png')
             : image === 'R_Shoulder.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/R_Shoulder.png')
+            : image === 'L_Shoulder_Back.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/L_Shoulder_Back.png')
+            : image === 'R_Shoulder_Back.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/R_Shoulder_Back.png')
             : image === 'L_Elbow.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/L_Elbow.png')
             : image === 'R_Elbow.svg' ?
@@ -174,18 +192,22 @@ class BodyPartSelector extends Component {
                 require('../../../../assets/images/body/body_overlay_selector/R_Bicep.png')
             : image === 'L_Bicep.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/L_Bicep.png')
-            // : image === 'R_Tricep.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/R_Tricep.png')
-            // : image === 'L_Tricep.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/L_Tricep.png')
-            // : image === 'L_Forearm.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/L_Forearm.png')
-            // : image === 'R_Forearm.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/R_Forearm.png')
-            // : image === 'CoreStabilizers.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/CoreStabilizers.png')
-            // : image === 'ErectorSpinae.svg' ?
-            //     require('../../../../assets/images/body/body_overlay_selector/ErectorSpinae.png')
+            : image === 'R_Tricep.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/R_Tricep.png')
+            : image === 'L_Tricep.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/L_Tricep.png')
+            : image === 'L_Forearm.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/L_Forearm.png')
+            : image === 'R_Forearm.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/R_Forearm.png')
+            : image === 'L_Forearm_Back.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/L_Forearm_Back.png')
+            : image === 'R_Forearm_Back.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/R_Forearm_Back.png')
+            : image === 'L_OutsideKnee.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/L_OutsideKnee.png')
+            : image === 'R_OutsideKnee.svg' ?
+                require('../../../../assets/images/body/body_overlay_selector/R_OutsideKnee.png')
             :
                 require('../../../../assets/images/body/body_overlay_selector/Abs.png');
         return imageName;
@@ -196,6 +218,9 @@ class BodyPartSelector extends Component {
         const { selectedBodyPartObj, } = this.state;
         let foundSelectedBodyPartInReducer = _.find(areaOfSorenessClicked, ['body_part', selectedBodyPartObj.index]);
         let selectedBodyPart = _.find(MyPlanConstants.bodyPartMapping, ['index', selectedBodyPartObj.index]);
+        if(areaOfSorenessClicked.length === 0 || !foundSelectedBodyPartInReducer || !selectedBodyPart) {
+          return;
+        }
         let hasSeverity = foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
             foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ||
             foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
@@ -227,6 +252,11 @@ class BodyPartSelector extends Component {
         let clickedBodyPart = _.find(BODY_PART_MAPPING, o => o.index.includes(key) && isBodyOverlayFront === o.isFront);
         let selectedBodyPart = clickedBodyPart ? _.find(MyPlanConstants.bodyPartMapping, ['index', clickedBodyPart.cleanedKey]) : false;
         if(selectedBodyPart) {
+            const options = {
+                enableVibrateFallback:       false,
+                ignoreAndroidSystemSettings: false,
+            };
+            ReactNativeHapticFeedback.trigger('impactMedium', options);
             let mergedBodyParts = _.concat(areaOfSorenessClicked);
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
             let severityValue = foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ?
@@ -287,26 +317,19 @@ class BodyPartSelector extends Component {
     render = () => {
         const { areaOfSorenessClicked, handleFormChange, isBodyOverlayFront, } = this.props;
         const { front, isModalOpen, selectedBodyPartObj, } = this.state;
-        let gridRange = _.range(1, ((NUMBER_OF_OVERLAY_GRIDS_HEIGHT * NUMBER_OF_OVERLAY_GRIDS_WIDTH) + 1));
-        const backAnimatedStyle = {
-            transform: [
-                { rotateY: this.backInterpolate, }
-            ],
-        };
-        const frontAnimatedStyle = {
-            transform: [
-                { rotateY: this.frontInterpolate, }
-            ],
-        };
-        let mergedBodyParts = _.concat(areaOfSorenessClicked);
-        let backBodyParts = _.filter(mergedBodyParts, o => _.find(MyPlanConstants.bodyPartMapping, { index: o.body_part, front: false, }));
-        let frontBodyParts = _.filter(mergedBodyParts, o => _.find(MyPlanConstants.bodyPartMapping, { index: o.body_part, front: true, }));
+        let {
+            backAnimatedStyle,
+            backBodyParts,
+            frontAnimatedStyle,
+            frontBodyParts,
+            gridRange,
+        } = PlanLogic.handleBodyPartSelectorRenderLogic(areaOfSorenessClicked, this.backInterpolate, this.frontInterpolate, BODY_PART_MAPPING, NUMBER_OF_OVERLAY_GRIDS_HEIGHT, NUMBER_OF_OVERLAY_GRIDS_WIDTH);
         return (
             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
 
-                <View style={{alignSelf: 'stretch', flex: 1, flexDirection: 'row', justifyContent: 'space-between', left: 0, paddingHorizontal: AppSizes.paddingLrg, position: 'absolute', right: 0, top: AppSizes.padding,}}>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}\nside`}</Text>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}\nside`}</Text>
+                <View style={[styles.leftRightHeader, {top: AppSizes.padding,}]}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}`}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}`}</Text>
                 </View>
 
                 <View>
@@ -314,7 +337,7 @@ class BodyPartSelector extends Component {
                         <RNImage
                             resizeMode={'contain'}
                             source={require('../../../../assets/images/body/body_overlay_selector/body_full_front.png')}
-                            style={{height: front.height, tintColor: AppColors.zeplin.slateXLight, width: front.width,}}
+                            style={{height: front.height, width: front.width,}}
                         />
                         <View style={{height: front.height, position: 'absolute', width: front.width,}}>
                             {_.map(frontBodyParts, (body, index) => {
@@ -322,15 +345,22 @@ class BodyPartSelector extends Component {
                                 if(!selectedBodyPart) {
                                     return (null);
                                 }
-                                let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, selectedBodyPart, []);
-                                let cleanedImageString = `${body.side === 2 ? 'R_' : body.side === 1 ? 'L_' : ''}${areasOfSorenessBodyPart.bodyImage}`;
-                                let bodyImage = this._getImageString(cleanedImageString);
+
+                                let {
+                                    bodyImage,
+                                    severityValue,
+                                } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, false, this._getImageString);
                                 return (
                                     <RNImage
                                         key={index}
                                         resizeMode={'contain'}
                                         source={bodyImage}
-                                        style={{height: front.height, position: 'absolute', tintColor: AppColors.zeplin.yellow, width: front.width,}}
+                                        style={{
+                                            height:    front.height,
+                                            position:  'absolute',
+                                            tintColor: `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(severityValue)}`,
+                                            width:     front.width,
+                                        }}
                                     />
                                 );
                             })}
@@ -348,15 +378,21 @@ class BodyPartSelector extends Component {
                                 if(!selectedBodyPart) {
                                     return (null);
                                 }
-                                let areasOfSorenessBodyPart = PlanLogic.handleAreasOfSorenessBodyPart(areaOfSorenessClicked, selectedBodyPart, []);
-                                let cleanedImageString = `${body.side === 2 ? 'R_' : body.side === 1 ? 'L_' : ''}${areasOfSorenessBodyPart.bodyImage}`;
-                                let bodyImage = this._getImageString(cleanedImageString);
+                                let {
+                                    bodyImage,
+                                    severityValue,
+                                } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, true, this._getImageString);
                                 return (
                                     <RNImage
                                         key={index}
                                         resizeMode={'contain'}
                                         source={bodyImage}
-                                        style={{height: front.height, position: 'absolute', tintColor: AppColors.zeplin.yellow, width: front.width,}}
+                                        style={{
+                                            height:    front.height,
+                                            position:  'absolute',
+                                            tintColor: `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(severityValue)}`,
+                                            width:     front.width,
+                                        }}
                                     />
                                 );
                             })}
@@ -377,11 +413,17 @@ class BodyPartSelector extends Component {
                     </View>
                 </View>
 
+                <View style={[styles.leftRightHeader, {bottom: ((AppSizes.padding * 2) + AppSizes.paddingXLrg),}]}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}`}</Text>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}`}</Text>
+                </View>
+
                 <Spacer size={(AppSizes.padding + AppSizes.paddingXLrg)} />
 
                 <SymptomIntake
                     handleContinue={this._handleContinue}
                     handleFormChange={handleFormChange}
+                    isBodyOverlayFront={isBodyOverlayFront}
                     isModalOpen={isModalOpen}
                     selectedBodyPart={selectedBodyPartObj}
                 />
