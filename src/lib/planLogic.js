@@ -2838,8 +2838,6 @@ const PlanLogic = {
             { cleanedKey: 19, index: [215, 216, 217, 235, 236, 237], isFront: false, side: 2, },
             { cleanedKey: 20, index: [277, 278, 279, 297, 298, 299], isFront: true, side: 1, },
             { cleanedKey: 20, index: [262, 263, 264, 282, 283, 284], isFront: true, side: 2, },
-            { cleanedKey: 20, index: [277, 278, 279, 297, 298, 299], isFront: false, side: 1, },
-            { cleanedKey: 20, index: [262, 263, 264, 282, 283, 284], isFront: false, side: 2, },
             { cleanedKey: 21, index: [147, 148, 149, 167, 168, 169, 170, 187, 188, 189, 190, 208, 209], isFront: false, side: 1, },
             { cleanedKey: 21, index: [152, 153, 154, 171, 172, 173, 174, 191, 192, 193, 194, 212, 213], isFront: false, side: 2, },
             { cleanedKey: 22, index: [155, 156, 156, 175, 176, 177, 195, 196, 197], isFront: true, side: 1, },

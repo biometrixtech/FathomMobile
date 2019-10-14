@@ -640,7 +640,7 @@ class MyPlan extends Component {
         );
         if(nextAppState === 'active' && notification) {
             this._handleEnteringApp(() => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && (!lastOpened.date || clearMyPlan)) {
+        } else if(nextAppState === 'active' && (!lastOpened.date || !moment().isSame(lastOpened.date, 'day') || clearMyPlan)) {
             Actions.reset('key1');
         } else if(
             nextAppState === 'active' &&

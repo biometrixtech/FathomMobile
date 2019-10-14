@@ -66,6 +66,7 @@ class BodyPartSelector extends Component {
                 height: 0,
                 width:  0,
             },
+            isClickLocked:       false,
             isModalOpen:         false,
             selectedBodyPartObj: {},
         };
@@ -226,7 +227,7 @@ class BodyPartSelector extends Component {
             foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
             foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0;
         this.setState(
-            { isModalOpen: false, selectedBodyPartObj: {}, },
+            { isClickLocked: false, isModalOpen: false, selectedBodyPartObj: {}, },
             () => foundSelectedBodyPartInReducer && !hasSeverity ?
                 handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side)
                 :
@@ -316,7 +317,7 @@ class BodyPartSelector extends Component {
 
     render = () => {
         const { areaOfSorenessClicked, handleFormChange, isBodyOverlayFront, } = this.props;
-        const { front, isModalOpen, selectedBodyPartObj, } = this.state;
+        const { front, isClickLocked, isModalOpen, selectedBodyPartObj, } = this.state;
         let {
             backAnimatedStyle,
             backBodyParts,
@@ -402,8 +403,8 @@ class BodyPartSelector extends Component {
                         {_.map(gridRange, key => (
                             <TouchableOpacity
                                 key={key}
-                                onLongPress={() => this._handleGridLongPress(key)}
-                                onPress={() => this._handleGridPress(key)}
+                                onLongPress={isClickLocked ? () => null : () => this.setState({ isClickLocked: true, }, () => this._handleGridLongPress(key))}
+                                onPress={isClickLocked ? () => null : () => this.setState({ isClickLocked: true, }, () => this._handleGridPress(key))}
                                 style={{
                                     height: _.round(front.height / NUMBER_OF_OVERLAY_GRIDS_HEIGHT),
                                     width:  _.round(front.width / NUMBER_OF_OVERLAY_GRIDS_WIDTH),
