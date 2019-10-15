@@ -493,7 +493,7 @@ const Battery = ({ currentPage, nextBtn, onBack, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, showTopNavStep = true, }) => (
+const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
         <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
@@ -529,7 +529,7 @@ const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nex
                     loadingProps={{color: AppColors.zeplin.yellow,}}
                     onPress={() => nextBtn()}
                     raised={true}
-                    title={'Next'}
+                    title={nextBtnText}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                 />
             </View>

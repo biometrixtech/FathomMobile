@@ -45,7 +45,7 @@ const bodyPartMapping = [
     {index: 22, order: null, label: 'Bicep', front: true, location: 'upper body', group: 'muscle', image: {0: 'Bicep.svg', 1: 'L_Bicep.svg', 2: 'R_Bicep.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 23, order: null, label: 'Tricep', front: false, location: 'upper body', group: 'muscle', image: {0: 'Tricep.svg', 1: 'L_Tricep.svg', 2: 'R_Tricep.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 24, order: null, label: 'Forearm', front: true, location: 'upper body', group: 'muscle', image: {0: 'Forearm.svg', 1: 'L_Forearm.svg', 2: 'R_Forearm.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 25, order: null, label: 'Core Stabilizers', front: true, location: 'upper body', group: 'muscle', image: {0: 'CoreStabilizers.svg',}, bilateral: false, helping_verb: 'has'},
+    {index: 25, order: null, label: 'Core Stabilizers', front: true, location: 'upper body', group: 'muscle', image: {0: 'CoreStabilizers.svg', 1: 'L_CoreStabilizers.svg', 2: 'R_CoreStabilizers.svg',}, bilateral: false, helping_verb: 'has'},
     {index: 26, order: null, label: 'Erector Spinae', front: false, location: 'upper body', group: 'muscle', image: {0: 'ErectorSpinae.svg'}, bilateral: false, helping_verb: 'has'},
     {index: 27, order: null, label: 'Outer Knee', front: true, location: 'lower body', group: 'joint', image: {0: 'OutsideKnee.svg', 1: 'L_OutsideKnee.svg', 2: 'R_OutsideKnee.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 28, order: null, label: 'Hip Flexor', front: true, location: 'lower body', group: 'muscle', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},

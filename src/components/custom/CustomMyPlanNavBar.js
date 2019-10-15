@@ -309,11 +309,11 @@ class CustomMyPlanNavBar extends PureComponent {
                     { selectedCategory.visible ?
                         <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
                             { selectedCategory.insight_type === 6 ?
-                                'Care For Pain & Soreness'
+                                'Care Insights'
                                 : selectedCategory.insight_type === 5 ?
-                                    'Injury Prevention'
+                                    'Prevention Insights'
                                     :
-                                    'Personalized Recovery'
+                                    'Recovery Insights'
                             }
                         </Text>
                         :
@@ -331,11 +331,11 @@ class CustomMyPlanNavBar extends PureComponent {
                     { selectedCategory.visible ?
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
                             { selectedCategory.insight_type === 6 ?
-                                'Pain & soreness change the way you move and distribute force. "Care" improves mobility & reduces those effects.'
+                                'From your data we infer that some tissues may benefit from additional care to reduce inflammation & tightness.'
                                 : selectedCategory.insight_type === 5 ?
-                                    'Your data indicates imbalances in muscle activation & strength which may elevate overuse injury risk.'
+                                    'Your data indicates imbalances in muscle activation, length & strength which may elevate overuse injury risk.'
                                     :
-                                    'Based on your data, we\'ve identified ways to expedite tissue recovery with targeted care for stressed areas.'
+                                    'Based on your data, we\'ve identified areas in need of recovery due to elevated stress from training or compensations.'
                             }
                         </Text>
                         :
@@ -353,14 +353,14 @@ class CustomMyPlanNavBar extends PureComponent {
                             />
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
                                 { selectedCategory.insight_type === 6 ?
-                                    'We use a research-validated approach to help heal areas of pain and soreness and keep symptoms from worsening.'
+                                    'We use a research-validated approach to identify  possible inflammation & tightness and create activities to improve symptoms.'
                                     : selectedCategory.insight_type === 5 ?
-                                        'Keep using your sensors and logging your workouts, pain and soreness to help our AI find underlying injury risk factors.'
+                                        'We search for and help correct potential imbalances in muscle activation, length & strength which may elevate your overuse injury risk.'
                                         :
-                                        'Keep using your sensors and logging your workouts. Our AI searches for daily optimizations for your tissue recovery.'
+                                        'We search your data for signs of fatigue, compensations, and other factors to create daily optimizations for tissue regeneration.'
                                 }
                             </Text>
-                            <Spacer size={AppSizes.paddingMed} />
+                            {/*<Spacer size={AppSizes.paddingMed} />
                             { selectedCategory.insight_type === 6 ?
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                     <Image
@@ -402,16 +402,10 @@ class CustomMyPlanNavBar extends PureComponent {
                                             style={{height: 40, width: 40,}}
                                         />
                                     </View>
-                            }
+                            */}
                             <Spacer size={AppSizes.paddingMed} />
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
-                                { selectedCategory.insight_type === 6 ?
-                                    'Your unique combination of daily pain & soreness informs your Care activities.'
-                                    : selectedCategory.insight_type === 5 ?
-                                        'These factors are used to design your personalized Injury Prevention activities.'
-                                        :
-                                        'These factors are used to design your optimal Personalized Recovery activities.'
-                                }
+                                {'Keep using your sensors and reporting symptoms for updated recommendations.'}
                             </Text>
                         </View>
                     }

@@ -421,7 +421,7 @@ class BodyPartSelector extends Component {
                     </View>
                 </View>
 
-                <View style={[styles.leftRightHeader, {bottom: ((AppSizes.padding * 2) + AppSizes.paddingXLrg),}]}>
+                <View style={[styles.leftRightHeader, {bottom: (((AppSizes.padding * 2) + AppSizes.paddingXLrg) * 1.5),}]}>
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}`}</Text>
                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}`}</Text>
                 </View>

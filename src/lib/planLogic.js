@@ -1025,7 +1025,8 @@ const PlanLogic = {
         let newRecoverObject = Object.assign({}, recover, {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
-        let updatedSoreness = _.map(dailyReadiness.soreness, s => {
+        let updatedSoreness = _.filter(dailyReadiness.soreness, s => s.ache || s.sore || s.tender || s.knots || s.sharp);
+        updatedSoreness = _.map(updatedSoreness, s => {
             let newSoreness = _.cloneDeep(s);
             newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
                 newSoreness.sore
@@ -1117,7 +1118,8 @@ const PlanLogic = {
         newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
         let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
         if(newPostSession.sessions[lastNonDeletedIndex]) {
-            let updatedSoreness = _.map(postSession.soreness, s => {
+            let updatedSoreness = _.filter(postSession.soreness, s => s.ache || s.sore || s.tender || s.knots || s.sharp);
+            updatedSoreness = _.map(updatedSoreness, s => {
                 let newSoreness = _.cloneDeep(s);
                 newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
                     newSoreness.sore
@@ -2714,8 +2716,12 @@ const PlanLogic = {
                                                             AppColors.zeplin.successLight
                                                             : color === 14 ?
                                                                 `${AppColors.zeplin.splash}${PlanLogic.returnHexOpacity(0.5)}`
-                                                                :
-                                                                AppColors.zeplin.errorLight;
+                                                                : color === 15 ?
+                                                                    AppColors.zeplin.splashXXLight
+                                                                    : color === 16 ?
+                                                                        AppColors.zeplin.warningXLight
+                                                                        :
+                                                                        AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {

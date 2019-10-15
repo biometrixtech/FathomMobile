@@ -7,6 +7,7 @@
         maximumValue={9}
         minimumValue={0}
         name={'string'}
+        sliderValue={sliderValue}
         value={value}
     />
  *
@@ -31,6 +32,12 @@ const severeValues = [7, 8, 9, 10];
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
+    severityTextWrapper: {
+        flexDirection:     'row',
+        justifyContent:    'space-between',
+        paddingBottom:     AppSizes.paddingMed,
+        paddingHorizontal: AppSizes.paddingXSml,
+    },
     textStyle: (isValid, isSelected) => ({
         color:    isSelected ? AppColors.zeplin.yellow : isValid ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight,
         fontSize: AppFonts.scaleFont(12),
@@ -54,71 +61,81 @@ const FathomSlider = ({
     minimumValue,
     name,
     orientation,
+    sliderValue,
     step,
     thumbTintColor,
     value,
-}) => (
-    <View>
-        <ImageBackground
-            source={require('../../../assets/images/standard/tickmarks.png')}
-            style={{width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
-        >
-            <Slider
-                animateTransitions={true}
-                animationType={'spring'}
-                disabled={disabled}
-                maximumTrackTintColor={AppColors.zeplin.superLight}
-                maximumValue={maximumValue}
-                minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
-                minimumValue={minimumValue}
-                onSlidingComplete={val => handleFormChange(val)}
-                orientation={orientation}
-                step={step}
-                thumbTintColor={thumbTintColor}
-                thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
-                thumbStyle={[customStyles.thumbStyle(!disabled),]}
-                trackStyle={{borderRadius: 10, height: 10,}}
-                value={value}
-            />
-        </ImageBackground>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingXSml, paddingTop: AppSizes.paddingMed,}}>
-            <Text
-                robotoBold={noneValues.includes(value)}
-                robotoRegular={!noneValues.includes(value)}
-                style={[customStyles.textStyle(isValid, noneValues.includes(value)),]}
+}) => {
+    let updatedValue = !sliderValue && !value ? 0 : sliderValue > value ? sliderValue : value;
+    return (
+        <View>
+            <View style={[customStyles.severityTextWrapper,]}>
+                <Text
+                    style={[
+                        (!disabled && noneValues.includes(updatedValue)) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
+                        customStyles.textStyle(isValid, (!disabled && noneValues.includes(updatedValue))),
+                    ]}
+                >
+                    {'None'}
+                </Text>
+                <Text
+                    style={[
+                        mildValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
+                        customStyles.textStyle(isValid, mildValues.includes(updatedValue)),
+                    ]}
+                >
+                    {'Mild'}
+                </Text>
+                <Text
+                    style={[
+                        moderateValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
+                        customStyles.textStyle(isValid, moderateValues.includes(updatedValue)),
+                    ]}
+                >
+                    {'Moderate'}
+                </Text>
+                <Text
+                    style={[
+                        severeValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
+                        customStyles.textStyle(isValid, severeValues.includes(updatedValue)),
+                    ]}
+                >
+                    {'Severe'}
+                </Text>
+                <Text
+                    robotoRegular
+                    style={[
+                        customStyles.textStyle(isValid, updatedValue),
+                    ]}
+                >
+                    {''}
+                </Text>
+            </View>
+            <ImageBackground
+                source={disabled ? require('../../../assets/images/standard/tickmarks-disabled.png') : require('../../../assets/images/standard/tickmarks.png')}
+                style={{width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
             >
-                {'None'}
-            </Text>
-            <Text
-                robotoBold={mildValues.includes(value)}
-                robotoRegular={!mildValues.includes(value)}
-                style={[customStyles.textStyle(isValid, mildValues.includes(value)),]}
-            >
-                {'Mild'}
-            </Text>
-            <Text
-                robotoBold={moderateValues.includes(value)}
-                robotoRegular={!moderateValues.includes(value)}
-                style={[customStyles.textStyle(isValid, moderateValues.includes(value)),]}
-            >
-                {'Moderate'}
-            </Text>
-            <Text
-                robotoBold={severeValues.includes(value)}
-                robotoRegular={!severeValues.includes(value)}
-                style={[customStyles.textStyle(isValid, severeValues.includes(value)),]}
-            >
-                {'Severe'}
-            </Text>
-            <Text
-                robotoRegular
-                style={[customStyles.textStyle(isValid, value, []),]}
-            >
-                {''}
-            </Text>
+                <Slider
+                    animateTransitions={true}
+                    animationType={'spring'}
+                    disabled={disabled}
+                    maximumTrackTintColor={AppColors.zeplin.superLight}
+                    maximumValue={maximumValue}
+                    minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
+                    minimumValue={minimumValue}
+                    onSlidingComplete={val => handleFormChange(val)}
+                    orientation={orientation}
+                    step={step}
+                    thumbTintColor={thumbTintColor}
+                    thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
+                    thumbStyle={[customStyles.thumbStyle(!disabled),]}
+                    trackStyle={{borderRadius: 10, height: 10,}}
+                    value={value}
+                />
+            </ImageBackground>
         </View>
-    </View>
-);
+    );
+}
 
 FathomSlider.propTypes = {
     bodyPart:         PropTypes.number,
@@ -129,6 +146,7 @@ FathomSlider.propTypes = {
     minimumValue:     PropTypes.number.isRequired,
     name:             PropTypes.string,
     orientation:      PropTypes.string,
+    sliderValue:      PropTypes.number,
     step:             PropTypes.number,
     thumbTintColor:   PropTypes.string,
     value:            PropTypes.number.isRequired,
@@ -139,6 +157,7 @@ FathomSlider.defaultProps = {
     isValid:        false,
     name:           '',
     orientation:    'vertical',
+    sliderValue:    0,
     step:           1,
     thumbTintColor: AppColors.zeplin.yellow,
 };

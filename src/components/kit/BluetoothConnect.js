@@ -47,8 +47,6 @@ class BluetoothConnect extends Component {
 
     constructor(props) {
         super(props);
-        const { user, } = this.props;
-        const updatedPageIndex = SensorLogic.handleFirstPageIndexRenderLogic(user, WIFI_PAGE_NUMBER); // TODO: FIX ME
         this.state = {
             availableNetworks:     [],
             bleState:              '',
@@ -59,7 +57,7 @@ class BluetoothConnect extends Component {
             isVideoMuted:          false,
             isWifiScanDone:        false,
             loading:               false,
-            pageIndex:             updatedPageIndex,
+            pageIndex:             0,
         };
         this._isMounted = false;
         this._pages = {};
@@ -383,13 +381,21 @@ class BluetoothConnect extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, } = this.props;
+        const { bluetooth, updateUser, user, } = this.props;
         if(!this._isMounted) {
             return '';
         }
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-        return ble.getScannedWifiConnections(device)
+        return ble.writeWifiNetworkReset(device)
+            .then(res => { // update user obj clearing wifi information when successful
+                let newUserNetworksPayloadObj = {};
+                newUserNetworksPayloadObj['@sensor_data'] = {};
+                newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+                updateUser(newUserNetworksPayloadObj, user.id);
+                return res;
+            })
+            .then(() => ble.getScannedWifiConnections(device))
             .then(res => {
                 if(!this._isMounted) {
                     return '';
@@ -575,6 +581,7 @@ class BluetoothConnect extends Component {
             isVideoMuted,
             isWifiScanDone,
         } = this.state;
+        const { user, } = this.props;
         return(
             <View style={{flex: 1,}}>
 
@@ -669,7 +676,8 @@ class BluetoothConnect extends Component {
                     <Complete
                         currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
                         currentPage={pageIndex === 6}
-                        nextBtn={this._renderNextPage}
+                        nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : this._renderNextPage()}
+                        nextBtnText={user.first_time_experience.includes('3Sensor-Onboarding-8') ? 'Done' : 'Next'}
                     />
 
                     {/* Train - pages 7-9 */}

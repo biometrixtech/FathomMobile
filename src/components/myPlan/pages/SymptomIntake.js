@@ -259,7 +259,8 @@ class SymptomIntake extends Component {
                         maximumValue={10}
                         minimumValue={0}
                         orientation={'horizontal'}
-                        value={sliderValue || 0}
+                        sliderValue={sliderValue}
+                        value={selectedBodyPart.value || 0}
                     />
                     <Spacer size={AppSizes.padding} />
                     <View style={{justifyContent: 'flex-end',}}>
@@ -267,7 +268,7 @@ class SymptomIntake extends Component {
                             onPress={isBtnValid ? () => this._handleContinue() : () => null}
                             style={[customStyles.continueBtnWrapper(isBtnValid),]}
                         >
-                            <Text robotoRegular style={{color: isBtnValid ? AppColors.white : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Continue'}</Text>
+                            <Text robotoRegular style={{color: isBtnValid ? AppColors.white : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Submit'}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
