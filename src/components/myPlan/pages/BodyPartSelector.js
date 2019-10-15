@@ -223,6 +223,8 @@ class BodyPartSelector extends Component {
           return;
         }
         let hasSeverity = foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
+            foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0 ||
+            foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0 ||
             foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ||
             foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
             foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0;
@@ -262,20 +264,26 @@ class BodyPartSelector extends Component {
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
             let severityValue = foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ?
                 foundSelectedBodyPartInReducer.ache
-                : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ?
-                    foundSelectedBodyPartInReducer.knots
-                    : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ?
-                        foundSelectedBodyPartInReducer.sharp
-                        : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0 ?
-                            foundSelectedBodyPartInReducer.tight
-                            :
-                            null;
+                : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0 ?
+                    foundSelectedBodyPartInReducer.sore
+                    : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0 ?
+                        foundSelectedBodyPartInReducer.tender
+                        : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ?
+                            foundSelectedBodyPartInReducer.knots
+                            : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ?
+                                foundSelectedBodyPartInReducer.sharp
+                                : foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0 ?
+                                    foundSelectedBodyPartInReducer.tight
+                                    :
+                                    null;
             let updatedPills = foundSelectedBodyPartInReducer ?
               [
                   { index: 0, isSelected: (foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0) || false, text: 'Tight', value: foundSelectedBodyPartInReducer.tight || null, },
-                  { index: 1, isSelected: (foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0) || false, text: 'Knots', value: foundSelectedBodyPartInReducer.knots || null, },
-                  { index: 2, isSelected: (foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0) || false, text: 'Ache', value: foundSelectedBodyPartInReducer.ache || null, },
-                  { index: 3, isSelected: (foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0) || false, text: 'Sharp', value: foundSelectedBodyPartInReducer.sharp || null, },
+                  { index: 1, isSelected: (foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0) || false, text: 'Sore', value: foundSelectedBodyPartInReducer.sore || null, },
+                  { index: 2, isSelected: (foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0) || false, text: 'Tender', value: foundSelectedBodyPartInReducer.tender || null, },
+                  { index: 3, isSelected: (foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0) || false, text: 'Knots', value: foundSelectedBodyPartInReducer.knots || null, },
+                  { index: 4, isSelected: (foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0) || false, text: 'Ache', value: foundSelectedBodyPartInReducer.ache || null, },
+                  { index: 5, isSelected: (foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0) || false, text: 'Sharp', value: foundSelectedBodyPartInReducer.sharp || null, },
               ]
               :
               null;
@@ -346,10 +354,9 @@ class BodyPartSelector extends Component {
                                 if(!selectedBodyPart) {
                                     return (null);
                                 }
-
                                 let {
                                     bodyImage,
-                                    severityValue,
+                                    tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, false, this._getImageString);
                                 return (
                                     <RNImage
@@ -359,7 +366,7 @@ class BodyPartSelector extends Component {
                                         style={{
                                             height:    front.height,
                                             position:  'absolute',
-                                            tintColor: `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(severityValue)}`,
+                                            tintColor: tintColor,
                                             width:     front.width,
                                         }}
                                     />
@@ -381,7 +388,7 @@ class BodyPartSelector extends Component {
                                 }
                                 let {
                                     bodyImage,
-                                    severityValue,
+                                    tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, true, this._getImageString);
                                 return (
                                     <RNImage
@@ -391,7 +398,7 @@ class BodyPartSelector extends Component {
                                         style={{
                                             height:    front.height,
                                             position:  'absolute',
-                                            tintColor: `${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(severityValue)}`,
+                                            tintColor: tintColor,
                                             width:     front.width,
                                         }}
                                     />

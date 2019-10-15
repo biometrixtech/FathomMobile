@@ -2,6 +2,7 @@
  * StartSensorSessionModal
  *
     <StartSensorSessionModal
+        appState={appState}
         createSensorSession={createSensorSession}
         isModalOpen={isStartSensorSessionModalOpen}
         onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
@@ -186,6 +187,9 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
+        if(prevProps.appState !== this.props.appState) {
+            this._handleAppStateChange(this.props.appState);
+        }
         if(prevState.timer !== this.state.timer && this.state.timer === -1 && !this.state.createError) {
             clearInterval(this.timerId);
             this._renderNextPage(1, () => this.setState({ timer: 15, }, () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}));
@@ -220,6 +224,22 @@ class StartSensorSessionModal extends PureComponent {
             { timer: 15, },
             () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}
         );
+    }
+
+    _handleAppStateChange = nextAppState => {
+        const { isFirstTimeExperience, pageIndex, showLEDPage, showPlacementPages, } = this.state;
+        if(
+            nextAppState === 'background' &&
+            (
+                (isFirstTimeExperience && (pageIndex === 9 || pageIndex === 10)) ||
+                (!isFirstTimeExperience &&
+                    ((showPlacementPages && pageIndex === 6) || (showLEDPage && pageIndex === 3) || pageIndex === 2) ||
+                    ((showPlacementPages && pageIndex === 7) || (showLEDPage && pageIndex === 4) || pageIndex === 3)
+                )
+            )
+        ) {
+            this._onClose('CREATE_ATTEMPT_FAILED');
+        }
     }
 
     _onClose = async patchSession => {
@@ -701,6 +721,7 @@ class StartSensorSessionModal extends PureComponent {
 }
 
 StartSensorSessionModal.propTypes = {
+    appState:            PropTypes.string.isRequired,
     createSensorSession: PropTypes.func.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
     isModalOpen:         PropTypes.bool.isRequired,

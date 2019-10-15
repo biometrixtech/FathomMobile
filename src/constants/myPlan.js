@@ -49,7 +49,7 @@ const bodyPartMapping = [
     {index: 26, order: null, label: 'Erector Spinae', front: false, location: 'upper body', group: 'muscle', image: {0: 'ErectorSpinae.svg'}, bilateral: false, helping_verb: 'has'},
     {index: 27, order: null, label: 'Outer Knee', front: true, location: 'lower body', group: 'joint', image: {0: 'OutsideKnee.svg', 1: 'L_OutsideKnee.svg', 2: 'R_OutsideKnee.svg'}, bilateral: true, helping_verb: 'has'},
     {index: 28, order: null, label: 'Hip Flexor', front: true, location: 'lower body', group: 'muscle', image: {0: 'Hip.svg', 1: 'L_Hip.svg', 2: 'R_Hip.svg'}, bilateral: true, helping_verb: 'has'},
-    {index: 29, order: null, label: 'Deltoid', front: true, location: 'upper body', group: 'muscle', image: {0: 'Shoulder.svg', 1: 'L_Shoulder.svg', 2: 'R_Shoulder.svg'}, bilateral: true, helping_verb: 'has'},
+    {index: 29, order: null, label: 'Deltoid', front: false, location: 'upper body', group: 'muscle', image: {0: 'Shoulder.svg', 1: 'L_Shoulder.svg', 2: 'R_Shoulder.svg'}, bilateral: true, helping_verb: 'has'},
 ];
 
 const overallReadiness = [

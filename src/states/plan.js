@@ -5,6 +5,7 @@ import { PlanLogic, } from '../lib';
  * Default MyPlan State
  */
 const defaultPlanState = {
+    appState:           'active',
     currentTabLocation: 0,
     dailyReadiness:     {
         current_position:          null,

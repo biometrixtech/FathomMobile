@@ -24,9 +24,11 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 const DEFAULT_PILLS = [
     { index: 0, isSelected: false, text: 'Tight', value: null, },
-    { index: 1, isSelected: false, text: 'Knots', value: null, },
-    { index: 2, isSelected: false, text: 'Ache', value: null, },
-    { index: 3, isSelected: false, text: 'Sharp', value: null, },
+    { index: 1, isSelected: false, text: 'Sore', value: null, },
+    { index: 2, isSelected: false, text: 'Tender', value: null, },
+    { index: 3, isSelected: false, text: 'Knots', value: null, },
+    { index: 4, isSelected: false, text: 'Ache', value: null, },
+    { index: 5, isSelected: false, text: 'Sharp', value: null, },
 ];
 
 /* Styles ==================================================================== */
@@ -78,14 +80,18 @@ class SymptomIntake extends Component {
         ) {
             let severityValue = selectedBodyPart.pills.ache && selectedBodyPart.pills.ache > 0 ?
                 selectedBodyPart.pills.ache
-                : selectedBodyPart.pills.knots && selectedBodyPart.pills.knots > 0 ?
-                    selectedBodyPart.pills.knots
-                    : selectedBodyPart.pills.sharp && selectedBodyPart.pills.sharp > 0 ?
-                        selectedBodyPart.pills.sharp
-                        : selectedBodyPart.pills.tight && selectedBodyPart.pills.tight > 0 ?
-                            selectedBodyPart.pills.tight
-                            :
-                            null;
+                : selectedBodyPart.pills.sore && selectedBodyPart.pills.sore > 0 ?
+                    selectedBodyPart.pills.sore
+                    : selectedBodyPart.pills.tender && selectedBodyPart.pills.tender > 0 ?
+                        selectedBodyPart.pills.tender
+                        : selectedBodyPart.pills.knots && selectedBodyPart.pills.knots > 0 ?
+                            selectedBodyPart.pills.knots
+                            : selectedBodyPart.pills.sharp && selectedBodyPart.pills.sharp > 0 ?
+                                selectedBodyPart.pills.sharp
+                                : selectedBodyPart.pills.tight && selectedBodyPart.pills.tight > 0 ?
+                                    selectedBodyPart.pills.tight
+                                    :
+                                    null;
             this.setState(
                 {
                     isBtnValid:  this._validateForm(true, selectedBodyPart.pills),
@@ -169,7 +175,7 @@ class SymptomIntake extends Component {
 
     render = () => {
         const { isBodyOverlayFront, isModalOpen, selectedBodyPart, } = this.props;
-        const { isBtnValid, isValid, pills, } = this.state;
+        const { isBtnValid, isValid, pills, sliderValue, } = this.state;
         return (
             <FathomModal
                 isVisible={isModalOpen}
@@ -185,9 +191,7 @@ class SymptomIntake extends Component {
                         paddingBottom:        AppSizes.iphoneXBottomBarPadding > 0 ? (AppSizes.iphoneXBottomBarPadding + AppSizes.paddingLrg) : AppSizes.paddingLrg,
                     }}
                 >
-                    <View
-                        style={{alignItems: 'flex-start', flexDirection: 'row', height: AppSizes.paddingXLrg, justifyContent: 'space-between', overflow: 'visible',}}
-                    >
+                    <View style={{alignItems: 'flex-start', flexDirection: 'row', height: AppSizes.paddingXLrg, justifyContent: 'space-between', overflow: 'visible',}}>
                         <TabIcon
                             containerStyle={[{alignSelf: 'flex-end',}]}
                             color={AppColors.white}
@@ -255,7 +259,7 @@ class SymptomIntake extends Component {
                         maximumValue={10}
                         minimumValue={0}
                         orientation={'horizontal'}
-                        value={selectedBodyPart.value || 0}
+                        value={sliderValue || 0}
                     />
                     <Spacer size={AppSizes.padding} />
                     <View style={{justifyContent: 'flex-end',}}>

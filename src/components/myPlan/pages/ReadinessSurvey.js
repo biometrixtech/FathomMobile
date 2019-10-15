@@ -416,6 +416,7 @@ class ReadinessSurvey extends Component {
                                 handleToggleSurvey={() => this._renderNextPage(1, isFormValidItems, newSoreBodyParts, null, areaOfSorenessClicked, true)}
                                 resetFirstPage={resetHealthKitFirstPage}
                                 trainingSessions={trainingSessions}
+                                user={user}
                                 workouts={healthKitWorkouts}
                             />
                         }
@@ -731,7 +732,7 @@ class ReadinessSurvey extends Component {
                         </View>
                     </View>
 
-                    <ScrollView
+                    {/*<ScrollView
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
@@ -777,7 +778,7 @@ class ReadinessSurvey extends Component {
                             onNextClick={() => this._renderNextPage(7, isFormValidItems)}
                             showSubmitBtn={true}
                         />
-                    </ScrollView>
+                    </ScrollView>*/}
 
                 </Pages>
 

@@ -112,8 +112,10 @@ class SensorFilesPage extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        // monitor when the BLE state changes
-        ble.startMonitor(state => this.setState({ bleState: state, }));
+        if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') { // turn on BLE & connect to accessory
+            // monitor when the BLE state changes
+            ble.startMonitor(state => this.setState({ bleState: state, }));
+        }
     }
 
     componentWillUnmount = () => {

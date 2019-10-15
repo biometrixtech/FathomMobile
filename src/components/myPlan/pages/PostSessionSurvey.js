@@ -271,7 +271,9 @@ class PostSessionSurvey extends Component {
                             <SingleSensorSession
                                 handleFormChange={handleSingleSensorSessionFormChange}
                                 handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
+                                handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
                                 session={sensorSession}
+                                user={user}
                             />
                             : healthKitWorkouts && healthKitWorkouts.length > 0 ?
                                 <HealthKitWorkouts
@@ -282,13 +284,13 @@ class PostSessionSurvey extends Component {
                                     isPostSession={true}
                                     resetFirstPage={resetHealthKitFirstPage}
                                     trainingSessions={trainingSessions}
+                                    user={user}
                                     workouts={healthKitWorkouts}
                                 />
                                 :
                                 null
                         }
                     </View>
-
 
                     { postSession.sessions && postSession.sessions.length > 0 ? _.map(postSession.sessions, (session, index) => {
                         const { isRPEValid, isSportValid, } = PlanLogic.handleSingleSessionValidation(session, this.sportScheduleBuilderRefs[index]);
@@ -322,7 +324,8 @@ class PostSessionSurvey extends Component {
                     <View style={{flex: 1,}}>
                         <ProgressPill
                             currentStep={2}
-                            onBack={sensorSession ? null : () => this._renderPreviousPage(2)}
+                            onBack={sensorSession ? () => this._updatePageIndex((pageIndex - 2)) : () => this._renderPreviousPage(2)}
+                            onClose={handleTogglePostSessionSurvey}
                             totalSteps={3}
                         />
                         <View style={[AppStyles.containerCentered, {flex: 1, paddingHorizontal: AppSizes.paddingXLrg,}]}>
@@ -504,7 +507,7 @@ class PostSessionSurvey extends Component {
                                     containerStyle={{backgroundColor: `${AppColors.zeplin.splashXLight}${PlanLogic.returnHexOpacity(0.8)}`, borderRadius: AppSizes.paddingLrg, borderWidth: 0, marginLeft: 0, marginTop: 0,}}
                                     innerBorderStyle={{width: 0,}}
                                     onPress={selectedIndex => this.setState({ isBodyOverlayFront: (selectedIndex === 0), })}
-                                    selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
+                                    selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
                                     selectedIndex={isBodyOverlayFront ? 0 : 1}
                                     selectedTextStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
                                     textStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
@@ -530,7 +533,7 @@ class PostSessionSurvey extends Component {
                         </View>
                     </View>
 
-                    <ScrollView
+                    {/*<ScrollView
                         contentContainerStyle={{flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between',}}
                         nestedScrollEnabled={true}
                         ref={ref => {this.scrollViewClickedSorenessRef = ref;}}
@@ -577,7 +580,7 @@ class PostSessionSurvey extends Component {
                             onNextClick={() => this._renderNextPage(5, isFormValidItems)}
                             showSubmitBtn={true}
                         />
-                    </ScrollView>
+                    </ScrollView>*/}
 
                 </Pages>
 

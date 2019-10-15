@@ -80,9 +80,11 @@ const PlanLogic = {
                 } else {
                     // newSorenessFields[sorenessIndex].severity = value;
                     newSorenessFields[sorenessIndex].tight = value[0].isSelected ? value[0].value : null;
-                    newSorenessFields[sorenessIndex].knots = value[1].isSelected ? value[1].value : null;
-                    newSorenessFields[sorenessIndex].ache = value[2].isSelected ? value[2].value : null;
-                    newSorenessFields[sorenessIndex].sharp = value[3].isSelected ? value[3].value : null;
+                    newSorenessFields[sorenessIndex].sore = value[1].isSelected ? value[1].value : null;
+                    newSorenessFields[sorenessIndex].tender = value[2].isSelected ? value[2].value : null;
+                    newSorenessFields[sorenessIndex].knots = value[3].isSelected ? value[3].value : null;
+                    newSorenessFields[sorenessIndex].ache = value[4].isSelected ? value[4].value : null;
+                    newSorenessFields[sorenessIndex].sharp = value[5].isSelected ? value[5].value : null;
                 }
             } else {
                 // doesn't exist, create new object
@@ -94,9 +96,11 @@ const PlanLogic = {
                 } else {
                     // newSorenessPart.severity = value;
                     newSorenessPart.tight = value[0].isSelected ? value[0].value : null;
-                    newSorenessPart.knots = value[1].isSelected ? value[1].value : null;
-                    newSorenessPart.ache = value[2].isSelected ? value[2].value : null;
-                    newSorenessPart.sharp = value[3].isSelected ? value[3].value : null;
+                    newSorenessPart.sore = value[1].isSelected ? value[1].value : null;
+                    newSorenessPart.tender = value[2].isSelected ? value[2].value : null;
+                    newSorenessPart.knots = value[3].isSelected ? value[3].value : null;
+                    newSorenessPart.ache = value[4].isSelected ? value[4].value : null;
+                    newSorenessPart.sharp = value[5].isSelected ? value[5].value : null;
                 }
                 newSorenessPart.side = side ? side : 0;
                 newSorenessPart.isClearCandidate = isClearCandidate;
@@ -163,6 +167,8 @@ const PlanLogic = {
                         newMissingSideSorenessPart.pain = false;
                         // newMissingSideSorenessPart.severity = null;
                         newMissingSideSorenessPart.tight = null;
+                        newMissingSideSorenessPart.sore = null;
+                        newMissingSideSorenessPart.tender = null;
                         newMissingSideSorenessPart.knots = null;
                         newMissingSideSorenessPart.ache = null;
                         newMissingSideSorenessPart.sharp = null;
@@ -182,6 +188,8 @@ const PlanLogic = {
                     newLeftSorenessPart.pain = areaClicked.group === 'joint';
                     // newLeftSorenessPart.severity = null;
                     newLeftSorenessPart.tight = null;
+                    newLeftSorenessPart.sore = null;
+                    newLeftSorenessPart.tender = null;
                     newLeftSorenessPart.knots = null;
                     newLeftSorenessPart.ache = null;
                     newLeftSorenessPart.sharp = null;
@@ -194,6 +202,8 @@ const PlanLogic = {
                     newRightSorenessPart.pain = areaClicked.group === 'joint';
                     // newRightSorenessPart.severity = null;
                     newRightSorenessPart.tight = null;
+                    newRightSorenessPart.sore = null;
+                    newRightSorenessPart.tender = null;
                     newRightSorenessPart.knots = null;
                     newRightSorenessPart.ache = null;
                     newRightSorenessPart.sharp = null;
@@ -207,6 +217,8 @@ const PlanLogic = {
                     newSorenessPart.pain = areaClicked.group === 'joint';
                     // newSorenessPart.severity = null;
                     newSorenessPart.tight = null;
+                    newSorenessPart.sore = null;
+                    newSorenessPart.tender = null;
                     newSorenessPart.knots = null;
                     newSorenessPart.ache = null;
                     newSorenessPart.sharp = null;
@@ -1013,13 +1025,23 @@ const PlanLogic = {
         let newRecoverObject = Object.assign({}, recover, {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
+        let updatedSoreness = _.map(dailyReadiness.soreness, s => {
+            let newSoreness = _.cloneDeep(s);
+            newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
+                newSoreness.sore
+                : newSoreness.tender && newSoreness.tender > 0 ?
+                    newSoreness.tender
+                    :
+                    newSoreness.ache;
+            return newSoreness;
+        });
         let newDailyReadiness = {
-            clear_candidates:          _.filter(dailyReadiness.soreness, {isClearCandidate: true}),
+            clear_candidates:          _.filter(updatedSoreness, {isClearCandidate: true}),
             date_time:                 eventDate,
             readiness:                 dailyReadiness.readiness,
             sessions_planned:          dailyReadiness.sessions_planned,
             sleep_quality:             dailyReadiness.sleep_quality,
-            soreness:                  _.filter(dailyReadiness.soreness, u => !u.isClearCandidate),
+            soreness:                  _.filter(updatedSoreness, u => !u.isClearCandidate),
             user_age:                  moment().diff(moment(user.personal_data.birth_date, ['YYYY-MM-DD', 'YYYY/MM/DD', 'MM/DD/YYYY']), 'years'),
             wants_functional_strength: dailyReadiness.wants_functional_strength,
         };
@@ -1095,11 +1117,21 @@ const PlanLogic = {
         newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
         let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
         if(newPostSession.sessions[lastNonDeletedIndex]) {
+            let updatedSoreness = _.map(postSession.soreness, s => {
+                let newSoreness = _.cloneDeep(s);
+                newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
+                    newSoreness.sore
+                    : newSoreness.tender && newSoreness.tender > 0 ?
+                        newSoreness.tender
+                        :
+                        newSoreness.ache;
+                return newSoreness;
+            });
             newPostSession.sessions[lastNonDeletedIndex].post_session_survey = {
-                clear_candidates: _.filter(postSession.soreness, {isClearCandidate: true}),
+                clear_candidates: _.filter(updatedSoreness, {isClearCandidate: true}),
                 event_date:       eventDate,
                 RPE:              newPostSession.sessions[lastNonDeletedIndex].post_session_survey.RPE,
-                soreness:         _.filter(postSession.soreness, u => !u.isClearCandidate),
+                soreness:         _.filter(updatedSoreness, u => !u.isClearCandidate),
             };
         }
         let clonedPostPracticeSurveys = _.cloneDeep(train.postPracticeSurveys);
@@ -2898,18 +2930,28 @@ const PlanLogic = {
             `${body.side === 2 ? 'R_' : body.side === 1 ? 'L_' : ''}${areasOfSorenessBodyPart.bodyImage}`;
         let bodyImage = _getImageString(cleanedImageString);
         let severityValue = body.ache && body.ache > 0 ?
-            (body.ache / 10)
-            : body.knots && body.knots > 0 ?
-                (body.knots / 10)
-                : body.sharp && body.sharp > 0 ?
-                    (body.sharp / 10)
-                    : body.tight && body.tight > 0 ?
-                        (body.tight / 10)
-                        :
-                        1.0;
+            body.ache
+            : body.sore && body.sore > 0 ?
+                body.sore
+                : body.tender && body.tender > 0 ?
+                    body.tender
+                    : body.knots && body.knots > 0 ?
+                        body.knots
+                        : body.sharp && body.sharp > 0 ?
+                            body.sharp
+                            : body.tight && body.tight > 0 ?
+                                body.tight
+                                :
+                                10;
+        let tintColor = severityValue > 0 && severityValue <= 3 ?
+            '#F7E3AB'
+            : severityValue > 3 && severityValue <= 6 ?
+                '#F1CF6C'
+                :
+                AppColors.zeplin.yellow;
         return {
             bodyImage,
-            severityValue,
+            tintColor,
         };
     },
 

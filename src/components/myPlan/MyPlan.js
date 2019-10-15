@@ -632,29 +632,31 @@ class MyPlan extends Component {
 
     _handleAppStateChange = nextAppState => {
         const { lastOpened, notification, user, } = this.props;
-        let clearMyPlan = (
-            !lastOpened ||
-            !lastOpened.date ||
-            lastOpened.userId !== user.id ||
-            !moment().isSame(lastOpened.date, 'day')
+        this.setState(
+            { appState: nextAppState, },
+            () => {
+                let clearMyPlan = (
+                    !lastOpened ||
+                    !lastOpened.date ||
+                    lastOpened.userId !== user.id ||
+                    !moment().isSame(lastOpened.date, 'day')
+                );
+                if(nextAppState === 'active' && notification) {
+                    this._handleEnteringApp(() => this._handlePushNotification(this.props));
+                } else if(nextAppState === 'active' && (!lastOpened.date || !moment().isSame(lastOpened.date, 'day') || clearMyPlan)) {
+                    Actions.reset('key1');
+                } else if(
+                    nextAppState === 'active' &&
+                    user.health_enabled &&
+                    (
+                        !user.health_sync_date ||
+                        (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
+                    )
+                ) {
+                    AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
+                }
+            },
         );
-        if(nextAppState === 'active' && notification) {
-            this._handleEnteringApp(() => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && (!lastOpened.date || !moment().isSame(lastOpened.date, 'day') || clearMyPlan)) {
-            Actions.reset('key1');
-        } else if(
-            nextAppState === 'active' &&
-            user.health_enabled &&
-            (
-                !user.health_sync_date ||
-                (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
-            )
-        ) {
-            AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
-        }
-        if(nextAppState === 'background') {
-            this.setState({ isStartSensorSessionModalOpen: false, });
-        }
     }
 
     _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback) => {
@@ -1239,6 +1241,7 @@ class MyPlan extends Component {
 
     render = () => {
         let {
+            appState,
             dailyReadiness,
             expandNotifications,
             healthData,
@@ -1566,6 +1569,7 @@ class MyPlan extends Component {
                 />
                 { isStartSensorSessionModalOpen &&
                     <StartSensorSessionModal
+                        appState={appState}
                         createSensorSession={createSensorSession}
                         getSensorFiles={getSensorFiles}
                         isModalOpen={isStartSensorSessionModalOpen}

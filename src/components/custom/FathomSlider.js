@@ -13,7 +13,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, } from 'react-native';
+import { ImageBackground, StyleSheet, View, } from 'react-native';
 
 // import third-party libraries
 import { Slider, } from 'react-native-elements';
@@ -24,13 +24,16 @@ import { Text, } from '../custom';
 import { PlanLogic, } from '../../lib';
 
 const THUMB_SIZE = 40;
+const noneValues = [0];
+const mildValues = [1, 2, 3];
+const moderateValues = [4, 5, 6];
+const severeValues = [7, 8, 9, 10];
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
-    textStyle: (isValid, isLeft) => ({
-        color:     isValid ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight,
-        fontSize:  AppFonts.scaleFont(12),
-        textAlign: isLeft ? 'left' : 'right',
+    textStyle: (isValid, isSelected) => ({
+        color:    isSelected ? AppColors.zeplin.yellow : isValid ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight,
+        fontSize: AppFonts.scaleFont(12),
     }),
     thumbStyle: isValid => ({
         ...AppStyles.scaleButtonShadowEffect,
@@ -56,26 +59,63 @@ const FathomSlider = ({
     value,
 }) => (
     <View>
-        <Slider
-            animateTransitions={true}
-            animationType={'spring'}
-            disabled={disabled}
-            maximumTrackTintColor={AppColors.zeplin.superLight}
-            maximumValue={maximumValue}
-            minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
-            minimumValue={minimumValue}
-            onSlidingComplete={val => handleFormChange(val)}
-            orientation={orientation}
-            step={step}
-            thumbTintColor={thumbTintColor}
-            thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
-            thumbStyle={[customStyles.thumbStyle(!disabled),]}
-            trackStyle={{borderRadius: 10, height: 10,}}
-            value={value}
-        />
+        <ImageBackground
+            source={require('../../../assets/images/standard/tickmarks.png')}
+            style={{width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
+        >
+            <Slider
+                animateTransitions={true}
+                animationType={'spring'}
+                disabled={disabled}
+                maximumTrackTintColor={AppColors.zeplin.superLight}
+                maximumValue={maximumValue}
+                minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
+                minimumValue={minimumValue}
+                onSlidingComplete={val => handleFormChange(val)}
+                orientation={orientation}
+                step={step}
+                thumbTintColor={thumbTintColor}
+                thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
+                thumbStyle={[customStyles.thumbStyle(!disabled),]}
+                trackStyle={{borderRadius: 10, height: 10,}}
+                value={value}
+            />
+        </ImageBackground>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingXSml, paddingTop: AppSizes.paddingMed,}}>
-            <Text robotoRegular style={[customStyles.textStyle(isValid, true),]}>{'None'}</Text>
-            <Text robotoRegular style={[customStyles.textStyle(isValid, false),]}>{'Max'}</Text>
+            <Text
+                robotoBold={noneValues.includes(value)}
+                robotoRegular={!noneValues.includes(value)}
+                style={[customStyles.textStyle(isValid, noneValues.includes(value)),]}
+            >
+                {'None'}
+            </Text>
+            <Text
+                robotoBold={mildValues.includes(value)}
+                robotoRegular={!mildValues.includes(value)}
+                style={[customStyles.textStyle(isValid, mildValues.includes(value)),]}
+            >
+                {'Mild'}
+            </Text>
+            <Text
+                robotoBold={moderateValues.includes(value)}
+                robotoRegular={!moderateValues.includes(value)}
+                style={[customStyles.textStyle(isValid, moderateValues.includes(value)),]}
+            >
+                {'Moderate'}
+            </Text>
+            <Text
+                robotoBold={severeValues.includes(value)}
+                robotoRegular={!severeValues.includes(value)}
+                style={[customStyles.textStyle(isValid, severeValues.includes(value)),]}
+            >
+                {'Severe'}
+            </Text>
+            <Text
+                robotoRegular
+                style={[customStyles.textStyle(isValid, value, []),]}
+            >
+                {''}
+            </Text>
         </View>
     </View>
 );
