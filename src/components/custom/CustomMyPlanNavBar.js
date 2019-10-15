@@ -250,8 +250,10 @@ class CustomMyPlanNavBar extends PureComponent {
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingSml,}}>
-                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(10), width: '40%',}}>{item.description}</Text>
-                    <View style={{width: '7%'}} />
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                        {item.description}
+                    </Text>
+                    {/* *width: '40%', to item.description style above* <View style={{width: '7%'}} />
                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', width: '10%',}}>
                         <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: (28 / 2), height: 28, justifyContent: 'center', width: 28,}}>
                             { imageSource ?
@@ -275,7 +277,7 @@ class CustomMyPlanNavBar extends PureComponent {
                     <View style={{alignSelf: 'flex-end', flex: 1, width: '40%',}}>
                         {statisticText1}
                         {statisticText2}
-                    </View>
+                    </View>*/}
                 </View>
             </View>
         );
