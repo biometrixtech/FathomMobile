@@ -21,34 +21,23 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
-import { Spacer, SVGImage, Text, } from '../../custom';
+import { Spacer, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 import { BodyPartSelector, } from './';
 
-// import third-party libraries
-import _ from 'lodash';
-
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
-    shadowEffect: {
-        shadowColor:   'rgba(0, 0, 0, 0.16)',
-        shadowOffset:  { height: 3, width: 0, },
-        shadowOpacity: 1,
-        shadowRadius:  6,
-    },
-    allGoodCircle: {
+    allGoodBtnWrapper: isValid => ({
         alignSelf:         'center',
-        borderRadius:      85 / 2,
-        height:            85,
-        justifyContent:    'center',
-        marginBottom:      20,
-        paddingHorizontal: AppSizes.paddingSml,
-        width:             85,
-    },
+        backgroundColor:   isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
+        borderRadius:      100,
+        paddingHorizontal: AppSizes.padding,
+        paddingVertical:   AppSizes.paddingXSml,
+    }),
 });
 
 /* Component ==================================================================== */
@@ -66,28 +55,27 @@ class AreasOfSoreness extends Component {
         const {
             handleAreaOfSorenessClick,
             handleFormChange,
-            handleUpdateFirstTimeExperience,
             headerTitle,
             isBodyOverlayFront,
             newSoreBodyParts,
-            scrollToArea,
-            scrollToTop,
             soreBodyParts,
             soreBodyPartsState,
-            user,
         } = this.props;
-        let { areaOfSorenessClicked, groupedNewBodyPartMap, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
-        let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
-        let backNextHeight = ((AppSizes.backNextButtonsHeight) + (AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.paddingMed));
-        let btnsWrapperHeight = this.state.showWholeArea ?
-            (AppSizes.screen.height - pillsHeight)
-            :
-            (AppSizes.screen.height - (pillsHeight + backNextHeight));
+        let { areaOfSorenessClicked, } = PlanLogic.handleAreaOfSorenessRenderLogic(soreBodyParts, soreBodyPartsState);
         return(
             <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center',}}>
                 <View>
                     <Spacer size={AppSizes.padding} />
-                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25),}]}>{headerTitle}</Text>
+                    <Text robotoLight style={[AppStyles.textCenterAligned, AppStyles.paddingHorizontal, AppStyles.paddingVerticalSml, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(25),}]}>
+                        {headerTitle}
+                    </Text>
+                    {/*<Spacer size={AppSizes.padding} />
+                    <TouchableOpacity
+                        onPress={() => this.setState({ isAllGood: !this.state.isAllGood, })}
+                        style={[styles.allGoodBtnWrapper(this.state.isAllGood),]}
+                    >
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'No, all good!'}</Text>
+                    </TouchableOpacity>*/}
                     <Spacer size={AppSizes.padding} />
                     <BodyPartSelector
                         areaOfSorenessClicked={areaOfSorenessClicked}

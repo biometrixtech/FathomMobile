@@ -913,7 +913,7 @@ const Connect = ({
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                         containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
-                        onPress={() => nextBtn(!pageFirst ? 3 : 1)}
+                        onPress={() => nextBtn(!pageFirst ? 3 : 1, !pageFirst)}
                         raised={true}
                         title={pageFirst ? 'Continue' : 'Connect Wifi Later'}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}

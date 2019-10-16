@@ -105,7 +105,7 @@ class BluetoothConnect extends Component {
         newUserNetworksPayloadObj['@sensor_data'] = {};
         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
         let newUserObj = _.cloneDeep(user);
-        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}18`);
+        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
         newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
         newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
         newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
@@ -462,10 +462,38 @@ class BluetoothConnect extends Component {
         }
     }
 
-    _renderNextPage = (numberOfPages = 1) => {
+    _renderNextPage = (numberOfPages = 1, assignUserToKit) => {
         let nextPageIndex = (this.state.pageIndex + numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
-        this.setState({ pageIndex: nextPageIndex, });
+        this.setState(
+            { pageIndex: nextPageIndex, },
+            () => {
+                if(assignUserToKit) {
+                    const { bluetooth, getSensorFiles, updateUser, user, } = this.props;
+                    // setup user variables
+                    let newUserPayloadObj = {};
+                    newUserPayloadObj.sensor_data = {};
+                    newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserPayloadObj.sensor_data.system_type = '3-sensor';
+                    let newUserNetworksPayloadObj = {};
+                    newUserNetworksPayloadObj['@sensor_data'] = {};
+                    newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+                    let newUserObj = _.cloneDeep(user);
+                    newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
+                    newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserObj.sensor_data.sensor_networks = [];
+                    newUserObj.sensor_data.system_type = '3-sensor';
+                    this._handleDisconnection(false, () => {
+                        updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
+                            .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
+                            .then(() => getSensorFiles(newUserObj)) // 2. grab sensor files as they may have changed
+                            .catch(err => console.log('assignUserToKit-err',err));
+                    }, true);
+                }
+            }
+        );
     }
 
     _renderPreviousPage = (numberOfPages = 1) => {
@@ -648,7 +676,7 @@ class BluetoothConnect extends Component {
                     {/* Wifi - page 4-5 */}
                     <Connect
                         currentPage={pageIndex === 4}
-                        nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
+                        nextBtn={(numberOfPages, assignUserToKit) => this._renderNextPage(numberOfPages, assignUserToKit)}
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
