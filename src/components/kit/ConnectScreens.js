@@ -614,7 +614,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
                     containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '45%',}}
                     onPress={() => nextBtn()}
                     raised={true}
-                    title={'Got to your plan'}
+                    title={'Go to your plan'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                 />
             </View>
