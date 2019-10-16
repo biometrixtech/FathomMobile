@@ -140,7 +140,7 @@ class ResetPassword extends Component {
             password: userData.NewPassword,
         }, false)
             .then(response => {
-                let { authorization, user } = response;
+                let { authorization, user, } = response;
                 return this.props.registerDevice(this.props.certificate, this.props.device, user)
                     .then(() => {
                         let clearMyPlan = (
@@ -173,7 +173,16 @@ class ResetPassword extends Component {
                                 return this.setState({ resultMsg: { err } });
                             });
                     })
-                    .then(() => this.props.finalizeLogin(user, userData, authorization))
+                    .then(() => {
+                        let reducerExpiresDateTime = moment.utc(this.props.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                        let authorizationExpiresDateTime = moment.utc(authorization.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                        let newAuthorization = {
+                            jwt:           reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.jwt : authorization.jwt,
+                            expires:       reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.expires : authorization.expires,
+                            session_token: reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.sessionToken : authorization.session_token,
+                        };
+                        return this.props.finalizeLogin(user, userData, newAuthorization);
+                    })
                     .then(() => user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid ? this.props.getSensorFiles(user) : user);
             })
             .then(res => this.setState({

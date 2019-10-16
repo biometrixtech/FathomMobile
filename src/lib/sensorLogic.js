@@ -431,6 +431,72 @@ const SensorLogic = {
         ];
     },
 
+    /**
+      * Content for Return Sensors pages
+      */
+    getReturnSensorsContent: styles => {
+        return [
+            {
+                buttonText: 'Next',
+                image:      false,
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
+                        {'Remove adhesives & return sensors to the Smart Charger. '}
+                        <Text robotoBold>{'Firmly close the lid.'}</Text>
+                    </Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
+                        {'(you\'ll here a '}
+                        <Text robotoBold>{'"click"'}</Text>
+                        {' when fully closed)'}
+                    </Text>
+                ],
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Now, Return your Sensors'}</Text>,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/return_sensors.mp4',
+            },
+            {
+                buttonText: 'Next',
+                image:      false,
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
+                        {'The sensors will "breathe" green while syncing with the kit.'}
+                    </Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
+                        {'(Keep lid '}
+                        <Text robotoBold>{'closed'}</Text>
+                        {' while sensors sync)'}
+                    </Text>
+                ],
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Allow Sensors to Sync'}</Text>,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/sensorsgreen.mp4',
+            },
+            {
+                buttonText: 'Next',
+                image:      false,
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
+                        {'Bring the kit into your home wifi & wait for your data to upload!'}
+                    </Text>,
+                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
+                        {'If you haven\'t already, you can connect the Kit to wifi on your Plan page.'}
+                    </Text>
+                ],
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Bring Kit into Wifi'}</Text>,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
+            },
+            {
+                buttonText: 'Continue To My Plan',
+                image:      false,
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginTop: AppSizes.padding,}]}>
+                        {'Charge your Kit between workouts. Click the Button to check battery.'}
+                    </Text>,
+                ],
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Charge After Training'}</Text>,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/check_battery.mp4',
+            },
+        ];
+    },
+
     getMinRSSIDBM: () => -75,
 
 };

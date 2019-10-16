@@ -112,8 +112,10 @@ class SensorFilesPage extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
         }
-        // monitor when the BLE state changes
-        ble.startMonitor(state => this.setState({ bleState: state, }));
+        if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') { // turn on BLE & connect to accessory
+            // monitor when the BLE state changes
+            ble.startMonitor(state => this.setState({ bleState: state, }));
+        }
     }
 
     componentWillUnmount = () => {
@@ -238,7 +240,7 @@ class SensorFilesPage extends Component {
                 !response.accessory.owner_id ||
                 (response.accessory.owner_id && response.accessory.owner_id !== this.props.user.id)
             ) {
-                return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+                return this._handleDisconnection(device, () => this._handleBLEPair(), true, false);
             }
             clearTimeout(this._timer);
             return this._toggleAlertNotification();
@@ -395,16 +397,16 @@ class SensorFilesPage extends Component {
     _handleWifiNotInRange = () => {
         Alert.alert(
             '',
-            'To configure wifi, your Kit needs to be in range of the network. If not currently in range, please set up wifi later to sync your training data.',
+            'To connect wifi, your PRO kit needs to be in range of your home network. If not currently in range, connect to wifi later to sync your training data.',
             [
                 {
-                    text:    'I\'ll do it later',
+                    text:    'Connect Later',
                     onPress: () => {
                         this._handleDisconnection(false, () => Actions.pop(), true);
                     },
                 },
                 {
-                    text:  'Configure Now',
+                    text:  'Connect Now',
                     style: 'cancel',
                 },
             ],
@@ -413,12 +415,21 @@ class SensorFilesPage extends Component {
     }
 
     _handleWifiScan = () => {
-        const { bluetooth, } = this.props;
+        const { bluetooth, updateUser, user, } = this.props;
         if(!this._isMounted) {
             return '';
         }
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
+        // return ble.writeWifiNetworkReset(device)
+        //     .then(res => { // update user obj clearing wifi information when successful
+        //         let newUserNetworksPayloadObj = {};
+        //         newUserNetworksPayloadObj['@sensor_data'] = {};
+        //         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+        //         updateUser(newUserNetworksPayloadObj, user.id);
+        //         return res;
+        //     })
+        //     .then(() => ble.getScannedWifiConnections(device))
         return ble.getScannedWifiConnections(device)
             .then(res => {
                 if(!this._isMounted) {
@@ -496,7 +507,7 @@ class SensorFilesPage extends Component {
                 [
                     {
                         text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {})),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {}, true)),
                         style:   'cancel',
                     },
                     {

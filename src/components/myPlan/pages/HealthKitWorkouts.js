@@ -7,6 +7,7 @@
         handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         handleToggleSurvey={handleTogglePostSessionSurvey}
         resetFirstPage={resetHealthKitFirstPage}
+        user={user}
         workouts={healthKitWorkouts}
     />
  *
@@ -254,7 +255,7 @@ class HealthKitWorkouts extends Component {
     }
 
     render = () => {
-        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, workouts, } = this.props;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, user, workouts, } = this.props;
         const { isEditingDuration, isHKRetrieveChecked, isHKRetrieveModalOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         return(
@@ -307,7 +308,7 @@ class HealthKitWorkouts extends Component {
                                 )}
                             </View>
                             <View>
-                                { (Platform.OS === 'ios') &&
+                                { (Platform.OS === 'ios' && user.health_enabled) &&
                                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                         <Checkbox
                                             checked={isHKRetrieveChecked}
@@ -550,6 +551,7 @@ HealthKitWorkouts.propTypes = {
     handleToggleSurvey:            PropTypes.func.isRequired,
     isPostSession:                 PropTypes.bool,
     resetFirstPage:                PropTypes.bool,
+    user:                          PropTypes.object.isRequired,
     workouts:                      PropTypes.array.isRequired,
 };
 

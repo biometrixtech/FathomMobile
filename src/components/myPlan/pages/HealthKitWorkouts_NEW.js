@@ -8,6 +8,7 @@
         handleToggleSurvey={handleTogglePostSessionSurvey}
         resetFirstPage={resetHealthKitFirstPage}
         trainingSessions={trainingSessions}
+        user={user}
         workouts={healthKitWorkouts}
     />
  *
@@ -385,7 +386,7 @@ class HealthKitWorkouts extends Component {
     }
 
     render = () => {
-        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, trainingSessions, workouts, } = this.props;
+        const { handleHealthDataFormChange, handleTogglePostSessionSurvey, isPostSession, trainingSessions, user, workouts, } = this.props;
         const { isEditingDuration, isHKRetrieveChecked, isHKRetrieveModalOpen, pageIndex, showAddContinueBtns, showRPEPicker, } = this.state;
         let pillsHeight = (AppSizes.statusBarHeight + AppSizes.progressPillsHeight);
         // console.log('workouts',workouts);
@@ -453,7 +454,7 @@ class HealthKitWorkouts extends Component {
                                     />
                                 )
                             })}
-                            { (Platform.OS === 'ios') &&
+                            { (Platform.OS === 'ios' && user.health_enabled) &&
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                     <Checkbox
                                         checked={isHKRetrieveChecked}
@@ -541,7 +542,7 @@ class HealthKitWorkouts extends Component {
                                         </View>
                                     </View>
                                     <View style={{backgroundColor: 'red', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
-                                        { (Platform.OS === 'ios') &&
+                                        { (Platform.OS === 'ios' && user.health_enabled) &&
                                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                                 <Checkbox
                                                     checked={isHKRetrieveChecked}
@@ -621,7 +622,7 @@ class HealthKitWorkouts extends Component {
                                 )}
                             </View>
                             <View>
-                                { (Platform.OS === 'ios') &&
+                                { (Platform.OS === 'ios' && user.health_enabled) &&
                                     <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                         <Checkbox
                                             checked={isHKRetrieveChecked}
@@ -865,6 +866,7 @@ HealthKitWorkouts.propTypes = {
     isPostSession:                 PropTypes.bool,
     resetFirstPage:                PropTypes.bool,
     trainingSessions:              PropTypes.array.isRequired,
+    user:                          PropTypes.object.isRequired,
     workouts:                      PropTypes.array.isRequired,
 };
 

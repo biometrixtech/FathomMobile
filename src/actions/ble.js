@@ -373,6 +373,7 @@ const startConnection = async (device) => {
                     });
                     return resolve(macAddress);
                 } catch(error) {
+                    console.log('error',error);
                     let errorObj = await handleError(error, device);
                     return reject(errorObj);
                 }
@@ -418,18 +419,18 @@ const startDeviceScan = callback => {
 
 const getScannedWifiConnections = device => {
     const wifiScanBase64 = new Buffer([commands.WRITE_WIFI_SCAN, convertHex('0x00')]).toString('base64');
-    let transactionId = 'wifi-scan';
+    let wifiScanTransactionId = 'wifi-scan';
     return new Promise((resolve, reject) => {
-        return device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, wifiScanBase64, transactionId)
+        return device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, wifiScanBase64, wifiScanTransactionId)
             .then(async characteristic => await checkRSSI(device, characteristic))
             .then(characteristic => {
                 let rejectionTimer = _.delay(async () => {
-                    bleManager.cancelTransaction(transactionId);
+                    bleManager.cancelTransaction(wifiScanTransactionId);
                     let errorObj = await handleError({errorCode: -1,}, device);
                     return reject(errorObj);
                 }, 60000);
                 let noReturnTimer = _.delay(async () => {
-                    let writeCharacterristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, wifiScanBase64, transactionId);
+                    let writeCharacterristic = await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, wifiScanBase64, wifiScanTransactionId);
                     try {
                         let characteristicBase64 = writeCharacterristic.value;
                         let characteristicHex = convertBase64ToHex(characteristicBase64);
@@ -443,7 +444,7 @@ const getScannedWifiConnections = device => {
                     async (error, monitoredCharacteristic) => {
                         clearTimeout(rejectionTimer);
                         clearTimeout(noReturnTimer);
-                        bleManager.cancelTransaction(transactionId);
+                        bleManager.cancelTransaction(wifiScanTransactionId);
                         if(error) {
                             let errorObj = await handleError(error, device);
                             return reject(errorObj);
@@ -452,7 +453,7 @@ const getScannedWifiConnections = device => {
                         let monitoredCharacteristicHex = convertBase64ToHex(monitoredCharacteristicBase64);
                         return resolve(monitoredCharacteristicHex[4]);
                     },
-                    transactionId
+                    wifiScanTransactionId
                 );
             })
             .catch(async error => {
@@ -641,6 +642,20 @@ const exitKitSetup = async device => {
     });
 };
 
+const writeWifiNetworkReset = device => {
+    const resetWifiNetworkBase64 = new Buffer([commands.WRITE_WIFI_NETWORK_RESET, convertHex('0x00')]).toString('base64');
+    let resetWifiTransactionId = 'reset-wifi-network';
+    return new Promise((resolve, reject) => {
+        return device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, resetWifiNetworkBase64, resetWifiTransactionId)
+            .then(async characteristic => await checkRSSI(device, characteristic))
+            .then(characteristic => resolve(characteristic))
+            .catch(async error => {
+                let errorObj = await handleError(error, device);
+                return reject(errorObj);
+            });
+    });
+};
+
 export default {
     assignKitIndividual,
     createSensorSession,
@@ -655,4 +670,5 @@ export default {
     startMonitor,
     updateSensorSession,
     writeWifiDetailsToSensor,
+    writeWifiNetworkReset,
 };

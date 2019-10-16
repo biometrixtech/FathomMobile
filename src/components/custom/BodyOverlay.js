@@ -134,6 +134,14 @@ class BodyOverlay extends Component {
                 require('../../../assets/images/body/body_overlay/R_Forearm.png')
             : image === 'CoreStabilizers.svg' ?
                 require('../../../assets/images/body/body_overlay/CoreStabilizers.png')
+            : image === 'L_CoreStabilizers.svg' ?
+                require('../../../assets/images/body/body_overlay/L_CoreStabilizers.png')
+            : image === 'R_CoreStabilizers.svg' ?
+                require('../../../assets/images/body/body_overlay/R_CoreStabilizers.png')
+            : image === 'L_OutsideKnee.svg' ?
+                require('../../../assets/images/body/body_overlay/L_OuterKnee.png')
+            : image === 'R_OutsideKnee.svg' ?
+                require('../../../assets/images/body/body_overlay/R_OuterKnee.png')
             : image === 'ErectorSpinae.svg' ?
                 require('../../../assets/images/body/body_overlay/ErectorSpinae.png')
             :

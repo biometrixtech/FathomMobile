@@ -5,6 +5,7 @@ import { PlanLogic, } from '../lib';
  * Default MyPlan State
  */
 const defaultPlanState = {
+    appState:           'active',
     currentTabLocation: 0,
     dailyReadiness:     {
         current_position:          null,
@@ -31,6 +32,7 @@ const defaultPlanState = {
     isPostSessionSurveyModalOpen:         false,
     isPrepareSessionsCompletionModalOpen: false,
     isReadinessSurveyModalOpen:           false,
+    isReturnSensorsModalOpen:             false,
     isStartSensorSessionModalOpen:        false,
     isTrainSessionsCompletionModalOpen:   false,
     loading:                              false,

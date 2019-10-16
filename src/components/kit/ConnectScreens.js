@@ -103,7 +103,7 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
                         <TabIcon
                             color={color}
                             icon={'close'}
-                            onPress={() => onClose ? onClose() : Actions.pop()}
+                            onPress={onClose ? () => onClose() : () => Actions.pop()}
                             reverse={false}
                             size={30}
                         />
@@ -319,27 +319,27 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         </Text>
                     </View>
                     :
-                    <View>
+                    <View style={{flex: 1,}}>
                         <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
                         <View>
-                            <TabIcon
+                            {/*<TabIcon
                                 color={AppColors.zeplin.slateLight}
                                 containerStyle={[{position: 'absolute', right: 10, top: 40, zIndex: 100,}]}
                                 icon={isVideoPaused ? 'pause' : 'play-arrow'}
                                 onPress={() => handleUpdatePauseState()}
                                 size={20}
-                            />
+                            />*/}
                             <Video
                                 paused={isVideoPaused}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={require('../../../assets/videos/calibration.mp4')}
+                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4'}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
-                        <View style={{marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
+                        <View style={{flex: 1, justifyContent: 'flex-end', marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
-                                {'Start a Workout by tapping the "+" button on the Plan page & follow calibration.\n\nStand up. Stand still. Then March. After that, your workout has started.'}
+                                {'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'}
                             </Text>
                         </View>
                     </View>
@@ -363,7 +363,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                     :
-                    <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
@@ -493,7 +493,7 @@ const Battery = ({ currentPage, nextBtn, onBack, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, showTopNavStep = true, }) => (
+const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
         <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
@@ -529,7 +529,7 @@ const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nex
                     loadingProps={{color: AppColors.zeplin.yellow,}}
                     onPress={() => nextBtn()}
                     raised={true}
-                    title={'Next'}
+                    title={nextBtnText}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                 />
             </View>
@@ -614,7 +614,7 @@ const Train = ({ currentPage, nextBtn, onBack, page, showTopNavStep = true, }) =
                     containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '45%',}}
                     onPress={() => nextBtn()}
                     raised={true}
-                    title={'Next'}
+                    title={'Go to your plan'}
                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                 />
             </View>
@@ -743,6 +743,7 @@ const Connect = ({
     onClose,
     nextBtn,
     page,
+    pageFirst,
     showTopNavStep = true,
 }) => {
     let content = SensorLogic.getConnectContent(styles)[page];
@@ -874,19 +875,19 @@ const Connect = ({
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
                     style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                 >
-                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{'First, let\'s connect PRO to your account'}</Text>
+                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{pageFirst ? 'First, let\'s connect PRO to your account' : 'Now let\'s Connect Fathom PRO to Wifi!'}</Text>
                     <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
                             <View style={{alignItems: 'center', height: 20, justifyContent: 'center', width: 40,}}>
                                 <TabIcon
                                     color={AppColors.zeplin.yellow}
-                                    icon={'bluetooth'}
+                                    icon={pageFirst ? 'bluetooth' : 'wifi'}
                                     reverse={false}
                                     size={20}
                                 />
                             </View>
-                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{'Mobile Bluetooth ON'}</Text>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{pageFirst ? 'Mobile Bluetooth ON' : 'Home Wifi In Range'}</Text>
                         </View>
                         <View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
@@ -899,12 +900,22 @@ const Connect = ({
                             </View>
                         </View>
                     </View>
+                    { !pageFirst &&
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignSelf: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.padding, width: '75%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={'Connect Wifi Now'}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
+                    }
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                        containerStyle={{alignSelf: 'center',marginTop: AppSizes.padding, width: '75%',}}
-                        onPress={() => nextBtn()}
+                        containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
+                        onPress={() => nextBtn(!pageFirst ? 3 : 1)}
                         raised={true}
-                        title={'Continue'}
+                        title={pageFirst ? 'Continue' : 'Connect Wifi Later'}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 </LinearGradient>
@@ -912,6 +923,62 @@ const Connect = ({
         </ImageBackground>
     );
 };
+
+const ReturnSensors = ({ currentPage, onBack, onClose, nextBtn, page, }) => {
+    let content = SensorLogic.getReturnSensorsContent(styles)[page];
+    return (
+        <View style={{flex: 1,}}>
+            <TopNav darkColor={true} onBack={onBack} onClose={onClose} step={false} />
+            <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                {content.title}
+            </View>
+            { content.image ?
+                <Image
+                    resizeMode={'contain'}
+                    source={content.image}
+                    style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
+                />
+                : content.video ?
+                    <Video
+                        paused={!currentPage}
+                        repeat={true}
+                        resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
+                        source={{uri: content.video}}
+                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                    />
+                    :
+                    null
+            }
+            <View style={{alignItems: 'center', flex: 1, paddingTop: AppSizes.padding,}}>
+                <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
+                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
+                        {content.subtitle}
+                    </View>
+                    { page === 3 &&
+                        <View style={{marginHorizontal: AppSizes.paddingXLrg, marginBottom: AppSizes.padding,}}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
+                                <View style={[styles.ledStyle, {backgroundColor: 'green', shadowColor: 'green', marginRight: AppSizes.paddingSml,}]} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Green = Charged'}</Text>
+                            </View>
+                            <View style={{alignItems: 'center', flexDirection: 'row', paddingBottom: AppSizes.paddingXSml,}}>
+                                <View style={[styles.ledStyle, {backgroundColor: 'blue', shadowColor: 'blue', marginRight: AppSizes.paddingSml,}]} />
+                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15),}}>{'Blue = Low Battery'}</Text>
+                            </View>
+                        </View>
+                    }
+                </View>
+                <Button
+                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                    containerStyle={{alignItems: 'center', marginBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, width: '60%',}}
+                    onPress={() => nextBtn()}
+                    raised={true}
+                    title={content.buttonText}
+                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                />
+            </View>
+        </View>
+    );
+}
 
 /* Export Components ================================================================= */
 export {
@@ -922,6 +989,7 @@ export {
     Connect,
     ExtraPages,
     Placement,
+    ReturnSensors,
     Session,
     TopNav,
     Train,

@@ -171,6 +171,7 @@ class Start extends Component {
                 if(authorizationResponse && authorizationResponse.authorization) {
                     authorization.expires = authorizationResponse.authorization.expires;
                     authorization.jwt = authorizationResponse.authorization.jwt;
+                    authorization.session_token = authorizationResponse.authorization.session_token;
                 }
                 return this.props.getUser(userObj.id);
             })
@@ -211,7 +212,16 @@ class Start extends Component {
                         );
                     });
             })
-            .then(() => this.props.finalizeLogin(userObj, credentials, authorization))
+            .then(() => {
+                let reducerExpiresDateTime = moment.utc(this.props.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                let authorizationExpiresDateTime = moment.utc(authorization.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+                let newAuthorization = {
+                    jwt:           reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.jwt : authorization.jwt,
+                    expires:       reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.expires : authorization.expires,
+                    session_token: reducerExpiresDateTime.isAfter(authorizationExpiresDateTime) ? this.props.sessionToken : authorization.session_token,
+                };
+                return this.props.finalizeLogin(userObj, credentials, newAuthorization);
+            })
             .then(() => userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? this.props.getSensorFiles(userObj) : userObj)
             .then(() => _.delay(() => this.hideSplash(() => AppUtil.routeOnLogin(userObj)), 500))
             .catch(err => {
