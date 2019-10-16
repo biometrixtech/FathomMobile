@@ -106,6 +106,68 @@ function serialize(obj, prefix) {
     return str.join('&');
 }
 
+/*
+ * Checks if we need to reauthorize the user before continuing
+ */
+function _handleReAuthorizing(hostname, currentState) {
+    let currentInitState = currentState.init;
+    let currentUserState = currentState.user;
+    if(!currentInitState.expires) {
+        return Promise.resolve();
+    }
+    let expiresDateTime = moment.utc(currentInitState.expires, 'YYYY-MM-DDTHH:mm:ssZ');
+    let currentDateTime = moment();
+    let timeDiff = expiresDateTime.diff(currentDateTime, 'minutes', true);
+    if(timeDiff <= 5) {
+        // reauthorize user since we're close to expiration time
+        let reAuthorizeParam = { userId: currentUserState.id, };
+        let sessionTokenObj = { session_token: currentInitState.session_token, };
+        let reAuthorizeEndpoint = APIConfig.endpoints.get('authorize');
+        Object.keys(reAuthorizeParam).forEach(param => {
+            if (reAuthorizeEndpoint.includes(`{${param}}`)) {
+                reAuthorizeEndpoint = reAuthorizeEndpoint.split(`{${param}}`).join(reAuthorizeParam[param]);
+                delete reAuthorizeParam[param];
+            }
+        });
+        let reAuthorizeUrl = `${hostname}${reAuthorizeEndpoint}`;
+        let reAuthorizeReqs = {
+            body:    JSON.stringify(sessionTokenObj),
+            headers: {
+                'Accept':        'application/json',
+                'Authorization': currentInitState.jwt,
+                'Content-Type':  'application/json',
+                'User-Agent':    AppConfig.deviceInfo,
+            },
+            method: 'POST',
+        };
+        requestCounter += 1;
+        debug('', `API Request #${requestCounter} to ${reAuthorizeUrl} @ ${moment()}`);
+        return fetch(reAuthorizeUrl, reAuthorizeReqs)
+            .then(async res => {
+                if(res && /20[012]/.test(`${res.status}`)) {
+                    return res.json();
+                }
+                // log user out
+                await store.dispatch({
+                    type: DispatchActions.LOGOUT
+                });
+                return Promise.reject();
+            })
+            .then(cleanedRes => {
+                debug(cleanedRes, `API Response #${requestCounter} from ${reAuthorizeUrl} @ ${moment()}`);
+                // successfully fetched, update reducer, and resend API
+                store.dispatch({
+                    type:    DispatchActions.LOGIN,
+                    jwt:     cleanedRes.authorization.jwt,
+                    expires: cleanedRes.authorization.expires,
+                });
+                return Promise.resolve();
+            });
+    }
+    // resolve since we are still in the valid window
+    return Promise.resolve();
+}
+
 /**
   * Sends requests to the API
   */
@@ -211,7 +273,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
         debug('', `API Request #${requestNum} to ${thisUrl} @ ${moment()}`);
 
         // Make the request
-        return fetch(thisUrl, req)
+        return await _handleReAuthorizing(hostname, currentState)
+            .then(async () => await fetch(thisUrl, req))
             .then(async rawRes => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);
@@ -229,7 +292,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         let reAuthorizeParam = { userId: currentState.user.id, };
                         let sessionTokenObj = { session_token: currentState.init.session_token, };
                         let reAuthorizeEndpoint = APIConfig.endpoints.get('authorize');
-                        Object.keys(reAuthorizeParam).forEach((param) => {
+                        Object.keys(reAuthorizeParam).forEach(param => {
                             if (reAuthorizeEndpoint.includes(`{${param}}`)) {
                                 reAuthorizeEndpoint = reAuthorizeEndpoint.split(`{${param}}`).join(reAuthorizeParam[param]);
                                 delete reAuthorizeParam[param];
@@ -250,7 +313,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
                         debug('', `API Request #${requestCounter} to ${reAuthorizeUrl} @ ${moment()}`);
                         return await fetch(reAuthorizeUrl, reAuthorizeReqs)
                             .then(res => {
-                                if(rawRes && /20[012]/.test(`${rawRes.status}`)) {
+                                if(res && /20[012]/.test(`${res.status}`)) {
                                     return res.json();
                                 }
                                 // reached limit, reset timer and log user out

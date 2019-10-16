@@ -57,7 +57,7 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { PostSessionSurvey, ReadinessSurvey, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
+import { PostSessionSurvey, ReadinessSurvey, ReturnSensorsModal, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
 import { ContactUsModal, Loading, } from '../general';
 
 // global constants
@@ -632,41 +632,43 @@ class MyPlan extends Component {
 
     _handleAppStateChange = nextAppState => {
         const { lastOpened, notification, user, } = this.props;
-        let clearMyPlan = (
-            !lastOpened ||
-            !lastOpened.date ||
-            lastOpened.userId !== user.id ||
-            !moment().isSame(lastOpened.date, 'day')
+        this.setState(
+            { appState: nextAppState, },
+            () => {
+                let clearMyPlan = (
+                    !lastOpened ||
+                    !lastOpened.date ||
+                    lastOpened.userId !== user.id ||
+                    !moment().isSame(lastOpened.date, 'day')
+                );
+                if(nextAppState === 'active' && notification) {
+                    this._handleEnteringApp(() => this._handlePushNotification(this.props));
+                } else if(nextAppState === 'active' && (!lastOpened.date || !moment().isSame(lastOpened.date, 'day') || clearMyPlan)) {
+                    Actions.reset('key1');
+                } else if(
+                    nextAppState === 'active' &&
+                    user.health_enabled &&
+                    (
+                        !user.health_sync_date ||
+                        (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
+                    )
+                ) {
+                    AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
+                }
+            },
         );
-        if(nextAppState === 'active' && notification) {
-            this._handleEnteringApp(() => this._handlePushNotification(this.props));
-        } else if(nextAppState === 'active' && (!lastOpened.date || clearMyPlan)) {
-            Actions.reset('key1');
-        } else if(
-            nextAppState === 'active' &&
-            user.health_enabled &&
-            (
-                !user.health_sync_date ||
-                (moment().diff(moment(user.health_sync_date), 'minutes') > 7)
-            )
-        ) {
-            AppUtil.getAppleHealthKitData(user.id, user.health_sync_date, user.historic_health_sync_date);
-        }
-        if(nextAppState === 'background') {
-            this.setState({ isStartSensorSessionModalOpen: false, });
-        }
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback) => {
         const { plan, } = this.props;
         const { dailyReadiness, postSession, } = this.state;
         let stateObject = isDailyReadiness ? dailyReadiness : postSession;
-        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections);
+        let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections, side);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
-            this.setState({ dailyReadiness: newFormFields, });
+            this.setState({ dailyReadiness: newFormFields, }, () => callback && callback());
         } else {
-            this.setState({ postSession: newFormFields, });
+            this.setState({ postSession: newFormFields, }, () => callback && callback());
         }
     }
 
@@ -1027,7 +1029,6 @@ class MyPlan extends Component {
                 recover:       newRecoverObject,
                 sensorSession: null,
             },
-            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: true, }), 500); }
         );
         updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
             .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
@@ -1038,7 +1039,10 @@ class MyPlan extends Component {
             .then(() => getSensorFiles(user))
             .then(response => {
                 this.setState(
-                    { isPageCalculating: false, },
+                    {
+                        isPageCalculating:        false,
+                        isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
+                    },
                     () => {
                         clearCompletedExercises();
                         clearCompletedCoolDownExercises();
@@ -1237,6 +1241,7 @@ class MyPlan extends Component {
 
     render = () => {
         let {
+            appState,
             dailyReadiness,
             expandNotifications,
             healthData,
@@ -1247,6 +1252,7 @@ class MyPlan extends Component {
             isPostSessionSurveyModalOpen,
             isPrepareSessionsCompletionModalOpen,
             isReadinessSurveyModalOpen,
+            isReturnSensorsModalOpen,
             isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
@@ -1517,9 +1523,7 @@ class MyPlan extends Component {
                         null
                 }
 
-                <FathomModal
-                    isVisible={isReadinessSurveyModalOpen}
-                >
+                <FathomModal isVisible={isReadinessSurveyModalOpen}>
                     <ReadinessSurvey
                         dailyReadiness={dailyReadiness}
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1535,9 +1539,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
-                <FathomModal
-                    isVisible={isPostSessionSurveyModalOpen}
-                >
+                <FathomModal isVisible={isPostSessionSurveyModalOpen}>
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
@@ -1567,6 +1569,7 @@ class MyPlan extends Component {
                 />
                 { isStartSensorSessionModalOpen &&
                     <StartSensorSessionModal
+                        appState={appState}
                         createSensorSession={createSensorSession}
                         getSensorFiles={getSensorFiles}
                         isModalOpen={isStartSensorSessionModalOpen}
@@ -1655,6 +1658,13 @@ class MyPlan extends Component {
                 <ContactUsModal
                     handleModalToggle={this._toggleContactUsWebView}
                     isModalOpen={isContactUsOpen}
+                />
+
+                <ReturnSensorsModal
+                    handleModalToggle={() => this.setState({ isReturnSensorsModalOpen: !this.state.isReturnSensorsModalOpen, })}
+                    isModalOpen={isReturnSensorsModalOpen}
+                    updateUser={updateUser}
+                    user={user}
                 />
 
             </View>

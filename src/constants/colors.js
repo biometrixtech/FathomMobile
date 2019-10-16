@@ -110,6 +110,7 @@ const zeplin = {
     superLight:    '#F5F5F5',
     warning:       '#EDA14A',
     warningLight:  '#F1B877',
+    warningXLight: '#F6D4AD',
     yellow:        '#EBBA2D',
     yellowLight:   '#EEC756',
 }

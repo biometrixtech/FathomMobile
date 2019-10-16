@@ -4,7 +4,9 @@
     <SingleSensorSession
         handleFormChange={handleHealthDataFormChange}
         handleNextStep={(isHealthKitValid, isHKNextStep) => this._checkNextStep(0, isHealthKitValid, isHKNextStep)}
+        handleTogglePostSessionSurvey={handleTogglePostSessionSurvey}
         session={sensorSession}
+        user={user}
     />
  *
  */
@@ -85,7 +87,7 @@ class SingleSensorSession extends Component {
     }
 
     render = () => {
-        const { handleFormChange, session, } = this.props;
+        const { handleFormChange, handleTogglePostSessionSurvey, session, user, } = this.props;
         const { isHKRetrieveChecked, isHKRetrieveModalOpen, } = this.state;
         let { sportImage, sportText, } = PlanLogic.handleSingleHealthKitWorkoutPageRenderLogic([session]);
         return (
@@ -93,6 +95,7 @@ class SingleSensorSession extends Component {
 
                 <ProgressPill
                     currentStep={1}
+                    onClose={handleTogglePostSessionSurvey}
                     totalSteps={3}
                 />
 
@@ -133,7 +136,7 @@ class SingleSensorSession extends Component {
                                 />
                             )
                         })}
-                        { (Platform.OS === 'ios') &&
+                        { (Platform.OS === 'ios' && user.health_enabled) &&
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                 <Checkbox
                                     checked={isHKRetrieveChecked}
@@ -161,9 +164,11 @@ class SingleSensorSession extends Component {
 }
 
 SingleSensorSession.propTypes = {
-    handleFormChange: PropTypes.func.isRequired,
-    handleNextStep:   PropTypes.func.isRequired,
-    session:          PropTypes.object.isRequired,
+    handleFormChange:              PropTypes.func.isRequired,
+    handleNextStep:                PropTypes.func.isRequired,
+    handleTogglePostSessionSurvey: PropTypes.func.isRequired,
+    session:                       PropTypes.object.isRequired,
+    user:                          PropTypes.object.isRequired,
 };
 
 SingleSensorSession.defaultProps = {};
