@@ -474,7 +474,7 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Bring the kit into your home wifi & wait for your data upload!'}
+                        {'Bring the kit into your home wifi & wait for your data to upload!'}
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
                         {'If you haven\'t already, you can connect the Kit to wifi on your Plan page.'}
