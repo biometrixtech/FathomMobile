@@ -676,7 +676,7 @@ class BluetoothConnect extends Component {
                     <Complete
                         currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
                         currentPage={pageIndex === 6}
-                        nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : this._renderNextPage()}
+                        nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : () => this._renderNextPage()}
                         nextBtnText={user.first_time_experience.includes('3Sensor-Onboarding-8') ? 'Done' : 'Next'}
                     />
 

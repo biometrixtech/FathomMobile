@@ -245,7 +245,10 @@ class BodyPartSelector extends Component {
             let mergedBodyParts = _.concat(areaOfSorenessClicked);
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
             if(foundSelectedBodyPartInReducer) {
-                handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side);
+                this.setState(
+                    { isClickLocked: false, },
+                    () => handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side),
+                );
             }
         }
     }

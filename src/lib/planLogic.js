@@ -1025,7 +1025,7 @@ const PlanLogic = {
         let newRecoverObject = Object.assign({}, recover, {
             isActiveRecoveryCollapsed: dailyReadiness.sessions_planned ? true : false,
         });
-        let updatedSoreness = _.filter(dailyReadiness.soreness, s => s.ache || s.sore || s.tender || s.knots || s.sharp);
+        let updatedSoreness = _.filter(dailyReadiness.soreness, s => s.tight || s.ache || s.sore || s.tender || s.knots || s.sharp);
         updatedSoreness = _.map(updatedSoreness, s => {
             let newSoreness = _.cloneDeep(s);
             newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
@@ -1118,7 +1118,7 @@ const PlanLogic = {
         newPostSession.sessions = _.concat(healthDataWorkouts, loggedSessions);
         let lastNonDeletedIndex = _.findLastIndex(newPostSession.sessions, ['deleted', false]);
         if(newPostSession.sessions[lastNonDeletedIndex]) {
-            let updatedSoreness = _.filter(postSession.soreness, s => s.ache || s.sore || s.tender || s.knots || s.sharp);
+            let updatedSoreness = _.filter(postSession.soreness, s => s.tight || s.ache || s.sore || s.tender || s.knots || s.sharp);
             updatedSoreness = _.map(updatedSoreness, s => {
                 let newSoreness = _.cloneDeep(s);
                 newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
