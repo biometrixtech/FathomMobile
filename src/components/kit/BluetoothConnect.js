@@ -237,7 +237,7 @@ class BluetoothConnect extends Component {
                             if(!this._isMounted) {
                                 return '';
                             }
-                            // // TODO: THIS NEEDS TO BE FLUSHED OUT
+                            // TODO: THIS NEEDS TO BE FLUSHED OUT
                             // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
                             // let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
                             // AppUtil.handleAPIErrorAlert(message, header);
@@ -256,7 +256,7 @@ class BluetoothConnect extends Component {
                         if(!this._isMounted) {
                             return '';
                         }
-                        // // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
                         // let errorObj = await ble.handleError(err, device);
                         // let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
                         // let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
