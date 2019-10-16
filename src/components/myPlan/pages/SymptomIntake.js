@@ -36,7 +36,9 @@ const customStyles = StyleSheet.create({
     continueBtnWrapper: isValid => ({
         alignSelf:         'flex-end',
         backgroundColor:   isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
+        borderColor:       isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
         borderRadius:      100,
+        borderWidth:       1,
         paddingHorizontal: AppSizes.paddingLrg,
         paddingVertical:   AppSizes.paddingMed,
     }),
@@ -52,6 +54,15 @@ const customStyles = StyleSheet.create({
         shadowOffset:      { height: 3, width: 0, },
         shadowOpacity:     1,
         shadowRadius:      6,
+    }),
+    removeBtnWrapper: () => ({
+        alignSelf:         'flex-end',
+        backgroundColor:   AppColors.white,
+        borderColor:       AppColors.zeplin.yellow,
+        borderRadius:      100,
+        borderWidth:       1,
+        paddingHorizontal: AppSizes.paddingLrg,
+        paddingVertical:   AppSizes.paddingMed,
     }),
     textStyle: isSelected => ({
         color:    isSelected ? AppColors.white : AppColors.zeplin.slate,
@@ -135,7 +146,7 @@ class SymptomIntake extends Component {
         );
     }
 
-    _handleSliderChange = value => {
+    _handleSliderChange = (value, callback) => {
         const { handleFormChange, selectedBodyPart, } = this.props;
         // regsiter haptics
         const options = {
@@ -159,7 +170,16 @@ class SymptomIntake extends Component {
                 pills:       newPillsState.pills,
                 sliderValue: value,
             },
-            () => handleFormChange('soreness', this.state.pills, false, selectedBodyPart.index, selectedBodyPart.side, value === 0 ? true : false),
+            () => handleFormChange(
+                'soreness',
+                this.state.pills,
+                false,
+                selectedBodyPart.index,
+                selectedBodyPart.side,
+                value === 0 ? true : false,
+                false,
+                callback && callback()
+            ),
         );
     }
 
@@ -263,7 +283,15 @@ class SymptomIntake extends Component {
                         value={selectedBodyPart.value || 0}
                     />
                     <Spacer size={AppSizes.padding} />
-                    <View style={{justifyContent: 'flex-end',}}>
+                    <View style={{flexDirection: 'row', justifyContent: (sliderValue && isValid) ? 'space-between' : 'flex-end',}}>
+                        { (sliderValue >= 1 && isValid) &&
+                            <TouchableOpacity
+                                onPress={() => this._handleSliderChange(0, () => this._handleContinue())}
+                                style={[customStyles.removeBtnWrapper(),]}
+                            >
+                                <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Remove'}</Text>
+                            </TouchableOpacity>
+                        }
                         <TouchableOpacity
                             onPress={isBtnValid ? () => this._handleContinue() : () => null}
                             style={[customStyles.continueBtnWrapper(isBtnValid),]}

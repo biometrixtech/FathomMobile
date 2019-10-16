@@ -672,10 +672,13 @@ class MyPlan extends Component {
         }
     }
 
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
         const { dailyReadiness, } = this.state;
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, dailyReadiness, isClearCandidate, isMovementValue);
-        this.setState({ dailyReadiness: newFormFields, });
+        this.setState(
+            { dailyReadiness: newFormFields, },
+            () => callback && callback(),
+        );
     }
 
     _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
@@ -876,10 +879,13 @@ class MyPlan extends Component {
         );
     }
 
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
         const { postSession, } = this.state;
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, postSession, isClearCandidate, isMovementValue);
-        this.setState({ postSession: newFormFields, });
+        this.setState(
+            { postSession: newFormFields, },
+            () => callback && callback(),
+        );
     }
 
     _handlePostSessionSurveySubmit = areAllDeleted => {
