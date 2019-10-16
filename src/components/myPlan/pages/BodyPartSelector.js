@@ -217,11 +217,8 @@ class BodyPartSelector extends Component {
     _handleContinue = () => {
         const { areaOfSorenessClicked, handleBodyPartClick, } = this.props;
         const { selectedBodyPartObj, } = this.state;
-        let foundSelectedBodyPartInReducer = _.find(areaOfSorenessClicked, ['body_part', selectedBodyPartObj.index]);
+        let foundSelectedBodyPartInReducer = _.find(areaOfSorenessClicked, {body_part: selectedBodyPartObj.index, side: selectedBodyPartObj.side,});
         let selectedBodyPart = _.find(MyPlanConstants.bodyPartMapping, ['index', selectedBodyPartObj.index]);
-        if(areaOfSorenessClicked.length === 0 || !foundSelectedBodyPartInReducer || !selectedBodyPart) {
-          return;
-        }
         let hasSeverity = foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
             foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0 ||
             foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0 ||
@@ -245,12 +242,14 @@ class BodyPartSelector extends Component {
             let mergedBodyParts = _.concat(areaOfSorenessClicked);
             let foundSelectedBodyPartInReducer = _.find(mergedBodyParts, {body_part: clickedBodyPart.cleanedKey, side: clickedBodyPart.side,});
             if(foundSelectedBodyPartInReducer) {
-                this.setState(
+                return this.setState(
                     { isClickLocked: false, },
                     () => handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side),
                 );
             }
+            return this.setState({ isClickLocked: false, },);
         }
+        return this.setState({ isClickLocked: false, },);
     }
 
     _handleGridPress = key => {
@@ -280,16 +279,16 @@ class BodyPartSelector extends Component {
                                     :
                                     null;
             let updatedPills = foundSelectedBodyPartInReducer ?
-              [
-                  { index: 0, isSelected: (foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0) || false, text: 'Tight', value: foundSelectedBodyPartInReducer.tight || null, },
-                  { index: 1, isSelected: (foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0) || false, text: 'Sore', value: foundSelectedBodyPartInReducer.sore || null, },
-                  { index: 2, isSelected: (foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0) || false, text: 'Tender', value: foundSelectedBodyPartInReducer.tender || null, },
-                  { index: 3, isSelected: (foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0) || false, text: 'Knots', value: foundSelectedBodyPartInReducer.knots || null, },
-                  { index: 4, isSelected: (foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0) || false, text: 'Ache', value: foundSelectedBodyPartInReducer.ache || null, },
-                  { index: 5, isSelected: (foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0) || false, text: 'Sharp', value: foundSelectedBodyPartInReducer.sharp || null, },
-              ]
-              :
-              null;
+                [
+                    { index: 0, isSelected: (foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0) || false, text: 'Tight', value: severityValue, },
+                    { index: 1, isSelected: (foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0) || false, text: 'Sore', value: severityValue, },
+                    { index: 2, isSelected: (foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0) || false, text: 'Tender', value: severityValue, },
+                    { index: 3, isSelected: (foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0) || false, text: 'Knots', value: severityValue, },
+                    { index: 4, isSelected: (foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0) || false, text: 'Ache', value: severityValue, },
+                    { index: 5, isSelected: (foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0) || false, text: 'Sharp', value: severityValue, },
+                ]
+                :
+                null;
             let newSelectedBodyPartObj = {
                 bodyImage:  selectedBodyPart.image[clickedBodyPart.side],
                 index:      selectedBodyPart.index,

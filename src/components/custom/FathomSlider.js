@@ -66,7 +66,7 @@ const FathomSlider = ({
     thumbTintColor,
     value,
 }) => {
-    let updatedValue = !sliderValue && !value ? 0 : sliderValue > value ? sliderValue : value;
+    let updatedValue = sliderValue || 0;
     return (
         <View>
             <View style={[customStyles.severityTextWrapper,]}>
@@ -130,7 +130,7 @@ const FathomSlider = ({
                     thumbTouchSize={{height: THUMB_SIZE, width: THUMB_SIZE,}}
                     thumbStyle={[customStyles.thumbStyle(!disabled),]}
                     trackStyle={{borderRadius: 10, height: 10,}}
-                    value={value}
+                    value={updatedValue}
                 />
             </ImageBackground>
         </View>

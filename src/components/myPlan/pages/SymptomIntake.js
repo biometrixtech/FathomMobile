@@ -78,18 +78,18 @@ class SymptomIntake extends Component {
             prevProps.selectedBodyPart !== selectedBodyPart &&
             selectedBodyPart.pills
         ) {
-            let severityValue = selectedBodyPart.pills.ache && selectedBodyPart.pills.ache > 0 ?
-                selectedBodyPart.pills.ache
-                : selectedBodyPart.pills.sore && selectedBodyPart.pills.sore > 0 ?
-                    selectedBodyPart.pills.sore
-                    : selectedBodyPart.pills.tender && selectedBodyPart.pills.tender > 0 ?
-                        selectedBodyPart.pills.tender
-                        : selectedBodyPart.pills.knots && selectedBodyPart.pills.knots > 0 ?
-                            selectedBodyPart.pills.knots
-                            : selectedBodyPart.pills.sharp && selectedBodyPart.pills.sharp > 0 ?
-                                selectedBodyPart.pills.sharp
-                                : selectedBodyPart.pills.tight && selectedBodyPart.pills.tight > 0 ?
-                                    selectedBodyPart.pills.tight
+            let severityValue = selectedBodyPart.pills[4].value && selectedBodyPart.pills[4].value > 0 ?
+                selectedBodyPart.pills[4].value
+                : selectedBodyPart.pills[1].value && selectedBodyPart.pills[1].value > 0 ?
+                    selectedBodyPart.pills[1].value
+                    : selectedBodyPart.pills[2].value && selectedBodyPart.pills[2].value > 0 ?
+                        selectedBodyPart.pills[2].value
+                        : selectedBodyPart.pills[3].value && selectedBodyPart.pills[3].value > 0 ?
+                            selectedBodyPart.pills[3].value
+                            : selectedBodyPart.pills[5].value && selectedBodyPart.pills[5].value > 0 ?
+                                selectedBodyPart.pills[5].value
+                                : selectedBodyPart.pills[0].value && selectedBodyPart.pills[0].value > 0 ?
+                                    selectedBodyPart.pills[0].value
                                     :
                                     null;
             this.setState(
@@ -259,7 +259,7 @@ class SymptomIntake extends Component {
                         maximumValue={10}
                         minimumValue={0}
                         orientation={'horizontal'}
-                        sliderValue={sliderValue}
+                        sliderValue={sliderValue || 0}
                         value={selectedBodyPart.value || 0}
                     />
                     <Spacer size={AppSizes.padding} />
