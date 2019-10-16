@@ -219,12 +219,12 @@ class BodyPartSelector extends Component {
         const { selectedBodyPartObj, } = this.state;
         let foundSelectedBodyPartInReducer = _.find(areaOfSorenessClicked, {body_part: selectedBodyPartObj.index, side: selectedBodyPartObj.side,});
         let selectedBodyPart = _.find(MyPlanConstants.bodyPartMapping, ['index', selectedBodyPartObj.index]);
-        let hasSeverity = foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
-            foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0 ||
-            foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0 ||
-            foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ||
-            foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
-            foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0;
+        let hasSeverity = foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.ache && foundSelectedBodyPartInReducer.ache > 0 ||
+            foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sore && foundSelectedBodyPartInReducer.sore > 0 ||
+            foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tender && foundSelectedBodyPartInReducer.tender > 0 ||
+            foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.knots && foundSelectedBodyPartInReducer.knots > 0 ||
+            foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.sharp && foundSelectedBodyPartInReducer.sharp > 0 ||
+            foundSelectedBodyPartInReducer && foundSelectedBodyPartInReducer.tight && foundSelectedBodyPartInReducer.tight > 0;
         this.setState(
             { isClickLocked: false, isModalOpen: false, selectedBodyPartObj: {}, },
             () => foundSelectedBodyPartInReducer && !hasSeverity ?
