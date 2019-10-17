@@ -681,7 +681,7 @@ class MyPlan extends Component {
         );
     }
 
-    _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
+    _handleDailyReadinessSurveySubmit = (isSecondFunctionalStrength, updateUserFlag) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postReadinessSurvey, user, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
@@ -709,6 +709,12 @@ class MyPlan extends Component {
         );
         postReadinessSurvey(newDailyReadiness, user.id)
             .then(res => {
+                if(updateUserFlag) {
+                    return this._handleUpdateFirstTimeExperience(updateUserFlag, () => {
+                        getSensorFiles(user);
+                        return res;
+                    });
+                }
                 getSensorFiles(user);
                 return res;
             })
@@ -888,7 +894,7 @@ class MyPlan extends Component {
         );
     }
 
-    _handlePostSessionSurveySubmit = areAllDeleted => {
+    _handlePostSessionSurveySubmit = (areAllDeleted, updateUserFlag) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postSessionSurvey, user, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
@@ -917,7 +923,14 @@ class MyPlan extends Component {
         );
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession, user.id))
-            .then(() => getSensorFiles(user))
+            .then(() => {
+                if(updateUserFlag) {
+                    return this._handleUpdateFirstTimeExperience(updateUserFlag, () => {
+                        return getSensorFiles(user);
+                    });
+                }
+                return getSensorFiles(user);
+            })
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
@@ -1549,7 +1562,7 @@ class MyPlan extends Component {
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={areAllDeleted => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleFormSubmit={(areAllDeleted, updateUserFlag) => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted, updateUserFlag)}
                         handleHealthDataFormChange={this._handleHealthDataFormChange}
                         handleSingleSensorSessionFormChange={this._handleSingleSensorSessionFormChange}
                         handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}

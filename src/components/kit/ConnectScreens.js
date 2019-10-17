@@ -69,7 +69,7 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
                                 robotoLight={step !== 1}
                                 style={{color: color, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}
                             >
-                                {'Bluetooh'}
+                                {'Bluetooth'}
                             </Text>
                         </View>
                         <View
@@ -796,7 +796,7 @@ const Connect = ({
                                     loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
                                     onPress={() => nextBtn()}
                                     raised={true}
-                                    title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
+                                    title={isNextDisabled ? 'Turn on Bluetooth to continue' : content.buttonText}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                 />
                             </View>
@@ -816,7 +816,7 @@ const Connect = ({
                         disabledStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.slateXLight, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}])}
                         disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         onPress={() => nextBtn()}
-                        title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
+                        title={isNextDisabled ? 'Turn on Bluetooth to continue' : content.buttonText}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 }

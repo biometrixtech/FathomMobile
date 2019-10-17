@@ -429,6 +429,7 @@ class SensorFilesPage extends Component {
         //         updateUser(newUserNetworksPayloadObj, user.id);
         //         return res;
         //     })
+        //     .then(async () => await ble.sleeper(1000))
         //     .then(() => ble.getScannedWifiConnections(device))
         return ble.getScannedWifiConnections(device)
             .then(res => {

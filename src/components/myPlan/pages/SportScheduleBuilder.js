@@ -283,9 +283,9 @@ class SportScheduleBuilder extends Component {
                             <Spacer size={30} />
                             { showMoreOptions ?
                                 <SectionList
+                                    bounces={false}
                                     initialNumToRender={30}
                                     keyExtractor={(item, index) => item + index}
-                                    removeClippedSubviews={true}
                                     renderItem={({item, index, section}) =>
                                         <TouchableOpacity
                                             key={index}

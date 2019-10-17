@@ -395,6 +395,7 @@ class BluetoothConnect extends Component {
                 updateUser(newUserNetworksPayloadObj, user.id);
                 return res;
             })
+            .then(async () => await ble.sleeper(1000))
             .then(() => ble.getScannedWifiConnections(device))
             .then(res => {
                 if(!this._isMounted) {
@@ -712,7 +713,7 @@ class BluetoothConnect extends Component {
                     <Train
                         currentPage={pageIndex === 7}
                         nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
+                        onBack={() => this._renderPreviousPage(3)}
                         page={0}
                     />
                     <Train

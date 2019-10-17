@@ -190,8 +190,12 @@ const SensorLogic = {
                         'Uploading your data! Do not remove from wifi.'
                         : session.status === 'PROCESSING_COMPLETE' ?
                             `Synced & processed at ${updateEndDateTimeString}`
-                            :
-                            'Hmm...something went wrong. We\'re working on it!';
+                            : session.status === 'CREATE_COMPLETE' && !session.end_date ?
+                                'Workout ongoing...'
+                                : session.status === 'CREATE_COMPLETE' && session.end_date ?
+                                    'Return kit to wifi to upload data.'
+                                    :
+                                    'Hmm...something went wrong. We\'re working on it!';
         let iconName = session.status === 'UPLOAD_IN_PROGRESS' ?
             'sync'
             : session.status === 'PROCESSING_COMPLETE' ?

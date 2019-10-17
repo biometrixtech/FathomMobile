@@ -21,11 +21,11 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Spacer, TabIcon, Text, } from '../../custom';
+import { Checkbox, FathomModal, Spacer, TabIcon, Text, } from '../../custom';
 import { PlanLogic, } from '../../../lib';
 
 // Components
@@ -56,6 +56,12 @@ const styles = StyleSheet.create({
         position:          'absolute',
         right:             0,
     },
+    modalButtonWrapper: {
+        backgroundColor:   AppColors.zeplin.yellow,
+        borderRadius:      100,
+        paddingHorizontal: AppSizes.paddingXLrg,
+        paddingVertical:   AppSizes.paddingMed,
+    },
 });
 
 /* Component ==================================================================== */
@@ -66,8 +72,10 @@ class PostSessionSurvey extends Component {
         this.state = {
             isActionButtonVisible:      false,
             isBodyOverlayFront:         true,
+            isDontAskChecked:           false,
             isSlideUpPanelExpanded:     true,
             isSlideUpPanelOpen:         false,
+            isSubmitSurveyModalOpen:    false,
             lockTrainLaterBtn:          false,
             pageIndex:                  sensorSession || (healthKitWorkouts && healthKitWorkouts.length > 0) ? 0 : 1,
             resetHealthKitFirstPage:    false,
@@ -247,8 +255,10 @@ class PostSessionSurvey extends Component {
             isActionButtonVisible,
             isBodyOverlayFront,
             isCloseToBottom,
+            isDontAskChecked,
             isSlideUpPanelExpanded,
             isSlideUpPanelOpen,
+            isSubmitSurveyModalOpen,
             pageIndex,
             resetHealthKitFirstPage,
             resetSportBuilderFirstPage,
@@ -516,7 +526,7 @@ class PostSessionSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={() => handleFormSubmit()}
+                                    handleFormSubmit={user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit() : () => this.setState({ isSubmitSurveyModalOpen: true, })}
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :
@@ -609,6 +619,42 @@ class PostSessionSurvey extends Component {
                     isSlideUpPanelOpen={isSlideUpPanelOpen}
                     toggleSlideUpPanel={isExpanded => this._toggleSlideUpPanel(isExpanded)}
                 />
+
+                <FathomModal
+                    isVisible={isSubmitSurveyModalOpen}
+                    onBackdropPress={() => this.setState({ isSubmitSurveyModalOpen: false, })}
+                >
+                    <View style={{alignItems: 'center', justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>
+                            {'Are you sure you\'re ready to submit?'}
+                        </Text>
+                        <Spacer size={AppSizes.paddingXLrg} />
+                        <TouchableOpacity
+                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, }, () => _.delay(() => handleFormSubmit(false, isDontAskChecked ? 'LAST_CHANCE_MODAL' : false), 250))}
+                            style={[styles.modalButtonWrapper,]}
+                        >
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Submit Survey'}</Text>
+                        </TouchableOpacity>
+                        <Spacer size={AppSizes.padding} />
+                        <TouchableOpacity
+                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, })}
+                            style={[styles.modalButtonWrapper,]}
+                        >
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Log a symptom'}</Text>
+                        </TouchableOpacity>
+                        <Spacer size={AppSizes.paddingXLrg} />
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                            <Checkbox
+                                checked={isDontAskChecked}
+                                checkedIcon={'check-box'}
+                                iconType={'material'}
+                                onPress={() => this.setState({ isDontAskChecked: !this.state.isDontAskChecked, })}
+                                uncheckedIcon={'check-box-outline-blank'}
+                            />
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{'Don\'t ask me this again'}</Text>
+                        </View>
+                    </View>
+                </FathomModal>
             </View>
         )
     }

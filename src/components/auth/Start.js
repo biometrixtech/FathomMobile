@@ -79,6 +79,10 @@ class Start extends Component {
     }
 
     componentWillMount = () => {
+        /*
+         * Maintenance Window
+         */
+        AppUtil.getMaintenanceWindow();
         if (Platform.OS === 'ios') {
             SplashScreen.hide();
         }
