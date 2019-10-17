@@ -526,7 +526,7 @@ class PostSessionSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit() : () => this.setState({ isSubmitSurveyModalOpen: true, })}
+                                    handleFormSubmit={areaOfSorenessClicked.length === 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit() : () => this.setState({ isSubmitSurveyModalOpen: true, })}
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :
@@ -630,7 +630,7 @@ class PostSessionSurvey extends Component {
                         </Text>
                         <Spacer size={AppSizes.paddingXLrg} />
                         <TouchableOpacity
-                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, }, () => _.delay(() => handleFormSubmit(false, isDontAskChecked ? 'LAST_CHANCE_MODAL' : false), 250))}
+                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, }, () => _.delay(() => handleFormSubmit(false, this.state.isDontAskChecked ? 'LAST_CHANCE_MODAL' : false), 250))}
                             style={[styles.modalButtonWrapper,]}
                         >
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Submit Survey'}</Text>

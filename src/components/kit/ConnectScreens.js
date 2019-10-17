@@ -497,15 +497,13 @@ const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nex
     <View style={{flex: 1,}}>
         <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
-            <View style={{flex: 6, justifyContent: 'center',}}>
+            <View style={{alignItems: 'center', flex: 6, justifyContent: 'center',}}>
                 <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'Success, you\'re connected!'}</Text>
                 <Spacer size={AppSizes.paddingMed} />
-                <Video
-                    paused={!currentPage}
-                    repeat={true}
-                    resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                    source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4'}}
-                    style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                <LottieView
+                    autoPlay={currentPage}
+                    source={require('../../../assets/animation/bluetoothloading.json')}
+                    style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                 />
             </View>
             <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>

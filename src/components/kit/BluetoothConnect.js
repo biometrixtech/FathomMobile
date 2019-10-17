@@ -62,6 +62,7 @@ class BluetoothConnect extends Component {
         this._isMounted = false;
         this._pages = {};
         this._timer = null;
+        this.bluetoothLoadingAnimation1 = {};
     }
 
     componentDidMount = () => {
@@ -434,7 +435,7 @@ class BluetoothConnect extends Component {
     }
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [8];
+        const checkpointPages = [3, 8];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         }
@@ -455,6 +456,10 @@ class BluetoothConnect extends Component {
                             );
                     }
                 });
+            }
+        } else if(currentPage === 3) {
+            if(this.bluetoothLoadingAnimation1 && this.bluetoothLoadingAnimation1.play) {
+                this.bluetoothLoadingAnimation1.play();
             }
         } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
             this._timer = _.delay(() => this._handleWifiScan(), 2000);
@@ -521,6 +526,10 @@ class BluetoothConnect extends Component {
 
     _toggleAlertNotification = () => {
         if(this.state.pageIndex === 2) {
+            let nextNumberOfPages = this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}3`) ?
+                2
+                :
+                1;
             Alert.alert(
                 '',
                 'Did the LED turn green?',
@@ -532,7 +541,7 @@ class BluetoothConnect extends Component {
                     },
                     {
                         text:    'Yes',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(nextNumberOfPages), 500)}),
                     },
                 ],
                 { cancelable: false, }
@@ -629,12 +638,12 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Owner - pages 1-3 */}
+                    {/* Owner - pages 1-3 
                     <Connect
                         currentPage={pageIndex === 1}
                         nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true)}
                         page={0}
                         pageFirst={true}
                     />
@@ -645,22 +654,30 @@ class BluetoothConnect extends Component {
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
                         onBack={isConnectingToSensor ? null : () => this._handleSyncOnBack()}
                         onClose={() =>
-                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true))
+                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true))
                         }
                         page={1}
                     />
                     <View style={{flex: 1,}}>
-                        <TopNav darkColor={true} onBack={this._renderPreviousPage} onClose={() => Actions.pop()} step={1} />
+                        <TopNav
+                            darkColor={true}
+                            onBack={this._renderPreviousPage}
+                            onClose={() => this._handleDisconnection(false, () => {this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true); Actions.pop();}, true)}
+                            step={1}
+                        />
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
                             <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                {'Success, you\'re connected!'}
+                                {'Success!'}
                             </Text>
                             <LottieView
-                                autoPlay={pageIndex === 3}
                                 loop={false}
+                                ref={animation => {this.bluetoothLoadingAnimation1 = animation;}}
                                 source={require('../../../assets/animation/bluetoothloading.json')}
                                 style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                             />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                {'Your kit is now connected to your account!'}
+                            </Text>
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
@@ -674,10 +691,15 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
 
-                    {/* Wifi - page 4-5 */}
+                    {/* Wifi - page 4-5
                     <Connect
                         currentPage={pageIndex === 4}
-                        nextBtn={(numberOfPages, assignUserToKit) => this._renderNextPage(numberOfPages, assignUserToKit)}
+                        nextBtn={(numberOfPages, assignUserToKit) =>
+                            numberOfPages > 0 ?
+                                this._handleDisconnection(false, () => this._renderNextPage(numberOfPages, assignUserToKit), true)
+                                :
+                                this._renderNextPage(numberOfPages, assignUserToKit)
+                        }
                         onBack={this._renderPreviousPage}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
@@ -699,15 +721,15 @@ class BluetoothConnect extends Component {
                             this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                         }}
                         page={3}
-                    />
+                    />*/}
 
-                    {/* Success - page 6 */}
+                    {/* Success - page 6
                     <Complete
                         currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
                         currentPage={pageIndex === 6}
                         nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : () => this._renderNextPage()}
                         nextBtnText={user.first_time_experience.includes('3Sensor-Onboarding-8') ? 'Done' : 'Next'}
-                    />
+                    />*/}
 
                     {/* Train - pages 7-9 */}
                     <Train

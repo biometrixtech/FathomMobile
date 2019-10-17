@@ -205,7 +205,10 @@ const SensorLogic = {
                     :
                     false;
         let iconType = session.status === 'PROCESSING_FAILED' ? 'material-community' : 'material';
-        let title = `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
+        let title = session.status === 'CREATE_COMPLETE' && !session.end_dateon ?
+            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}`
+            :
+            `${moment(session.event_date.replace('Z', '')).format('h:mmA')}, ${SensorLogic.convertMinutesToHrsMins(session.duration)}`;
         return {
             iconName,
             iconType,
