@@ -526,7 +526,7 @@ class PostSessionSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={areaOfSorenessClicked.length === 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit() : () => this.setState({ isSubmitSurveyModalOpen: true, })}
+                                    handleFormSubmit={areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit() : () => this.setState({ isSubmitSurveyModalOpen: true, })}
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :
@@ -613,6 +613,7 @@ class PostSessionSurvey extends Component {
                     :
                     null
                 */}
+
                 <SurveySlideUpPanel
                     expandSlideUpPanel={() => this.setState({ isSlideUpPanelExpanded: true, })}
                     isSlideUpPanelExpanded={isSlideUpPanelExpanded}

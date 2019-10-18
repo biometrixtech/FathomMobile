@@ -709,15 +709,10 @@ class MyPlan extends Component {
         );
         postReadinessSurvey(newDailyReadiness, user.id)
             .then(res => {
-                if(updateUserFlag) {
-                    return this._handleUpdateFirstTimeExperience(updateUserFlag, () => {
-                        getSensorFiles(user);
-                        return res;
-                    });
-                }
                 getSensorFiles(user);
                 return res;
             })
+            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
             .then(response => {
                 clearHealthKitWorkouts();
                 clearCompletedExercises();
@@ -923,14 +918,8 @@ class MyPlan extends Component {
         );
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession, user.id))
-            .then(() => {
-                if(updateUserFlag) {
-                    return this._handleUpdateFirstTimeExperience(updateUserFlag, () => {
-                        return getSensorFiles(user);
-                    });
-                }
-                return getSensorFiles(user);
-            })
+            .then(() => getSensorFiles(user))
+            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {

@@ -638,7 +638,7 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Owner - pages 1-3 
+                    {/* Owner - pages 1-3 */}
                     <Connect
                         currentPage={pageIndex === 1}
                         nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
@@ -691,7 +691,7 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
 
-                    {/* Wifi - page 4-5
+                    {/* Wifi - page 4-5 */}
                     <Connect
                         currentPage={pageIndex === 4}
                         nextBtn={(numberOfPages, assignUserToKit) =>
@@ -721,15 +721,15 @@ class BluetoothConnect extends Component {
                             this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
                         }}
                         page={3}
-                    />*/}
+                    />
 
-                    {/* Success - page 6
+                    {/* Success - page 6 */}
                     <Complete
                         currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
                         currentPage={pageIndex === 6}
                         nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : () => this._renderNextPage()}
                         nextBtnText={user.first_time_experience.includes('3Sensor-Onboarding-8') ? 'Done' : 'Next'}
-                    />*/}
+                    />
 
                     {/* Train - pages 7-9 */}
                     <Train
