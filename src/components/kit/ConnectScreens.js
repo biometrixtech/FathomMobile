@@ -493,18 +493,20 @@ const Battery = ({ currentPage, nextBtn, onBack, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
+const Complete = ({ animationRef, currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
-        <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
+        <TopNav darkColor={true} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
-            <View style={{alignItems: 'center', flex: 6, justifyContent: 'center',}}>
+            <View style={{alignItems: 'center', flex: 6, justifyContent: 'space-between',}}>
                 <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'Success, you\'re connected!'}</Text>
                 <Spacer size={AppSizes.paddingMed} />
                 <LottieView
-                    autoPlay={currentPage}
+                    loop={false}
+                    ref={animation => animationRef(animation)}
                     source={require('../../../assets/animation/bluetoothloading.json')}
                     style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                 />
+                <Spacer size={AppSizes.paddingMed} />
             </View>
             <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
