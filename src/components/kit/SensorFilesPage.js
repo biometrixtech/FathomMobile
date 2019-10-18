@@ -421,17 +421,16 @@ class SensorFilesPage extends Component {
         }
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-        // return ble.writeWifiNetworkReset(device)
-        //     .then(res => { // update user obj clearing wifi information when successful
-        //         let newUserNetworksPayloadObj = {};
-        //         newUserNetworksPayloadObj['@sensor_data'] = {};
-        //         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
-        //         updateUser(newUserNetworksPayloadObj, user.id);
-        //         return res;
-        //     })
-        //     .then(async () => await ble.sleeper(1000))
-        //     .then(() => ble.getScannedWifiConnections(device))
-        return ble.getScannedWifiConnections(device)
+        return ble.writeWifiNetworkReset(device)
+            .then(res => { // update user obj clearing wifi information when successful
+                let newUserNetworksPayloadObj = {};
+                newUserNetworksPayloadObj['@sensor_data'] = {};
+                newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+                updateUser(newUserNetworksPayloadObj, user.id);
+                return res;
+            })
+            .then(async () => await ble.sleeper(1000))
+            .then(() => ble.getScannedWifiConnections(device))
             .then(res => {
                 if(!this._isMounted) {
                     return '';
