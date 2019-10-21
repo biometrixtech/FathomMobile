@@ -726,7 +726,7 @@ class BluetoothConnect extends Component {
                     <Train
                         currentPage={pageIndex === 7}
                         nextBtn={this._renderNextPage}
-                        onBack={has3SensorConnected ? () =>  null : () => this._renderPreviousPage(3)}
+                        onBack={has3SensorConnected ? null : () => this._renderPreviousPage(3)}
                         page={0}
                     />
                     <Train

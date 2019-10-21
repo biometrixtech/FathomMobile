@@ -277,7 +277,7 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
             .then(async newJwt => {
                 if(newJwt) {
                     jwt = newJwt;
-                    req.headers.Authorization = jwt;
+                    req.headers.Authorization = newJwt;
                 }
                 return await fetch(thisUrl, req);
             })
