@@ -120,7 +120,7 @@ const CVP = ({ currentPage, nextBtn, onClose, }) => (
             paused={!currentPage}
             repeat={true}
             resizeMode={'cover'}
-            source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/cvp.mp4'}}
+            source={require('../../../assets/videos/cvp.mp4')}
             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.black,} : {}, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
         />
         <View style={{height: AppSizes.screen.height, position: 'absolute', width: AppSizes.screen.width,}}>
