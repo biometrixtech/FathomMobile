@@ -12,7 +12,7 @@ import Video from 'react-native-video';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { Button, ListItem, Spacer, TabIcon, Text, } from '../custom';
-import { SensorLogic, } from '../../lib';
+import { PlanLogic, SensorLogic, } from '../../lib';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -123,7 +123,7 @@ const CVP = ({ currentPage, nextBtn, onClose, }) => (
             source={require('../../../assets/videos/cvp.mp4')}
             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.black,} : {}, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
         />
-        <View style={{height: AppSizes.screen.height, position: 'absolute', width: AppSizes.screen.width,}}>
+        <View style={{backgroundColor: `${AppColors.zeplin.darkNavy}${PlanLogic.returnHexOpacity(0.4)}`, height: AppSizes.screen.height, position: 'absolute', width: AppSizes.screen.width,}}>
             <TopNav darkColor={false} onBack={null} onClose={onClose} step={false} />
             <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
                 <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
