@@ -89,10 +89,10 @@ class SensorFiles extends Component {
     _handleWifiClicked = sensorNetwork => {
         Alert.alert(
             '',
-            !sensorNetwork ?
-                'To setup your preferred network, you must be in range of the new network.'
+            sensorNetwork ?
+                `"${sensorNetwork}"\nis currently your preferred wifi.\n\nTo change your preferred network, you must be in range of the new network.`
                 :
-                `"${sensorNetwork}"\nis currently your preferred wifi.\n\nTo change your preferred network, you must be in range of the new network.`,
+                'To setup your preferred network, you must be in range of the new network.',
             [
                 {
                     text:  'Cancel',
