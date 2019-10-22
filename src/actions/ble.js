@@ -666,6 +666,7 @@ export default {
     getSensorFiles,
     getSingleWifiConnection,
     handleError,
+    sleeper,
     startDeviceScan,
     startMonitor,
     updateSensorSession,

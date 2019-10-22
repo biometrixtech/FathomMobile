@@ -161,7 +161,7 @@ function _handleReAuthorizing(hostname, currentState) {
                     jwt:     cleanedRes.authorization.jwt,
                     expires: cleanedRes.authorization.expires,
                 });
-                return Promise.resolve();
+                return Promise.resolve(cleanedRes.authorization.jwt);
             });
     }
     // resolve since we are still in the valid window
@@ -274,7 +274,13 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
 
         // Make the request
         return await _handleReAuthorizing(hostname, currentState)
-            .then(async () => await fetch(thisUrl, req))
+            .then(async newJwt => {
+                if(newJwt) {
+                    jwt = newJwt;
+                    req.headers.Authorization = newJwt;
+                }
+                return await fetch(thisUrl, req);
+            })
             .then(async rawRes => {
                 // API got back to us, clear the timeout
                 clearTimeout(apiTimedOut);

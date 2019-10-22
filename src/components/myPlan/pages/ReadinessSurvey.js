@@ -19,11 +19,11 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { ImageBackground, Platform, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../../constants';
-import { Button, Spacer, TabIcon, Text, } from '../../custom';
+import { Button, Checkbox, FathomModal, Spacer, TabIcon, Text, } from '../../custom';
 import { EnableAppleHealthKit, } from '../../general';
 import { AppUtil, PlanLogic, } from '../../../lib';
 
@@ -73,6 +73,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 50,
         paddingVertical:   50,
     },
+    modalButtonWrapper: {
+        backgroundColor:   AppColors.zeplin.yellow,
+        borderRadius:      100,
+        paddingHorizontal: AppSizes.paddingXLrg,
+        paddingVertical:   AppSizes.paddingMed,
+    },
     shadowEffect: {
         shadowColor:   'rgba(0, 0, 0, 0.16)',
         shadowOffset:  { width: 0, height: 3 },
@@ -93,11 +99,13 @@ class ReadinessSurvey extends Component {
             isAppleHealthModalOpen:      !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
             isBodyOverlayFront:          true,
             isCloseToBottom:             false,
+            isDontAskChecked:            false,
             isFromHKAddSession:          false,
             isFromHKContinue:            false,
             isFromManualSessionContinue: false,
             isSlideUpPanelExpanded:      true,
             isSlideUpPanelOpen:          false,
+            isSubmitSurveyModalOpen:     false,
             lockAlreadyTrainedBtn:       false,
             lockTrainLaterBtn:           false,
             pageIndex:                   0,
@@ -340,6 +348,8 @@ class ReadinessSurvey extends Component {
             isActionButtonVisible,
             isBodyOverlayFront,
             isCloseToBottom,
+            isDontAskChecked,
+            isSubmitSurveyModalOpen,
             pageIndex,
             resetHealthKitFirstPage,
             resetSportBuilderFirstPage,
@@ -715,7 +725,7 @@ class ReadinessSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={() => handleFormSubmit(isSecondFunctionalStrength)}
+                                    handleFormSubmit={areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit(isSecondFunctionalStrength) : () => this.setState({ isSubmitSurveyModalOpen: true, })}
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :
@@ -815,6 +825,42 @@ class ReadinessSurvey extends Component {
                     isLoading={this.state.isAppleHealthKitLoading}
                     isModalOpen={this.state.isAppleHealthModalOpen}
                 />
+
+                <FathomModal
+                    isVisible={isSubmitSurveyModalOpen}
+                    onBackdropPress={() => this.setState({ isSubmitSurveyModalOpen: false, })}
+                >
+                    <View style={{alignItems: 'center', justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(32), textAlign: 'center',}}>
+                            {'Are you sure you\'re ready to submit?'}
+                        </Text>
+                        <Spacer size={AppSizes.paddingXLrg} />
+                        <TouchableOpacity
+                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, }, () => _.delay(() => handleFormSubmit(isSecondFunctionalStrength, this.state.isDontAskChecked ? 'LAST_CHANCE_MODAL' : false), 250))}
+                            style={[styles.modalButtonWrapper,]}
+                        >
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Submit Survey'}</Text>
+                        </TouchableOpacity>
+                        <Spacer size={AppSizes.padding} />
+                        <TouchableOpacity
+                            onPress={() => this.setState({ isSubmitSurveyModalOpen: false, })}
+                            style={[styles.modalButtonWrapper,]}
+                        >
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}>{'Log a symptom'}</Text>
+                        </TouchableOpacity>
+                        <Spacer size={AppSizes.paddingXLrg} />
+                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                            <Checkbox
+                                checked={isDontAskChecked}
+                                checkedIcon={'check-box'}
+                                iconType={'material'}
+                                onPress={() => this.setState({ isDontAskChecked: !this.state.isDontAskChecked, })}
+                                uncheckedIcon={'check-box-outline-blank'}
+                            />
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>{'Don\'t ask me this again'}</Text>
+                        </View>
+                    </View>
+                </FathomModal>
 
             </View>
         )

@@ -62,6 +62,8 @@ class BluetoothConnect extends Component {
         this._isMounted = false;
         this._pages = {};
         this._timer = null;
+        this.bluetoothLoadingAnimation1 = {};
+        this.bluetoothLoadingAnimation2 = {};
     }
 
     componentDidMount = () => {
@@ -105,7 +107,7 @@ class BluetoothConnect extends Component {
         newUserNetworksPayloadObj['@sensor_data'] = {};
         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
         let newUserObj = _.cloneDeep(user);
-        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}18`);
+        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
         newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
         newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
         newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
@@ -395,6 +397,7 @@ class BluetoothConnect extends Component {
                 updateUser(newUserNetworksPayloadObj, user.id);
                 return res;
             })
+            .then(async () => await ble.sleeper(1000))
             .then(() => ble.getScannedWifiConnections(device))
             .then(res => {
                 if(!this._isMounted) {
@@ -433,7 +436,7 @@ class BluetoothConnect extends Component {
     }
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [8];
+        const checkpointPages = [3, 8];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         }
@@ -455,17 +458,50 @@ class BluetoothConnect extends Component {
                     }
                 });
             }
+        } else if(currentPage === 3) {
+            if(this.bluetoothLoadingAnimation1 && this.bluetoothLoadingAnimation1.play) {
+                this.bluetoothLoadingAnimation1.play();
+            }
         } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
             this._timer = _.delay(() => this._handleWifiScan(), 2000);
         } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
+            if(this.bluetoothLoadingAnimation2 && this.bluetoothLoadingAnimation2.play) {
+                this.bluetoothLoadingAnimation2.play();
+            }
             this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
         }
     }
 
-    _renderNextPage = (numberOfPages = 1) => {
+    _renderNextPage = (numberOfPages = 1, assignUserToKit) => {
         let nextPageIndex = (this.state.pageIndex + numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
-        this.setState({ pageIndex: nextPageIndex, });
+        this.setState(
+            { pageIndex: nextPageIndex, },
+            () => {
+                if(assignUserToKit) {
+                    const { bluetooth, getSensorFiles, updateUser, user, } = this.props;
+                    // setup user variables
+                    let newUserPayloadObj = {};
+                    newUserPayloadObj.sensor_data = {};
+                    newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserPayloadObj.sensor_data.system_type = '3-sensor';
+                    let newUserNetworksPayloadObj = {};
+                    newUserNetworksPayloadObj['@sensor_data'] = {};
+                    newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+                    let newUserObj = _.cloneDeep(user);
+                    newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
+                    newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
+                    newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+                    newUserObj.sensor_data.sensor_networks = [];
+                    newUserObj.sensor_data.system_type = '3-sensor';
+                    updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
+                        .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
+                        .then(() => getSensorFiles(newUserObj)) // 2. grab sensor files as they may have changed
+                        .catch(err => console.log('assignUserToKit-err',err));
+                }
+            }
+        );
     }
 
     _renderPreviousPage = (numberOfPages = 1) => {
@@ -492,6 +528,10 @@ class BluetoothConnect extends Component {
 
     _toggleAlertNotification = () => {
         if(this.state.pageIndex === 2) {
+            let nextNumberOfPages = this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}3`) ?
+                2
+                :
+                1;
             Alert.alert(
                 '',
                 'Did the LED turn green?',
@@ -503,7 +543,7 @@ class BluetoothConnect extends Component {
                     },
                     {
                         text:    'Yes',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(), 500)}),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(nextNumberOfPages), 500)}),
                     },
                 ],
                 { cancelable: false, }
@@ -582,6 +622,7 @@ class BluetoothConnect extends Component {
             isWifiScanDone,
         } = this.state;
         const { user, } = this.props;
+        const has3SensorConnected = user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid;
         return(
             <View style={{flex: 1,}}>
 
@@ -605,7 +646,7 @@ class BluetoothConnect extends Component {
                         currentPage={pageIndex === 1}
                         nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
                         onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
+                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true)}
                         page={0}
                         pageFirst={true}
                     />
@@ -616,22 +657,29 @@ class BluetoothConnect extends Component {
                         nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
                         onBack={isConnectingToSensor ? null : () => this._handleSyncOnBack()}
                         onClose={() =>
-                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true))
+                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true))
                         }
                         page={1}
                     />
                     <View style={{flex: 1,}}>
-                        <TopNav darkColor={true} onBack={this._renderPreviousPage} onClose={() => Actions.pop()} step={1} />
+                        <TopNav
+                            darkColor={true}
+                            onClose={() => this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true), true)}
+                            step={1}
+                        />
                         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
                             <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                {'Success, you\'re connected!'}
+                                {'Success!'}
                             </Text>
                             <LottieView
-                                autoPlay={pageIndex === 3}
                                 loop={false}
+                                ref={animation => {this.bluetoothLoadingAnimation1 = animation;}}
                                 source={require('../../../assets/animation/bluetoothloading.json')}
                                 style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                             />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                {'Your kit is now connected to your account!'}
+                            </Text>
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
@@ -648,8 +696,7 @@ class BluetoothConnect extends Component {
                     {/* Wifi - page 4-5 */}
                     <Connect
                         currentPage={pageIndex === 4}
-                        nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
-                        onBack={this._renderPreviousPage}
+                        nextBtn={(numberOfPages, assignUserToKit) => this._renderNextPage(numberOfPages, assignUserToKit)}
                         onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
                         page={0}
                     />
@@ -661,19 +708,14 @@ class BluetoothConnect extends Component {
                         handleWifiScan={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiScan()}
                         isWifiScanDone={isWifiScanDone}
                         nextBtn={this._renderNextPage}
-                        onBack={() => {
-                            this._handleDisconnection(false, () => {}, true);
-                            this._renderPreviousPage();
-                        }}
-                        onClose={() =>{
-                            this._handleDisconnection(false, () => {}, true);
-                            this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                        }}
+                        onBack={() => this._renderPreviousPage()}
+                        onClose={() => this._handleDisconnection(false, () => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false), true)}
                         page={3}
                     />
 
                     {/* Success - page 6 */}
                     <Complete
+                        animationRef={ref => {this.bluetoothLoadingAnimation2 = ref;}}
                         currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
                         currentPage={pageIndex === 6}
                         nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : () => this._renderNextPage()}
@@ -684,7 +726,7 @@ class BluetoothConnect extends Component {
                     <Train
                         currentPage={pageIndex === 7}
                         nextBtn={this._renderNextPage}
-                        onBack={this._renderPreviousPage}
+                        onBack={has3SensorConnected ? null : () => this._renderPreviousPage(3)}
                         page={0}
                     />
                     <Train
