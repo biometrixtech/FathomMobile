@@ -73,11 +73,11 @@ const SensorLogic = {
       */
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
-        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'hours') : 0;
-        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'days') : 0;
+        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'hours', true) : 0;
+        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'days', true) : 0;
         let lastSyncTime = hoursAgo > 48 ? daysAgo : hoursAgo;
         let lastSyncExtraString = hoursAgo > 48 ? daysAgo === 1 || daysAgo === 0 ? 'day' : 'days' : hoursAgo === 1 || hoursAgo === 0 ? 'hr' : 'hrs';
-        let lastSyncString = `${lastSyncTime} ${lastSyncExtraString} ago`;
+        let lastSyncString = `${_.round(lastSyncTime)} ${lastSyncExtraString} ago`;
         // battery logic
         let batteryLevel = sensorData && sensorData.accessory && sensorData.accessory.battery_level ? _.round(sensorData.accessory.battery_level * 100) : 0;
         let batteryIconProps = { color: AppColors.zeplin.slate, icon: 'battery', iconStyle: [], size: 20, type: 'material-community', };
