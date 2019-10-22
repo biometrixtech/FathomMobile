@@ -12,7 +12,7 @@ import Video from 'react-native-video';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { Button, ListItem, Spacer, TabIcon, Text, } from '../custom';
-import { SensorLogic, } from '../../lib';
+import { PlanLogic, SensorLogic, } from '../../lib';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -69,7 +69,7 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
                                 robotoLight={step !== 1}
                                 style={{color: color, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}
                             >
-                                {'Bluetooh'}
+                                {'Bluetooth'}
                             </Text>
                         </View>
                         <View
@@ -120,10 +120,10 @@ const CVP = ({ currentPage, nextBtn, onClose, }) => (
             paused={!currentPage}
             repeat={true}
             resizeMode={'cover'}
-            source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/cvp.mp4'}}
+            source={require('../../../assets/videos/cvp.mp4')}
             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.black,} : {}, {height: AppSizes.screen.height, width: AppSizes.screen.width,}]}
         />
-        <View style={{height: AppSizes.screen.height, position: 'absolute', width: AppSizes.screen.width,}}>
+        <View style={{backgroundColor: `${AppColors.zeplin.darkNavy}${PlanLogic.returnHexOpacity(0.4)}`, height: AppSizes.screen.height, position: 'absolute', width: AppSizes.screen.width,}}>
             <TopNav darkColor={false} onBack={null} onClose={onClose} step={false} />
             <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg,}}>
                 <View style={{paddingHorizontal: AppSizes.paddingLrg,}}>
@@ -493,20 +493,20 @@ const Battery = ({ currentPage, nextBtn, onBack, showTopNavStep = true, }) => (
     </View>
 );
 
-const Complete = ({ currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
+const Complete = ({ animationRef, currentNetwork, currentPage, isLoading, onBack, onClose, nextBtn, nextBtnText = 'Next', showTopNavStep = true, }) => (
     <View style={{flex: 1,}}>
-        <TopNav darkColor={true} onBack={isLoading || !onBack ? null : () => onBack()} showClose={false} step={showTopNavStep ? 2 : false} />
+        <TopNav darkColor={true} showClose={false} step={showTopNavStep ? 2 : false} />
         <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
-            <View style={{flex: 6, justifyContent: 'center',}}>
+            <View style={{alignItems: 'center', flex: 6, justifyContent: 'space-between',}}>
                 <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{'Success, you\'re connected!'}</Text>
                 <Spacer size={AppSizes.paddingMed} />
-                <Video
-                    paused={!currentPage}
-                    repeat={true}
-                    resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                    source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4'}}
-                    style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                <LottieView
+                    loop={false}
+                    ref={animation => animationRef(animation)}
+                    source={require('../../../assets/animation/bluetoothloading.json')}
+                    style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                 />
+                <Spacer size={AppSizes.paddingMed} />
             </View>
             <View style={{alignItems: 'center', flex: 4, justifyContent: 'flex-end', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
@@ -796,7 +796,7 @@ const Connect = ({
                                     loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
                                     onPress={() => nextBtn()}
                                     raised={true}
-                                    title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
+                                    title={isNextDisabled ? 'Turn on Bluetooth to continue' : content.buttonText}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                 />
                             </View>
@@ -816,7 +816,7 @@ const Connect = ({
                         disabledStyle={StyleSheet.flatten([AppStyles.buttonVerticalPadding, {backgroundColor: AppColors.zeplin.slateXLight, borderRadius: 0, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}])}
                         disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         onPress={() => nextBtn()}
-                        title={isNextDisabled ? 'Turn on Bluetooh to continue' : content.buttonText}
+                        title={isNextDisabled ? 'Turn on Bluetooth to continue' : content.buttonText}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
                 }
@@ -913,7 +913,7 @@ const Connect = ({
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                         containerStyle={{alignSelf: 'center', marginTop: AppSizes.padding, width: '75%',}}
-                        onPress={() => nextBtn(!pageFirst ? 3 : 1)}
+                        onPress={() => nextBtn(!pageFirst ? 3 : 1, !pageFirst)}
                         raised={true}
                         title={pageFirst ? 'Continue' : 'Connect Wifi Later'}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}

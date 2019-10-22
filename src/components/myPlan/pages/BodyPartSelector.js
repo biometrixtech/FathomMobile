@@ -309,6 +309,8 @@ class BodyPartSelector extends Component {
                     this.setState({ isModalOpen: true, selectedBodyPartObj: newSelectedBodyPartObj, });
                 });
             }
+        } else {
+            this.setState({ isClickLocked: false, });
         }
     }
 

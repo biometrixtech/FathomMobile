@@ -672,13 +672,16 @@ class MyPlan extends Component {
         }
     }
 
-    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+    _handleDailyReadinessFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
         const { dailyReadiness, } = this.state;
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, dailyReadiness, isClearCandidate, isMovementValue);
-        this.setState({ dailyReadiness: newFormFields, });
+        this.setState(
+            { dailyReadiness: newFormFields, },
+            () => callback && callback(),
+        );
     }
 
-    _handleDailyReadinessSurveySubmit = isSecondFunctionalStrength => {
+    _handleDailyReadinessSurveySubmit = (isSecondFunctionalStrength, updateUserFlag) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postReadinessSurvey, user, } = this.props;
         const { dailyReadiness, healthData, prepare, recover, } = this.state;
         let {
@@ -709,6 +712,7 @@ class MyPlan extends Component {
                 getSensorFiles(user);
                 return res;
             })
+            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
             .then(response => {
                 clearHealthKitWorkouts();
                 clearCompletedExercises();
@@ -876,13 +880,16 @@ class MyPlan extends Component {
         );
     }
 
-    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue) => {
+    _handlePostSessionFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
         const { postSession, } = this.state;
         const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, postSession, isClearCandidate, isMovementValue);
-        this.setState({ postSession: newFormFields, });
+        this.setState(
+            { postSession: newFormFields, },
+            () => callback && callback(),
+        );
     }
 
-    _handlePostSessionSurveySubmit = areAllDeleted => {
+    _handlePostSessionSurveySubmit = (areAllDeleted, updateUserFlag) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, clearHealthKitWorkouts, getSensorFiles, postSessionSurvey, user, } = this.props;
         const { healthData, postSession, recover, train, } = this.state;
         let {
@@ -912,6 +919,7 @@ class MyPlan extends Component {
         clearHealthKitWorkouts() // clear HK workouts right away
             .then(() => postSessionSurvey(newPostSession, user.id))
             .then(() => getSensorFiles(user))
+            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
             .then(response => {
                 this.setState({ isPageCalculating: false, });
                 if(!areAllDeleted) {
@@ -1543,7 +1551,7 @@ class MyPlan extends Component {
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
                         handleFormChange={this._handlePostSessionFormChange}
-                        handleFormSubmit={areAllDeleted => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted)}
+                        handleFormSubmit={(areAllDeleted, updateUserFlag) => sensorSession ? this._handleSingleSensorPostSessionSurveySubmit() : this._handlePostSessionSurveySubmit(areAllDeleted, updateUserFlag)}
                         handleHealthDataFormChange={this._handleHealthDataFormChange}
                         handleSingleSensorSessionFormChange={this._handleSingleSensorSessionFormChange}
                         handleTogglePostSessionSurvey={this._togglePostSessionSurveyModal}

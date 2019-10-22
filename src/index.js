@@ -68,10 +68,6 @@ class Root extends Component {
             // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
             senderID: Platform.OS === 'ios' ? null : '394820950629', // Both the Android and iOS senderID in Firebase
         });
-        /*
-         * Maintenance Window
-         */
-        AppUtil.getMaintenanceWindow();
         // clear PN flag
         PushNotification.setApplicationIconBadgeNumber(0);
         // if error or tablet, hide splash screen
