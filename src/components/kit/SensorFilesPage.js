@@ -182,7 +182,7 @@ class SensorFilesPage extends Component {
                     // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
                     // let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
                     // return AppUtil.handleAPIErrorAlert(message, header);
-                    return false;
+                    return console.log(err);
                 }, 500));
             });
     }
@@ -457,7 +457,7 @@ class SensorFilesPage extends Component {
                     // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
                     // let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
                     // return AppUtil.handleAPIErrorAlert(message, header);
-                    return false;
+                    return console.log(err);
                 });
             });
     }
