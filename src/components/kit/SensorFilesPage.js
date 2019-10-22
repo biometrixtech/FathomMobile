@@ -501,13 +501,18 @@ class SensorFilesPage extends Component {
 
     _toggleAlertNotification = () => {
         if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') {
+            const { user, } = this.props;
+            let sensorNetwork = user.sensor_data.sensor_networks[0];
             Alert.alert(
                 '',
-                'Did the LED turn green?',
+                sensorNetwork ?
+                    `Are you sure you want to remove "${sensorNetwork}" as your preferred network?`
+                    :
+                    'Did the LED turn green?',
                 [
                     {
                         text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => {}, true)),
+                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, sensorNetwork ? () => Actions.pop() : () => {}, true)),
                         style:   'cancel',
                     },
                     {
