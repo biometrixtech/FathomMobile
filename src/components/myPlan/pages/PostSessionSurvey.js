@@ -71,6 +71,7 @@ class PostSessionSurvey extends Component {
         const { healthKitWorkouts, sensorSession, } = this.props;
         this.state = {
             isActionButtonVisible:      false,
+            isBodyOverlayButtonLocked:  false,
             isBodyOverlayFront:         true,
             isDontAskChecked:           false,
             isSlideUpPanelExpanded:     true,
@@ -253,6 +254,7 @@ class PostSessionSurvey extends Component {
         } = this.props;
         const {
             isActionButtonVisible,
+            isBodyOverlayButtonLocked,
             isBodyOverlayFront,
             isCloseToBottom,
             isDontAskChecked,
@@ -516,7 +518,14 @@ class PostSessionSurvey extends Component {
                                     buttons={['Front', 'Back']}
                                     containerStyle={{backgroundColor: `${AppColors.zeplin.splashXLight}${PlanLogic.returnHexOpacity(0.8)}`, borderRadius: AppSizes.paddingLrg, borderWidth: 0, marginLeft: 0, marginTop: 0,}}
                                     innerBorderStyle={{width: 0,}}
-                                    onPress={selectedIndex => this.setState({ isBodyOverlayFront: (selectedIndex === 0), })}
+                                    onPress={selectedIndex => isBodyOverlayButtonLocked ?
+                                        {}
+                                        :
+                                        this.setState(
+                                            { isBodyOverlayButtonLocked: true, isBodyOverlayFront: (selectedIndex === 0), },
+                                            () => _.delay(() => this.setState({ isBodyOverlayButtonLocked: false, }), 800)
+                                        )
+                                    }
                                     selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
                                     selectedIndex={isBodyOverlayFront ? 0 : 1}
                                     selectedTextStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
