@@ -207,7 +207,12 @@ class BluetoothConnect extends Component {
                     this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
                     return this._handleDisconnection(device, () => this._renderPreviousPage());
                 }
-                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+                return this._toggleTimedoutBringCloserAlert(true, isExit => _.delay(() =>
+                    isExit ?
+                        Actions.pop()
+                        :
+                        ble.startMonitor(newState => this.setState({ bleState: newState, }))
+                , 500));
             }
             if(
                 !response.accessory.owner_id || (response.accessory.owner_id === user.id)
@@ -215,7 +220,14 @@ class BluetoothConnect extends Component {
                 clearTimeout(this._timer);
                 return assignKitIndividual({wifiMacAddress: response.accessory.mac_address,}, user)
                     .then(res => this._toggleAlertNotification())
-                    .catch(err => this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, }))));
+                    .catch(err =>
+                        this._toggleTimedoutBringCloserAlert(true, isExit => _.delay(() =>
+                            isExit ?
+                                Actions.pop()
+                                :
+                                ble.startMonitor(newState => this.setState({ bleState: newState, }))
+                        , 500))
+                    );
             }
             return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
         });
@@ -347,7 +359,15 @@ class BluetoothConnect extends Component {
                             this._renderPreviousPage();
                         }, 500));
                     } else if(err.errorMapping.errorCode === -1) {
-                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
+                        return this.setState(
+                            { isWifiScanDone: true, },
+                            () => this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() =>
+                                isExit ?
+                                    Actions.pop()
+                                    :
+                                    this._handleWifiScan()
+                            , 500))
+                        );
                     } else if(currentIndex === numberOfConnections) {
                         return this.setState({ isWifiScanDone: true, });
                     }

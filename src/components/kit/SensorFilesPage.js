@@ -234,7 +234,12 @@ class SensorFilesPage extends Component {
                     this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
                     return this._handleDisconnection(device, () => this._renderPreviousPage(), false, true);
                 }
-                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
+                return this._toggleTimedoutBringCloserAlert(true, isExit => _.delay(() =>
+                    isExit ?
+                        Actions.pop()
+                        :
+                        ble.startMonitor(newState => this.setState({ bleState: newState, }))
+                , 500));
             }
             if(
                 !response.accessory.owner_id ||
@@ -385,7 +390,15 @@ class SensorFilesPage extends Component {
                     } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
                         return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
                     } else if(err.errorMapping.errorCode === -1) {
-                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
+                        return this.setState(
+                            { isWifiScanDone: true, },
+                            () => this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() =>
+                                isExit ?
+                                    Actions.pop()
+                                    :
+                                    this._handleWifiScan()
+                            , 500))
+                        );
                     } else if(currentIndex === numberOfConnections) {
                         return this.setState({ isWifiScanDone: true, });
                     }
