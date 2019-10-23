@@ -229,7 +229,7 @@ class BluetoothConnect extends Component {
                         , 500))
                     );
             }
-            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
+            return this._handleDisconnection(device, () => this._handleBLEPair(), true, false);
         });
     }
 
