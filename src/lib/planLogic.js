@@ -972,7 +972,7 @@ const PlanLogic = {
         let workout = workouts[0];
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
-        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).format('h:mma') : moment().format('hh:mma');
         let sportText = workout.apple_health_kit_source_names && workout.apple_health_kit_source_names[0] ?
             [
                 `How was your ${sportStartTime} `,

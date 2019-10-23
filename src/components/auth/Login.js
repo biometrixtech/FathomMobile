@@ -288,6 +288,7 @@ class Login extends Component {
     }
 
     render = () => {
+        console.log(APIConfig.APIs, this.props, this.props.environment);
         let isLoginBtnDisabled = !onboardingUtils.isEmailValid(this.state.form_values.email).isValid || this.state.form_values.password.length < 8;
         /*eslint no-return-assign: 0*/
         return (
