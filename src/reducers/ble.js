@@ -50,6 +50,10 @@ export default function bleReducer(state = initialState, action) {
             });
         }
         return state;
+    case Actions.CLEAR_DEVICES:
+        return Object.assign({}, state, {
+            devicesFound: [],
+        });
     case Actions.START_SCAN:
         return Object.assign({}, state, {
             scanning:     true,

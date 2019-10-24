@@ -591,6 +591,9 @@ class BluetoothConnect extends Component {
             clearTimeout(this._timer);
             this._timer = null;
             ble.destroyInstance();
+            store.dispatch({
+                type: DispatchActions.CLEAR_DEVICES,
+            });
         }
         Alert.alert(
             '',
