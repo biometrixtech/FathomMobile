@@ -131,6 +131,7 @@ export default {
     // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
-        ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['accessory',    `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['get_utc_time', `${hardwareAPIVersion}/misc/time`], // GET
     ]),
 };

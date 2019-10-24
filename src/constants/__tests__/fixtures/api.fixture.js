@@ -132,5 +132,6 @@ export default {
 
     hardwareEndpoints: new Map([
         ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['get_utc_time', `${hardwareAPIVersion}/misc/time`], // GET
     ]),
 };

@@ -219,7 +219,8 @@ class BluetoothConnect extends Component {
             ) {
                 clearTimeout(this._timer);
                 return assignKitIndividual({wifiMacAddress: response.accessory.mac_address,}, user)
-                    .then(res => this._toggleAlertNotification())
+                    .then(() => ble.writeAccessoryTime(device))
+                    .then(() => this._toggleAlertNotification())
                     .catch(err =>
                         this._toggleTimedoutBringCloserAlert(true, isExit => _.delay(() =>
                             isExit ?

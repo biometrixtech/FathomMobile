@@ -656,6 +656,24 @@ const writeWifiNetworkReset = device => {
     });
 };
 
+const writeAccessoryTime = async device => {
+    let writeTimeBase64 = '';
+    let writeTimeTransactionId = 'write-time';
+    return await new Promise(async (resolve, reject) => {
+        return AppAPI.hardware.get_utc_time.get()
+            .then(async response => {
+                let responseDate = response.current_date;
+                let currentUTCTime = moment(responseDate, 'YYYY-MM-DDTHH:mm:ssZ').utc();
+                let currentUTCEpochTime = currentUTCTime.unix().toString();
+                writeTimeBase64 = new Buffer(returnCleaned3SensorDataArray(convertBase64ToHex(currentUTCEpochTime), commands.WRITE_TIME)).toString('base64');
+                return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, writeTimeBase64, writeTimeTransactionId)
+            })
+            .then(async writeCharacteristic => await validateWriteWifiDetailsResponse(writeCharacteristic, writeTimeBase64, device, writeTimeTransactionId))
+            .then(res => resolve())
+            .catch(err => resolve());
+    });
+};
+
 export default {
     assignKitIndividual,
     createSensorSession,
@@ -670,6 +688,7 @@ export default {
     startDeviceScan,
     startMonitor,
     updateSensorSession,
+    writeAccessoryTime,
     writeWifiDetailsToSensor,
     writeWifiNetworkReset,
 };
