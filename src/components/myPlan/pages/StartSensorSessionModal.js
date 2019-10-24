@@ -387,7 +387,7 @@ class StartSensorSessionModal extends PureComponent {
     _startCalibration = async () => {
         const { createSensorSession, getSensorFiles, user, } = this.props;
         try {
-            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/America/New_York');
             const timesyncResponse = await timesyncApiCall.json();
             let dateTimeReturned = timesyncResponse.utc_datetime;
             let indexOfDot = dateTimeReturned.indexOf('.');
