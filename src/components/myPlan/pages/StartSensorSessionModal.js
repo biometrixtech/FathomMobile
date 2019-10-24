@@ -221,7 +221,7 @@ class StartSensorSessionModal extends PureComponent {
         this._pages = {};
         clearInterval(this.timerId);
         this.setState(
-            { timer: 15, },
+            { timer: 15, sessionId: null, },
             () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}
         );
     }
@@ -385,6 +385,17 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     _startCalibration = async () => {
+        const { updateSensorSession, user, } = this.props;
+        const { sessionId, } = this.state;
+        if(sessionId) {
+            return updateSensorSession(false, 'CREATE_ATTEMPT_FAILED', sessionId, user)
+                .then(res => this.setState({ createError: null, sessionId: null, }, () => this._createSession()))
+                .catch(err => this._createSession());
+        }
+        return this._createSession();
+    }
+
+    _createSession = async () => {
         const { createSensorSession, getSensorFiles, user, } = this.props;
         try {
             const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/America/New_York');
@@ -415,7 +426,7 @@ class StartSensorSessionModal extends PureComponent {
                 this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
                 if(patchSession) {
                     updateSensorSession(false, patchSession, sessionId, user)
-                        .then(res => console.log('res',res))
+                        .then(res => this.setState({ createError: null, sessionId: null, }))
                         .catch(err => console.log('err',err));
                 }
                 this._renderPreviousPage(numberOfPagesBack);
