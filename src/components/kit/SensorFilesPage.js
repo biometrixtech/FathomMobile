@@ -435,10 +435,18 @@ class SensorFilesPage extends Component {
         this.setState({ availableNetworks: [], isWifiScanDone: false, });
         let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
         return ble.writeWifiNetworkReset(device)
-            .then(res => { // update user obj clearing wifi information when successful
+            .then(res => {
+                // update user obj clearing wifi information when successful
                 let newUserNetworksPayloadObj = {};
                 newUserNetworksPayloadObj['@sensor_data'] = {};
                 newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+                let newUserObj = _.cloneDeep(user);
+                newUserObj.sensor_data.sensor_networks = [];
+                // update reducer as API might take too long to return a value
+                store.dispatch({
+                    type: DispatchActions.USER_REPLACE,
+                    data: newUserObj,
+                });
                 updateUser(newUserNetworksPayloadObj, user.id);
                 return res;
             })
