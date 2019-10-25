@@ -678,8 +678,8 @@ const writeAccessoryTime = async device => {
                 return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, writeTimeBase64, writeTimeTransactionId)
             })
             .then(async writeCharacteristic => await validateWriteWifiDetailsResponse(writeCharacteristic, writeTimeBase64, device, writeTimeTransactionId))
-            .then(res => { console.log('res',res); return resolve(); })
-            .catch(err => { console.log('err',err); return resolve(); });
+            .then(res => resolve())
+            .catch(err => resolve());
     });
 };
 
