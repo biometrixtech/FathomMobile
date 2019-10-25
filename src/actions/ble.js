@@ -35,7 +35,7 @@ const validateReadData = (response, dataArray) => (response[0] === 0 && response
   *   [116,101,115,116]
   *   'test'
   */
-const convertByteArrayToString = array => array.map(byte =>  byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
+const convertByteArrayToString = array => array.map(byte => byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 
 /**
   * Convert string to byte array
@@ -54,6 +54,14 @@ const convertStringToByteArray = string => string.split('').map(char => char.cha
 const convertBase64ToHex = string => {
     let hexString = new Buffer.from(string, 'base64').toString('hex');
     return hexString.match(/.{1,2}/g).map(val => convertHex(val))
+};
+
+const convertEpochTimeToBase64 = (command, time) => {
+    let returnArray = [command];
+    let hexArray = parseInt(time, 10).toString(16).toUpperCase().match(/.{1,2}/g).reverse();
+    returnArray.push(hexArray.length);
+    returnArray.push(hexArray);
+    return new Buffer.from(_.flatten(returnArray)).toString('base64');
 };
 
 const unsignedToSignedInt = int => (int <<24 >>24);
@@ -518,8 +526,8 @@ const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value
     });
     return Promise
         .all([responseValidation, timeout])
-        .then(res => Promise.resolve(res))
-        .catch(err => Promise.reject(err));
+        .then(res => {console.log('res',res); return Promise.resolve(res); })
+        .catch(err => {console.log('err',err); return Promise.reject(err); });
 };
 
 const checkCharacteristicForChange = async (device, readConnectBase64, transactionId, startTime) => {
@@ -664,8 +672,8 @@ const writeAccessoryTime = async device => {
             .then(async response => {
                 let responseDate = response.current_date;
                 let currentUTCTime = moment(responseDate, 'YYYY-MM-DDTHH:mm:ssZ').utc();
-                let currentUTCEpochTime = currentUTCTime.unix().toString();
-                writeTimeBase64 = new Buffer(returnCleaned3SensorDataArray(convertBase64ToHex(currentUTCEpochTime), commands.WRITE_TIME)).toString('base64');
+                let currentUTCEpochTime = currentUTCTime.unix();
+                writeTimeBase64 = convertEpochTimeToBase64(currentUTCEpochTime);
                 return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, writeTimeBase64, writeTimeTransactionId)
             })
             .then(async writeCharacteristic => await validateWriteWifiDetailsResponse(writeCharacteristic, writeTimeBase64, device, writeTimeTransactionId))
