@@ -59,9 +59,11 @@ const convertBase64ToHex = string => {
 const convertEpochTimeToBase64 = (command, time) => {
     let returnArray = [command];
     let hexArray = parseInt(time, 10).toString(16).toUpperCase().match(/.{1,2}/g).reverse();
+    hexArray = hexArray.map(byte => convertHex(`0x${byte}`));
     returnArray.push(hexArray.length);
     returnArray.push(hexArray);
-    return new Buffer.from(_.flatten(returnArray)).toString('base64');
+    let cleanedReturnArray = _.flatten(returnArray);
+    return new Buffer(cleanedReturnArray).toString('base64');
 };
 
 const unsignedToSignedInt = int => (int <<24 >>24);
@@ -381,7 +383,6 @@ const startConnection = async (device) => {
                     });
                     return resolve(macAddress);
                 } catch(error) {
-                    console.log('error',error);
                     let errorObj = await handleError(error, device);
                     return reject(errorObj);
                 }
@@ -526,8 +527,8 @@ const validateWriteWifiDetailsResponse = async (characteristic, writeBase64Value
     });
     return Promise
         .all([responseValidation, timeout])
-        .then(res => {console.log('res',res); return Promise.resolve(res); })
-        .catch(err => {console.log('err',err); return Promise.reject(err); });
+        .then(res => Promise.resolve(res))
+        .catch(err => Promise.reject(err));
 };
 
 const checkCharacteristicForChange = async (device, readConnectBase64, transactionId, startTime) => {
@@ -673,12 +674,12 @@ const writeAccessoryTime = async device => {
                 let responseDate = response.current_date;
                 let currentUTCTime = moment(responseDate, 'YYYY-MM-DDTHH:mm:ssZ').utc();
                 let currentUTCEpochTime = currentUTCTime.unix();
-                writeTimeBase64 = convertEpochTimeToBase64(currentUTCEpochTime);
+                writeTimeBase64 = convertEpochTimeToBase64(commands.WRITE_TIME, currentUTCEpochTime);
                 return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, writeTimeBase64, writeTimeTransactionId)
             })
             .then(async writeCharacteristic => await validateWriteWifiDetailsResponse(writeCharacteristic, writeTimeBase64, device, writeTimeTransactionId))
-            .then(res => resolve())
-            .catch(err => resolve());
+            .then(res => { console.log('res',res); return resolve(); })
+            .catch(err => { console.log('err',err); return resolve(); });
     });
 };
 
