@@ -254,12 +254,17 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     _onPageScrollEnd = currentPage => {
+        const { showLEDPage, showPlacementPages, } = this.state;
         const checkpointPages = [7];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint();
         }
         this._video.seek(0);
-        if( currentPage === 2 || currentPage === 9 ) {
+        if(
+            (currentPage === 2 || currentPage === 9) &&
+            !showLEDPage &&
+            !showPlacementPages
+        ) {
             this.timerId = setInterval(() => {
                 let newTimerValue = parseInt((this.state.followAlongTimer + 100), 10);
                 this.setState(
@@ -272,7 +277,11 @@ class StartSensorSessionModal extends PureComponent {
                     },
                 );
             }, 500);
-        } else if( currentPage === 3 || currentPage === 10 ) {
+        } else if(
+            (currentPage === 3 || currentPage === 10) &&
+            !showLEDPage &&
+            !showPlacementPages
+        ) {
             this.timerId = setInterval(() => {
                 let newTimerValue = parseInt((this.state.timer - 1), 10);
                 this.setState({ timer: newTimerValue, });
