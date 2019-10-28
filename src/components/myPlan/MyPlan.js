@@ -817,7 +817,7 @@ class MyPlan extends Component {
         clearInterval(this._timer);
         let userId = user.id;
         this.setState(
-            { isPageLoading: isFromPushNotification ? false : true, },
+            { isPageCalculating: isFromPushNotification ? false : true, isPageLoading: isFromPushNotification ? false : true, },
             () => {
                 getMyPlan(userId, moment().format('YYYY-MM-DD'))
                     .then(() => getSensorFiles(user))
@@ -1269,7 +1269,7 @@ class MyPlan extends Component {
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { createSensorSession, getSensorFiles, handleReadInsight, plan, updateSensorSession, updateUser, user, } = this.props;
+        let { createSensorSession, getSensorFiles, handleReadInsight, network, plan, updateSensorSession, updateUser, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1581,7 +1581,8 @@ class MyPlan extends Component {
                         createSensorSession={createSensorSession}
                         getSensorFiles={getSensorFiles}
                         isModalOpen={isStartSensorSessionModalOpen}
-                        onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                        network={network}
+                        onClose={refreshPlan => this.setState({ isStartSensorSessionModalOpen: false, }, () => refreshPlan ? this._handleExerciseListRefresh() : null)}
                         updateSensorSession={updateSensorSession}
                         updateUser={updateUser}
                         user={user}

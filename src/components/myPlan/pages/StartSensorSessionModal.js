@@ -5,6 +5,7 @@
         appState={appState}
         createSensorSession={createSensorSession}
         isModalOpen={isStartSensorSessionModalOpen}
+        network={network}
         onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
         updateSensorSession={updateSensorSession}
         updateUser={updateUser}
@@ -195,25 +196,7 @@ class StartSensorSessionModal extends PureComponent {
             this._renderNextPage(1, () => this.setState({ timer: 15, }, () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}));
         }
         if(prevState.timer !== this.state.timer && this.state.timer === 0 && this.state.createError) {
-            this._pages.scrollToPage(0);
-            this.setState(
-                { pageIndex: 0, timer: 15, },
-                () => {
-                    this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
-                    Alert.alert(
-                        ERROR_HEADER,
-                        this.state.createError,
-                        [
-                            {
-                                onPress: () => this.props.onClose(),
-                                style:   'cancel',
-                                text:    'OK',
-                            },
-                        ],
-                        { cancelable: false, }
-                    );
-                },
-            );
+            this._triggerErrorModal();
         }
     }
 
@@ -382,8 +365,11 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     _startCalibration = () => {
-        const { updateSensorSession, user, } = this.props;
+        const { network, updateSensorSession, user, } = this.props;
         const { sessionId, } = this.state;
+        if(!network.connected) {
+            return this._triggerErrorModal();
+        }
         if(sessionId) {
             return updateSensorSession(false, 'CREATE_ATTEMPT_FAILED', sessionId, user)
                 .then(res => this.setState({ createError: null, sessionId: null, }, () => this._createSession()))
@@ -428,6 +414,29 @@ class StartSensorSessionModal extends PureComponent {
                 }
                 this._renderPreviousPage(numberOfPagesBack);
             }
+        );
+    }
+
+    _triggerErrorModal = () => {
+        clearInterval(this.timerId);
+        this._pages.scrollToPage(0);
+        this.setState(
+            { pageIndex: 0, timer: 15, },
+            () => {
+                this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
+                Alert.alert(
+                    ERROR_HEADER,
+                    this.state.createError || ERROR_STRING,
+                    [
+                        {
+                            onPress: () => this.props.onClose(true),
+                            style:   'cancel',
+                            text:    'OK',
+                        },
+                    ],
+                    { cancelable: false, }
+                );
+            },
         );
     }
 
@@ -733,6 +742,7 @@ StartSensorSessionModal.propTypes = {
     createSensorSession: PropTypes.func.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
     isModalOpen:         PropTypes.bool.isRequired,
+    network:             PropTypes.object.isRequired,
     onClose:             PropTypes.func.isRequired,
     updateSensorSession: PropTypes.func.isRequired,
     updateUser:          PropTypes.func.isRequired,

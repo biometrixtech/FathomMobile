@@ -176,12 +176,18 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
     const params = inputParams;
     let currentState = store.getState();
     let environment = currentState.init.environment;
+    let networkState = currentState.network;
     let jwt = currentState.init.jwt;
     let hostname = '';
 
     return new Promise(async (resolve, reject) => {
         requestCounter += 1;
         const requestNum = requestCounter;
+
+        // reject if there is no internet connection detected
+        if(!networkState.connected) {
+            reject(handleError({ message: ErrorMessages.timeout, }));
+        }
 
         // After x seconds, let's call it a day!
         const timeoutAfter = 25;
