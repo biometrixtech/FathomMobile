@@ -168,22 +168,25 @@ class SensorFilesPage extends Component {
                 ) // 3. route to next page
             )
             .catch(err => {
-                this.setState({ isSubmittingDetails: false, loading: false, }, () => _.delay(() => {
-                    if(err.errorMapping.errorCode === -2) {
-                        return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
-                    } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                        return this._toggleWeakRSSIAlertNotification();
-                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
-                    } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
-                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
-                    }
-                    // TODO: THIS NEEDS TO BE FLUSHED OUT
-                    // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                    // let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                    // return AppUtil.handleAPIErrorAlert(message, header);
-                    return false;
-                }, 500));
+                this.setState(
+                    { availableNetworks: [], isSubmittingDetails: false, isWifiScanDone: true, loading: false, },
+                    () => _.delay(() => {
+                        if(err.errorMapping.errorCode === -2) {
+                            return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
+                        } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
+                            return this._toggleWeakRSSIAlertNotification();
+                        } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
+                            return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => isExit ? Actions.pop() : this._renderPreviousPage(), 500));
+                        } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
+                            return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
+                        }
+                        // TODO: THIS NEEDS TO BE FLUSHED OUT
+                        // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
+                        // let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
+                        // return AppUtil.handleAPIErrorAlert(message, header);
+                        return false;
+                    }, 500)
+                );
             });
     }
 
