@@ -41,6 +41,7 @@ class SingleSensorSession extends Component {
         super(props);
         this.state = {
             delayTimerId:          null,
+            isCloseLocked:         false,
             isHKRetrieveChecked:   Platform.OS === 'ios',
             isHKRetrieveModalOpen: false,
         };
@@ -88,14 +89,14 @@ class SingleSensorSession extends Component {
 
     render = () => {
         const { handleFormChange, handleTogglePostSessionSurvey, session, user, } = this.props;
-        const { isHKRetrieveChecked, isHKRetrieveModalOpen, } = this.state;
+        const { isCloseLocked, isHKRetrieveChecked, isHKRetrieveModalOpen, } = this.state;
         let { sportImage, sportText, } = PlanLogic.handleSingleHealthKitWorkoutPageRenderLogic([session]);
         return (
             <View style={{flex: 1,}}>
 
                 <ProgressPill
                     currentStep={1}
-                    onClose={handleTogglePostSessionSurvey}
+                    onClose={isCloseLocked ? () => null : () => this.setState({ isCloseLocked: true, }, () => handleTogglePostSessionSurvey())}
                     totalSteps={3}
                 />
 

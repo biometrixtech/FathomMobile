@@ -381,7 +381,7 @@ class StartSensorSessionModal extends PureComponent {
         );
     }
 
-    _startCalibration = async () => {
+    _startCalibration = () => {
         const { updateSensorSession, user, } = this.props;
         const { sessionId, } = this.state;
         if(sessionId) {
