@@ -1037,38 +1037,39 @@ class MyPlan extends Component {
                 recover:       newRecoverObject,
                 sensorSession: null,
             },
+            () =>
+                updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
+                    .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                    .then(() => {
+                        newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
+                        return postSessionSurvey(newPostSession, user.id);
+                    })
+                    .then(() => getSensorFiles(user))
+                    .then(response => {
+                        this.setState(
+                            {
+                                isPageCalculating:        false,
+                                isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
+                            },
+                            () => {
+                                clearCompletedExercises();
+                                clearCompletedCoolDownExercises();
+                                // scroll to first active activity tab
+                                this._scrollToFirstActiveActivityTab();
+                                // handle Coach related items
+                                if(!this.state.isTrainSessionsCompletionModalOpen) {
+                                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                                }
+                            },
+                        );
+                    })
+                    .catch(error =>
+                        this.setState(
+                            { isPageCalculating: false, },
+                            () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                        )
+                    ),
         );
-        updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
-            .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
-            .then(() => {
-                newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
-                return postSessionSurvey(newPostSession, user.id);
-            })
-            .then(() => getSensorFiles(user))
-            .then(response => {
-                this.setState(
-                    {
-                        isPageCalculating:        false,
-                        isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
-                    },
-                    () => {
-                        clearCompletedExercises();
-                        clearCompletedCoolDownExercises();
-                        // scroll to first active activity tab
-                        this._scrollToFirstActiveActivityTab();
-                        // handle Coach related items
-                        if(!this.state.isTrainSessionsCompletionModalOpen) {
-                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                        }
-                    },
-                );
-            })
-            .catch(error =>
-                this.setState(
-                    { isPageCalculating: false, },
-                    () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
-                )
-            );
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {

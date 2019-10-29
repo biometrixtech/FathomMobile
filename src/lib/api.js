@@ -188,9 +188,8 @@ function fetcher(method, inputEndpoint, inputParams, body, api_enum) {
         if(!networkState.connected) {
             reject(handleError({ message: ErrorMessages.timeout, }));
         }
-
         // After x seconds, let's call it a day!
-        const timeoutAfter = 25;
+        const timeoutAfter = 20;
         const apiTimedOut = _.delay(() => reject(handleError({ message: ErrorMessages.timeout, })), timeoutAfter * 1000);
 
         if (!method || !endpoint) { return reject('Missing params (AppAPI.fetcher).'); }
