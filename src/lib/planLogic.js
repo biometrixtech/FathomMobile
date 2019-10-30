@@ -2753,7 +2753,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
+    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData, activityIdLoading) => {
         let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
         let activityStatus =  activity.status === 'CREATE_COMPLETE' && !activity.end_date ?
             activity.status
@@ -2829,6 +2829,8 @@ const PlanLogic = {
                                             :
                                             false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
+        let calculatingStatuses = ['UPLOAD_IN_PROGRESS', 'UPLOAD_PAUSED', 'PROCESSING_IN_PROGRESS', 'PROCESSING_COMPLETE', 'CREATE_COMPLETE'];
+        let isCalculating = calculatingStatuses.includes(activityStatus) && (activityIdLoading === activity.id);
         return {
             actionText,
             activityStatus,
@@ -2836,6 +2838,7 @@ const PlanLogic = {
             iconColor,
             iconName,
             iconType,
+            isCalculating,
             subtext,
             title,
         };

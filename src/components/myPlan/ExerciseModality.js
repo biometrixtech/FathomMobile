@@ -69,19 +69,6 @@ class ExerciseModality extends Component {
         clearInterval(this._timer);
     }
 
-    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
-        this.setState(
-            {
-                isSelectedExerciseModalOpen: isModalOpen,
-                selectedExercise:            exerciseObj,
-            },
-            () => this.state.isSelectedExerciseModalOpen ?
-                Actions.refresh({ panHandlers: null, })
-                :
-                {}
-        );
-    }
-
     _handleCompleteExercise = (exerciseId, setNumber) => {
         const { markStartedRecovery, modality, plan, setCompletedCoolDownExercises, setCompletedExercises, user, } = this.props;
         let index = 0; // NOTE: THIS WOULD NEED TO UPDATE SOON
@@ -135,6 +122,41 @@ class ExerciseModality extends Component {
         }
     }
 
+    _handleSubmit = (index, recoveryType) => {
+        let { modality, patchActiveRecovery, plan, user, } = this.props;
+        this.setState(
+            { isExerciseCompletionModalOpen: false, isSubmitting: true, },
+            () => {
+                let reducerCompletedExercises = plan.dailyPlan[0].cool_down[index] && plan.dailyPlan[0].cool_down[index].active && modality === 'cool_down' ? store.getState().plan.completedCoolDownExercises : store.getState().plan.completedExercises;
+                let { newCompletedExercises, } = PlanLogic.handleCompletedExercises(reducerCompletedExercises);
+                patchActiveRecovery(newCompletedExercises, recoveryType, user.id)
+                    .then(res => Actions.pop())
+                    .catch(() => this.setState({isSubmitting: false,}, () => AppUtil.handleAPIErrorAlert(ErrorMessages.patchActiveRecovery)));
+            }
+        );
+    }
+
+    _handleUpdateFirstTimeExperience = (value, callback) => {
+        let { updateUser, user, } = this.props;
+        // setup variables
+        let newUserPayloadObj = {};
+        newUserPayloadObj.first_time_experience = [value];
+        let newUserObj = _.cloneDeep(user);
+        newUserObj.first_time_experience.push(value);
+        // update reducer as API might take too long to return a value
+        store.dispatch({
+            type: DispatchActions.USER_REPLACE,
+            data: newUserObj
+        });
+        // update user object
+        updateUser(newUserPayloadObj, user.id)
+            .then(res => {
+                if(callback) {
+                    callback();
+                }
+            });
+    }
+
     _scrollToExerciseList = () => {
         this._scrollViewRef.scrollTo({
             x:        this._exerciseListRef.x,
@@ -160,25 +182,17 @@ class ExerciseModality extends Component {
         }
     }
 
-    _handleUpdateFirstTimeExperience = (value, callback) => {
-        let { updateUser, user, } = this.props;
-        // setup variables
-        let newUserPayloadObj = {};
-        newUserPayloadObj.first_time_experience = [value];
-        let newUserObj = _.cloneDeep(user);
-        newUserObj.first_time_experience.push(value);
-        // update reducer as API might take too long to return a value
-        store.dispatch({
-            type: DispatchActions.USER_REPLACE,
-            data: newUserObj
-        });
-        // update user object
-        updateUser(newUserPayloadObj, user.id)
-            .then(res => {
-                if(callback) {
-                    callback();
-                }
-            });
+    _toggleSelectedExercise = (exerciseObj, isModalOpen) => {
+        this.setState(
+            {
+                isSelectedExerciseModalOpen: isModalOpen,
+                selectedExercise:            exerciseObj,
+            },
+            () => this.state.isSelectedExerciseModalOpen ?
+                Actions.refresh({ panHandlers: null, })
+                :
+                {}
+        );
     }
 
     render = () => {
@@ -323,7 +337,7 @@ class ExerciseModality extends Component {
                                     disabledStyle={buttonDisabledStyle}
                                     disabledTitleStyle={{color: AppColors.white,}}
                                     loading={isSubmitting}
-                                    onPress={() => this.setState({ isExerciseCompletionModalOpen: true, })}
+                                    onPress={() => this._handleSubmit(index, recoveryType)}
                                     title={buttonTitle}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(16),}}
                                 />
@@ -348,7 +362,7 @@ class ExerciseModality extends Component {
                                 if(!hasNextExercise) {
                                     this.setState(
                                         { isSelectedExerciseModalOpen: false, },
-                                        () => { this._timer = _.delay(() => this.setState({ isExerciseCompletionModalOpen: true, }), 750); }
+                                        () => this._handleSubmit(index, recoveryType),
                                     );
                                 }
                             }}
@@ -360,7 +374,7 @@ class ExerciseModality extends Component {
                             user={user}
                         />
                     </FathomModal>
-                    { isExerciseCompletionModalOpen &&
+                    {/* isExerciseCompletionModalOpen &&
                         <ExerciseCompletionModal
                             completedExercises={completedExercises}
                             exerciseList={exerciseList}
@@ -380,7 +394,7 @@ class ExerciseModality extends Component {
                             }}
                             user={user}
                         />
-                    }
+                    */}
                 </View>
             </View>
         );

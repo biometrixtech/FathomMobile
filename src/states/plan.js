@@ -5,6 +5,8 @@ import { PlanLogic, } from '../lib';
  * Default MyPlan State
  */
 const defaultPlanState = {
+    activityIdLoading:  null,
+    apiIndex:           null,
     appState:           'active',
     currentTabLocation: 0,
     dailyReadiness:     {
@@ -52,7 +54,7 @@ const defaultPlanState = {
     train:           {
         postPracticeSurveys: [],
     },
-    trainLoadingScreenText: 'LOADING WORKOUTS...',
+    trainLoadingScreenText: 'Searching for workouts...',
 };
 
 /* Export ==================================================================== */

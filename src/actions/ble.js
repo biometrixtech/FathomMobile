@@ -227,7 +227,7 @@ const assignKitIndividual = (accessory, user) => {
     });
 };
 
-const getSensorFiles = (userObj, days = 14) => {
+const getSensorFiles = (userObj, cleanSessions, days = 14) => {
     const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
     const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
     if(!userHas3SensorSystem || !has3SensorConnected) {
@@ -237,6 +237,9 @@ const getSensorFiles = (userObj, days = 14) => {
     payload.accessory_id = userObj.sensor_data.sensor_pid;
     if(userObj.timezone) {
         payload.timezone = userObj.timezone;
+    }
+    if(cleanSessions) {
+        payload.cleanSessions = true;
     }
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
