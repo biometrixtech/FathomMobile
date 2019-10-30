@@ -2720,8 +2720,20 @@ const PlanLogic = {
                                                                     AppColors.zeplin.splashXXLight
                                                                     : color === 16 ?
                                                                         AppColors.zeplin.warningXLight
-                                                                        :
-                                                                        AppColors.zeplin.errorLight;
+                                                                        : color === 17 ?
+                                                                            AppColors.zeplin.errorXLight
+                                                                            : color === 18 ?
+                                                                                AppColors.zeplin.errorXXLight
+                                                                                : color === 19 ?
+                                                                                    AppColors.zeplin.splashMLight
+                                                                                    : color === 20 ?
+                                                                                        AppColors.zeplin.successXLight
+                                                                                        : color === 21 ?
+                                                                                            AppColors.zeplin.successXXLight
+                                                                                            : color === 22 ?
+                                                                                                AppColors.zeplin.warningXXLight
+                                                                                                :
+                                                                                                AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {
