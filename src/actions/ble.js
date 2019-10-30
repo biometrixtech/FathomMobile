@@ -241,6 +241,9 @@ const getSensorFiles = (userObj, cleanSessions, days = 14) => {
     if(cleanSessions) {
         payload.cleanSessions = true;
     }
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
             .then(response => {
@@ -251,9 +254,17 @@ const getSensorFiles = (userObj, cleanSessions, days = 14) => {
                     type: Actions.USER_REPLACE,
                     data: newUserObj,
                 });
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
                 return resolve(response);
             })
-            .catch(error => reject(error));
+            .catch(error => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return reject(error);
+            });
     });
 };
 

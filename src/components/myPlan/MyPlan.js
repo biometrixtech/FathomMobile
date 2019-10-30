@@ -199,7 +199,7 @@ const ActivityTab = ({
             </View>
             :
             <TouchableOpacity
-                activeOpacity={0.5}
+                activeOpacity={onPress ? 0.5 : 1}
                 onPress={onPress}
                 style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 12,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
@@ -266,7 +266,7 @@ const SensorSession = ({
             activeOpacity={1}
             onLayout={onLayout ? event => onLayout(event) : null}
             onPress={
-                isCalculating ?
+                (isCalculating || activityIdLoading) ?
                     () => {}
                     : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                         () => handeRefresh(activity.id)
@@ -1434,7 +1434,7 @@ class MyPlan extends Component {
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                             onPress={
                                                 activityIdLoading ?
-                                                    () => {}
+                                                    null
                                                     : activeModality.isBodyModality ?
                                                         () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
                                                         :
@@ -1473,7 +1473,7 @@ class MyPlan extends Component {
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
                                             onPress={
                                                 activityIdLoading ?
-                                                    () => {}
+                                                    null
                                                     : activeModality.isBodyModality ?
                                                         () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
                                                         :
