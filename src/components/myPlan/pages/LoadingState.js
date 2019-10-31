@@ -26,30 +26,30 @@ import LottieView from 'lottie-react-native';
 /* Data ==================================================================== */
 const rsData = [
     { progress: 0, text: 'Updating your history', time: 300, },
-    { progress: 33, text: 'Updating your history', time: 1000, },
-    { progress: 33, text: 'Estimating your recovery needs', time: 1300, },
-    { progress: 66, text: 'Estimating your recovery needs', time: 2000, },
-    { progress: 66, text: 'Creating your plan', time: 2100, },
+    { progress: 33, text: 'Updating your history', time: 1500, },
+    { progress: 33, text: 'Estimating your recovery needs', time: 1600, },
+    { progress: 66, text: 'Estimating your recovery needs', time: 3100, },
+    { progress: 66, text: 'Creating your plan', time: 3200, },
     { isFinalStep: true, progress: 100, text: 'Your Plan is ready!', time: null, },
 ];
 const pssData = [
     { progress: 0, text: 'Updating your history', time: 300, },
-    { progress: 25, text: 'Updating your history', time: 1000, },
-    { progress: 25, text: 'Calculating your training load', time: 1300, },
-    { progress: 50, text: 'Calculating your training load', time: 2000, },
-    { progress: 50, text: 'Estimating your recovery needs', time: 2300, },
-    { progress: 75, text: 'Estimating your recovery needs', time: 3000, },
-    { progress: 75, text: 'Creating your plan', time: 3100, },
+    { progress: 25, text: 'Updating your history', time: 1500, },
+    { progress: 25, text: 'Calculating your training load', time: 1600, },
+    { progress: 50, text: 'Calculating your training load', time: 3100, },
+    { progress: 50, text: 'Estimating your recovery needs', time: 3200, },
+    { progress: 75, text: 'Estimating your recovery needs', time: 4700, },
+    { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'All done!', time: null, },
 ];
 const sensorData = [
     { progress: 0, text: 'Updating your movement profile', time: 300, },
-    { progress: 25, text: 'Updating your movement profile', time: 1000, },
-    { progress: 25, text: 'Analyzing your prevention needs', time: 1300, },
-    { progress: 50, text: 'Analyzing your prevention needs', time: 2000, },
-    { progress: 50, text: 'Projecting your recovery timeline', time: 2300, },
-    { progress: 75, text: 'Projecting your recovery timeline', time: 3000, },
-    { progress: 75, text: 'Creating your plan', time: 3100, },
+    { progress: 25, text: 'Updating your movement profile', time: 1500, },
+    { progress: 25, text: 'Analyzing your prevention needs', time: 1600, },
+    { progress: 50, text: 'Analyzing your prevention needs', time: 3100, },
+    { progress: 50, text: 'Projecting your recovery timeline', time: 3200, },
+    { progress: 75, text: 'Projecting your recovery timeline', time: 4700, },
+    { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'Your Plan is ready!', time: null, },
 ];
 
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         alignItems:        'center',
-        backgroundColor:   `${AppColors.white}${PlanLogic.returnHexOpacity(0.95)}`,
+        backgroundColor:   AppColors.transparent,
         flex:              1,
         justifyContent:    'center',
         paddingHorizontal: AppSizes.paddingXLrg,
@@ -118,8 +118,10 @@ class LoadingState extends PureComponent {
             clearInterval(this.timerId);
             this.setState(
                 {
-                    progress: newProgressValue || this.state.progress,
-                    text:     filteredData ? filteredData.text : this.state.text,
+                    isModalOpen: false,
+                    progress:    newProgressValue || this.state.progress,
+                    text:        filteredData ? filteredData.text : this.state.text,
+                    timer:       0,
                 },
                 () => {
                     this.timerId = _.delay(() => this.setState({ isModalOpen: false, }, () => this.props.onClose()), 1100);
@@ -137,7 +139,7 @@ class LoadingState extends PureComponent {
             if(this.state.progress < 100) {
                 let newTimerValue = parseInt((this.state.timer + 100), 10);
                 let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
-                let filteredData = _.find(data, d => d.time && d.time === newTimerValue);
+                let filteredData = _.find(data, d => d.time && d.time >= newTimerValue);
                 let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
                 this.setState({
                     progress: newProgressValue || this.state.progress,
@@ -154,7 +156,8 @@ class LoadingState extends PureComponent {
         const { isModalOpen, progress, text, } = this.state;
         return (
             <FathomModal
-                hasBackdrop={false}
+                backdropColor={AppColors.white}
+                backdropOpacity={0.95}
                 isVisible={isModalOpen}
             >
                 <View style={[styles.wrapper,]}>
@@ -162,7 +165,8 @@ class LoadingState extends PureComponent {
                         autoPlay={true}
                         loop={true}
                         progress={1}
-                        source={require('../../../../assets/animation/running-man.json')}
+                        source={require('../../../../assets/animation/loading-state.json')}
+                        speed={0.75}
                         style={[styles.animationWrapper,]}
                     />
                     <View style={[styles.textWrapper,]}>

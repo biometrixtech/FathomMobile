@@ -275,7 +275,7 @@ const SensorSession = ({
                             : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                                 () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
                                 : activityStatus === 'PROCESSING_COMPLETE' ?
-                                    () => handleGetMobilize(activity.id)
+                                    () => handleGetMobilize()
                                     : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
                                         () => updateSensorSession(activity)
                                         : activityStatus === 'NO_WIFI_SETUP' ?
@@ -752,7 +752,7 @@ class MyPlan extends Component {
         } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData, user);
         this.setState(
             {
-                apiIndex:                   0,
+                apiIndex:                   nonDeletedSessions.length !== 0 ? 1 : 0,
                 expandNotifications:        false,
                 dailyReadiness:             newDailyReadinessState,
                 healthData:                 _.cloneDeep(defaultPlanState.healthData),
@@ -896,14 +896,14 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = activityId => {
+    _handleGetMobilize = () => {
         const { getMobilize, user, } = this.props;
         this.setState(
-            { activityIdLoading: activityId, expandNotifications: false, isPageCalculating: true, },
+            { apiIndex: 2, expandNotifications: false, isPageCalculating: true, },
             () =>
                 getMobilize(user.id)
-                    .then(res => this.setState({ activityIdLoading: null, isPageCalculating: false, }))
-                    .catch(() => this.setState({ activityIdLoading: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
+                    .then(res => this.setState({ apiIndex: null, isPageCalculating: false, }))
+                    .catch(() => this.setState({ apiIndex: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
     }
 
@@ -1086,7 +1086,7 @@ class MyPlan extends Component {
         } = PlanLogic.handlePostSessionSurveySubmitLogic(updatedPostSession, train, recover, healthData, user);
         this.setState(
             {
-                apiIndex:                     2,
+                apiIndex:                     1,
                 expandNotifications:          false,
                 goToScreen:                   landingScreen,
                 healthData:                   [],
@@ -1650,6 +1650,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
+
                 <FathomModal isVisible={isPostSessionSurveyModalOpen}>
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1668,6 +1669,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
+
                 {/*<SessionsCompletionModal
                     isModalOpen={isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
@@ -1678,6 +1680,7 @@ class MyPlan extends Component {
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
                 />*/}
+
                 { isStartSensorSessionModalOpen &&
                     <StartSensorSessionModal
                         appState={appState}
@@ -1691,6 +1694,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 }
+
                 { loading ?
                     <Loading
                         text={showLoadingText ? trainLoadingScreenText : null}
@@ -1698,6 +1702,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
+
                 <FathomModal
                     hasBackdrop={false}
                     isVisible={isCoachModalOpen}

@@ -255,16 +255,9 @@ const setCompletedCoolDownExercises = exercise => {
   * Post Readiness Survey Data
   */
 const postReadinessSurvey = (dailyReadinessObj, userId) => {
-    // update daily_readiness_survey_completed flag
-    let newDailyPlanObj = _.cloneDeep(store.getState().plan.dailyPlan);
-    newDailyPlanObj[0].daily_readiness_survey_completed = true;
     // update reducer
     store.dispatch({
         type: Actions.START_REQUEST,
-    });
-    store.dispatch({
-        type: Actions.GET_MY_PLAN,
-        data: newDailyPlanObj,
     });
     // continue logic
     return dispatch => AppAPI.post_readiness_survey.post({userId}, dailyReadinessObj)

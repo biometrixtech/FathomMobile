@@ -1550,9 +1550,9 @@ const PlanLogic = {
         let offDaySelected = !dailyPlanObj.sessions_planned;
         let askForNewMobilize = (dailyPlanObj.train_later && (!dailyPlanObj.pre_active_rest[0] || dailyPlanObj.pre_active_rest[0].completed)) || (!dailyPlanObj.train_later && (!dailyPlanObj.post_active_rest[0] || dailyPlanObj.post_active_rest[0].completed));
         let noTriggerCoreLogic = !dailyPlanObj.heat && !dailyPlanObj.ice && !dailyPlanObj.cold_water_immersion && dailyPlanObj.cool_down.length === 0 && dailyPlanObj.pre_active_rest.length === 0 && dailyPlanObj.post_active_rest.length === 0;
-        let firstTrigger = offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
-        let secondTrigger = noTriggerCoreLogic && filteredTrainingSessions.length > 0;
-        let thirdTrigger = dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let firstTrigger = isReadinessSurveyCompleted && offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let secondTrigger = isReadinessSurveyCompleted && noTriggerCoreLogic && filteredTrainingSessions.length > 0;
+        let thirdTrigger = isReadinessSurveyCompleted && dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let triggerStep = firstTrigger ?
             'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand.\n\nEnjoy your off day!'
             : secondTrigger ?
