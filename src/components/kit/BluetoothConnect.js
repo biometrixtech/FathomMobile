@@ -74,14 +74,12 @@ class BluetoothConnect extends Component {
             this._updateUserCheckpoint(0);
         }
         this._isMounted = true;
+    }
+
+    componentWillMount = () => {
         // monitor when the BLE state changes
         ble.startMonitor(state => this.setState({ bleState: state, }));
     }
-
-    // componentWillMount = () => {
-    //     // monitor when the BLE state changes
-    //     ble.startMonitor(state => this.setState({ bleState: state, }));
-    // }
 
     componentWillUnmount = () => {
         this._pages = {};
