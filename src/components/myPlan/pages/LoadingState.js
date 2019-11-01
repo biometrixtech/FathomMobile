@@ -17,7 +17,6 @@ import { AnimatedProgressBar, FathomModal, Text, } from '../../custom';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, } from '../../../constants';
-import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
