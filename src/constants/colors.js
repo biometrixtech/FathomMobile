@@ -118,7 +118,9 @@ const zeplin = {
     warningXLight:  '#F4CA99',
     warningXXLight: '#F8DBBA',
     yellow:         '#EBBA2D',
-    yellowLight:    '#EEC756',
+    yellowLight:    '#F0CB61',
+    yellowXLight:   '#F4D888',
+    yellowXXLight:  '#F7E5AF',
 }
 
 const bodyOverlay = {
