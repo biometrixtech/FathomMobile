@@ -90,63 +90,76 @@ class LoadingState extends PureComponent {
     constructor(props) {
         super(props);
         let data = props.apiIndex === 0 ? rsData : props.apiIndex === 1 ?  pssData : sensorData;
-        this.state = {
+        this.defaultState = {
             isModalOpen: false,
+            isAPIDone:   false,
             progress:    0,
             text:        data[0].text,
             timer:       0,
         };
+        this.state = { ...this.defaultState, };
         this.timerId = null;
     }
 
     componentDidUpdate = prevProps => {
-        let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
         if(
             (prevProps.isModalOpen !== this.props.isModalOpen && this.props.isModalOpen) ||
             (prevProps.apiIndex !== this.props.apiIndex && this.props.apiIndex && this.props.apiIndex >= 0)
         ) {
+            let newState = _.cloneDeep(this.defaultState);
+            newState.isModalOpen = true;
             this.timerId = _.delay(() => this.setState(
-                { isModalOpen: true, progress: 0, text: data[0].text, timer: 0, },
+                newState,
                 () => {
                     this.timerId = _.delay(() => this._triggerStartTimer(), 500);
                 }
             ), 800);
-        } else if((prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isModalOpen)) {
-            let filteredData = _.find(data, d => d.isFinalStep);
-            let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
-            clearInterval(this.timerId);
-            this.setState(
-                {
-                    isModalOpen: false,
-                    progress:    newProgressValue || this.state.progress,
-                    text:        filteredData ? filteredData.text : this.state.text,
-                    timer:       0,
-                },
-                () => {
-                    this.timerId = _.delay(() => this.setState({ isModalOpen: false, }, () => this.props.onClose()), 1100);
-                }
-            );
+        } else if(prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isModalOpen && !this.state.isAPIDone) {
+            this.setState({ isAPIDone: true, });
+        } else if(prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isModalOpen && this.state.isAPIDone) {
+            this._triggerLastStep();
         }
     }
 
     componentWillUnmount = () => {
+        this.setState(
+            this.defaultState,
+            () => clearInterval(this.timerId),
+        );
+    }
+
+    _triggerLastStep = () => {
+        let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
+        let filteredData = _.find(data, d => d.isFinalStep);
+        let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
         clearInterval(this.timerId);
+        this.setState(
+            {
+                progress: newProgressValue || this.state.progress,
+                text:     filteredData ? filteredData.text : this.state.text,
+                timer:    0,
+            },
+            () => {
+                this.timerId = _.delay(() => this.setState({ isModalOpen: false, }, () => this.props.onClose()), 1500);
+            }
+        );
     }
 
     _triggerStartTimer = () => {
         this.timerId = setInterval(() => {
-            if(this.state.progress < 100) {
-                let newTimerValue = parseInt((this.state.timer + 100), 10);
-                let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
-                let filteredData = _.find(data, d => d.time && d.time >= newTimerValue);
-                let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
+            let newTimerValue = parseInt((this.state.timer + 100), 10);
+            let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
+            let endTime = data[(data.length - 2)].time;
+            let filteredData = _.find(data, d => d.time && d.time >= newTimerValue);
+            let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
+            if((endTime + 1500) < newTimerValue) {
+                this._triggerLastStep();
+            } else if(this.state.progress < 100) {
                 this.setState({
                     progress: newProgressValue || this.state.progress,
                     text:     filteredData ? filteredData.text : this.state.text,
                     timer:    newTimerValue,
                 });
-            } else {
-                clearInterval(this.timerId);
             }
         }, 100);
     }
