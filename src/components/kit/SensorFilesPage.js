@@ -105,16 +105,14 @@ class SensorFilesPage extends Component {
                     }
                 });
             }
+            // monitor when the BLE state changes
+            ble.startMonitor(state => this.setState({ bleState: state, }));
         }
     }
 
     componentWillMount = () => {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', () => true);
-        }
-        if(this.state.pageIndex === 0 && this.props.pageStep === 'connect') { // turn on BLE & connect to accessory
-            // monitor when the BLE state changes
-            ble.startMonitor(state => this.setState({ bleState: state, }));
         }
     }
 
