@@ -152,7 +152,7 @@ class LoadingState extends PureComponent {
             let endTime = data[(data.length - 2)].time;
             let filteredData = _.find(data, d => d.time && d.time >= newTimerValue);
             let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
-            if((endTime + 1500) < newTimerValue) {
+            if(((endTime + 1500) < newTimerValue) && this.state.isAPIDone) {
                 this._triggerLastStep();
             } else if(this.state.progress < 100) {
                 this.setState({
