@@ -949,9 +949,21 @@ class MyPlan extends Component {
     _handleLogSymptomsFormSubmit = () => {
         const { logSymptoms, } = this.state;
         const { postSymptoms, user, } = this.props;
+        let clonedSoreness = _.cloneDeep(logSymptoms.soreness);
+        let updatedSoreness = _.filter(clonedSoreness, s => s.tight || s.ache || s.sore || s.tender || s.knots || s.sharp);
+        updatedSoreness = _.map(updatedSoreness, s => {
+            let newSoreness = _.cloneDeep(s);
+            newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
+                newSoreness.sore
+                : newSoreness.tender && newSoreness.tender > 0 ?
+                    newSoreness.tender
+                    :
+                    newSoreness.ache;
+            return newSoreness;
+        });
         let newLogSymptoms = {
             event_date: `${moment().toISOString(true).split('.')[0]}Z`,
-            soreness:   _.cloneDeep(logSymptoms.soreness),
+            soreness:   updatedSoreness,
         };
         this.setState(
             {
