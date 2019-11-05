@@ -57,7 +57,15 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { LoadingState, PostSessionSurvey, ReadinessSurvey, ReturnSensorsModal, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
+import {
+    LoadingState,
+    LogSymptomsModal,
+    PostSessionSurvey,
+    ReadinessSurvey,
+    ReturnSensorsModal,
+    SessionsCompletionModal,
+    StartSensorSessionModal,
+} from './pages';
 import { ContactUsModal, Loading, } from '../general';
 
 // global constants
@@ -515,6 +523,7 @@ class MyPlan extends Component {
         plan:                 PropTypes.object.isRequired,
         postReadinessSurvey:  PropTypes.func.isRequired,
         postSessionSurvey:    PropTypes.func.isRequired,
+        postSymptoms:         PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         setAppLogs:           PropTypes.func.isRequired,
         updateSensorSession:  PropTypes.func.isRequired,
@@ -718,14 +727,16 @@ class MyPlan extends Component {
         );
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback, isLogSymptoms) => {
         const { plan, } = this.props;
-        const { dailyReadiness, postSession, } = this.state;
-        let stateObject = isDailyReadiness ? dailyReadiness : postSession;
+        const { dailyReadiness, logSymptoms, postSession, } = this.state;
+        let stateObject = isDailyReadiness ? dailyReadiness : isLogSymptoms ? logSymptoms : postSession;
         let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections, side);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
             this.setState({ dailyReadiness: newFormFields, }, () => callback && callback());
+        } else if(isLogSymptoms) {
+            this.setState({ logSymptoms: newFormFields, }, () => callback && callback());
         } else {
             this.setState({ postSession: newFormFields, }, () => callback && callback());
         }
@@ -924,6 +935,52 @@ class MyPlan extends Component {
         }, () => {
             if(callback) { callback(); }
         });
+    }
+
+    _handleLogSymptomsFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
+        const { logSymptoms, } = this.state;
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, logSymptoms, isClearCandidate, isMovementValue);
+        this.setState(
+            { logSymptoms: newFormFields, },
+            () => callback && callback(),
+        );
+    }
+
+    _handleLogSymptomsFormSubmit = () => {
+        const { logSymptoms, } = this.state;
+        const { postSymptoms, user, } = this.props;
+        let newLogSymptoms = {
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            soreness:   _.cloneDeep(logSymptoms.soreness),
+        };
+        this.setState(
+            {
+                apiIndex:               0,
+                isLogSymptomsModalOpen: false,
+                isPageCalculating:      true,
+                logSymptoms:            {
+                    soreness: [],
+                },
+            },
+            () => postSymptoms(newLogSymptoms, user.id)
+                .then(response =>
+                    this.setState(
+                        { apiIndex: null, isPageCalculating: false, },
+                        () => {
+                            // handle Coach related items
+                            if(!this.state.isTrainSessionsCompletionModalOpen) {
+                                this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                            }
+                        }
+                    )
+                )
+                .catch(error =>
+                    this.setState(
+                        { apiIndex: null, isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                ),
+        );
     }
 
     _handleNoSessions = () => {
@@ -1323,6 +1380,7 @@ class MyPlan extends Component {
             healthData,
             isCoachModalOpen,
             isContactUsOpen,
+            isLogSymptomsModalOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -1332,6 +1390,7 @@ class MyPlan extends Component {
             isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
+            logSymptoms,
             postSession,
             sensorSession,
             showLoadingText,
@@ -1546,12 +1605,12 @@ class MyPlan extends Component {
                                 />
                             </ActionButton.Item>
                         }
-                        {/*<ActionButton.Item
+                        <ActionButton.Item
                             activeOpacity={1}
                             buttonColor={AppColors.zeplin.yellow}
                             fixNativeFeedbackRadius={true}
                             hideShadow={true}
-                            onPress={() => }
+                            onPress={() => this.setState({ isLogSymptomsModalOpen: true, })}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                             textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
@@ -1564,7 +1623,7 @@ class MyPlan extends Component {
                                 size={32}
                                 type={'ionicon'}
                             />
-                        </ActionButton.Item>*/}
+                        </ActionButton.Item>
                         <ActionButton.Item
                             activeOpacity={1}
                             buttonColor={AppColors.zeplin.yellow}
@@ -1788,6 +1847,17 @@ class MyPlan extends Component {
                     apiIndex={apiIndex}
                     isModalOpen={activityIdLoading ? false : isPageCalculating}
                     onClose={() => this.setState({ isPageCalculating: false, }, () => this._scrollToFirstActiveActivityTab())}
+                />
+
+                <LogSymptomsModal
+                    handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                    handleClose={() => this.setState({ isLogSymptomsModalOpen: false, })}
+                    handleFormChange={this._handleLogSymptomsFormChange}
+                    handleFormSubmit={this._handleLogSymptomsFormSubmit}
+                    isModalOpen={isLogSymptomsModalOpen}
+                    soreBodyParts={plan.soreBodyParts}
+                    soreness={logSymptoms.soreness}
+                    user={user}
                 />
 
             </View>

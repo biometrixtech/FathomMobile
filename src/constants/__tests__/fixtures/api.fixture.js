@@ -67,6 +67,7 @@ export default {
         ['post_readiness_survey', `${plansAPIVersion}/daily_readiness/{userId}`], // POST
         ['post_sensor_data',      `${plansAPIVersion}/session/{userId}/sensor_data`], // POST
         ['post_session_survey',   `${plansAPIVersion}/session/{userId}`], // POST
+        ['post_symptoms',         `${plansAPIVersion}/symptoms/{userId}`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
