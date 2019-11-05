@@ -2733,11 +2733,13 @@ const PlanLogic = {
                                                                                             : color === 22 ?
                                                                                                 AppColors.zeplin.warningXXLight
                                                                                                 : color === 23 ?
-                                                                                                    AppColors.zeplin.yellowXLight
+                                                                                                    AppColors.zeplin.yellowLight
                                                                                                     : color === 24 ?
-                                                                                                        AppColors.zeplin.yellowXXLight
-                                                                                                        :
-                                                                                                        AppColors.zeplin.errorLight;
+                                                                                                        AppColors.zeplin.yellowXLight
+                                                                                                        : color === 25 ?
+                                                                                                            AppColors.zeplin.yellowXXLight
+                                                                                                            :
+                                                                                                            AppColors.zeplin.errorLight;
     },
 
     returnStubBiomechanicsTrend: () => {

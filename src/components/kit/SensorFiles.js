@@ -107,6 +107,20 @@ class SensorFiles extends Component {
         );
     }
 
+    _handleWifiDisabledClicked = () => {
+        Alert.alert(
+            '',
+            'Hmm...we\'re having trouble changing your preferred wifi network. Please try to update your app or contact support at support@fathomai.com for assistance.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
     render = () => {
         const { user, } = this.props;
         const { isTooltipOpen, isTutorialModalOpen, } = this.state;
@@ -213,7 +227,7 @@ class SensorFiles extends Component {
                             name:      'wifi',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => this._handleWifiClicked(sensorNetwork)}
+                        onPress={() => this._handleWifiDisabledClicked()}//this._handleWifiClicked(sensorNetwork)}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',

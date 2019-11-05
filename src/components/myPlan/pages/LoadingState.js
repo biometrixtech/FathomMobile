@@ -25,12 +25,14 @@ import LottieView from 'lottie-react-native';
 /* Data ==================================================================== */
 const rsData = [
     { progress: 0, text: 'Updating your history', time: 300, },
-    { progress: 33, text: 'Updating your history', time: 1500, },
-    { progress: 33, text: 'Estimating your recovery needs', time: 1600, },
-    { progress: 66, text: 'Estimating your recovery needs', time: 3100, },
-    { progress: 66, text: 'Creating your plan', time: 3200, },
+    { progress: 25, text: 'Updating your history', time: 1500, },
+    { progress: 25, text: 'Analyzing symptoms', time: 1600, },
+    { progress: 50, text: 'Analyzing symptoms', time: 3100, },
+    { progress: 50, text: 'Estimating your recovery needs', time: 3200, },
+    { progress: 75, text: 'Estimating your recovery needs', time: 4700, },
+    { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'Your Plan is ready!', time: null, },
-];
+]; // apiIndex === 0
 const pssData = [
     { progress: 0, text: 'Updating your history', time: 300, },
     { progress: 25, text: 'Updating your history', time: 1500, },
@@ -40,7 +42,7 @@ const pssData = [
     { progress: 75, text: 'Estimating your recovery needs', time: 4700, },
     { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'All done!', time: null, },
-];
+]; // apiIndex === 1
 const sensorData = [
     { progress: 0, text: 'Updating your movement profile', time: 300, },
     { progress: 25, text: 'Updating your movement profile', time: 1500, },
@@ -50,7 +52,17 @@ const sensorData = [
     { progress: 75, text: 'Projecting your recovery timeline', time: 4700, },
     { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'Your Plan is ready!', time: null, },
-];
+]; // apiIndex === 2
+const mobilizeData = [
+    { progress: 0, text: 'Reviewing training history', time: 300, },
+    { progress: 25, text: 'Reviewing training history', time: 1500, },
+    { progress: 25, text: 'Analyzing personal data', time: 1600, },
+    { progress: 50, text: 'Analyzing personal data', time: 3100, },
+    { progress: 50, text: 'Estimating mobility needs', time: 3200, },
+    { progress: 75, text: 'Estimating mobility needs', time: 4700, },
+    { progress: 75, text: 'Creating your Mobilize', time: 4800, },
+    { isFinalStep: true, progress: 100, text: 'All done!', time: null, },
+]; // apiIndex === 3
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -89,7 +101,7 @@ const styles = StyleSheet.create({
 class LoadingState extends PureComponent {
     constructor(props) {
         super(props);
-        let data = props.apiIndex === 0 ? rsData : props.apiIndex === 1 ?  pssData : sensorData;
+        let data = props.apiIndex === 0 ? rsData : props.apiIndex === 1 ? pssData : props.apiIndex === 2 ? sensorData : mobilizeData;
         this.defaultState = {
             isModalOpen: false,
             isAPIDone:   false,
@@ -129,7 +141,7 @@ class LoadingState extends PureComponent {
     }
 
     _triggerLastStep = () => {
-        let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
+        let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ? pssData : this.props.apiIndex === 2 ? sensorData : mobilizeData;
         let filteredData = _.find(data, d => d.isFinalStep);
         let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;
         clearInterval(this.timerId);
@@ -148,7 +160,7 @@ class LoadingState extends PureComponent {
     _triggerStartTimer = () => {
         this.timerId = setInterval(() => {
             let newTimerValue = parseInt((this.state.timer + 100), 10);
-            let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ?  pssData : sensorData;
+            let data = this.props.apiIndex === 0 ? rsData : this.props.apiIndex === 1 ? pssData : this.props.apiIndex === 2 ? sensorData : mobilizeData;
             let endTime = data[(data.length - 2)].time;
             let filteredData = _.find(data, d => d.time && d.time >= newTimerValue);
             let newProgressValue = filteredData ? parseInt(filteredData.progress, 10) : false;

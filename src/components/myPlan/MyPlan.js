@@ -896,10 +896,10 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = () => {
+    _handleGetMobilize = isFromAddButton => {
         const { getMobilize, user, } = this.props;
         this.setState(
-            { apiIndex: 2, expandNotifications: false, isPageCalculating: true, },
+            { apiIndex: isFromAddButton ? 3 : 2, expandNotifications: false, isPageCalculating: true, },
             () =>
                 getMobilize(user.id)
                     .then(res => this.setState({ apiIndex: null, isPageCalculating: false, }))
@@ -1582,13 +1582,13 @@ class MyPlan extends Component {
                                 style={{height: 32, tintColor: AppColors.white, width: 32,}}
                             />
                         </ActionButton.Item>
-                        {/* askForNewMobilize &&
+                        { askForNewMobilize &&
                             <ActionButton.Item
                                 activeOpacity={1}
                                 buttonColor={AppColors.zeplin.yellow}
                                 fixNativeFeedbackRadius={true}
                                 hideShadow={true}
-                                onPress={() => this._handleGetMobilize()}
+                                onPress={() => this._handleGetMobilize(true)}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
@@ -1600,7 +1600,7 @@ class MyPlan extends Component {
                                     style={{height: 32, tintColor: AppColors.white, width: 32,}}
                                 />
                             </ActionButton.Item>
-                        */}
+                        }
                         { userHas3SensorSystem &&
                             <ActionButton.Item
                                 activeOpacity={1}

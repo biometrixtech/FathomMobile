@@ -64,6 +64,8 @@ class BluetoothConnect extends Component {
         this._timer = null;
         this.bluetoothLoadingAnimation1 = {};
         this.bluetoothLoadingAnimation2 = {};
+        // monitor when the BLE state changes
+        ble.startMonitor(state => this.setState({ bleState: state, }));
     }
 
     componentDidMount = () => {
@@ -74,11 +76,6 @@ class BluetoothConnect extends Component {
             this._updateUserCheckpoint(0);
         }
         this._isMounted = true;
-    }
-
-    componentWillMount = () => {
-        // monitor when the BLE state changes
-        ble.startMonitor(state => this.setState({ bleState: state, }));
     }
 
     componentWillUnmount = () => {
