@@ -7,8 +7,7 @@ import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOp
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import _ from 'lodash';
-import moment from 'moment';
+import { WebView, } from 'react-native-webview'; // REMOVE ME
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -132,6 +131,24 @@ class SensorFiles extends Component {
             lastSyncString,
             sensorNetwork,
         } = SensorLogic.handleSensorFileRenderLogic(sensorData);
+        return (
+            <View
+                style={{
+                    flex:   1,
+                    height: (AppSizes.screen.height * 0.75),
+                    width:  (AppSizes.screen.width),
+                }}
+            >
+                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
+                <WebView
+                    onMessage={event => console.log(JSON.parse(event.nativeEvent.data))}
+                    originWhitelist={['*']}
+                    source={require('./test/index.html')}
+                    startInLoadingState={true}
+                    style={{flex: 1,}}
+                />
+            </View>
+        );
         return (
             <ScrollView
                 automaticallyAdjustContentInsets={false}
