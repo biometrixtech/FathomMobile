@@ -36,10 +36,10 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* FathomTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* FathomTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
+		7218B2692373439300CC296C /* libBleClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7218B2682373438800CC296C /* libBleClient.a */; };
 		723539C02260DC37003049A5 /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 723539B42260DC22003049A5 /* libRNCNetInfo.a */; };
 		724780E32370B0E1003211AE /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 724780E22370B0E1003211AE /* GameKit.framework */; };
 		72A486922285C0B900C351EE /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A4868A2285C0A700C351EE /* libRNReactNativeHapticFeedback.a */; };
-		72AD6421237089CB00575232 /* libBleClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 721F02B422DFB437001FDD13 /* libBleClient.a */; };
 		72C80D7A22DFAC0400F64903 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C80D7922DFAC0400F64903 /* File.swift */; };
 		72F02F0E22552EC500943040 /* libLottie.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0722552EA400943040 /* libLottie.a */; };
 		72F02F0F22552EC500943040 /* libLottieReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72F02F0D22552EB000943040 /* libLottieReactNative.a */; };
@@ -339,9 +339,9 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
-		721F02B322DFB437001FDD13 /* PBXContainerItemProxy */ = {
+		7218B2672373438800CC296C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */;
+			containerPortal = 7218B2632373438800CC296C /* BleClient.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D73F06E81D48E17B00AD5963;
 			remoteInfo = BleClient;
@@ -645,7 +645,7 @@
 		2D02E4901E0B4A5D006451C7 /* Fathom-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Fathom-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleClient.xcodeproj; path = "../node_modules/react-native-ble-plx/ios/BleClient.xcodeproj"; sourceTree = "<group>"; };
+		7218B2632373438800CC296C /* BleClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BleClient.xcodeproj; path = "../node_modules/react-native-ble-plx/ios/BleClient.xcodeproj"; sourceTree = "<group>"; };
 		723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNCNetInfo.xcodeproj; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; };
 		724780E22370B0E1003211AE /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNReactNativeHapticFeedback.xcodeproj; path = "../node_modules/react-native-haptic-feedback/ios/RNReactNativeHapticFeedback.xcodeproj"; sourceTree = "<group>"; };
@@ -737,7 +737,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72AD6421237089CB00575232 /* libBleClient.a in Frameworks */,
+				7218B2692373439300CC296C /* libBleClient.a in Frameworks */,
 				72F439CA23034719006AE13F /* libRNCPushNotificationIOS.a in Frameworks */,
 				724780E32370B0E1003211AE /* GameKit.framework in Frameworks */,
 				72F2435B228C8757008C6B93 /* libRNSVG.a in Frameworks */,
@@ -951,10 +951,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		721F02AE22DFB437001FDD13 /* Products */ = {
+		7218B2642373438800CC296C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				721F02B422DFB437001FDD13 /* libBleClient.a */,
+				7218B2682373438800CC296C /* libBleClient.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1182,8 +1182,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				7218B2632373438800CC296C /* BleClient.xcodeproj */,
 				72F439C42303470A006AE13F /* PushNotificationIOS.xcodeproj */,
-				721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */,
 				72F2430E228C8741008C6B93 /* RNSVG.xcodeproj */,
 				72A486492285C0A600C351EE /* RNReactNativeHapticFeedback.xcodeproj */,
 				723539782260DC21003049A5 /* RNCNetInfo.xcodeproj */,
@@ -1410,8 +1410,8 @@
 					ProjectRef = 72F02F43225537BE00943040 /* ART.xcodeproj */;
 				},
 				{
-					ProductGroup = 721F02AE22DFB437001FDD13 /* Products */;
-					ProjectRef = 721F02AD22DFB437001FDD13 /* BleClient.xcodeproj */;
+					ProductGroup = 7218B2642373438800CC296C /* Products */;
+					ProjectRef = 7218B2632373438800CC296C /* BleClient.xcodeproj */;
 				},
 				{
 					ProductGroup = 72F02FCB22553D8B00943040 /* Products */;
@@ -1751,11 +1751,11 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		721F02B422DFB437001FDD13 /* libBleClient.a */ = {
+		7218B2682373438800CC296C /* libBleClient.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libBleClient.a;
-			remoteRef = 721F02B322DFB437001FDD13 /* PBXContainerItemProxy */;
+			remoteRef = 7218B2672373438800CC296C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		723539B42260DC22003049A5 /* libRNCNetInfo.a */ = {
