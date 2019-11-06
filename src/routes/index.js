@@ -292,14 +292,12 @@ const Index = (
                 component={SensorFilesContainer}
                 hideNavBar={true}
                 key={'sensorFiles'}
-                panHandlers={null}
             />
             <Scene
                 Layout={SensorFilesPageComponent}
                 component={SensorFilesPageContainer}
                 hideNavBar={true}
                 key={'sensorFilesPage'}
-                panHandlers={null}
             />
         </Stack>
     </Router>

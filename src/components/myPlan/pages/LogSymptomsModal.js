@@ -1,10 +1,15 @@
 /**
- * SessionsCompletionModal
+ * LogSymptomsModal
  *
-    <SessionsCompletionModal
-        isModalOpen={this.state.isModalOpen}
-        onClose={this._closePrepareSessionsCompletionModal}
-        sessions={[]}
+    <LogSymptomsModal
+        handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+        handleClose={() => this.setState({ isLogSymptomsModalOpen: false, })}
+        handleFormChange={this._handleLogSymptomsFormChange}
+        handleFormSubmit={this._handleLogSymptomsFormSubmit}
+        isModalOpen={isLogSymptomsModalOpen}
+        soreBodyParts={plan.soreBodyParts}
+        soreness={logSymptoms.soreness}
+        user={user}
     />
  *
  */
