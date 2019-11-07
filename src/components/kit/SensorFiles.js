@@ -227,7 +227,7 @@ class SensorFiles extends Component {
                             name:      'wifi',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => this._handleWifiDisabledClicked()}//this._handleWifiClicked(sensorNetwork)}
+                        onPress={() => this._handleWifiClicked(sensorNetwork)}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',
