@@ -291,6 +291,7 @@ class CustomMyPlanNavBar extends PureComponent {
         let categoryTrend = selectedCategory.trends[0];
         let categoryData = categoryTrend.trend_data && categoryTrend.trend_data.data && categoryTrend.trend_data.data[0] ? categoryTrend.trend_data.data[0] : [];
         let bodyOverlayData = _.flatten(_.map(categoryData, category => category));
+        console.log('bodyOverlayData',bodyOverlayData);
         let bodyOverlayHeightMultiplier = (modalContentHeight && modalContentHeight > 0 && (AppSizes.screen.height - modalContentHeight) <= (AppSizes.paddingXLrg) ? 0.8 : 1);
         let remainingBodyOverlayWidth = (AppSizes.screen.widthTwoThirds * bodyOverlayHeightMultiplier);
         return (
