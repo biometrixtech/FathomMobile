@@ -130,7 +130,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 46
-        versionName "3.9.2-beta.29"
+        versionName "3.9.2-beta.30"
     }
     configurations.all {
         resolutionStrategy {
