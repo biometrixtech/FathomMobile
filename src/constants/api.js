@@ -132,6 +132,7 @@ export default {
 
     hardwareEndpoints: new Map([
         ['accessory',    `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['check_sync',   `${hardwareAPIVersion}/accessory/{wifiMacAddress}/check_sync`], // POST
         ['get_utc_time', `${hardwareAPIVersion}/misc/time`], // GET
     ]),
 };

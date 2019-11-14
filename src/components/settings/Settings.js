@@ -306,7 +306,6 @@ class Settings extends Component {
     render = () => {
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
-        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
         const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
@@ -396,31 +395,29 @@ class Settings extends Component {
                         <Spacer isDivider />
                     </View>
                 }
-                { userHas3SensorSystem &&
-                    <View>
-                        <ListItem
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                            leftIcon={
-                                <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={require('../../../assets/images/standard/kitactive.png')}
-                                        style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
-                                    />
-                                </View>
-                            }
-                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
-                            rightIcon={{
-                                color: AppColors.zeplin.slate,
-                                name:  'chevron-right',
-                                size:  ICON_SIZE,
-                            }}
-                            title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                        />
-                        <Spacer isDivider />
-                    </View>
-                }
+                <View>
+                    <ListItem
+                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                        leftIcon={
+                            <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/kitactive.png')}
+                                    style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
+                                />
+                            </View>
+                        }
+                        onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
+                        rightIcon={{
+                            color: AppColors.zeplin.slate,
+                            name:  'chevron-right',
+                            size:  ICON_SIZE,
+                        }}
+                        title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    />
+                    <Spacer isDivider />
+                </View>
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{

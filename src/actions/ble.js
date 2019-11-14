@@ -8,21 +8,21 @@ import { store } from '../store';
 
 // import third-party libraries
 import _ from 'lodash';
-import { BleManager, } from 'react-native-ble-plx';
-import { Buffer } from 'buffer';
+// import { BleManager, } from 'react-native-ble-plx';
+// import { Buffer } from 'buffer';
 import moment from 'moment';
 
 // constants
-const commands = BLEConfig.commands;
-const networkTypes = BLEConfig.networkTypes;
-const serviceUUID = BLEConfig.serviceUUID3Sensor;
-const characteristicUUID = BLEConfig.characteristicUUID3Sensor;
-
-let bleManager = null;
+// const commands = BLEConfig.commands;
+// const networkTypes = BLEConfig.networkTypes;
+// const serviceUUID = BLEConfig.serviceUUID3Sensor;
+// const characteristicUUID = BLEConfig.characteristicUUID3Sensor;
+//
+// let bleManager = null;
 
 /**
   * UTILITY FUNCTIONS
-  */
+  *
 const convertDecimal = array => array.map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2)).join(':');
 
 const convertHex = value => parseInt(value, 16);
@@ -34,7 +34,7 @@ const validateReadData = (response, dataArray) => (response[0] === 0 && response
   * eg.
   *   [116,101,115,116]
   *   'test'
-  */
+  *
 const convertByteArrayToString = array => array.map(byte => byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 
 /**
@@ -42,7 +42,7 @@ const convertByteArrayToString = array => array.map(byte => byte && byte > 31 &&
   * eg.
   *   'test'
   *   [116,101,115,116]
-  */
+  *
 const convertStringToByteArray = string => string.split('').map(char => char.charCodeAt(0));
 
 /**
@@ -50,7 +50,7 @@ const convertStringToByteArray = string => string.split('').map(char => char.cha
   * eg.
   *   'AAjUADygZ1csEgAAAAAAAAAAAAA='
   *   [00 08 d4 00 3c a0 67 57 2c 12 00 00 00 00 00 00 00 00 00 00]
-  */
+  *
 const convertBase64ToHex = string => {
     let hexString = new Buffer.from(string, 'base64').toString('hex');
     return hexString.match(/.{1,2}/g).map(val => convertHex(val))
@@ -80,7 +80,7 @@ const read = async (device, base64Value, transactionId) => {
                 let value = convertBase64ToHex(characteristic.value);
                 let base64WriteValue = convertBase64ToHex(base64Value);
                 if(!validateReadData(value, base64WriteValue)) {
-                    /*eslint no-use-before-define: 0*/
+                    /*eslint no-use-before-define: 0*
                     return _.delay(() => write(device, base64Value, transactionId), 2000);
                 } else if(value[3] === 1) {
                     let errorObj = await handleError({mesasge: 'object not valid - read',}, device);
@@ -205,7 +205,7 @@ const handleError = async (error, device) => {
                 rssi:         null,
             };
         });
-};
+};*/
 
 /**
   * API CALL FUNCTIONS
@@ -330,7 +330,7 @@ const deviceFound = data => {
 
 /**
   * 3-SENSOR SYSTEM FUNCTIONS
-  */
+  *
 const checkRSSI = async (device, characteristic) => {
     return await device.readRSSI()
         .then(async rssiCharacteristic => {
@@ -695,23 +695,23 @@ const writeAccessoryTime = async device => {
             .then(res => resolve())
             .catch(err => resolve());
     });
-};
+};*/
 
 export default {
     assignKitIndividual,
     createSensorSession,
-    destroyInstance,
-    enable,
-    exitKitSetup,
-    getScannedWifiConnections,
+    // destroyInstance,
+    // enable,
+    // exitKitSetup,
+    // getScannedWifiConnections,
     getSensorFiles,
-    getSingleWifiConnection,
-    handleError,
-    sleeper,
-    startDeviceScan,
-    startMonitor,
+    // getSingleWifiConnection,
+    // handleError,
+    // sleeper,
+    // startDeviceScan,
+    // startMonitor,
     updateSensorSession,
-    writeAccessoryTime,
-    writeWifiDetailsToSensor,
-    writeWifiNetworkReset,
+    // writeAccessoryTime,
+    // writeWifiDetailsToSensor,
+    // writeWifiNetworkReset,
 };

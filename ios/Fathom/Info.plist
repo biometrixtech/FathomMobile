@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3.9.2-beta.20</string>
+	<string>3.9.2-beta.26</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -68,7 +68,11 @@
 	<string>Read and understand health data.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Share workout data with other apps.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app always requires your Location Services to connect to our hardware.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app always requires your Location Services to connect to our hardware.</string>
+	<key>NSLocationUsageDescription</key>
 	<string>This app always requires your Location Services to connect to our hardware.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app always requires to use your Location Services when the app is in use to connect to our hardware.</string>

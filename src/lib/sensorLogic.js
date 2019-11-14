@@ -375,14 +375,11 @@ const SensorLogic = {
                 image:      false,
                 subtitle:   [
                     <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Hold the button for 3 sec until battery LED turns '}
+                        {'Hold the button for 3 sec until LED turns '}
                         <Text robotoBold style={{color: AppColors.blue,}}>{'solid blue'}</Text>
-                    </Text>,
-                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(make sure your phone\'s bluetooth is "on")'}
                     </Text>
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Turn on Bluetooth'}</Text>,
+                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Turn on PRO Bluetooth'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_on.mp4',
             },
             {
