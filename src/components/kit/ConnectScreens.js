@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Image, ImageBackground, Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 });
 
 /* Components =================================================================== */
-const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
+const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, title, }) => {
     let color = darkColor ? AppColors.zeplin.slateLight : AppColors.white;
     return(
         <View>
@@ -94,8 +94,12 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, }) => {
                             </Text>
                         </View>
                     </View>
-                    :
-                    <View style={{flex: 8,}} />
+                    : title ?
+                        <View style={{flex: 8, flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{title}</Text>
+                        </View>
+                        :
+                        <View style={{flex: 8,}} />
                 }
                 <View style={{flex: 1,}}>
                     { showClose &&
@@ -748,76 +752,51 @@ const Connect = ({
     if(page === 6) {
         return (
             <View style={{flex: 1,}}>
-                <TopNav darkColor={true} onBack={null} onClose={onClose} step={showTopNavStep ? 1 : false} />
-                <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
-                    <Text robotoMedium style={[styles.titleStyle,]}>{'Connect to FathomPRO Wifi'}</Text>
-                </View>
-                <View style={{flex: 1, justifyContent: 'space-between',}}>
-                    <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
-                        <View style={{flexDirection: 'row',}}>
-                            <TabIcon
-                                color={AppColors.zeplin.slateLight}
-                                containerStyle={[styles.circleBackground,]}
-                                icon={'settings'}
-                                size={24}
-                            />
-                            <View style={{flex: 1,}}>
-                                <Text robotoMedium style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(28),}}>{'Step 1'}</Text>
-                                <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>{'Open Your Phone\'s Wifi Settings'}</Text>
-                            </View>
+                <TopNav darkColor={true} onBack={null} onClose={onClose} title={'Setup Wifi'} />
+                <Image
+                    resizeMode={'contain'}
+                    source={require('../../../assets/images/standard/settingsnetwork.png')}
+                    style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
+                />
+                <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
+                    <View style={{flex: 1, justifyContent: 'space-between',}}>
+                        <View style={{justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'left',}}>
+                                {'Connect your phone to '}
+                                <Text robotoRegular style={{textDecorationLine: 'underline',}}>{'FathomPRO'}</Text>
+                                {' wifi network'}
+                            </Text>
+                            <Spacer size={AppSizes.paddingSml} />
+                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'left',}}>
+                                {'Go to your '}
+                                <Text robotoBold>{'wifi settings on this phone'}</Text>
+                                {' and select the network: '}
+                                <Text robotoBold>{'FathomPRO'}</Text>
+                                {' It may take up to a minute to display. After connecting your phone to the FathomPRO network, return here to continue setup.\n\nIf you see a notification saying, "Wi-Fi has no Internet access." Tap it and select "Yes".'}
+                            </Text>
                         </View>
-                        <View style={{flexDirection: 'row',}}>
-                            <TabIcon
-                                color={AppColors.zeplin.slateLight}
-                                containerStyle={[styles.circleBackground,]}
-                                icon={'wifi'}
-                                size={24}
-                                type={'material-community'}
-                            />
-                            <View style={{flex: 1,}}>
-                                <Text robotoMedium style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(28),}}>{'Step 2'}</Text>
-                                <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>
-                                    {'Select Wifi Network: '}
-                                    <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22), textDecorationLine: 'underline',}}>{'FathomPRO'}</Text>
-                                </Text>
-                            </View>
-                        </View>
-                        <View>
-                            <View style={{flexDirection: 'row',}}>
-                                <View style={[styles.circleBackground,]}>
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={require('../../../assets/images/standard/fathom-drop-slate.png')}
-                                        style={{height: 24, width: 24,}}
-                                    />
-                                </View>
-                                <View style={{flex: 1,}}>
-                                    <Text robotoMedium style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(28),}}>{'Step 3'}</Text>
-                                    <Text robotoMedium style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(22),}}>{'Return to Fathom App'}</Text>
-                                </View>
-                            </View>
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                containerStyle={{alignItems: 'center', alignSelf: 'center', marginTop: AppSizes.paddingSml, justifyContent: 'center', width: '75%',}}
-                                disabled={isNextDisabled || isLoading}
-                                disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
-                                disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                                loading={isLoading}
-                                loadingProps={{color: AppColors.zeplin.yellow,}}
-                                loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
-                                onPress={() => nextBtn()}
-                                raised={true}
-                                title={'Tap when connected'}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                            />
-                        </View>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => onBack(1)}
+                        >
+                            <Text robotoLight style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), textAlign: 'center', textDecorationLine: 'underline',}}>
+                                {'DON\'T SEE THE SOLID BLUE LED'}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                         <Button
-                            buttonStyle={{backgroundColor: AppColors.white, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            buttonStyle={{backgroundColor: page === 1 ? AppColors.blue : AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
-                            onPress={() => null}
-                            title={'Tap when connected'}
+                            disabled={isNextDisabled || isLoading}
+                            disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
+                            disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                            loading={isLoading}
+                            loadingProps={{color: AppColors.zeplin.yellow,}}
+                            loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
+                            onPress={() => nextBtn()}
+                            raised={true}
+                            title={'Next'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     </View>
@@ -829,7 +808,7 @@ const Connect = ({
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
-                <TopNav darkColor={true} onBack={isWifiScanDone && onBack ? () => onBack() : null} onClose={onClose} step={showTopNavStep ? 1 : false} />
+                <TopNav darkColor={true} onBack={isWifiScanDone && onBack ? () => onBack() : null} onClose={onClose} step={showTopNavStep ? 1 : false} title={content.navTitle} />
                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                     {content.title}
                 </View>
@@ -837,7 +816,7 @@ const Connect = ({
                     <Image
                         resizeMode={'contain'}
                         source={content.image}
-                        style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.width,}}
+                        style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
                     />
                     : content.video ?
                         <Video
@@ -865,7 +844,7 @@ const Connect = ({
                         { (content.buttonText && nextBtn) &&
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                    buttonStyle={{backgroundColor: page === 1 ? AppColors.blue : AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                     containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
                                     disabled={isNextDisabled || isLoading}
                                     disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
@@ -954,7 +933,9 @@ const Connect = ({
                     colors={[`${AppColors.zeplin.splash}D9`, `${AppColors.zeplin.splashDark}D9`]}
                     style={{justifyContent: 'space-between', padding: AppSizes.paddingLrg,}}
                 >
-                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: AppSizes.paddingSml,}}>{pageFirst ? 'First, let\'s connect PRO to your account' : 'Now let\'s Connect Fathom PRO to Wifi!'}</Text>
+                    <Text robotoMedium style={{color: AppColors.white, fontSize: AppFonts.scaleFont(35), marginBottom: (AppSizes.paddingSml + AppSizes.paddingMed),}}>
+                        {pageFirst ? 'First, let\'s connect PRO to your account' : 'Now let\'s Connect Fathom PRO to Wifi!'}
+                    </Text>
                     <View style={{justifyContent: 'space-between', marginBottom: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginBottom: AppSizes.paddingSml,}}>{'You\'ll need:'}</Text>
                         <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
@@ -963,10 +944,22 @@ const Connect = ({
                                     color={AppColors.zeplin.yellow}
                                     icon={pageFirst ? 'bluetooth' : 'wifi'}
                                     reverse={false}
-                                    size={20}
+                                    size={24}
                                 />
                             </View>
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{pageFirst ? 'Mobile Bluetooth ON' : 'Home Wifi In Range'}</Text>
+                        </View>
+                        <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>
+                            <View style={{alignItems: 'center', height: 24, justifyContent: 'center', width: 40,}}>
+                                <TabIcon
+                                    color={AppColors.zeplin.yellow}
+                                    icon={'textbox-password'}
+                                    reverse={false}
+                                    size={24}
+                                    type={'material-community'}
+                                />
+                            </View>
+                            <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(20), marginLeft: AppSizes.paddingMed,}}>{'Wifi Password'}</Text>
                         </View>
                         <View>
                             <View style={{alignItems: 'center', flexDirection: 'row', marginBottom: AppSizes.paddingSml,}}>

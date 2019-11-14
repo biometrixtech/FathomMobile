@@ -3,6 +3,7 @@
  *
     <BluetoothConnect
         assignKitIndividual={assignKitIndividual}
+        getSensorFiles={getSensorFiles}
         updateUser={updateUser}
         user={user}
     />
@@ -36,7 +37,7 @@ class BluetoothConnect extends Component {
         super(props);
         this.state = {
             currentAccessoryData:   {},
-            currentUTCTime:         null,
+            currentTime:            null,
             isDelaying:             false,
             isConnectionBtnActive:  false,
             isConnectionBtnLoading: false,
@@ -45,7 +46,7 @@ class BluetoothConnect extends Component {
         };
         this.defaultState = {
             currentAccessoryData:   {},
-            currentUTCTime:         null,
+            currentTime:            null,
             isDelaying:             false,
             isConnectionBtnActive:  false,
             isConnectionBtnLoading: false,
@@ -54,6 +55,7 @@ class BluetoothConnect extends Component {
         };
         this._pages = {};
         this._secondaryTimer = null;
+        this._thirdTimer = null;
         this._timer = null;
         this._webview = {};
         this.lottieAnimation1 = {};
@@ -61,8 +63,9 @@ class BluetoothConnect extends Component {
     }
 
     componentWillUnmount = () => {
-        clearInterval(this._timer);
         clearInterval(this._secondaryTimer);
+        clearInterval(this._thirdTimer);
+        clearInterval(this._timer);
         this._pages = {};
         this._webview = {};
     }
@@ -73,17 +76,17 @@ class BluetoothConnect extends Component {
             this._timer = _.delay(
                 () => this.setState(
                     { isDelaying: false, },
-                    () => this._renderNextPage(1, callback),
+                    () => _.delay(() => this._renderNextPage(1, callback), 250),
                 )
                 , 5000)
         },
     )
 
     _handleTestConnection = isFinalChance => {
-        const { currentAccessoryData, currentUTCTime, } = this.state;
+        const { currentAccessoryData, currentTime, } = this.state;
         const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
         let payload = {
-            start_date_time: currentUTCTime,
+            seconds_elapsed: moment().diff(currentTime, 'seconds'),
         };
         this.setState(
             { isConnectionBtnLoading: true, },
@@ -130,7 +133,21 @@ class BluetoothConnect extends Component {
                         );
                     }
                 ))
-                .catch(err => this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage()))
+                .catch(err => isFinalChance ?
+                    this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage())
+                    :
+                    Alert.alert(
+                        'Connection test not yet complete',
+                        'Test is completed when LED on your PRO Kit turns green.',
+                        [
+                            {
+                                style: 'cancel',
+                                text:  'Continue Test',
+                            },
+                        ],
+                        { cancelable: true, }
+                    )
+                )
         );
     }
 
@@ -234,18 +251,22 @@ class BluetoothConnect extends Component {
                         currentPage={pageIndex === 1}
                         nextBtn={this._renderNextPage}
                         page={0}
+                        showTopNavStep={false}
                     />
                     <Connect
                         currentPage={pageIndex === 2}
                         isLoading={isDelaying}
                         nextBtn={this._delayAndContinue}
                         page={1}
+                        showTopNavStep={false}
                     />
                     <Connect
                         currentPage={pageIndex === 3}
                         isLoading={isDelaying}
-                        nextBtn={() => this._delayAndContinue(() => this._handleWebViewLoadTime())}
+                        nextBtn={() => this._delayAndContinue(() => {this._secondaryTimer = _.delay(() => this._handleWebViewLoadTime(), 250);})}
+                        onBack={this._renderPreviousPage}
                         page={6}
+                        showTopNavStep={false}
                     />
                     <View
                         style={{
@@ -259,21 +280,21 @@ class BluetoothConnect extends Component {
                             <WebView
                                 cacheEnabled={false}
                                 cacheMode={'LOAD_NO_CACHE'}
-                                onError={syntheticEvent => {
-                                    const { nativeEvent, } = syntheticEvent;
-                                    return this._renderPreviousPage(1, () => Alert.alert(
-                                        'WEBVIEW ONERROR - ERROR2',
-                                        `canGoBack: ${nativeEvent.canGoBack}, canGoForward: ${nativeEvent.canGoForward}, code: ${nativeEvent.code}, description: ${nativeEvent.description}, didFailProvisionalNavigation: ${nativeEvent.didFailProvisionalNavigation}, domain: ${nativeEvent.domain}, loading: ${nativeEvent.loading}, target: ${nativeEvent.target}, title: ${nativeEvent.title}, url: ${nativeEvent.url}`,
+                                onError={syntheticEvent =>
+                                    this._renderPreviousPage(1, () => Alert.alert(
+                                        'Your phone is not connected to FathomPRO network.',
+                                        'The LED on your PRO Kit must be solid blue and your phone must be connected to the Fathom PRO wifi network. If you see a notification saying "Wi-Fi has no Internet access." Tap it and select "Yes".',
                                         [
                                             {
                                                 style: 'cancel',
-                                                text:  'OK',
+                                                text:  'Try Again',
                                             },
                                         ],
                                         { cancelable: true, }
-                                    ));
-                                }}
+                                    ))
+                                }
                                 onLoad={syntheticEvent => clearInterval(this._timer)}
+                                onLoadEnd={syntheticEvent => clearInterval(this._timer)}
                                 onMessage={event => {
                                     let data = JSON.parse(event.nativeEvent.data);
                                     if(
@@ -289,35 +310,31 @@ class BluetoothConnect extends Component {
                                         )
                                     ) {
                                         return this._renderPreviousPage(1, () => Alert.alert(
-                                            'MESSAGE FROM WEBAPP RECEIVED - ERROR',
-                                            `error: ${data.error}, errorCode: ${data.errorCode}`,
+                                            'Lost connection with FathomPRO network.',
+                                            'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                             [
                                                 {
-                                                    text:  'OK',
                                                     style: 'cancel',
+                                                    text:  'Try Again',
                                                 },
                                             ],
                                             { cancelable: true, }
                                         ));
                                     }
                                     this._timer = _.delay(() => this._handleTestConnection(true), 70000);
-                                    this._secondaryTimer = _.delay(() => this.setState(
-                                        { isConnectionBtnActive: true, },
-                                    ), 10000);
+                                    this._secondaryTimer = _.delay(() => this.setState({ isConnectionBtnActive: true, }), 10000);
                                     return this._renderNextPage(1, () => {
-                                        let macAddress = data.macAddress.toUpperCase();
-                                        let ssid = data.ssid;
-                                        let currentAccessoryData = {
-                                            macAddress,
-                                            ssid,
-                                        };
-                                        return AppAPI.hardware.get_utc_time.get()
-                                            .then(async response => {
-                                                let responseDate = response.current_date;
-                                                let currentUTCTime = moment(responseDate, 'YYYY-MM-DDTHH:mm:ssZ').utc();
-                                                this.setState({ currentAccessoryData: currentAccessoryData, currentUTCTime: currentUTCTime, });
-                                            })
-                                            .catch(err => this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage(2)));
+                                        this._thirdTimer = _.delay(() =>
+                                            this.setState(
+                                                {
+                                                    currentAccessoryData: {
+                                                        macAddress: data.macAddress.toUpperCase(),
+                                                        ssid:       data.ssid,
+                                                    },
+                                                    currentTime: moment(),
+                                                }
+                                            )
+                                        , 250);
                                     });
                                 }}
                                 originWhitelist={['*']}
@@ -354,7 +371,7 @@ class BluetoothConnect extends Component {
                         }
                     </View>
                     <View style={{flex: 1,}}>
-                        <TopNav darkColor={true} onBack={null} showClose={false} step={1} />
+                        <TopNav darkColor={true} onBack={null} showClose={false} showTopNavStep={false} />
                         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                             <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
                                 {'Testing Connection'}
@@ -399,7 +416,7 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
                     <View style={{flex: 1,}}>
-                        <TopNav darkColor={true} onBack={null} showClose={false} step={1} />
+                        <TopNav darkColor={true} onBack={null} showClose={false} showTopNavStep={false} />
                         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                             <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
                                 {isConnectionSuccessful ? 'Success!' : 'Connection Failed'}
@@ -427,7 +444,16 @@ class BluetoothConnect extends Component {
                                 <Button
                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                     containerStyle={{alignItems: 'center', alignSelf: 'center', marginTop: AppSizes.paddingSml, justifyContent: 'center', width: isConnectionSuccessful ? '45%' : '75%',}}
-                                    onPress={() => isConnectionSuccessful ? this._renderNextPage() : this.setState( { ...this.defaultState, }, () => this._renderPreviousPage(4))}
+                                    onPress={isConnectionSuccessful ?
+                                        () => this._renderNextPage()
+                                        :
+                                        () => {
+                                            let newState = _.cloneDeep(this.defaultState);
+                                            newState.pageIndex = 2;
+                                            this._pages.scrollToPage(2);
+                                            this.setState( { ...newState, });
+                                        }
+                                    }
                                     raised={true}
                                     title={isConnectionSuccessful ? 'Next' : 'Try Again'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
@@ -441,12 +467,14 @@ class BluetoothConnect extends Component {
                         currentPage={pageIndex === 7}
                         nextBtn={this._renderNextPage}
                         page={0}
+                        showTopNavStep={false}
                     />
                     <Train
                         currentPage={pageIndex === 8}
                         nextBtn={() => AppUtil.pushToScene('myPlan')}
                         onBack={this._renderPreviousPage}
                         page={1}
+                        showTopNavStep={false}
                     />
 
                 </Pages>
