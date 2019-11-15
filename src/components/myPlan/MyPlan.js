@@ -1166,6 +1166,8 @@ class MyPlan extends Component {
                 { loading: true, showLoadingText: true, },
                 async () => {
                     let newSensorSession = _.cloneDeep(activity);
+                    newSensorSession.deleted = false;
+                    newSensorSession.ignored = false;
                     newSensorSession.hr_data = [];
                     newSensorSession.session_type = 6;
                     newSensorSession.source = 3;

@@ -371,17 +371,17 @@ const SensorLogic = {
         return [
             {}, // will be manually set up
             {
-                buttonText: 'My LED is Blue',
-                image:      require('../../assets/images/standard/bluetooth_connect_kit.png'),
+                buttonText: 'My Kit LED is Blue',
+                image:      false,
                 navTitle:   'Setup Wifi',
                 subtitle:   [
                     <View key={0}>
-                        <Text robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
                             {'Is your LED '}
-                            <Text robotoBold style={{color: AppColors.blue,}}>{'solid blue'}</Text>
+                            <Text robotoBold style={{color: AppColors.zeplin.blue,}}>{'solid blue'}</Text>
                             {'?'}
                         </Text>
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml,}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml,}}>
                             {'To setup your Fathom PRO, press and '}
                             <Text robotoBold>{'hold the Action button'}</Text>
                             {' for 4 seconds until the LED turns blue.'}
@@ -390,7 +390,7 @@ const SensorLogic = {
                     <View key={1} />,
                 ],
                 title: false,
-                video: false,
+                video: {localFile: require('../../assets/videos/bluetooth_on.mp4'),},
             },
             {
                 animatedImage: Platform.OS === 'ios' ? {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone.png'} : {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone_android.png'},

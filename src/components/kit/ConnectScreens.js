@@ -758,9 +758,9 @@ const Connect = ({
                     source={require('../../../assets/images/standard/settingsnetwork.png')}
                     style={{alignSelf: 'center', height: AppSizes.screen.heightTwoFifths, width: AppSizes.screen.widthThreeQuarters,}}
                 />
-                <View style={{flex: 1, paddingTop: AppSizes.padding,}}>
+                <View style={{flex: 1,}}>
                     <View style={{flex: 1, justifyContent: 'space-between',}}>
-                        <View style={{justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
+                        <View style={{justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingBottom: AppSizes.padding,}}>
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), textAlign: 'left',}}>
                                 {'Connect your phone to '}
                                 <Text robotoRegular style={{textDecorationLine: 'underline',}}>{'FathomPRO'}</Text>
@@ -771,16 +771,16 @@ const Connect = ({
                                 {'Go to your '}
                                 <Text robotoBold>{'wifi settings on this phone'}</Text>
                                 {' and select the network: '}
-                                <Text robotoBold>{'FathomPRO'}</Text>
+                                <Text robotoBold>{'FathomPRO.'}</Text>
                                 {' It may take up to a minute to display. After connecting your phone to the FathomPRO network, return here to continue setup.\n\nIf you see a notification saying, "Wi-Fi has no Internet access." Tap it and select "Yes".'}
                             </Text>
                         </View>
                         <TouchableOpacity
                             activeOpacity={1}
-                            onPress={() => onBack(1)}
+                            onPress={() => onBack()}
                         >
                             <Text robotoLight style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(12), textAlign: 'center', textDecorationLine: 'underline',}}>
-                                {'DON\'T SEE THE SOLID BLUE LED'}
+                                {'I DON\'T SEE THE BLUE LED'}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -796,7 +796,7 @@ const Connect = ({
                             loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
                             onPress={() => nextBtn()}
                             raised={true}
-                            title={'Next'}
+                            title={'I\'m Connected'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     </View>
@@ -823,7 +823,7 @@ const Connect = ({
                             paused={!currentPage}
                             repeat={true}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                            source={{uri: content.video}}
+                            source={content.video.localFile ? content.video.localFile : {uri: content.video}}
                             style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                         />
                         :
@@ -844,7 +844,7 @@ const Connect = ({
                         { (content.buttonText && nextBtn) &&
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
-                                    buttonStyle={{backgroundColor: page === 1 ? AppColors.blue : AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                    buttonStyle={{backgroundColor: page === 1 ? AppColors.zeplin.blue : AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                     containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
                                     disabled={isNextDisabled || isLoading}
                                     disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}

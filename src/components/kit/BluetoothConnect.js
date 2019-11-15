@@ -11,7 +11,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, View, } from 'react-native';
+import { ActivityIndicator, Alert, Image, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
@@ -70,7 +70,7 @@ class BluetoothConnect extends Component {
         this._webview = {};
     }
 
-    _delayAndContinue = callback => this.setState(
+    _delayAndContinue = (delayTime = 5000, callback) => this.setState(
         { isDelaying: true, },
         () => {
             this._timer = _.delay(
@@ -78,7 +78,7 @@ class BluetoothConnect extends Component {
                     { isDelaying: false, },
                     () => _.delay(() => this._renderNextPage(1, callback), 250),
                 )
-                , 5000)
+                , delayTime)
         },
     )
 
@@ -120,58 +120,28 @@ class BluetoothConnect extends Component {
                         } else if(isFinalChance && !response.sync_found) {
                             return this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage());
                         }
-                        return Alert.alert(
-                            'Connection test not yet complete',
-                            'Test is completed when LED on your PRO Kit turns green.',
-                            [
-                                {
-                                    style: 'cancel',
-                                    text:  'Continue Test',
-                                },
-                            ],
-                            { cancelable: true, }
-                        );
+                        return this._handleTestConnectionAlert();
                     }
                 ))
                 .catch(err => isFinalChance ?
                     this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage())
                     :
-                    Alert.alert(
-                        'Connection test not yet complete',
-                        'Test is completed when LED on your PRO Kit turns green.',
-                        [
-                            {
-                                style: 'cancel',
-                                text:  'Continue Test',
-                            },
-                        ],
-                        { cancelable: true, }
-                    )
+                    this._handleTestConnectionAlert()
                 )
         );
     }
 
-    _handleWebViewLoadTime = () => {
-        this._timer = _.delay(() => {
-            if(this._webview && this._webview.stopLoading) {
-                this._webview.stopLoading();
-            }
-            return this._renderPreviousPage(
-                1,
-                () => Alert.alert(
-                    'We were not able to communicate with your kit.',
-                    'Ensure you are connected to the FathomPRO network to continue setup. You may need to confirm the connection through a notification from your OS.',
-                    [
-                        {
-                            style: 'cancel',
-                            text:  'OK',
-                        },
-                    ],
-                    { cancelable: true, }
-                )
-            );
-        }, 30000);
-    }
+    _handleTestConnectionAlert = () => Alert.alert(
+        'Connection test not yet complete',
+        'Test is completed when LED on your PRO Kit turns green.',
+        [
+            {
+                style: 'cancel',
+                text:  'Continue Test',
+            },
+        ],
+        { cancelable: true, }
+    )
 
     _onPageScrollEnd = currentPage => {
         let lottieAnimation1Page = 5;
@@ -227,7 +197,7 @@ class BluetoothConnect extends Component {
     }
 
     render = () => {
-        const { isDelaying, isConnectionBtnActive, isConnectionBtnLoading, isConnectionSuccessful, pageIndex, } = this.state;
+        const { currentAccessoryData, isDelaying, isConnectionBtnActive, isConnectionBtnLoading, isConnectionSuccessful, pageIndex, } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -256,15 +226,15 @@ class BluetoothConnect extends Component {
                     <Connect
                         currentPage={pageIndex === 2}
                         isLoading={isDelaying}
-                        nextBtn={this._delayAndContinue}
+                        nextBtn={() => this._delayAndContinue(2000)}
                         page={1}
                         showTopNavStep={false}
                     />
                     <Connect
                         currentPage={pageIndex === 3}
                         isLoading={isDelaying}
-                        nextBtn={() => this._delayAndContinue(() => {this._secondaryTimer = _.delay(() => this._handleWebViewLoadTime(), 250);})}
-                        onBack={this._renderPreviousPage}
+                        nextBtn={this._delayAndContinue}
+                        onBack={isDelaying ? () => {} : () => this._renderPreviousPage()}
                         page={6}
                         showTopNavStep={false}
                     />
@@ -280,8 +250,25 @@ class BluetoothConnect extends Component {
                             <WebView
                                 cacheEnabled={false}
                                 cacheMode={'LOAD_NO_CACHE'}
-                                onError={syntheticEvent =>
-                                    this._renderPreviousPage(1, () => Alert.alert(
+                                onError={syntheticEvent => {
+                                    const { nativeEvent, } = syntheticEvent;
+                                    if(nativeEvent.code && (nativeEvent.code === -1001 || nativeEvent.code === '-1001')) {
+                                        return this._renderPreviousPage(
+                                            1,
+                                            () => Alert.alert(
+                                                'We were not able to communicate with your Kit.',
+                                                'Ensure you are connected to the FathomPRO network to continue setup. You may need to confirm the connection through a notification from your OS.',
+                                                [
+                                                    {
+                                                        style: 'cancel',
+                                                        text:  'OK',
+                                                    },
+                                                ],
+                                                { cancelable: true, }
+                                            )
+                                        );
+                                    }
+                                    return this._renderPreviousPage(1, () => Alert.alert(
                                         'Your phone is not connected to FathomPRO network.',
                                         'The LED on your PRO Kit must be solid blue and your phone must be connected to the Fathom PRO wifi network. If you see a notification saying "Wi-Fi has no Internet access." Tap it and select "Yes".',
                                         [
@@ -292,9 +279,7 @@ class BluetoothConnect extends Component {
                                         ],
                                         { cancelable: true, }
                                     ))
-                                }
-                                onLoad={syntheticEvent => clearInterval(this._timer)}
-                                onLoadEnd={syntheticEvent => clearInterval(this._timer)}
+                                }}
                                 onMessage={event => {
                                     let data = JSON.parse(event.nativeEvent.data);
                                     if(
@@ -340,14 +325,18 @@ class BluetoothConnect extends Component {
                                 originWhitelist={['*']}
                                 ref={ref => {this._webview = ref;}}
                                 renderLoading={() =>
-                                    <View style={{alignItems: 'center', bottom: 0, flex: 1, justifyContent: 'center', left: 0, position: 'absolute', right: 0, top: 0,}}>
+                                    <View style={{alignItems: 'center', bottom: 0, flex: 1, justifyContent: 'center', left: 0, paddingHorizontal: AppSizes.padding, position: 'absolute', right: 0, top: 0,}}>
                                         <ActivityIndicator
                                             animating
                                             color={AppColors.zeplin.yellow}
                                             size={'large'}
                                         />
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, marginTop: AppSizes.padding, textAlign: 'center',}}>{'Searching for a connection to the FathomPRO network'}</Text>
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, marginTop: AppSizes.padding, textAlign: 'center',}}>{'If you have not yet gone to setting to connect to the FathomPRO wifi network...need to exit and try again'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                            {'Searching for a connection to the FathomPRO network'}
+                                        </Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                            {'If you have not yet connected to the FathomPRO network within your Wifi Settings, tap "Try Again" and do so now.'}
+                                        </Text>
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '45%',}}
@@ -359,7 +348,7 @@ class BluetoothConnect extends Component {
                                                 return this._renderPreviousPage();
                                             }}
                                             raised={true}
-                                            title={'Exit'}
+                                            title={'Try Again'}
                                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                                         />
                                     </View>
@@ -389,7 +378,7 @@ class BluetoothConnect extends Component {
                                 <View>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
                                         {'We are checking for a strong wifi connection.\n\n'}
-                                        <Text robotoBold>{'LED on your Fathom PRO Kit will turn green'}</Text>
+                                        <Text robotoBold>{'The LED on your Fathom PRO Kit will turn green'}</Text>
                                         {' when connection is a success!'}
                                     </Text>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginTop: AppSizes.padding, textAlign: 'center',}}>
@@ -399,17 +388,14 @@ class BluetoothConnect extends Component {
                             </View>
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
-                                    buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.green, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                     containerStyle={{alignItems: 'center', alignSelf: 'center', marginTop: AppSizes.paddingSml, justifyContent: 'center', width: '75%',}}
-                                    disabled={!isConnectionBtnActive}
-                                    disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
-                                    disabledTitleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
                                     loading={isConnectionBtnLoading}
                                     loadingProps={{color: AppColors.white,}}
                                     loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
-                                    onPress={() => this._handleTestConnection()}
+                                    onPress={() => isConnectionBtnActive ? this._handleTestConnection() : this._handleTestConnectionAlert()}
                                     raised={true}
-                                    title={'Tap when LED turns green'}
+                                    title={'My Kit LED is Green'}
                                     titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
                                 />
                             </View>
@@ -425,19 +411,31 @@ class BluetoothConnect extends Component {
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
                                 <View style={{alignItems: 'center',}}>
-                                    <LottieView
-                                        loop={false}
-                                        ref={animation => {this.lottieAnimation2 = animation;}}
-                                        source={isConnectionSuccessful ?
-                                            require('../../../assets/animation/bluetoothloading.json')
-                                            :
-                                            require('../../../assets/animation/wifi-error.json')
-                                        }
-                                        style={{height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
-                                    />
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                        {'This may be due to a wrong password, or weak wifi strength because the kit is too far from the router. '}
-                                    </Text>
+                                    {isConnectionSuccessful ?
+                                        <LottieView
+                                            loop={false}
+                                            ref={animation => {this.lottieAnimation2 = animation;}}
+                                            source={require('../../../assets/animation/bluetoothloading.json')}
+                                            style={{height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
+                                        />
+                                        :
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={require('../../../assets/images/standard/wifi-error.png')}
+                                            style={{alignSelf: 'center', height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
+                                        />
+                                    }
+                                    {isConnectionSuccessful ?
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                            {'Bring PRO Kit in range of '}
+                                            <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
+                                            {' after every workout to upload your training data and update your Recovery Plan!'}
+                                        </Text>
+                                        :
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                            {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
+                                        </Text>
+                                    }
                                 </View>
                             </View>
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
@@ -449,9 +447,11 @@ class BluetoothConnect extends Component {
                                         :
                                         () => {
                                             let newState = _.cloneDeep(this.defaultState);
-                                            newState.pageIndex = 2;
-                                            this._pages.scrollToPage(2);
-                                            this.setState( { ...newState, });
+                                            newState.pageIndex = 6;
+                                            this.setState(
+                                                { ...newState, },
+                                                () => this._renderPreviousPage(4),
+                                            );
                                         }
                                     }
                                     raised={true}
