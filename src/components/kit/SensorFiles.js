@@ -131,24 +131,6 @@ class SensorFiles extends Component {
             sensorNetwork,
         } = SensorLogic.handleSensorFileRenderLogic(sensorData);
         return (
-            <View
-                style={{
-                    flex:   1,
-                    height: (AppSizes.screen.height * 0.75),
-                    width:  (AppSizes.screen.width),
-                }}
-            >
-                <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-                <WebView
-                    onMessage={event => console.log(JSON.parse(event.nativeEvent.data))}
-                    originWhitelist={['*']}
-                    source={require('./test/index.html')}
-                    startInLoadingState={true}
-                    style={{flex: 1,}}
-                />
-            </View>
-        );
-        return (
             <ScrollView
                 automaticallyAdjustContentInsets={false}
                 contentContainerStyle={{backgroundColor: AppColors.white, flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between',}}
