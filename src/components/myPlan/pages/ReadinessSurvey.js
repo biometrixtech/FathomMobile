@@ -691,7 +691,13 @@ class ReadinessSurvey extends Component {
                                     // if(!body && isAllGood) {
                                     //     this.setState({ isActionButtonVisible: false, });
                                     // }
-                                    handleAreaOfSorenessClick(body, true, isAllGood, resetSections, side, callback);
+                                    if(!body && !side && !callback) {
+                                        return this.setState({ isBodyOverlayButtonLocked: false, });
+                                    }
+                                    return this.setState(
+                                        { isBodyOverlayButtonLocked: callback ? true : false, },
+                                        () => handleAreaOfSorenessClick(body, true, isAllGood, resetSections, side, callback),
+                                    );
                                 }}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
@@ -734,7 +740,13 @@ class ReadinessSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit(isSecondFunctionalStrength) : () => this.setState({ isSubmitSurveyModalOpen: true, })}
+                                    handleFormSubmit={isBodyOverlayButtonLocked ?
+                                        () => {}
+                                        : areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ?
+                                            () => handleFormSubmit(isSecondFunctionalStrength)
+                                            :
+                                            () => this.setState({ isSubmitSurveyModalOpen: true, })
+                                    }
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :

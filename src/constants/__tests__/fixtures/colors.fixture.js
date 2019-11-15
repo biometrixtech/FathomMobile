@@ -92,11 +92,13 @@ const tabbar = {
 };
 
 const zeplin = {
+    blue:           '#237CDD',
     darkNavy:       '#0F1320',
     error:          '#EA6F4A',
     errorLight:     '#EE8B6E',
     errorXLight:    '#F2A892',
     errorXXLight:   '#F6C5B6',
+    green:          '#40C74A',
     navy:           '#081832',
     purpleLight:    '#CBB9D8',
     slate:          '#757D8A',

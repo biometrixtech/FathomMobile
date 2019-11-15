@@ -11,17 +11,13 @@ import { ble as BluetoothActions, user as UserActions, } from '../../actions';
 const BluetoothConnect = ({
     Layout,
     assignKitIndividual,
-    bluetooth,
     getSensorFiles,
-    network,
     updateUser,
     user,
 }) => (
     <Layout
         assignKitIndividual={assignKitIndividual}
-        bluetooth={bluetooth}
         getSensorFiles={getSensorFiles}
-        network={network}
         updateUser={updateUser}
         user={user}
     />
@@ -30,22 +26,17 @@ const BluetoothConnect = ({
 BluetoothConnect.propTypes = {
     Layout:              PropTypes.func.isRequired,
     assignKitIndividual: PropTypes.func.isRequired,
-    bluetooth:           PropTypes.shape({}).isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
-    network:             PropTypes.object.isRequired,
     updateUser:          PropTypes.func.isRequired,
     user:                PropTypes.shape({}).isRequired,
 };
 
 BluetoothConnect.defaultProps = {
-    bluetooth: {},
-    user:      {},
+    user: {},
 };
 
 const mapStateToProps = state => ({
-    bluetooth: state.ble || {},
-    network:   state.network,
-    user:      state.user || {},
+    user: state.user || {},
 });
 
 const mapDispatchToProps = {

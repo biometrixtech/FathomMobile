@@ -7,13 +7,12 @@ import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOp
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import { WebView, } from 'react-native-webview'; // REMOVE ME
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { FathomModal, ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
+import { ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { AppUtil, SensorLogic, } from '../../lib';
-import SensorBackUpTutorial from './SensorBackUpTutorial';
+// import SensorBackUpTutorial from './SensorBackUpTutorial';
 
 const ICON_SIZE = 24;
 
@@ -244,7 +243,7 @@ class SensorFiles extends Component {
                             name:      'wifi',
                             size:      ICON_SIZE,
                         }}
-                        onPress={() => this._handleWifiDisabledClicked()}//this._handleWifiClicked(sensorNetwork)}
+                        onPress={() => this._handleWifiClicked(sensorNetwork)}
                         rightIcon={{
                             color: AppColors.zeplin.slateLight,
                             name:  'chevron-right',

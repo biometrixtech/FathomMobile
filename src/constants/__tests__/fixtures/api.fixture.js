@@ -5,9 +5,9 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_5';
+const plansAPIVersion = '/plans/4_6';
 const preprocessingAPIVersion = '/preprocessing/2_0';
-const usersAPIVersion = '/users/2_3';
+const usersAPIVersion = '/users/2_4';
 
 export default {
     APIs: {
@@ -132,7 +132,8 @@ export default {
     // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
-        ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['accessory',    `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['check_sync',   `${hardwareAPIVersion}/accessory/{wifiMacAddress}/check_sync`], // POST
         ['get_utc_time', `${hardwareAPIVersion}/misc/time`], // GET
     ]),
 };
