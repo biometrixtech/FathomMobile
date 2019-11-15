@@ -14,6 +14,7 @@ import ExercisesExercise from './ExercisesExercise';
 import GoalPill from './GoalPill';
 import HealthKitWorkouts from './HealthKitWorkouts';
 import LoadingState from './LoadingState';
+import LogSymptomsModal from './LogSymptomsModal';
 import PostSessionSurvey from './PostSessionSurvey';
 import ProgressPill from './ProgressPill';
 import ReadinessSurvey from './ReadinessSurvey';
@@ -44,6 +45,7 @@ export {
     GoalPill,
     HealthKitWorkouts,
     LoadingState,
+    LogSymptomsModal,
     PostSessionSurvey,
     ProgressPill,
     ReadinessSurvey,

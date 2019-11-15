@@ -29,6 +29,7 @@ const defaultPlanState = {
     },
     isCoachModalOpen:                     false,
     isContactUsOpen:                      false,
+    isLogSymptomsModalOpen:               false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
@@ -38,10 +39,13 @@ const defaultPlanState = {
     isStartSensorSessionModalOpen:        false,
     isTrainSessionsCompletionModalOpen:   false,
     loading:                              false,
-    page0:                                {},
-    page1:                                {},
-    page2:                                {},
-    postSession:                          {
+    logSymptoms:                          {
+        soreness: [],
+    },
+    page0:       {},
+    page1:       {},
+    page2:       {},
+    postSession: {
         description:      '',
         sessions:         [PlanLogic.returnEmptySession()],
         sessions_planned: null,

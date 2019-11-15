@@ -344,6 +344,43 @@ const postSessionSurvey = (postSessionObj, userId) => {
 };
 
 /**
+  * Post Symptoms Survey Data
+  */
+const postSymptoms = (postSymptomsObj, userId) => {
+    // call api
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
+    return dispatch => AppAPI.post_symptoms.post({userId}, postSymptomsObj)
+        .then(myPlanData => {
+            // setup variables to be used
+            let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
+            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest[0] : myPlanData.daily_plans[0].post_active_rest[0];
+            let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+            let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+            let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
+            let warmUpGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
+            dispatch({
+                type:            Actions.POST_SESSION_SURVEY,
+                data:            myPlanData.daily_plans,
+                activeRestGoals: activeRestGoals,
+                coolDownGoals:   coolDownGoals,
+                warmUpGoals:     warmUpGoals,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.resolve(myPlanData);
+        })
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
+};
+
+/**
   * Get Sore Body Parts Data
   */
 const getSoreBodyParts = userId => {
@@ -777,6 +814,7 @@ export default {
     postSessionSurvey,
     postSingleSensorData,
     postSurvey,
+    postSymptoms,
     setAppLogs,
     setCompletedCoolDownExercises,
     setCompletedExercises,
