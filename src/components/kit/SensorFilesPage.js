@@ -201,13 +201,20 @@ class SensorFilesPage extends Component {
     )
 
     _onPageScrollEnd = currentPage => {
-        const { pageStep, } = this.props;
+        const { pageStep, updateUser, user, } = this.props;
         let lottieAnimation1Page = 3;
         let lottieAnimation2Page = 4;
         if(currentPage === lottieAnimation1Page && pageStep === 'connect' && this.lottieAnimation1 && this.lottieAnimation1.play) {
             this.lottieAnimation1.play();
         } else if(currentPage === lottieAnimation2Page && pageStep === 'connect' && this.lottieAnimation2 && this.lottieAnimation2.play) {
             this.lottieAnimation2.play();
+        }
+        if(currentPage === lottieAnimation1Page) {
+            // clear user ssid
+            let newUserNetworksPayloadObj = {};
+            newUserNetworksPayloadObj['@sensor_data'] = {};
+            newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+            updateUser(newUserNetworksPayloadObj, user.id);
         }
     }
 
@@ -315,7 +322,7 @@ class SensorFilesPage extends Component {
                                                     )
                                                 )
                                             ) {
-                                                return this._renderPreviousPage(1, () => Alert.alert(
+                                                return this._renderPreviousPage(2, () => Alert.alert(
                                                     'Lost connection with FathomPRO network.',
                                                     'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                                     [
@@ -425,7 +432,7 @@ class SensorFilesPage extends Component {
                                 </View>
                             </View>
                             <View style={{flex: 1,}}>
-                                <TopNav darkColor={true} onBack={null} showClose={false} showTopNavStep={false} />
+                                <TopNav darkColor={true} onBack={null} showClose={!isConnectionSuccessful} showTopNavStep={false} />
                                 <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                                     <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
                                         {isConnectionSuccessful ? 'Success!' : 'Connection Failed'}
@@ -449,13 +456,13 @@ class SensorFilesPage extends Component {
                                                 />
                                             }
                                             {isConnectionSuccessful ?
-                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                                     {'Bring PRO Kit in range of '}
                                                     <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
                                                     {' after every workout to upload your training data and update your Recovery Plan!'}
                                                 </Text>
                                                 :
-                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                                     {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
                                                 </Text>
                                             }

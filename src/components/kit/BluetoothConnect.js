@@ -294,7 +294,7 @@ class BluetoothConnect extends Component {
                                             )
                                         )
                                     ) {
-                                        return this._renderPreviousPage(1, () => Alert.alert(
+                                        return this._renderPreviousPage(2, () => Alert.alert(
                                             'Lost connection with FathomPRO network.',
                                             'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                             [
@@ -426,13 +426,13 @@ class BluetoothConnect extends Component {
                                         />
                                     }
                                     {isConnectionSuccessful ?
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                             {'Bring PRO Kit in range of '}
                                             <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
                                             {' after every workout to upload your training data and update your Recovery Plan!'}
                                         </Text>
                                         :
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                             {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
                                         </Text>
                                     }

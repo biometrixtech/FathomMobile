@@ -1440,6 +1440,7 @@ class MyPlan extends Component {
                         newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
                         handleReadInsight(newDailyPlan, insightType, user.id);
                     }}
+                    toggleLogSymptomsModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : {}}
                 />
 

@@ -1569,7 +1569,7 @@ const PlanLogic = {
         }
         let newInsights = [];
         if(dailyPlanObj.trends) {
-            _.map(dailyPlanObj.trends.trend_categories, (alert, i) => {
+            _.map(dailyPlanObj.trends.insight_categories, (alert, i) => {
                 _.map(alert.plan_alerts, planAlert => {
                     if(alert.insight_type === planAlert.category) {
                         let newPlanAlert = _.cloneDeep(planAlert);
@@ -1579,8 +1579,8 @@ const PlanLogic = {
                 });
             });
         }
-        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
-        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.insight_categories ? dailyPlanObj.trends.insight_categories : [];
+        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.insight_categories ? dailyPlanObj.trends.dashboard.insight_categories : [];
         let trainingSessionsIds = _.map(completedTrainingSessions, o => o.session_id);
         let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ?
             userObj.sensor_data.sessions
@@ -2158,7 +2158,7 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }
                 return [];
@@ -2170,7 +2170,7 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }
                 return [];
@@ -2667,9 +2667,9 @@ const PlanLogic = {
         ];
     },
 
-    returnBodyOverlayColorString: (value, isPain, color) => {
+    returnBodyOverlayColorString: (value, isPain, color, customOpacity) => {
         if(color) {
-            return PlanLogic.returnInsightColorString(color);
+            return PlanLogic.returnInsightColorString(color, customOpacity);
         }
         return isPain === true ?
             value === 3 ?
@@ -2687,8 +2687,8 @@ const PlanLogic = {
                     AppColors.bodyOverlay.sorenessMild;
     },
 
-    returnInsightColorString: color => {
-        return color === 1 ?
+    returnInsightColorString: (color, customOpacity) => {
+        let newColor = color === 1 ?
             AppColors.zeplin.warningLight
             : color === 2 ?
                 AppColors.zeplin.errorLight
@@ -2740,6 +2740,10 @@ const PlanLogic = {
                                                                                                             AppColors.zeplin.yellowXXLight
                                                                                                             :
                                                                                                             AppColors.zeplin.errorLight;
+        if(customOpacity) {
+            newColor = `${newColor}${PlanLogic.returnHexOpacity(customOpacity)}`
+        }
+        return newColor;
     },
 
     returnStubBiomechanicsTrend: () => {

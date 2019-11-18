@@ -317,7 +317,7 @@ class BodyOverlay extends Component {
                 <View style={{marginRight: ADDITIONAL_MIDDLE_PADDING,}}>
                     <RNImage
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/body/body_overlay/body_full_front.png')}
+                      source={require('../../../assets/images/body/body_overlay_selector/body_full_front.png')}
                         style={{height: front.height, width: front.width,}}
                     />
                     {_.map(filteredFrontBodyParts, (bodyPart, i) =>
@@ -332,7 +332,7 @@ class BodyOverlay extends Component {
                 <View>
                     <RNImage
                         resizeMode={'contain'}
-                        source={require('../../../assets/images/body/body_overlay/body_full_back.png')}
+                        source={require('../../../assets/images/body/body_overlay_selector/body_full_back.png')}
                         style={{height: back.height, width: back.width,}}
                     />
                     {_.map(filteredBackBodyParts, (bodyPart, i) =>

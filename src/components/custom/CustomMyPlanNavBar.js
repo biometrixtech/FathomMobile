@@ -4,17 +4,19 @@
     <CustomMyPlanNavBar
         categories={trendCategories}
         handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
+        toggleLogSymptomsModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
         user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
     />
  *
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
+import { Image, ImageBackground, Platform, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
+import resolveAssetSource from 'resolveAssetSource';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { BodyOverlay, FathomModal, ParsedText, Spacer, TabIcon, Text, } from './';
+import { BodyOverlay, Button, FathomModal, ParsedText, Spacer, TabIcon, Text, } from './';
 import { PlanLogic, } from '../../lib';
 
 // import third-party libraries
@@ -25,9 +27,10 @@ import Carousel from 'react-native-snap-carousel';
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: AppColors.white,
-        borderRadius:    12,
-        padding:         AppSizes.paddingSml,
+        backgroundColor:   AppColors.white,
+        borderRadius:      12,
+        paddingHorizontal: AppSizes.padding,
+        paddingVertical:   AppSizes.paddingSml,
     },
     circleStyle: circleSize => ({
         ...AppStyles.scaleButtonShadowEffect,
@@ -56,6 +59,19 @@ const styles = StyleSheet.create({
     },
     notVisibleCircleStyle: isSelected => ({
         backgroundColor: isSelected ? AppColors.zeplin.slateLight : AppColors.zeplin.superLight,
+    }),
+    pillText: (color, isSelected) => ({
+        color:    isSelected ? AppColors.white : PlanLogic.returnInsightColorString(color),
+        fontSize: AppFonts.scaleFont(14),
+    }),
+    pillWrapper: (color, isLast, isSelected) => ({
+        alignItems:        'center',
+        backgroundColor:   `${PlanLogic.returnInsightColorString(color)}${PlanLogic.returnHexOpacity(isSelected ? 1 : 0.15)}`,
+        borderRadius:      100,
+        justifyContent:    'center',
+        marginRight:       AppSizes.paddingMed,
+        paddingHorizontal: AppSizes.paddingMed,
+        paddingVertical:   AppSizes.paddingXSml,
     }),
     text: {
         ...AppStyles.robotoLight,
@@ -156,9 +172,10 @@ const InsightIcon = ({
 
 class CustomMyPlanNavBar extends PureComponent {
     static propTypes = {
-        categories:        PropTypes.array,
-        handleReadInsight: PropTypes.func.isRequired,
-        user:              PropTypes.object.isRequired,
+        categories:             PropTypes.array,
+        handleReadInsight:      PropTypes.func.isRequired,
+        toggleLogSymptomsModal: PropTypes.func.isRequired,
+        user:                   PropTypes.object.isRequired,
     };
 
     static defaultProps = {
@@ -168,9 +185,10 @@ class CustomMyPlanNavBar extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            isModalOpen:        false,
-            modalContentHeight: 0,
-            selectedIndex:      0,
+            isModalOpen:           false,
+            modalContentHeight:    0,
+            selectedCategoryIndex: null,
+            selectedIndex:         0,
         };
         this._navBarHeight = 0;
         this._swiperRef = {};
@@ -189,96 +207,34 @@ class CustomMyPlanNavBar extends PureComponent {
         }
     }
 
-    _renderCard = (item, index) => {
-        let parsedData = [];
-        if(item && item.text) {
-            _.map(item.bold_text, (prop, i) => {
-                let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
-                newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
-                parsedData.push(newParsedData);
-            });
-        }
-        let imageSource = null;
-        let iconSource = null;
-        if([11, 12, 13, 14, 15, 23, 24].includes(item.trigger_type)) {
-            iconSource = { icon: 'md-body', type: 'ionicon', };
-        } else if([16, 19].includes(item.trigger_type)) {
-            iconSource = { icon: 'timeline', type: 'material', };
-        } else if([110, 111].includes(item.trigger_type)) {
-            imageSource = require('../../../assets/images/standard/apt.png');
-        } else {
-            switch (item.trigger_type) {
-            case 0:
-                let filteredSportName = _.filter(MyPlanConstants.teamSports, s => s.index === item.sport_name);
-                imageSource = filteredSportName && filteredSportName[0] && filteredSportName[0].imagePath ? filteredSportName[0].imagePath : null;
-                break;
-            default:
-                iconSource = null;
-                imageSource = null;
-            }
-        }
-        let statisticText1 = (item.statistic_text && item.statistic_text.length > 0) ?
-            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18),}}>
-                {item.bold_statistic_text[0] ? item.bold_statistic_text[0].text : ''}
-            </Text>
-            :
-            null;
-        let statisticText2 = (item.statistic_text && item.statistic_text.length > 0) ?
-            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(10),}}>
-                {item.statistic_text.replace(`${item.bold_statistic_text[0] ? item.bold_statistic_text[0].text : ''} `, '')}
-            </Text>
-            :
-            null;
+    _renderCard = (item, index, selectedCategoryData, dataLength) => {
+        // let parsedData = [];
+        // if(item && item.text) {
+        //     _.map(item.bold_text, (prop, i) => {
+        //         let newParsedData = {};
+        //         newParsedData.pattern = new RegExp(prop.text, 'i');
+        //         newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
+        //         parsedData.push(newParsedData);
+        //     });
+        // }
         return (
             <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
-                <View
-                    style={{
-                        backgroundColor: `${PlanLogic.returnInsightColorString(item.bold_text[0].color)}${PlanLogic.returnHexOpacity(0.15)}`,
-                        borderRadius:    10,
-                        height:          ((AppSizes.paddingSml * 2) + (AppFonts.scaleFont(15) * 2)),
-                        justifyContent:  'center',
-                        padding:         AppSizes.paddingSml,
-                    }}
-                >
-                    <ParsedText
-                        parse={parsedData}
-                        style={[styles.text, {lineHeight: AppFonts.scaleFont(15),}]}
-                    >
-                        {item ? item.text : ''}
-                    </ParsedText>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                    <Text robotoBold style={{color: selectedCategoryData.active ? PlanLogic.returnInsightColorString(selectedCategoryData.color) : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{'HEADER'}</Text>
+                    { (selectedCategoryData && selectedCategoryData.active) &&
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(12),}}>
+                            {`${(index + 1)}/${dataLength}`}
+                        </Text>
+                    }
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
-                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingSml,}}>
-                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
-                        {item.description}
-                    </Text>
-                    {/* *width: '40%', to item.description style above* <View style={{width: '7%'}} />
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', width: '10%',}}>
-                        <View style={{alignItems: 'center', backgroundColor: AppColors.zeplin.superLight, borderRadius: (28 / 2), height: 28, justifyContent: 'center', width: 28,}}>
-                            { imageSource ?
-                                <Image
-                                    source={imageSource}
-                                    style={{height: 22, tintColor: AppColors.zeplin.slateLight, width: 22,}}
-                                />
-                                : iconSource ?
-                                    <TabIcon
-                                        color={AppColors.zeplin.slateLight}
-                                        icon={iconSource.icon}
-                                        size={22}
-                                        type={iconSource.type}
-                                    />
-                                    :
-                                    null
-                            }
-                        </View>
-                    </View>
-                    <View style={{width: '3%'}} />
-                    <View style={{alignSelf: 'flex-end', flex: 1, width: '40%',}}>
-                        {statisticText1}
-                        {statisticText2}
-                    </View>*/}
-                </View>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{item.text}</Text>
+                {/*<ParsedText
+                    parse={parsedData}
+                    style={[styles.text, {lineHeight: AppFonts.scaleFont(15),}]}
+                >
+                    {item ? item.text : ''}
+                </ParsedText>*/}
             </View>
         );
     }
@@ -287,210 +243,120 @@ class CustomMyPlanNavBar extends PureComponent {
         if(!selectedCategory) {
             return (<View />);
         }
+        const { toggleLogSymptomsModal, user, } = this.props;
+        const { selectedCategoryIndex, } = this.state;
+        const has3SensorConnected = user && user.sensor_data && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid;
+        if(!selectedCategory.active) {
+            let emptyStateImage =  require('../../../assets/images/standard/insights-empty.png');
+            let emptyStateImageSource = resolveAssetSource(emptyStateImage);
+            let emptyStateImageWidth = (AppSizes.screen.width - (AppSizes.padding * 2));
+            let emptyStateImageHeight = emptyStateImageSource.height * (emptyStateImageWidth / emptyStateImageSource.width);
+            return (
+                <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20), textAlign: 'left',}}>
+                        {selectedCategory.empty_state_header}
+                    </Text>
+                    <ImageBackground
+                        resizeMode={'contain'}
+                        source={require('../../../assets/images/standard/insights-empty.png')}
+                        style={{alignItems: 'center', height: emptyStateImageHeight, justifyContent: 'center', width: emptyStateImageWidth,}}
+                    >
+                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
+                            {has3SensorConnected ? selectedCategory.empty_context_sensors_enabled : selectedCategory.empty_context_sensors_not_enabled}
+                        </Text>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '60%',}}
+                            onPress={() => this._toggleModal(null, () => _.delay(() => toggleLogSymptomsModal(), 200))}
+                            raised={true}
+                            title={selectedCategory.empty_state_cta}
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
+                    </ImageBackground>
+                </View>
+            );
+        }
         const { modalContentHeight, } = this.state;
-        let categoryTrend = selectedCategory.trends[0];
-        let categoryData = categoryTrend.trend_data && categoryTrend.trend_data.data && categoryTrend.trend_data.data[0] ? categoryTrend.trend_data.data[0] : [];
-        let bodyOverlayData = _.flatten(_.map(categoryData, category => category));
+        let categoryTrendData = selectedCategory.trend_data;
         let bodyOverlayHeightMultiplier = (modalContentHeight && modalContentHeight > 0 && (AppSizes.screen.height - modalContentHeight) <= (AppSizes.paddingXLrg) ? 0.8 : 1);
         let remainingBodyOverlayWidth = (AppSizes.screen.widthTwoThirds * bodyOverlayHeightMultiplier);
+        let parsedData = [];
+        if(selectedCategory.context_text) {
+            _.map(selectedCategory.context_bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, {color: AppColors.zeplin.slate,}];
+                parsedData.push(newParsedData);
+            });
+        }
+        let selectedCategoryData = categoryTrendData.data[selectedCategoryIndex];
+        let triggerTiles = selectedCategoryData ? selectedCategoryData.trigger_tiles : false;
+        let bodyOverlayData = categoryTrendData.body_parts;
+        if(selectedCategoryData) {
+            bodyOverlayData = _.map(bodyOverlayData, (bodyPart, i) => {
+                let isSelected = _.filter(selectedCategoryData.body_parts, { body_part_location: bodyPart.body_part_location, color: bodyPart.color, side: bodyPart.side, });
+                let newBodyPart = _.cloneDeep(bodyPart);
+                newBodyPart.customOpacity = isSelected && isSelected.length > 0 ? 1 : 0.15;
+                return newBodyPart;
+            });
+        }
         return (
-            <View style={{marginBottom: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
-                <View style={{marginHorizontal: AppSizes.paddingMed,}}>
-                    { selectedCategory.visible ?
-                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20),}}>
-                            { selectedCategory.insight_type === 6 ?
-                                'Care Insights'
-                                : selectedCategory.insight_type === 5 ?
-                                    'Prevention Insights'
-                                    :
-                                    'Recovery Insights'
-                            }
-                        </Text>
+            <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
+                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20), textAlign: 'left',}}>
+                    {selectedCategory.header}
+                </Text>
+                <View style={{alignItems: 'center', justifyContent: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
+                    <BodyOverlay
+                        bodyParts={bodyOverlayData}
+                        remainingWidth={remainingBodyOverlayWidth}
+                    />
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginTop: AppSizes.padding,}}>
+                        {_.map(categoryTrendData.data, (pill, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => this.setState({ selectedCategoryIndex: this.state.selectedCategoryIndex === index ? null : index, })}
+                                style={[
+                                    styles.pillWrapper(
+                                        pill.active ? pill.color : 11,
+                                        (index + 1) === categoryTrendData.length,
+                                        (selectedCategoryIndex === index)
+                                    )
+                                ]}
+                            >
+                                <Text robotoRegular style={[styles.pillText(pill.active ? pill.color : 11, (selectedCategoryIndex === index)),]}>
+                                    {pill.title}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </View>
+                <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                    {triggerTiles ?
+                        <Carousel
+                            activeSlideAlignment={'start'}
+                            contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
+                            data={triggerTiles}
+                            firstItem={0}
+                            initialNumToRender={triggerTiles ? triggerTiles.length : 0}
+                            itemWidth={(AppSizes.screen.widthThreeQuarters)}
+                            layout={'default'}
+                            lockScrollWhileSnapping={true}
+                            maxToRenderPerBatch={3}
+                            ref={ref => {this._swiperRef = ref;}}
+                            removeClippedSubviews={false}
+                            renderItem={({item, index}) => this._renderCard(item, index, selectedCategoryData, triggerTiles.length)}
+                            sliderWidth={AppSizes.screen.width}
+                            windowSize={3}
+                        />
                         :
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
-                            { selectedCategory.insight_type === 6 ?
-                                'Searching for Care Insights'
-                                : selectedCategory.insight_type === 5 ?
-                                    'Searching for Prevention Insights'
-                                    :
-                                    'Searching for Recovery Insights'
-                            }
-                        </Text>
-                    }
-                    <Spacer size={AppSizes.paddingXSml} />
-                    { selectedCategory.visible ?
-                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
-                            { selectedCategory.insight_type === 6 ?
-                                'From your data we infer that some tissues may benefit from additional care to reduce inflammation & tightness.'
-                                : selectedCategory.insight_type === 5 ?
-                                    'Your data indicates imbalances in muscle activation, length & strength which may elevate overuse injury risk.'
-                                    :
-                                    'Based on your data, we\'ve identified areas in need of recovery due to elevated stress from training or compensations.'
-                            }
-                        </Text>
-                        :
-                        <View style={{alignItems: 'center', justifyContent: 'center',}}>
-                            <Image
-                                source={
-                                    selectedCategory.insight_type === 6 ?
-                                        require('../../../assets/images/standard/care-not-visible.png')
-                                        : selectedCategory.insight_type === 5 ?
-                                            require('../../../assets/images/standard/prevention-not-visible.png')
-                                            :
-                                            require('../../../assets/images/standard/recovery-not-visible.png')
-                                }
-                                style={{height: 100, marginVertical: AppSizes.paddingLrg, width: 100,}}
-                            />
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
-                                { selectedCategory.insight_type === 6 ?
-                                    'We use a research-validated approach to identify  possible inflammation & tightness and create activities to improve symptoms.'
-                                    : selectedCategory.insight_type === 5 ?
-                                        'We search for and help correct potential imbalances in muscle activation, length & strength which may elevate your overuse injury risk.'
-                                        :
-                                        'We search your data for signs of fatigue, compensations, and other factors to create daily optimizations for tissue regeneration.'
-                                }
-                            </Text>
-                            {/*<Spacer size={AppSizes.paddingMed} />
-                            { selectedCategory.insight_type === 6 ?
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                    <Image
-                                        source={require('../../../assets/images/standard/sorepain.png')}
-                                        style={{height: 40, width: 40,}}
-                                    />
-                                </View>
-                                : selectedCategory.insight_type === 5 ?
-                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                        <Image
-                                            source={require('../../../assets/images/standard/load.png')}
-                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
-                                        />
-                                        <Image
-                                            source={require('../../../assets/images/standard/trend.png')}
-                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
-                                        />
-                                        <Image
-                                            source={require('../../../assets/images/standard/sorepain.png')}
-                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
-                                        />
-                                        <Image
-                                            source={require('../../../assets/images/standard/sensorsession.png')}
-                                            style={{height: 40, width: 40,}}
-                                        />
-                                    </View>
-                                    :
-                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                        <Image
-                                            source={require('../../../assets/images/standard/load.png')}
-                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
-                                        />
-                                        <Image
-                                            source={require('../../../assets/images/standard/trend.png')}
-                                            style={{height: 40, marginRight: AppSizes.padding, width: 40,}}
-                                        />
-                                        <Image
-                                            source={require('../../../assets/images/standard/sensorsession.png')}
-                                            style={{height: 40, width: 40,}}
-                                        />
-                                    </View>
-                            */}
-                            <Spacer size={AppSizes.paddingMed} />
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
-                                {'Keep using your sensors and reporting symptoms for updated recommendations.'}
-                            </Text>
-                        </View>
-                    }
-                    { selectedCategory.visible &&
-                        <View>
-                            <Spacer size={AppSizes.padding} />
-                            <View style={{alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'flex-start',}}>
-                                <BodyOverlay
-                                    bodyParts={bodyOverlayData}
-                                    remainingWidth={remainingBodyOverlayWidth}
-                                />
-                                <View style={{alignItems: 'flex-start', justifyContent: 'flex-start', marginLeft: AppSizes.padding,}}>
-                                    {categoryTrend && categoryTrend.trend_data && categoryTrend.trend_data.visualization_data && categoryTrend.trend_data.visualization_data.plot_legends && _.map(categoryTrend.trend_data.visualization_data.plot_legends, (plot, i) =>
-                                        <View
-                                            key={i}
-                                            style={{flexDirection: 'row', marginBottom: AppSizes.paddingXSml,}}
-                                        >
-                                            <View style={{backgroundColor: PlanLogic.returnBodyOverlayColorString(false, false, plot.color), borderRadius: (10 / 2), height: 10, marginRight: AppSizes.paddingXSml, width: 10,}} />
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{plot.text}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                            </View>
-                            <Spacer size={AppSizes.padding} />
-                            <View style={{alignItems: 'center', flexDirection: 'row',}}>
-                                <Image
-                                    source={
-                                        selectedCategory.visible ?
-                                            selectedCategory.insight_type === 6 ?
-                                                require('../../../assets/images/standard/care.png')
-                                                : selectedCategory.insight_type === 5 ?
-                                                    require('../../../assets/images/standard/prevention.png')
-                                                    :
-                                                    require('../../../assets/images/standard/recovery.png')
-                                            :
-                                            selectedCategory.insight_type === 6 ?
-                                                require('../../../assets/images/standard/care-empty.png')
-                                                : selectedCategory.insight_type === 5 ?
-                                                    require('../../../assets/images/standard/prevention-empty.png')
-                                                    :
-                                                    require('../../../assets/images/standard/recovery-empty.png')
-                                    }
-                                    style={{height: 15, marginRight: AppSizes.paddingXSml, width: 15,}}
-                                />
-                                { selectedCategory.visible ?
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                                        {`Your ${selectedCategory.insight_type === 6 ? 'Care' : selectedCategory.insight_type === 5 ? 'Prevention' : 'Recovery'} plan will:`}
-                                    </Text>
-                                    :
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
-                                        { selectedCategory.insight_type === 6 ?
-                                            'No Care needs identified:'
-                                            : selectedCategory.insight_type === 5 ?
-                                                'Searching for Prevention needs:'
-                                                :
-                                                'Searching for Recovery needs:'
-                                        }
-                                    </Text>
-                                }
-                            </View>
-                            <Spacer size={AppSizes.paddingSml} />
-                        </View>
+                        <ParsedText
+                            parse={parsedData}
+                            style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}
+                        >
+                            {selectedCategory.context_text}
+                        </ParsedText>
                     }
                 </View>
-                { selectedCategory.visible &&
-                    <View>
-                        { categoryTrend && categoryTrend.trigger_tiles && categoryTrend.trigger_tiles.length > 0 ?
-                            <Carousel
-                                activeSlideAlignment={'start'}
-                                contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
-                                data={categoryTrend.trigger_tiles}
-                                firstItem={0}
-                                initialNumToRender={categoryTrend && categoryTrend.trigger_tiles ? categoryTrend.trigger_tiles.length : 0}
-                                itemWidth={(AppSizes.screen.widthThreeQuarters)}
-                                layout={'default'}
-                                lockScrollWhileSnapping={true}
-                                maxToRenderPerBatch={3}
-                                ref={ref => {this._swiperRef = ref;}}
-                                removeClippedSubviews={false}
-                                renderItem={({item, index}) => this._renderCard(item, index)}
-                                sliderWidth={AppSizes.screen.width}
-                                windowSize={3}
-                            />
-                            :
-                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/research.png')}
-                                    style={{alignSelf: 'center', height: 75, marginRight: AppSizes.paddingSml, width: 75,}}
-                                />
-                                <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}>{'We\'re still looking for insights in your data to optimize your plan.'}</Text>
-                            </View>
-                        }
-                    </View>
-                }
             </View>
         );
     }
@@ -506,23 +372,23 @@ class CustomMyPlanNavBar extends PureComponent {
                             insightType={6}
                             isFTE={selectedCareCategory ? selectedCareCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 6 && this.state.isModalOpen}
-                            isVisible={selectedCareCategory ? selectedCareCategory.visible : false}
+                            isVisible={selectedCareCategory ? selectedCareCategory.active : false}
                             text={'Care'}
                             toggleModal={user && user.id ? () => this._toggleModal(6) : null}
                         />
                         <InsightIcon
                             insightType={4}
-                            isFTE={selectedPreventionCategory ? selectedPreventionCategory.first_time_experience : false}
+                            isFTE={selectedRecoveryCategory ? selectedRecoveryCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 4 && this.state.isModalOpen}
-                            isVisible={selectedPreventionCategory ? selectedPreventionCategory.visible : false}
+                            isVisible={selectedRecoveryCategory ? selectedRecoveryCategory.active : false}
                             text={'Recovery'}
                             toggleModal={user && user.id ? () => this._toggleModal(4) : null}
                         />
                         <InsightIcon
                             insightType={5}
-                            isFTE={selectedRecoveryCategory ? selectedRecoveryCategory.first_time_experience : false}
+                            isFTE={selectedPreventionCategory ? selectedPreventionCategory.first_time_experience : false}
                             isSelected={this.state.selectedIndex === 5 && this.state.isModalOpen}
-                            isVisible={selectedRecoveryCategory ? selectedRecoveryCategory.visible : false}
+                            isVisible={selectedPreventionCategory ? selectedPreventionCategory.active : false}
                             text={'Prevention'}
                             toggleModal={user && user.id ? () => this._toggleModal(5) : null}
                         />
@@ -536,11 +402,11 @@ class CustomMyPlanNavBar extends PureComponent {
         );
     };
 
-    _toggleModal = index => {
+    _toggleModal = (index, callback) => {
         const { categories, handleReadInsight, } = this.props;
         let newModalState = index === null ? false : (index !== this.state.selectedIndex || !this.state.isModalOpen);
         this.setState(
-            { isModalOpen: newModalState, selectedIndex: index, },
+            { isModalOpen: newModalState, selectedCategoryIndex: null, selectedIndex: index, },
             () => {
                 if(
                     index &&
@@ -549,6 +415,7 @@ class CustomMyPlanNavBar extends PureComponent {
                 ) {
                     handleReadInsight(index);
                 }
+                return callback && callback();
             }
         );
     }
@@ -558,8 +425,8 @@ class CustomMyPlanNavBar extends PureComponent {
         const { selectedIndex, isModalOpen, } = this.state;
         let selectedCategory = _.find(categories, ['insight_type', selectedIndex]);
         let selectedCareCategory = _.find(categories, ['insight_type', 6]);
-        let selectedPreventionCategory = _.find(categories, ['insight_type', 4]);
-        let selectedRecoveryCategory = _.find(categories, ['insight_type', 5]);
+        let selectedPreventionCategory = _.find(categories, ['insight_type', 5]);
+        let selectedRecoveryCategory = _.find(categories, ['insight_type', 4]);
         return (
             <View style={[AppStyles.scaleButtonShadowEffect,]}>
                 {this._renderTopNav(selectedCareCategory, selectedPreventionCategory, selectedRecoveryCategory)}
