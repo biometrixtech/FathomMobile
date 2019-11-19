@@ -144,16 +144,16 @@ class BluetoothConnect extends Component {
     )
 
     _onPageScrollEnd = currentPage => {
-        let lottieAnimation1Page = 5;
-        let lottieAnimation2Page = 6;
+        let lottieAnimation1Page = 7;
+        let lottieAnimation2Page = 8;
         if(currentPage === lottieAnimation1Page && this.lottieAnimation1 && this.lottieAnimation1.play) {
             this.lottieAnimation1.play();
         } else if(currentPage === lottieAnimation2Page && this.lottieAnimation2 && this.lottieAnimation2.play) {
             this.lottieAnimation2.play();
         }
         if(
-            (currentPage === 6 && this.state.isConnectionSuccessful) ||
-            currentPage === 8
+            (currentPage === 8 && this.state.isConnectionSuccessful) ||
+            currentPage === 10
         ) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint(currentPage);
         }
@@ -216,7 +216,7 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                     />
 
-                    {/* Connect - pages 1 - 6 */}
+                    {/* Connect - pages 1 - 8 */}
                     <Connect
                         currentPage={pageIndex === 1}
                         nextBtn={this._renderNextPage}
@@ -225,13 +225,27 @@ class BluetoothConnect extends Component {
                     />
                     <Connect
                         currentPage={pageIndex === 2}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={7}
+                        showTopNavStep={false}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 3}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={8}
+                        showTopNavStep={false}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 4}
                         isLoading={isDelaying}
                         nextBtn={() => this._delayAndContinue(2000)}
                         page={1}
                         showTopNavStep={false}
                     />
                     <Connect
-                        currentPage={pageIndex === 3}
+                        currentPage={pageIndex === 5}
                         isLoading={isDelaying}
                         nextBtn={this._delayAndContinue}
                         onBack={isDelaying ? () => {} : () => this._renderPreviousPage()}
@@ -246,7 +260,7 @@ class BluetoothConnect extends Component {
                         }}
                     >
                         <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
-                        { pageIndex === 4 &&
+                        { pageIndex === 6 &&
                             <WebView
                                 cacheEnabled={false}
                                 cacheMode={'LOAD_NO_CACHE'}
@@ -335,7 +349,9 @@ class BluetoothConnect extends Component {
                                             {'Searching for a connection to the FathomPRO network'}
                                         </Text>
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
-                                            {'If you have not yet connected to the FathomPRO network within your Wifi Settings, tap "Try Again" and do so now.'}
+                                            {'If your phone\'s not connect to the '}
+                                            <Text robotoBold>{'FathomPRO'}</Text>
+                                            {' wifi network. tap "Try Again" to go back.'}
                                         </Text>
                                         <Button
                                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
@@ -376,12 +392,12 @@ class BluetoothConnect extends Component {
                                     />
                                 </View>
                                 <View>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), textAlign: 'center',}}>
                                         {'We are checking for a strong wifi connection.\n\n'}
                                         <Text robotoBold>{'The LED on your Fathom PRO Kit will turn green'}</Text>
                                         {' when connection is a success!'}
                                     </Text>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), lineHeight: AppFonts.scaleFont(18), marginTop: AppSizes.padding, textAlign: 'center',}}>
                                         {'(This may take up to 2 minutes, keep Kit closed)'}
                                     </Text>
                                 </View>
@@ -402,7 +418,7 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
                     <View style={{flex: 1,}}>
-                        <TopNav darkColor={true} onBack={null} showClose={false} showTopNavStep={false} />
+                        <TopNav darkColor={true} onBack={null} showClose={!isConnectionSuccessful} showTopNavStep={false} />
                         <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
                             <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
                                 {isConnectionSuccessful ? 'Success!' : 'Connection Failed'}
@@ -426,13 +442,13 @@ class BluetoothConnect extends Component {
                                         />
                                     }
                                     {isConnectionSuccessful ?
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                             {'Bring PRO Kit in range of '}
                                             <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
                                             {' after every workout to upload your training data and update your Recovery Plan!'}
                                         </Text>
                                         :
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                             {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
                                         </Text>
                                     }
@@ -462,15 +478,15 @@ class BluetoothConnect extends Component {
                         </View>
                     </View>
 
-                    {/* Train - pages 7 - 8 */}
+                    {/* Train - pages 9 - 10 */}
                     <Train
-                        currentPage={pageIndex === 7}
+                        currentPage={pageIndex === 9}
                         nextBtn={this._renderNextPage}
                         page={0}
                         showTopNavStep={false}
                     />
                     <Train
-                        currentPage={pageIndex === 8}
+                        currentPage={pageIndex === 10}
                         nextBtn={() => AppUtil.pushToScene('myPlan')}
                         onBack={this._renderPreviousPage}
                         page={1}

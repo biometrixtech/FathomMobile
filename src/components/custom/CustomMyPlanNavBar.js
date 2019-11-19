@@ -189,6 +189,7 @@ class CustomMyPlanNavBar extends PureComponent {
             modalContentHeight:    0,
             selectedCategoryIndex: null,
             selectedIndex:         0,
+            slideIndex:            0,
         };
         this._navBarHeight = 0;
         this._swiperRef = {};
@@ -208,19 +209,32 @@ class CustomMyPlanNavBar extends PureComponent {
     }
 
     _renderCard = (item, index, selectedCategoryData, dataLength) => {
-        // let parsedData = [];
-        // if(item && item.text) {
-        //     _.map(item.bold_text, (prop, i) => {
-        //         let newParsedData = {};
-        //         newParsedData.pattern = new RegExp(prop.text, 'i');
-        //         newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
-        //         parsedData.push(newParsedData);
-        //     });
-        // }
+        let parsedData = [];
+        if(selectedCategoryData.active && item && item.title) {
+            parsedData = _.map(item.bold_title, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
+                return newParsedData;
+            });
+        }
+        let titleColorEnum = parsedData.length > 0 ? item.bold_title[0].color : selectedCategoryData.color;
+        let titleColor = selectedCategoryData.active ? PlanLogic.returnInsightColorString(titleColorEnum) : AppColors.zeplin.slateLight;
         return (
             <View key={index} style={[AppStyles.scaleButtonShadowEffect, styles.card,]}>
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                    <Text robotoBold style={{color: selectedCategoryData.active ? PlanLogic.returnInsightColorString(selectedCategoryData.color) : AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>{'HEADER'}</Text>
+                    { selectedCategoryData.active ?
+                        <ParsedText
+                            parse={parsedData || []}
+                            style={{...AppStyles.robotoBold, color: titleColor, fontSize: AppFonts.scaleFont(13),}}
+                        >
+                            {item.title}
+                        </ParsedText>
+                        :
+                        <Text robotoBold style={{color: titleColor, fontSize: AppFonts.scaleFont(13),}}>
+                            {item.title}
+                        </Text>
+                    }
                     { (selectedCategoryData && selectedCategoryData.active) &&
                         <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(12),}}>
                             {`${(index + 1)}/${dataLength}`}
@@ -229,12 +243,6 @@ class CustomMyPlanNavBar extends PureComponent {
                 </View>
                 <Spacer size={AppSizes.paddingSml} />
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{item.text}</Text>
-                {/*<ParsedText
-                    parse={parsedData}
-                    style={[styles.text, {lineHeight: AppFonts.scaleFont(15),}]}
-                >
-                    {item ? item.text : ''}
-                </ParsedText>*/}
             </View>
         );
     }
@@ -244,7 +252,7 @@ class CustomMyPlanNavBar extends PureComponent {
             return (<View />);
         }
         const { toggleLogSymptomsModal, user, } = this.props;
-        const { selectedCategoryIndex, } = this.state;
+        const { selectedCategoryIndex, slideIndex, } = this.state;
         const has3SensorConnected = user && user.sensor_data && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid;
         if(!selectedCategory.active) {
             let emptyStateImage =  require('../../../assets/images/standard/insights-empty.png');
@@ -264,14 +272,18 @@ class CustomMyPlanNavBar extends PureComponent {
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
                             {has3SensorConnected ? selectedCategory.empty_context_sensors_enabled : selectedCategory.empty_context_sensors_not_enabled}
                         </Text>
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '60%',}}
-                            onPress={() => this._toggleModal(null, () => _.delay(() => toggleLogSymptomsModal(), 200))}
-                            raised={true}
-                            title={selectedCategory.empty_state_cta}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
+                        { (selectedCategory.empty_state_cta !== '' || (selectedCategory.empty_state_cta && selectedCategory.empty_state_cta && selectedCategory.empty_state_cta.length > 0)) ?
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '60%',}}
+                                onPress={() => this._toggleModal(null, () => _.delay(() => toggleLogSymptomsModal(), 200))}
+                                raised={true}
+                                title={selectedCategory.empty_state_cta}
+                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                            />
+                            :
+                            null
+                        }
                     </ImageBackground>
                 </View>
             );
@@ -294,7 +306,8 @@ class CustomMyPlanNavBar extends PureComponent {
         let bodyOverlayData = categoryTrendData.body_parts;
         if(selectedCategoryData) {
             bodyOverlayData = _.map(bodyOverlayData, (bodyPart, i) => {
-                let isSelected = _.filter(selectedCategoryData.body_parts, { body_part_location: bodyPart.body_part_location, color: bodyPart.color, side: bodyPart.side, });
+                let bodyPartsToFilter = selectedCategoryData.trigger_tiles && selectedCategoryData.trigger_tiles[slideIndex] ? selectedCategoryData.trigger_tiles[slideIndex].body_parts : selectedCategoryData.body_parts;
+                let isSelected = _.filter(bodyPartsToFilter, { body_part_location: bodyPart.body_part_location, color: bodyPart.color, side: bodyPart.side, });
                 let newBodyPart = _.cloneDeep(bodyPart);
                 newBodyPart.customOpacity = isSelected && isSelected.length > 0 ? 1 : 0.15;
                 return newBodyPart;
@@ -342,6 +355,8 @@ class CustomMyPlanNavBar extends PureComponent {
                             layout={'default'}
                             lockScrollWhileSnapping={true}
                             maxToRenderPerBatch={3}
+                            onBeforeSnapToItem={newSlideIndex => this.setState({ slideIndex: newSlideIndex, })}
+                            onLayout={event => this.setState({ slideIndex: 0, })}
                             ref={ref => {this._swiperRef = ref;}}
                             removeClippedSubviews={false}
                             renderItem={({item, index}) => this._renderCard(item, index, selectedCategoryData, triggerTiles.length)}

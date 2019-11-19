@@ -1625,7 +1625,7 @@ class MyPlan extends Component {
                             buttonColor={AppColors.zeplin.yellow}
                             fixNativeFeedbackRadius={true}
                             hideShadow={true}
-                            onPress={() => this.setState({ isLogSymptomsModalOpen: true, })}
+                            onPress={() => _.delay(() => this.setState({ isLogSymptomsModalOpen: true, }), 200)}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                             textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}

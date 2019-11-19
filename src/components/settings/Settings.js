@@ -16,7 +16,7 @@ import moment from 'moment';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
-import { PrivacyPolicyModal, } from '../general';
+import { WebViewPageModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { user as UserActions, } from '../../actions';
 import { store, } from '../../store';
@@ -63,6 +63,7 @@ class Settings extends Component {
             isJoinATeamFormSubmitting:      false,
             isJoinATeamModalOpen:           false,
             isLogoutBtnDisabled:            false,
+            isNeedHelpModalOpen:            false,
             isPrivacyPolicyOpen:            false,
             isUnpairing:                    false,
             resultMsg:                      {
@@ -457,6 +458,24 @@ class Settings extends Component {
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                    leftIcon={{
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'help-outline',
+                        size:      ICON_SIZE,
+                    }}
+                    onPress={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    rightIcon={{
+                        color: AppColors.zeplin.slate,
+                        name:  'chevron-right',
+                        size:  ICON_SIZE,
+                    }}
+                    title={'Need Help?'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                />
+                <Spacer isDivider />
+                <ListItem
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
                     disabled={this.state.isLogoutBtnDisabled}
                     leftIcon={{
                         color:     AppColors.zeplin.splash,
@@ -519,9 +538,15 @@ class Settings extends Component {
                     newPasswordConfirm={this.state.form_values.newPasswordConfirm}
                     resultMsg={this.state.resultMsg}
                 />
-                <PrivacyPolicyModal
+                <WebViewPageModal
                     handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
-                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
+                    isModalOpen={this.state.isPrivacyPolicyOpen}
+                    webViewPageSource={'https://www.fathomai.com/privacy/'}
+                />
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    isModalOpen={this.state.isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
                 />
             </View>
         );

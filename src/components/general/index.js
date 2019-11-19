@@ -15,6 +15,7 @@ import Loading from './Loading';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import Placeholder from './Placeholder';
 import WebView from './WebView';
+import WebViewPageModal from './WebViewPageModal';
 
 export {
     ContactUsModal,
@@ -24,4 +25,5 @@ export {
     PrivacyPolicyModal,
     Placeholder,
     WebView,
+    WebViewPageModal,
 };

@@ -237,14 +237,14 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     _onPageScrollEnd = currentPage => {
-        const { showLEDPage, showPlacementPages, } = this.state;
+        const { isFirstTimeExperience, showLEDPage, showPlacementPages, } = this.state;
         const checkpointPages = [7];
         if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
             this._updateUserCheckpoint();
         }
         this._video.seek(0);
         if(
-            (currentPage === 2 || currentPage === 9) &&
+            ((!isFirstTimeExperience && currentPage === 2) || (isFirstTimeExperience && currentPage === 9)) &&
             !showLEDPage &&
             !showPlacementPages
         ) {
@@ -261,7 +261,7 @@ class StartSensorSessionModal extends PureComponent {
                 );
             }, 500);
         } else if(
-            (currentPage === 3 || currentPage === 10) &&
+            ((!isFirstTimeExperience && currentPage === 3) || (isFirstTimeExperience && currentPage === 10)) &&
             !showLEDPage &&
             !showPlacementPages
         ) {

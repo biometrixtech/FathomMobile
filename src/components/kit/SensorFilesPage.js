@@ -24,10 +24,11 @@ import moment from 'moment';
 import LottieView from 'lottie-react-native';
 
 // Consts and Libs
-import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
+import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { AppAPI, AppUtil, SensorLogic, } from '../../lib';
 import { Battery, Calibration, Connect, Placement, Session, TopNav, } from './ConnectScreens';
 import { Button, ListItem, Spacer, TabIcon, Text, } from '../custom';
+import { store, } from '../../store';
 
 /* Component ==================================================================== */
 const TopNavBar = () => (
@@ -214,6 +215,12 @@ class SensorFilesPage extends Component {
             let newUserNetworksPayloadObj = {};
             newUserNetworksPayloadObj['@sensor_data'] = {};
             newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
+            let newUserObj = _.cloneDeep(user);
+            newUserObj.sensor_data.sensor_networks = [];
+            store.dispatch({
+                type: DispatchActions.USER_REPLACE,
+                data: newUserObj,
+            });
             updateUser(newUserNetworksPayloadObj, user.id);
         }
     }
@@ -365,7 +372,9 @@ class SensorFilesPage extends Component {
                                                     {'Searching for a connection to the FathomPRO network'}
                                                 </Text>
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
-                                                    {'If you have not yet connected to the FathomPRO network within your Wifi Settings, tap "Try Again" and do so now.'}
+                                                    {'If your phone\'s not connect to the '}
+                                                    <Text robotoBold>{'FathomPRO'}</Text>
+                                                    {' wifi network. tap "Try Again" to go back.'}
                                                 </Text>
                                                 <Button
                                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
@@ -406,12 +415,12 @@ class SensorFilesPage extends Component {
                                             />
                                         </View>
                                         <View>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), textAlign: 'center',}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), textAlign: 'center',}}>
                                                 {'We are checking for a strong wifi connection.\n\n'}
                                                 <Text robotoBold>{'The LED on your Fathom PRO Kit will turn green'}</Text>
                                                 {' when connection is a success!'}
                                             </Text>
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), lineHeight: AppFonts.scaleFont(18), marginTop: AppSizes.padding, textAlign: 'center',}}>
                                                 {'(This may take up to 2 minutes, keep Kit closed)'}
                                             </Text>
                                         </View>
@@ -456,13 +465,13 @@ class SensorFilesPage extends Component {
                                                 />
                                             }
                                             {isConnectionSuccessful ?
-                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                                     {'Bring PRO Kit in range of '}
                                                     <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
                                                     {' after every workout to upload your training data and update your Recovery Plan!'}
                                                 </Text>
                                                 :
-                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
                                                     {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
                                                 </Text>
                                             }
