@@ -314,7 +314,7 @@ class CustomMyPlanNavBar extends PureComponent {
             });
         }
         return (
-            <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.padding, marginTop: AppSizes.paddingMed,}}>
+            <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20), textAlign: 'left',}}>
                     {selectedCategory.header}
                 </Text>
@@ -347,11 +347,11 @@ class CustomMyPlanNavBar extends PureComponent {
                     {triggerTiles ?
                         <Carousel
                             activeSlideAlignment={'start'}
-                            contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
+                            contentContainerCustomStyle={{alignItems: 'center', paddingLeft: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, justifyContent: 'center',}}
                             data={triggerTiles}
                             firstItem={0}
                             initialNumToRender={triggerTiles ? triggerTiles.length : 0}
-                            itemWidth={(AppSizes.screen.widthThreeQuarters)}
+                            itemWidth={(AppSizes.screen.widthFourFifths)}
                             layout={'default'}
                             lockScrollWhileSnapping={true}
                             maxToRenderPerBatch={3}

@@ -51,7 +51,7 @@ import moment from 'moment';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
-import { AppUtil, PlanLogic, } from '../../lib';
+import { AlertHelper, AppUtil, PlanLogic, } from '../../lib';
 import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
@@ -583,6 +583,8 @@ class MyPlan extends Component {
         }
         // handle Coach related items
         this._checkCoachStatus();
+        // check battery level
+        this._checkBatteryLevel();
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -657,6 +659,24 @@ class MyPlan extends Component {
         clearInterval(this._timer);
         clearInterval(this.goToPageTimer);
         clearInterval(this.scrollToTimer);
+    }
+
+    _checkBatteryLevel = () => {
+        const { user, } = this.props;
+        const userSesnorData = user && user.sensor_data ? user.sensor_data : false;
+        const userHas3SensorSystem = userSesnorData && userSesnorData.system_type && userSesnorData.system_type === '3-sensor' && userSesnorData.mobile_udid && userSesnorData.sensor_pid ? true : false;
+        const userBatteryIsLow = (userHas3SensorSystem && userSesnorData.accessory.battery_level && userSesnorData.accessory.battery_level < 0.3);
+        if(userHas3SensorSystem && userBatteryIsLow) {
+            AlertHelper.showCancelableDropDown(
+                'custom',
+                'Fathom PRO Kit battery is low',
+                'Please charge your Kit soon. Use a micro-USB cable and wall adapter to charge your PRO Kit. Full-recharge takes 3 hours. Tap here for help.',
+                {
+                    page:  'sensorFilesPage',
+                    props: {pageStep: 'battery'},
+                },
+            );
+        }
     }
 
     _checkCoachStatus = () => {
