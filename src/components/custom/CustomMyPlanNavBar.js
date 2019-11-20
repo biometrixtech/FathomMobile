@@ -245,7 +245,7 @@ class CustomMyPlanNavBar extends PureComponent {
                         </Text>
                     }
                 </View>
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18),}}>{item.text}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{item.text}</Text>
             </View>
         );
     }
@@ -330,6 +330,7 @@ class CustomMyPlanNavBar extends PureComponent {
                 return newBodyPart;
             });
         }
+        console.log('triggerTiles',triggerTiles);
         return (
             <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20), textAlign: 'left',}}>
@@ -344,7 +345,15 @@ class CustomMyPlanNavBar extends PureComponent {
                         {_.map(categoryTrendData.data, (pill, index) => (
                             <TouchableOpacity
                                 key={index}
-                                onPress={() => this.setState({ selectedCategoryIndex: this.state.selectedCategoryIndex === index ? null : index, })}
+                                onPress={() =>
+                                    this.setState(
+                                        { selectedCategoryIndex: this.state.selectedCategoryIndex === index ? null : index, slideIndex: 0, },
+                                        () => {
+                                            console.log('hiii',this._swiperRef);
+                                            this._swiperRef.snapToItem(0);
+                                        },
+                                    )
+                                }
                                 style={[
                                     styles.pillWrapper(
                                         pill.active ? pill.color : 11,

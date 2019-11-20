@@ -1890,8 +1890,8 @@ class MyPlan extends Component {
                         this.setState(
                             { isPageCalculating: false, },
                             () => {
-                                this._checkCoachStatus();
                                 this._scrollToFirstActiveActivityTab();
+                                this._timer = _.delay(() => this._checkCoachStatus(), 750);
                             }
                         )
                     }
