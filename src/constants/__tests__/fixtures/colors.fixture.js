@@ -114,7 +114,7 @@ const zeplin = {
     splashXXLight:     '#E9F5F6',
     success:           '#4EC1A6',
     successLight:      '#71CDB7',
-    successSuperLight: '#EAF8FA',
+    successSuperLight: '#EAF8F4',
     successXLight:     '#94D9C9',
     successXXLight:    '#B7E6DB',
     superLight:        '#F5F5F5',
