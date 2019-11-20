@@ -4,7 +4,9 @@
     <CustomMyPlanNavBar
         categories={trendCategories}
         handleReadInsight={insightType => handleReadInsight(insightType, user.id)}
-        toggleLogSymptomsModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
+        toggleCareModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
+        togglePreventionModal={() => userHas3SensorSystem ? this.setState({ isStartSensorSessionModalOpen: true, }) : this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+        toggleRecoveryModal={() => this._togglePostSessionSurveyModal()}
         user={isReadinessSurveyCompleted && !isPageCalculating ? user : false}
     />
  *
@@ -172,10 +174,12 @@ const InsightIcon = ({
 
 class CustomMyPlanNavBar extends PureComponent {
     static propTypes = {
-        categories:             PropTypes.array,
-        handleReadInsight:      PropTypes.func.isRequired,
-        toggleLogSymptomsModal: PropTypes.func.isRequired,
-        user:                   PropTypes.object.isRequired,
+        categories:            PropTypes.array,
+        handleReadInsight:     PropTypes.func.isRequired,
+        toggleCareModal:       PropTypes.func.isRequired,
+        togglePreventionModal: PropTypes.func.isRequired,
+        toggleRecoveryModal:   PropTypes.func.isRequired,
+        user:                  PropTypes.object.isRequired,
     };
 
     static defaultProps = {
@@ -241,8 +245,7 @@ class CustomMyPlanNavBar extends PureComponent {
                         </Text>
                     }
                 </View>
-                <Spacer size={AppSizes.paddingSml} />
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{item.text}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18),}}>{item.text}</Text>
             </View>
         );
     }
@@ -251,8 +254,8 @@ class CustomMyPlanNavBar extends PureComponent {
         if(!selectedCategory) {
             return (<View />);
         }
-        const { toggleLogSymptomsModal, user, } = this.props;
-        const { selectedCategoryIndex, slideIndex, } = this.state;
+        const { toggleCareModal, togglePreventionModal, toggleRecoveryModal, user, } = this.props;
+        const { selectedCategoryIndex, selectedIndex, slideIndex, } = this.state;
         const has3SensorConnected = user && user.sensor_data && user.sensor_data.system_type === '3-sensor' && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid;
         if(!selectedCategory.active) {
             let emptyStateImage =  require('../../../assets/images/standard/insights-empty.png');
@@ -272,18 +275,32 @@ class CustomMyPlanNavBar extends PureComponent {
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16), textAlign: 'center',}}>
                             {has3SensorConnected ? selectedCategory.empty_context_sensors_enabled : selectedCategory.empty_context_sensors_not_enabled}
                         </Text>
-                        { (selectedCategory.empty_state_cta !== '' || (selectedCategory.empty_state_cta && selectedCategory.empty_state_cta && selectedCategory.empty_state_cta.length > 0)) ?
-                            <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '60%',}}
-                                onPress={() => this._toggleModal(null, () => _.delay(() => toggleLogSymptomsModal(), 200))}
-                                raised={true}
-                                title={selectedCategory.empty_state_cta}
-                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                            />
-                            :
-                            null
-                        }
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '60%',}}
+                            onPress={() =>
+                                this._toggleModal(
+                                    null,
+                                    () => _.delay(() => selectedIndex === 6 ?
+                                        toggleCareModal()
+                                        : selectedIndex === 5 ?
+                                            togglePreventionModal()
+                                            :
+                                            toggleRecoveryModal()
+                                    , 500)
+                                )
+                            }
+                            raised={true}
+                            title={
+                                has3SensorConnected && selectedIndex === 5 ?
+                                    'Start a PRO Workout'
+                                    : !has3SensorConnected && selectedIndex === 5 ?
+                                        'Learn More'
+                                        :
+                                        selectedCategory.empty_state_cta
+                            }
+                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                        />
                     </ImageBackground>
                 </View>
             );

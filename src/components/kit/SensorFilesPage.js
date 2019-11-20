@@ -126,6 +126,30 @@ class SensorFilesPage extends Component {
         },
     )
 
+    _handleFinalSetup = (numberOfPages = 1) => {
+        const { currentAccessoryData, } = this.state;
+        const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
+        clearInterval(this._timer);
+        let newUserPayloadObj = {};
+        newUserPayloadObj.sensor_data = {};
+        newUserPayloadObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
+        newUserPayloadObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
+        newUserPayloadObj.sensor_data.system_type = '3-sensor';
+        let newUserNetworksPayloadObj = {};
+        newUserNetworksPayloadObj['@sensor_data'] = {};
+        newUserNetworksPayloadObj['@sensor_data'].sensor_networks = currentAccessoryData.ssid ? [currentAccessoryData.ssid] : [];
+        let newUserObj = _.cloneDeep(user);
+        newUserObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
+        newUserObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
+        newUserObj.sensor_data.sensor_networks = [currentAccessoryData.ssid];
+        newUserObj.sensor_data.system_type = '3-sensor';
+        return assignKitIndividual({wifiMacAddress: currentAccessoryData.macAddress,}, user) // 1. assign kit to individual
+            .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
+            .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
+            .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
+            .then(() => this._renderNextPage(numberOfPages));
+    }
+
     _handleNotInRange = () => {
         Alert.alert(
             '',
@@ -142,7 +166,7 @@ class SensorFilesPage extends Component {
 
     _handleTestConnection = isFinalChance => {
         const { currentAccessoryData, currentTime, } = this.state;
-        const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
+        // const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
         let payload = {
             seconds_elapsed: moment().diff(currentTime, 'seconds'),
         };
@@ -156,25 +180,7 @@ class SensorFilesPage extends Component {
                             (isFinalChance && response.sync_found) ||
                             (!isFinalChance && response.sync_found)
                         ) {
-                            clearInterval(this._timer);
-                            let newUserPayloadObj = {};
-                            newUserPayloadObj.sensor_data = {};
-                            newUserPayloadObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
-                            newUserPayloadObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
-                            newUserPayloadObj.sensor_data.system_type = '3-sensor';
-                            let newUserNetworksPayloadObj = {};
-                            newUserNetworksPayloadObj['@sensor_data'] = {};
-                            newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentAccessoryData.ssid];
-                            let newUserObj = _.cloneDeep(user);
-                            newUserObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
-                            newUserObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
-                            newUserObj.sensor_data.sensor_networks = [currentAccessoryData.ssid];
-                            newUserObj.sensor_data.system_type = '3-sensor';
-                            return assignKitIndividual({wifiMacAddress: currentAccessoryData.macAddress,}, user) // 1. assign kit to individual
-                                .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
-                                .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
-                                .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
-                                .then(() => this._renderNextPage());
+                            return this._handleFinalSetup();
                         } else if(isFinalChance && !response.sync_found) {
                             return this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage());
                         }
@@ -281,6 +287,19 @@ class SensorFilesPage extends Component {
                                 }}
                             >
                                 <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
+                                <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center',}}>
+                                    <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}} />
+                                    <View style={{flex: 8, justifyContent: 'center',}} />
+                                    <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+                                        <TabIcon
+                                            color={AppColors.zeplin.slateLight}
+                                            icon={'close'}
+                                            onPress={() => Actions.pop()}
+                                            reverse={false}
+                                            size={30}
+                                        />
+                                    </View>
+                                </View>
                                 { pageIndex === 2 &&
                                     <WebView
                                         cacheEnabled={false}
@@ -329,6 +348,14 @@ class SensorFilesPage extends Component {
                                                     )
                                                 )
                                             ) {
+                                                if(data.macAddress && !data.ssid) {
+                                                    return this.setState({
+                                                        currentAccessoryData: {
+                                                            macAddress: data.macAddress.toUpperCase(),
+                                                            ssid:       null,
+                                                        }
+                                                    });
+                                                }
                                                 return this._renderPreviousPage(2, () => Alert.alert(
                                                     'Lost connection with FathomPRO network.',
                                                     'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',

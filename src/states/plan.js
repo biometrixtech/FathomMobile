@@ -30,6 +30,7 @@ const defaultPlanState = {
     isCoachModalOpen:                     false,
     isContactUsOpen:                      false,
     isLogSymptomsModalOpen:               false,
+    isNeedHelpModalOpen:                  false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,

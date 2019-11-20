@@ -2740,8 +2740,19 @@ const PlanLogic = {
                                                                                                             AppColors.zeplin.yellowXXLight
                                                                                                             :
                                                                                                             AppColors.zeplin.errorLight;
-        if(customOpacity) {
-            newColor = `${newColor}${PlanLogic.returnHexOpacity(customOpacity)}`
+        if(customOpacity && customOpacity !== 1) {
+            newColor = [2, 6, 17, 18].includes(color) ?
+                AppColors.zeplin.errorSuperLight
+                : [4, 7, 15, 19].includes(color) ?
+                    AppColors.zeplin.splashSuperLight
+                    : [1, 5, 16, 22].includes(color) ?
+                        AppColors.zeplin.warningSuperLight
+                        : [13, 20, 21].includes(color) ?
+                            AppColors.zeplin.successSuperLight
+                            : [23, 24, 25].includes(color) ?
+                                AppColors.zeplin.yellowSuperLight
+                                :
+                                AppColors.zeplin.errorLight;
         }
         return newColor;
     },

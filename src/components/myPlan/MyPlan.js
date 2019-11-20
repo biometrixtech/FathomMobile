@@ -66,7 +66,7 @@ import {
     SessionsCompletionModal,
     StartSensorSessionModal,
 } from './pages';
-import { ContactUsModal, Loading, } from '../general';
+import { ContactUsModal, Loading, WebViewPageModal, } from '../general';
 
 // global constants
 const numberOfPlaceholders = 8;
@@ -662,18 +662,19 @@ class MyPlan extends Component {
     }
 
     _checkBatteryLevel = () => {
-        const { user, } = this.props;
+        const { plan, user, } = this.props;
         const userSesnorData = user && user.sensor_data ? user.sensor_data : false;
         const userHas3SensorSystem = userSesnorData && userSesnorData.system_type && userSesnorData.system_type === '3-sensor' && userSesnorData.mobile_udid && userSesnorData.sensor_pid ? true : false;
         const userBatteryIsLow = (userHas3SensorSystem && userSesnorData.accessory.battery_level && userSesnorData.accessory.battery_level < 0.3);
-        if(userHas3SensorSystem && userBatteryIsLow) {
+        const isReadinessSurveyCompleted = plan && plan.dailyPlan && plan.dailyPlan[0] && plan.dailyPlan[0].daily_readiness_survey_completed;
+        if(userHas3SensorSystem && userBatteryIsLow && isReadinessSurveyCompleted) {
             AlertHelper.showCancelableDropDown(
                 'custom',
                 'Fathom PRO Kit battery is low',
-                'Please charge your Kit soon. Use a micro-USB cable and wall adapter to charge your PRO Kit. Full-recharge takes 3 hours. Tap here for help.',
+                'Please charge your Kit soon. Full-recharge takes 3 hours. Tap here for help.',
                 {
                     page:  'sensorFilesPage',
-                    props: {pageStep: 'battery'},
+                    props: {pageStep: 'battery',},
                 },
             );
         }
@@ -819,7 +820,7 @@ class MyPlan extends Component {
                     .catch(error =>
                         this.setState(
                             { apiIndex: null, isPageCalculating: false, },
-                            () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),
+                            () => _.delay(() => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey), 500),
                         )
                     );
             }
@@ -1083,10 +1084,12 @@ class MyPlan extends Component {
                             }
                         );
                     })
-                    .catch(error => {
-                        this.setState({ apiIndex: null, isPageCalculating: false, });
-                        AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
-                    });
+                    .catch(error =>
+                        this.setState(
+                            { apiIndex: null, isPageCalculating: false, },
+                            () => _.delay(() => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey), 500),
+                        )
+                    );
             }
         );
     }
@@ -1460,7 +1463,9 @@ class MyPlan extends Component {
                         newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
                         handleReadInsight(newDailyPlan, insightType, user.id);
                     }}
-                    toggleLogSymptomsModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
+                    toggleCareModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
+                    togglePreventionModal={() => userHas3SensorSystem ? this.setState({ isStartSensorSessionModalOpen: true, }) : this.setState({ isNeedHelpModalOpen: true, })}
+                    toggleRecoveryModal={() => this._togglePostSessionSurveyModal()}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : {}}
                 />
 
@@ -1881,7 +1886,15 @@ class MyPlan extends Component {
                 <LoadingState
                     apiIndex={apiIndex}
                     isModalOpen={activityIdLoading ? false : isPageCalculating}
-                    onClose={() => this.setState({ isPageCalculating: false, }, () => this._scrollToFirstActiveActivityTab())}
+                    onClose={() =>
+                        this.setState(
+                            { isPageCalculating: false, },
+                            () => {
+                                this._checkCoachStatus();
+                                this._scrollToFirstActiveActivityTab();
+                            }
+                        )
+                    }
                 />
 
                 <LogSymptomsModal
@@ -1893,6 +1906,12 @@ class MyPlan extends Component {
                     soreBodyParts={plan.soreBodyParts}
                     soreness={logSymptoms.soreness}
                     user={user}
+                />
+
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    isModalOpen={this.state.isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
                 />
 
             </View>
