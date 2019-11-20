@@ -51,7 +51,7 @@ import moment from 'moment';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
-import { AlertHelper, AppUtil, PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, } from '../../lib';
 import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
@@ -583,8 +583,6 @@ class MyPlan extends Component {
         }
         // handle Coach related items
         this._checkCoachStatus();
-        // check battery level
-        this._checkBatteryLevel();
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -659,25 +657,6 @@ class MyPlan extends Component {
         clearInterval(this._timer);
         clearInterval(this.goToPageTimer);
         clearInterval(this.scrollToTimer);
-    }
-
-    _checkBatteryLevel = () => {
-        const { plan, user, } = this.props;
-        const userSesnorData = user && user.sensor_data ? user.sensor_data : false;
-        const userHas3SensorSystem = userSesnorData && userSesnorData.system_type && userSesnorData.system_type === '3-sensor' && userSesnorData.mobile_udid && userSesnorData.sensor_pid ? true : false;
-        const userBatteryIsLow = (userHas3SensorSystem && userSesnorData.accessory.battery_level && userSesnorData.accessory.battery_level < 0.3);
-        const isReadinessSurveyCompleted = plan && plan.dailyPlan && plan.dailyPlan[0] && plan.dailyPlan[0].daily_readiness_survey_completed;
-        if(userHas3SensorSystem && userBatteryIsLow && isReadinessSurveyCompleted) {
-            AlertHelper.showCancelableDropDown(
-                'custom',
-                'Fathom PRO Kit battery is low',
-                'Please charge your Kit soon. Full-recharge takes 3 hours. Tap here for help.',
-                {
-                    page:  'sensorFilesPage',
-                    props: {pageStep: 'battery',},
-                },
-            );
-        }
     }
 
     _checkCoachStatus = () => {
