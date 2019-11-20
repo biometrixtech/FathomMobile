@@ -216,18 +216,29 @@ const startLogin = (credentials, reload) => {
   * Logout
   */
 const logout = userId => {
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.logout.post({userId})
-            .then(() => resolve(
+            .then(() => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
                 dispatch({
                     type: Actions.LOGOUT
-                })
-            ))
-            .catch(err => resolve(
+                });
+                return resolve();
+            })
+            .catch(err => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
                 dispatch({
                     type: Actions.LOGOUT
-                })
-            ));
+                });
+                return resolve();
+            });
     });
 };
 

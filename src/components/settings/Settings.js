@@ -42,14 +42,16 @@ const SettingsNavBar = () => (
 
 class Settings extends Component {
     static componentName = 'SettingsView';
+
     static propTypes = {
-        accessoryData:   PropTypes.object.isRequired,
-        logout:          PropTypes.func.isRequired,
-        network:         PropTypes.object.isRequired,
-        updateUser:      PropTypes.func.isRequired,
-        userJoinAccount: PropTypes.func.isRequired,
-        user:            PropTypes.object.isRequired,
-        changePassword:  PropTypes.func.isRequired
+        accessoryData:    PropTypes.object.isRequired,
+        getSensorDetails: PropTypes.func.isRequired,
+        logout:           PropTypes.func.isRequired,
+        network:          PropTypes.object.isRequired,
+        updateUser:       PropTypes.func.isRequired,
+        userJoinAccount:  PropTypes.func.isRequired,
+        user:             PropTypes.object.isRequired,
+        changePassword:   PropTypes.func.isRequired
     }
 
     static defaultProps = {}
@@ -62,7 +64,8 @@ class Settings extends Component {
             isChangePasswordSuccessful:     false,
             isJoinATeamFormSubmitting:      false,
             isJoinATeamModalOpen:           false,
-            isLogoutBtnDisabled:            false,
+            isLogoutLoading:                false,
+            isManageLoading:                false,
             isNeedHelpModalOpen:            false,
             isPrivacyPolicyOpen:            false,
             isUnpairing:                    false,
@@ -85,6 +88,8 @@ class Settings extends Component {
             isChangePasswordSuccessful:     false,
             isJoinATeamFormSubmitting:      false,
             isJoinATeamModalOpen:           false,
+            isLogoutLoading:                false,
+            isManageLoading:                false,
             isUnpairing:                    false,
             resultMsg:                      {
                 error:   '',
@@ -304,7 +309,29 @@ class Settings extends Component {
         );
     }
 
+    _handleManageSensorFiles = () => {
+        const userObj = this.props.user ? _.cloneDeep(this.props.user) : false;
+        if(
+            userObj &&
+            userObj.sensor_data &&
+            userObj.sensor_data.accessory &&
+            userObj.sensor_data.accessory.battery_level
+        ) {
+            return Actions.sensorFiles();
+        }
+        let errorHeader = 'Error Loading';
+        let errorMessage = 'We\'re not able to access your Fathom PRO information right now. Please try again later.';
+        return this.setState(
+            { isManageLoading: true, },
+            () => this.props.getSensorDetails(userObj)
+                .then(() => this.setState({ isManageLoading: false, } , () => Actions.sensorFiles()))
+                .catch(err => this.setState({ isManageLoading: false, } , () => AppUtil.handleAPIErrorAlert(errorMessage, errorHeader))),
+        );
+    }
+
     render = () => {
+        const { isLogoutLoading, isManageLoading, } = this.state;
+        const isPageLoading = isLogoutLoading || isManageLoading;
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
         const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
@@ -357,7 +384,7 @@ class Settings extends Component {
                                     size:      ICON_SIZE,
                                     type:      'material-community',
                                 }}
-                                onPress={() => this._resetAccountData()}
+                                onPress={isPageLoading ? () => {} : () => this._resetAccountData()}
                                 rightIcon={{
                                     color: AppColors.zeplin.slate,
                                     name:  'chevron-right',
@@ -399,6 +426,7 @@ class Settings extends Component {
                 <View>
                     <ListItem
                         containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                        disabled={isManageLoading}
                         leftIcon={
                             <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
                                 <Image
@@ -408,12 +436,26 @@ class Settings extends Component {
                                 />
                             </View>
                         }
-                        onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
-                        rightIcon={{
-                            color: AppColors.zeplin.slate,
-                            name:  'chevron-right',
-                            size:  ICON_SIZE,
-                        }}
+                        onPress={isPageLoading ?
+                            () => {}
+                            : has3SensorConnected ?
+                                () => this._handleManageSensorFiles()
+                                :
+                                () => Actions.bluetoothConnect()
+                        }
+                        rightIcon={
+                            isManageLoading ?
+                                <ActivityIndicator
+                                    color={AppColors.zeplin.slate}
+                                    size={'small'}
+                                />
+                                :
+                                {
+                                    color: AppColors.zeplin.slate,
+                                    name:  'chevron-right',
+                                    size:  ICON_SIZE,
+                                }
+                        }
                         title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
                         titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                     />
@@ -428,7 +470,7 @@ class Settings extends Component {
                         size:      ICON_SIZE,
                         type:      'material-community',
                     }}
-                    onPress={() => this._toggleChangePasswordModal()}
+                    onPress={isPageLoading ? () => {} : () => this._toggleChangePasswordModal()}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',
@@ -446,7 +488,7 @@ class Settings extends Component {
                         name:      'gavel',
                         size:      ICON_SIZE,
                     }}
-                    onPress={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
+                    onPress={isPageLoading ? () => {} : () => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',
@@ -464,7 +506,7 @@ class Settings extends Component {
                         name:      'help-outline',
                         size:      ICON_SIZE,
                     }}
-                    onPress={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    onPress={isPageLoading ? () => {} : () => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',
@@ -476,32 +518,46 @@ class Settings extends Component {
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                    disabled={this.state.isLogoutBtnDisabled}
+                    disabled={isLogoutLoading}
                     leftIcon={{
                         color:     AppColors.zeplin.splash,
                         iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                         name:      'power-settings-new',
                         size:      ICON_SIZE,
                     }}
-                    onPress={() =>
-                        this.setState(
-                            { isLogoutBtnDisabled: true, },
+                    onPress={isPageLoading ?
+                        () => {}
+                        :
+                        () => this.setState(
+                            { isLogoutLoading: true, },
                             () => this.props.logout(this.props.user.id)
-                                .then(() => {
-                                    this.setState({ isLogoutBtnDisabled: false, });
-                                    Actions.reset('key1');
-                                })
-                                .catch(err => {
-                                    this.setState({ isLogoutBtnDisabled: false, });
-                                    this._handleLogoutAlert(err);
-                                })
+                                .then(() =>
+                                    this.setState(
+                                        { isLogoutLoading: false, },
+                                        () => Actions.reset('key1'),
+                                    )
+                                )
+                                .catch(err =>
+                                    this.setState(
+                                        { isLogoutLoading: false, },
+                                        () => this._handleLogoutAlert(err),
+                                    )
+                                )
                         )
                     }
-                    rightIcon={{
-                        color: AppColors.zeplin.slate,
-                        name:  'chevron-right',
-                        size:  ICON_SIZE,
-                    }}
+                    rightIcon={
+                        isLogoutLoading ?
+                            <ActivityIndicator
+                                color={AppColors.zeplin.slate}
+                                size={'small'}
+                            />
+                            :
+                            {
+                                color: AppColors.zeplin.slate,
+                                name:  'chevron-right',
+                                size:  ICON_SIZE,
+                            }
+                    }
                     title={'Logout'}
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
