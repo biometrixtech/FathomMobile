@@ -210,7 +210,7 @@ class BodyPartSelector extends Component {
             : image === 'R_OutsideKnee.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/R_OutsideKnee.png')
             :
-                require('../../../../assets/images/body/body_overlay_selector/Abs.png');
+                false;
         return imageName;
     }
 
@@ -362,6 +362,9 @@ class BodyPartSelector extends Component {
                                     bodyImage,
                                     tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, false, this._getImageString);
+                                if(!bodyImage) {
+                                    return(null);
+                                }
                                 return (
                                     <RNImage
                                         key={index}
@@ -394,6 +397,9 @@ class BodyPartSelector extends Component {
                                     bodyImage,
                                     tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, true, this._getImageString);
+                                if(!bodyImage) {
+                                    return(null);
+                                }
                                 return (
                                     <RNImage
                                         key={index}

@@ -2158,6 +2158,9 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
+                    if(!updatedBodyPart.imageSource) {
+                        return {};
+                    }
                     updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }
@@ -2170,6 +2173,9 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
+                    if(!updatedBodyPart.imageSource) {
+                        return {};
+                    }
                     updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }

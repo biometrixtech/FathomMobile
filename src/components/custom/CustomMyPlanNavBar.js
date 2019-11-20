@@ -330,7 +330,6 @@ class CustomMyPlanNavBar extends PureComponent {
                 return newBodyPart;
             });
         }
-        console.log('triggerTiles',triggerTiles);
         return (
             <View style={{marginBottom: AppSizes.padding, marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.paddingMed,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(20), textAlign: 'left',}}>
@@ -348,10 +347,7 @@ class CustomMyPlanNavBar extends PureComponent {
                                 onPress={() =>
                                     this.setState(
                                         { selectedCategoryIndex: this.state.selectedCategoryIndex === index ? null : index, slideIndex: 0, },
-                                        () => {
-                                            console.log('hiii',this._swiperRef);
-                                            this._swiperRef.snapToItem(0);
-                                        },
+                                        () => _.delay(() => this._swiperRef && this._swiperRef.snapToItem && this._swiperRef.snapToItem(0), 100),
                                     )
                                 }
                                 style={[

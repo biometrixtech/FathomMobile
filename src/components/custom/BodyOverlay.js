@@ -289,7 +289,7 @@ class BodyOverlay extends Component {
             : image === 'R_HipFlexor.svg' ?
                 require('../../../assets/images/body/body_overlay/R_HipFlexor.png')
             :
-                require('../../../assets/images/body/body_overlay/Abs.png');
+                false;
         return imageName;
     }
 
