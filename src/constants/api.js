@@ -115,7 +115,8 @@ export default {
 
     preprocessingEndpoints: new Map([
         ['create_session', `${preprocessingAPIVersion}/session`], // POST
-        ['status',         `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['details',        `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['status',         `${preprocessingAPIVersion}/user/{userId}/sessions_today`], // POST
         ['update_session', `${preprocessingAPIVersion}/session/{sessionId}`], // PATCH
     ]),
 

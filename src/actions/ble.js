@@ -227,6 +227,38 @@ const assignKitIndividual = (accessory, user) => {
     });
 };
 
+const getSensorDetails =  userObj => {
+    let payload = {};
+    if(userObj.timezone) {
+        payload.timezone = userObj.timezone;
+    }
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.details.post({userId: userObj.id}, payload)
+            .then(response => {
+                let newUserObj = _.cloneDeep(userObj);
+                newUserObj.sensor_data.accessory = response.accessory || {};
+                newUserObj.sensor_data.sessions = response.sessions;
+                dispatch({
+                    type: Actions.USER_REPLACE,
+                    data: newUserObj,
+                });
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return resolve(response);
+            })
+            .catch(error => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return reject(error);
+            });
+    });
+};
+
 const getSensorFiles = (userObj, cleanSessions, days = 14) => {
     const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
     const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
@@ -248,7 +280,7 @@ const getSensorFiles = (userObj, cleanSessions, days = 14) => {
         return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
             .then(response => {
                 let newUserObj = _.cloneDeep(userObj);
-                newUserObj.sensor_data.accessory = response.accessory;
+                newUserObj.sensor_data.accessory = response.accessory || {};
                 newUserObj.sensor_data.sessions = response.sessions;
                 dispatch({
                     type: Actions.USER_REPLACE,
@@ -704,6 +736,7 @@ export default {
     // enable,
     // exitKitSetup,
     // getScannedWifiConnections,
+    getSensorDetails,
     getSensorFiles,
     // getSingleWifiConnection,
     // handleError,
