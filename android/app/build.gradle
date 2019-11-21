@@ -129,8 +129,8 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 45
-        versionName "3.9.1-beta.6"
+        versionCode 46
+        versionName "3.9.2-beta.41"
     }
     configurations.all {
         resolutionStrategy {

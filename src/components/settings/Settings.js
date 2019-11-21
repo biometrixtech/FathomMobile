@@ -16,7 +16,7 @@ import moment from 'moment';
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { ListItem, Spacer, TabIcon, Text, } from '../custom';
-import { PrivacyPolicyModal, } from '../general';
+import { WebViewPageModal, } from '../general';
 import { AppUtil, } from '../../lib';
 import { user as UserActions, } from '../../actions';
 import { store, } from '../../store';
@@ -42,14 +42,16 @@ const SettingsNavBar = () => (
 
 class Settings extends Component {
     static componentName = 'SettingsView';
+
     static propTypes = {
-        accessoryData:   PropTypes.object.isRequired,
-        logout:          PropTypes.func.isRequired,
-        network:         PropTypes.object.isRequired,
-        updateUser:      PropTypes.func.isRequired,
-        userJoinAccount: PropTypes.func.isRequired,
-        user:            PropTypes.object.isRequired,
-        changePassword:  PropTypes.func.isRequired
+        accessoryData:    PropTypes.object.isRequired,
+        getSensorDetails: PropTypes.func.isRequired,
+        logout:           PropTypes.func.isRequired,
+        network:          PropTypes.object.isRequired,
+        updateUser:       PropTypes.func.isRequired,
+        userJoinAccount:  PropTypes.func.isRequired,
+        user:             PropTypes.object.isRequired,
+        changePassword:   PropTypes.func.isRequired
     }
 
     static defaultProps = {}
@@ -62,7 +64,9 @@ class Settings extends Component {
             isChangePasswordSuccessful:     false,
             isJoinATeamFormSubmitting:      false,
             isJoinATeamModalOpen:           false,
-            isLogoutBtnDisabled:            false,
+            isLogoutLoading:                false,
+            isManageLoading:                false,
+            isNeedHelpModalOpen:            false,
             isPrivacyPolicyOpen:            false,
             isUnpairing:                    false,
             resultMsg:                      {
@@ -84,6 +88,8 @@ class Settings extends Component {
             isChangePasswordSuccessful:     false,
             isJoinATeamFormSubmitting:      false,
             isJoinATeamModalOpen:           false,
+            isLogoutLoading:                false,
+            isManageLoading:                false,
             isUnpairing:                    false,
             resultMsg:                      {
                 error:   '',
@@ -303,10 +309,31 @@ class Settings extends Component {
         );
     }
 
+    _handleManageSensorFiles = () => {
+        const userObj = this.props.user ? _.cloneDeep(this.props.user) : false;
+        if(
+            userObj &&
+            userObj.sensor_data &&
+            userObj.sensor_data.accessory &&
+            userObj.sensor_data.accessory.battery_level
+        ) {
+            return Actions.sensorFiles();
+        }
+        let errorHeader = 'Error Loading';
+        let errorMessage = 'We\'re not able to access your Fathom PRO information right now. Please try again later.';
+        return this.setState(
+            { isManageLoading: true, },
+            () => this.props.getSensorDetails(userObj)
+                .then(() => this.setState({ isManageLoading: false, } , () => Actions.sensorFiles()))
+                .catch(err => this.setState({ isManageLoading: false, } , () => AppUtil.handleAPIErrorAlert(errorMessage, errorHeader))),
+        );
+    }
+
     render = () => {
+        const { isLogoutLoading, isManageLoading, } = this.state;
+        const isPageLoading = isLogoutLoading || isManageLoading;
         const userEmail = this.props.user.personal_data ? this.props.user.personal_data.email : '';
         const userObj = this.props.user ? this.props.user : false;
-        const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
         const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1}}>
@@ -357,7 +384,7 @@ class Settings extends Component {
                                     size:      ICON_SIZE,
                                     type:      'material-community',
                                 }}
-                                onPress={() => this._resetAccountData()}
+                                onPress={isPageLoading ? () => {} : () => this._resetAccountData()}
                                 rightIcon={{
                                     color: AppColors.zeplin.slate,
                                     name:  'chevron-right',
@@ -396,31 +423,44 @@ class Settings extends Component {
                         <Spacer isDivider />
                     </View>
                 }
-                { userHas3SensorSystem &&
-                    <View>
-                        <ListItem
-                            containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                            leftIcon={
-                                <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={require('../../../assets/images/standard/kitactive.png')}
-                                        style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
-                                    />
-                                </View>
-                            }
-                            onPress={has3SensorConnected ? () => Actions.sensorFiles() : () => Actions.bluetoothConnect()}
-                            rightIcon={{
-                                color: AppColors.zeplin.slate,
-                                name:  'chevron-right',
-                                size:  ICON_SIZE,
-                            }}
-                            title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
-                        />
-                        <Spacer isDivider />
-                    </View>
-                }
+                <View>
+                    <ListItem
+                        containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                        disabled={isManageLoading}
+                        leftIcon={
+                            <View style={{alignItems: 'center', height: ICON_SIZE, justifyContent: 'center', width: ICON_SIZE,}}>
+                                <Image
+                                    resizeMode={'contain'}
+                                    source={require('../../../assets/images/standard/kitactive.png')}
+                                    style={{height: 15, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, tintColor: AppColors.zeplin.splash, width: 35,}}
+                                />
+                            </View>
+                        }
+                        onPress={isPageLoading ?
+                            () => {}
+                            : has3SensorConnected ?
+                                () => this._handleManageSensorFiles()
+                                :
+                                () => Actions.bluetoothConnect()
+                        }
+                        rightIcon={
+                            isManageLoading ?
+                                <ActivityIndicator
+                                    color={AppColors.zeplin.slate}
+                                    size={'small'}
+                                />
+                                :
+                                {
+                                    color: AppColors.zeplin.slate,
+                                    name:  'chevron-right',
+                                    size:  ICON_SIZE,
+                                }
+                        }
+                        title={has3SensorConnected ? 'Manage Fathom PRO' : 'Connect Fathom PRO'}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                    />
+                    <Spacer isDivider />
+                </View>
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding}}
                     leftIcon={{
@@ -430,7 +470,7 @@ class Settings extends Component {
                         size:      ICON_SIZE,
                         type:      'material-community',
                     }}
-                    onPress={() => this._toggleChangePasswordModal()}
+                    onPress={isPageLoading ? () => {} : () => this._toggleChangePasswordModal()}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',
@@ -448,7 +488,7 @@ class Settings extends Component {
                         name:      'gavel',
                         size:      ICON_SIZE,
                     }}
-                    onPress={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
+                    onPress={isPageLoading ? () => {} : () => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
                     rightIcon={{
                         color: AppColors.zeplin.slate,
                         name:  'chevron-right',
@@ -460,32 +500,64 @@ class Settings extends Component {
                 <Spacer isDivider />
                 <ListItem
                     containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
-                    disabled={this.state.isLogoutBtnDisabled}
+                    leftIcon={{
+                        color:     AppColors.zeplin.splash,
+                        iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                        name:      'help-outline',
+                        size:      ICON_SIZE,
+                    }}
+                    onPress={isPageLoading ? () => {} : () => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    rightIcon={{
+                        color: AppColors.zeplin.slate,
+                        name:  'chevron-right',
+                        size:  ICON_SIZE,
+                    }}
+                    title={'Need Help?'}
+                    titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
+                />
+                <Spacer isDivider />
+                <ListItem
+                    containerStyle={{paddingBottom: AppSizes.padding, paddingTop: AppSizes.padding,}}
+                    disabled={isLogoutLoading}
                     leftIcon={{
                         color:     AppColors.zeplin.splash,
                         iconStyle: { shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
                         name:      'power-settings-new',
                         size:      ICON_SIZE,
                     }}
-                    onPress={() =>
-                        this.setState(
-                            { isLogoutBtnDisabled: true, },
+                    onPress={isPageLoading ?
+                        () => {}
+                        :
+                        () => this.setState(
+                            { isLogoutLoading: true, },
                             () => this.props.logout(this.props.user.id)
-                                .then(() => {
-                                    this.setState({ isLogoutBtnDisabled: false, });
-                                    Actions.reset('key1');
-                                })
-                                .catch(err => {
-                                    this.setState({ isLogoutBtnDisabled: false, });
-                                    this._handleLogoutAlert(err);
-                                })
+                                .then(() =>
+                                    this.setState(
+                                        { isLogoutLoading: false, },
+                                        () => Actions.reset('key1'),
+                                    )
+                                )
+                                .catch(err =>
+                                    this.setState(
+                                        { isLogoutLoading: false, },
+                                        () => this._handleLogoutAlert(err),
+                                    )
+                                )
                         )
                     }
-                    rightIcon={{
-                        color: AppColors.zeplin.slate,
-                        name:  'chevron-right',
-                        size:  ICON_SIZE,
-                    }}
+                    rightIcon={
+                        isLogoutLoading ?
+                            <ActivityIndicator
+                                color={AppColors.zeplin.slate}
+                                size={'small'}
+                            />
+                            :
+                            {
+                                color: AppColors.zeplin.slate,
+                                name:  'chevron-right',
+                                size:  ICON_SIZE,
+                            }
+                    }
                     title={'Logout'}
                     titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), paddingLeft: AppSizes.paddingSml,}}
                 />
@@ -522,9 +594,15 @@ class Settings extends Component {
                     newPasswordConfirm={this.state.form_values.newPasswordConfirm}
                     resultMsg={this.state.resultMsg}
                 />
-                <PrivacyPolicyModal
+                <WebViewPageModal
                     handleModalToggle={() => this.setState({ isPrivacyPolicyOpen: !this.state.isPrivacyPolicyOpen, })}
-                    isPrivacyPolicyOpen={this.state.isPrivacyPolicyOpen}
+                    isModalOpen={this.state.isPrivacyPolicyOpen}
+                    webViewPageSource={'https://www.fathomai.com/privacy/'}
+                />
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    isModalOpen={this.state.isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
                 />
             </View>
         );

@@ -5,6 +5,7 @@
         appState={appState}
         createSensorSession={createSensorSession}
         isModalOpen={isStartSensorSessionModalOpen}
+        network={network}
         onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
         updateSensorSession={updateSensorSession}
         updateUser={updateUser}
@@ -195,25 +196,7 @@ class StartSensorSessionModal extends PureComponent {
             this._renderNextPage(1, () => this.setState({ timer: 15, }, () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}));
         }
         if(prevState.timer !== this.state.timer && this.state.timer === 0 && this.state.createError) {
-            this._pages.scrollToPage(0);
-            this.setState(
-                { pageIndex: 0, timer: 15, },
-                () => {
-                    this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
-                    Alert.alert(
-                        ERROR_HEADER,
-                        this.state.createError,
-                        [
-                            {
-                                onPress: () => this.props.onClose(),
-                                style:   'cancel',
-                                text:    'OK',
-                            },
-                        ],
-                        { cancelable: false, }
-                    );
-                },
-            );
+            this._triggerErrorModal();
         }
     }
 
@@ -221,7 +204,7 @@ class StartSensorSessionModal extends PureComponent {
         this._pages = {};
         clearInterval(this.timerId);
         this.setState(
-            { timer: 15, },
+            { timer: 15, sessionId: null, },
             () => {this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];}
         );
     }
@@ -254,14 +237,16 @@ class StartSensorSessionModal extends PureComponent {
     }
 
     _onPageScrollEnd = currentPage => {
-        const { user, } = this.props;
-        const { showLEDPage, showPlacementPages, } = this.state;
+        const { isFirstTimeExperience, showLEDPage, showPlacementPages, } = this.state;
+        const checkpointPages = [7];
+        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
+            this._updateUserCheckpoint();
+        }
         this._video.seek(0);
         if(
-            (currentPage === 2 || currentPage === 9) &&
+            ((!isFirstTimeExperience && currentPage === 2) || (isFirstTimeExperience && currentPage === 9)) &&
             !showLEDPage &&
-            !showPlacementPages &&
-            user.first_time_experience.includes(START_SESSION_FIRST_TIME_EXPERIENCE)
+            !showPlacementPages
         ) {
             this.timerId = setInterval(() => {
                 let newTimerValue = parseInt((this.state.followAlongTimer + 100), 10);
@@ -276,19 +261,14 @@ class StartSensorSessionModal extends PureComponent {
                 );
             }, 500);
         } else if(
-            (currentPage === 3 || currentPage === 10) &&
+            ((!isFirstTimeExperience && currentPage === 3) || (isFirstTimeExperience && currentPage === 10)) &&
             !showLEDPage &&
-            !showPlacementPages &&
-            user.first_time_experience.includes(START_SESSION_FIRST_TIME_EXPERIENCE)
+            !showPlacementPages
         ) {
             this.timerId = setInterval(() => {
                 let newTimerValue = parseInt((this.state.timer - 1), 10);
                 this.setState({ timer: newTimerValue, });
             }, 1000);
-        }
-        const checkpointPages = [7];
-        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
-            this._updateUserCheckpoint();
         }
     }
 
@@ -384,10 +364,24 @@ class StartSensorSessionModal extends PureComponent {
         );
     }
 
-    _startCalibration = async () => {
+    _startCalibration = () => {
+        const { network, updateSensorSession, user, } = this.props;
+        const { sessionId, } = this.state;
+        if(!network.connected) {
+            return this._triggerErrorModal();
+        }
+        if(sessionId) {
+            return updateSensorSession(false, 'CREATE_ATTEMPT_FAILED', sessionId, user)
+                .then(res => this.setState({ createError: null, sessionId: null, }, () => this._createSession()))
+                .catch(err => this._createSession());
+        }
+        return this._createSession();
+    }
+
+    _createSession = async () => {
         const { createSensorSession, getSensorFiles, user, } = this.props;
         try {
-            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+            const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/America/New_York');
             const timesyncResponse = await timesyncApiCall.json();
             let dateTimeReturned = timesyncResponse.utc_datetime;
             let indexOfDot = dateTimeReturned.indexOf('.');
@@ -415,11 +409,34 @@ class StartSensorSessionModal extends PureComponent {
                 this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
                 if(patchSession) {
                     updateSensorSession(false, patchSession, sessionId, user)
-                        .then(res => console.log('res',res))
+                        .then(res => this.setState({ createError: null, sessionId: null, }))
                         .catch(err => console.log('err',err));
                 }
                 this._renderPreviousPage(numberOfPagesBack);
             }
+        );
+    }
+
+    _triggerErrorModal = () => {
+        clearInterval(this.timerId);
+        this._pages.scrollToPage(0);
+        this.setState(
+            { pageIndex: 0, timer: 15, },
+            () => {
+                this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
+                Alert.alert(
+                    ERROR_HEADER,
+                    this.state.createError || ERROR_STRING,
+                    [
+                        {
+                            onPress: () => this.props.onClose(true),
+                            style:   'cancel',
+                            text:    'OK',
+                        },
+                    ],
+                    { cancelable: false, }
+                );
+            },
         );
     }
 
@@ -725,6 +742,7 @@ StartSensorSessionModal.propTypes = {
     createSensorSession: PropTypes.func.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
     isModalOpen:         PropTypes.bool.isRequired,
+    network:             PropTypes.object.isRequired,
     onClose:             PropTypes.func.isRequired,
     updateSensorSession: PropTypes.func.isRequired,
     updateUser:          PropTypes.func.isRequired,

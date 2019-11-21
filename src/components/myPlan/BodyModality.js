@@ -380,7 +380,7 @@ class BodyModality extends Component {
                                                     { modality === 'heat' || modality === 'ice' ?
                                                         `Set a timer for ${time} minutes and wait.`
                                                         :
-                                                        'Set a timer for 11–15 min and wait.'
+                                                        'Set a timer for 10-15 minutes and wait'
                                                     }
                                                 </Text>
                                                 <Spacer size={AppSizes.paddingXSml} />

@@ -8,21 +8,21 @@ import { store } from '../store';
 
 // import third-party libraries
 import _ from 'lodash';
-import { BleManager, } from 'react-native-ble-plx';
-import { Buffer } from 'buffer';
+// import { BleManager, } from 'react-native-ble-plx';
+// import { Buffer } from 'buffer';
 import moment from 'moment';
 
 // constants
-const commands = BLEConfig.commands;
-const networkTypes = BLEConfig.networkTypes;
-const serviceUUID = BLEConfig.serviceUUID3Sensor;
-const characteristicUUID = BLEConfig.characteristicUUID3Sensor;
-
-let bleManager = null;
+// const commands = BLEConfig.commands;
+// const networkTypes = BLEConfig.networkTypes;
+// const serviceUUID = BLEConfig.serviceUUID3Sensor;
+// const characteristicUUID = BLEConfig.characteristicUUID3Sensor;
+//
+// let bleManager = null;
 
 /**
   * UTILITY FUNCTIONS
-  */
+  *
 const convertDecimal = array => array.map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2)).join(':');
 
 const convertHex = value => parseInt(value, 16);
@@ -34,15 +34,15 @@ const validateReadData = (response, dataArray) => (response[0] === 0 && response
   * eg.
   *   [116,101,115,116]
   *   'test'
-  */
-const convertByteArrayToString = array => array.map(byte =>  byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
+  *
+const convertByteArrayToString = array => array.map(byte => byte && byte > 31 && byte < 127 ? String.fromCharCode(byte) : '').join('');
 
 /**
   * Convert string to byte array
   * eg.
   *   'test'
   *   [116,101,115,116]
-  */
+  *
 const convertStringToByteArray = string => string.split('').map(char => char.charCodeAt(0));
 
 /**
@@ -50,10 +50,20 @@ const convertStringToByteArray = string => string.split('').map(char => char.cha
   * eg.
   *   'AAjUADygZ1csEgAAAAAAAAAAAAA='
   *   [00 08 d4 00 3c a0 67 57 2c 12 00 00 00 00 00 00 00 00 00 00]
-  */
+  *
 const convertBase64ToHex = string => {
     let hexString = new Buffer.from(string, 'base64').toString('hex');
     return hexString.match(/.{1,2}/g).map(val => convertHex(val))
+};
+
+const convertEpochTimeToBase64 = (command, time) => {
+    let returnArray = [command];
+    let hexArray = parseInt(time, 10).toString(16).toUpperCase().match(/.{1,2}/g).reverse();
+    hexArray = hexArray.map(byte => convertHex(`0x${byte}`));
+    returnArray.push(hexArray.length);
+    returnArray.push(hexArray);
+    let cleanedReturnArray = _.flatten(returnArray);
+    return new Buffer(cleanedReturnArray).toString('base64');
 };
 
 const unsignedToSignedInt = int => (int <<24 >>24);
@@ -70,7 +80,7 @@ const read = async (device, base64Value, transactionId) => {
                 let value = convertBase64ToHex(characteristic.value);
                 let base64WriteValue = convertBase64ToHex(base64Value);
                 if(!validateReadData(value, base64WriteValue)) {
-                    /*eslint no-use-before-define: 0*/
+                    /*eslint no-use-before-define: 0*
                     return _.delay(() => write(device, base64Value, transactionId), 2000);
                 } else if(value[3] === 1) {
                     let errorObj = await handleError({mesasge: 'object not valid - read',}, device);
@@ -195,7 +205,7 @@ const handleError = async (error, device) => {
                 rssi:         null,
             };
         });
-};
+};*/
 
 /**
   * API CALL FUNCTIONS
@@ -217,30 +227,72 @@ const assignKitIndividual = (accessory, user) => {
     });
 };
 
-const getSensorFiles = (userObj, days = 14) => {
+const getSensorDetails =  userObj => {
+    let payload = {};
+    payload.accessory_id = userObj.sensor_data.sensor_pid;
+    payload.timezone = AppUtil.getFormattedTimezoneString();
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
+    return dispatch => new Promise((resolve, reject) => {
+        return AppAPI.preprocessing.details.post({userId: userObj.id}, payload)
+            .then(response => {
+                let newUserObj = _.cloneDeep(userObj);
+                newUserObj.sensor_data.accessory = response.accessory || {};
+                newUserObj.sensor_data.sessions = response.sessions;
+                dispatch({
+                    type: Actions.USER_REPLACE,
+                    data: newUserObj,
+                });
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return resolve(response);
+            })
+            .catch(error => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return reject(error);
+            });
+    });
+};
+
+const getSensorFiles = (userObj, cleanSessions, days = 14) => {
     const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor';
     const has3SensorConnected = userObj && userObj.sensor_data && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid;
     if(!userHas3SensorSystem || !has3SensorConnected) {
         return dispatch => new Promise((resolve, reject) => resolve());
     }
     let payload = {};
-    payload.accessory_id = userObj.sensor_data.sensor_pid;
-    if(userObj.timezone) {
-        payload.timezone = userObj.timezone;
+    payload.timezone = AppUtil.getFormattedTimezoneString();
+    if(cleanSessions) {
+        payload.cleanSessions = true;
     }
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
     return dispatch => new Promise((resolve, reject) => {
         return AppAPI.preprocessing.status.post({userId: userObj.id}, payload)
             .then(response => {
                 let newUserObj = _.cloneDeep(userObj);
-                newUserObj.sensor_data.accessory = response.accessory;
+                newUserObj.sensor_data.accessory = response.accessory || {};
                 newUserObj.sensor_data.sessions = response.sessions;
                 dispatch({
                     type: Actions.USER_REPLACE,
                     data: newUserObj,
                 });
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
                 return resolve(response);
             })
-            .catch(error => reject(error));
+            .catch(error => {
+                dispatch({
+                    type: Actions.STOP_REQUEST,
+                });
+                return reject(error);
+            });
     });
 };
 
@@ -306,7 +358,7 @@ const deviceFound = data => {
 
 /**
   * 3-SENSOR SYSTEM FUNCTIONS
-  */
+  *
 const checkRSSI = async (device, characteristic) => {
     return await device.readRSSI()
         .then(async rssiCharacteristic => {
@@ -373,7 +425,6 @@ const startConnection = async (device) => {
                     });
                     return resolve(macAddress);
                 } catch(error) {
-                    console.log('error',error);
                     let errorObj = await handleError(error, device);
                     return reject(errorObj);
                 }
@@ -487,7 +538,7 @@ const getSingleWifiConnection = async (device, index) => {
                 let longWifiSleep = await sleeper(1000);
                 let longCharacteristic = await longWifiCharacteristic.read(singleWifiLongTransactionId);
                 let longResponseHex = convertBase64ToHex(longCharacteristic.value);
-                if(convertByteArrayToString(longResponseHex) === '\\' || convertByteArrayToString(longResponseHex) ==='/') {
+                if(convertByteArrayToString(longResponseHex) === '\\' || convertByteArrayToString(longResponseHex) === '/') {
                     let errorObj = await handleError({}, device);
                     return reject(errorObj);
                 }
@@ -656,20 +707,40 @@ const writeWifiNetworkReset = device => {
     });
 };
 
+const writeAccessoryTime = async device => {
+    let writeTimeBase64 = '';
+    let writeTimeTransactionId = 'write-time';
+    return await new Promise(async (resolve, reject) => {
+        return AppAPI.hardware.get_utc_time.get()
+            .then(async response => {
+                let responseDate = response.current_date;
+                let currentUTCTime = moment(responseDate, 'YYYY-MM-DDTHH:mm:ssZ').utc();
+                let currentUTCEpochTime = currentUTCTime.unix();
+                writeTimeBase64 = convertEpochTimeToBase64(commands.WRITE_TIME, currentUTCEpochTime);
+                return await device.writeCharacteristicWithResponseForService(serviceUUID, characteristicUUID, writeTimeBase64, writeTimeTransactionId)
+            })
+            .then(async writeCharacteristic => await validateWriteWifiDetailsResponse(writeCharacteristic, writeTimeBase64, device, writeTimeTransactionId))
+            .then(res => resolve())
+            .catch(err => resolve());
+    });
+};*/
+
 export default {
     assignKitIndividual,
     createSensorSession,
-    destroyInstance,
-    enable,
-    exitKitSetup,
-    getScannedWifiConnections,
+    // destroyInstance,
+    // enable,
+    // exitKitSetup,
+    // getScannedWifiConnections,
+    getSensorDetails,
     getSensorFiles,
-    getSingleWifiConnection,
-    handleError,
-    sleeper,
-    startDeviceScan,
-    startMonitor,
+    // getSingleWifiConnection,
+    // handleError,
+    // sleeper,
+    // startDeviceScan,
+    // startMonitor,
     updateSensorSession,
-    writeWifiDetailsToSensor,
-    writeWifiNetworkReset,
+    // writeAccessoryTime,
+    // writeWifiDetailsToSensor,
+    // writeWifiNetworkReset,
 };

@@ -57,8 +57,16 @@ import defaultPlanState from '../../states/plan';
 
 // Components
 import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
-import { PostSessionSurvey, ReadinessSurvey, ReturnSensorsModal, SessionsCompletionModal, StartSensorSessionModal, } from './pages';
-import { ContactUsModal, Loading, } from '../general';
+import {
+    LoadingState,
+    LogSymptomsModal,
+    PostSessionSurvey,
+    ReadinessSurvey,
+    ReturnSensorsModal,
+    SessionsCompletionModal,
+    StartSensorSessionModal,
+} from './pages';
+import { ContactUsModal, Loading, WebViewPageModal, } from '../general';
 
 // global constants
 const numberOfPlaceholders = 8;
@@ -67,6 +75,12 @@ const UNREAD_NOTIFICATIONS_HEIGHT_WIDTH = (AppFonts.scaleFont(13) + (AppSizes.pa
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
+    animationWrapper: {
+        alignSelf:      'center',
+        height:         50,
+        justifyContent: 'center',
+        width:          50,
+    },
     completedSubtitle: {
         fontSize: AppFonts.scaleFont(14),
     },
@@ -96,6 +110,17 @@ const styles = StyleSheet.create({
     lockedTitle: {
         fontSize: AppFonts.scaleFont(18),
         opacity:  0.4,
+    },
+    sensorSessionLoading: {
+        alignItems:      'center',
+        backgroundColor: `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`,
+        borderRadius:    12,
+        bottom:          0,
+        justifyContent:  'center',
+        left:            0,
+        position:        'absolute',
+        right:           0,
+        top:             0,
     },
     unreadNotificationsWrapper: {
         alignItems:      'center',
@@ -182,7 +207,7 @@ const ActivityTab = ({
             </View>
             :
             <TouchableOpacity
-                activeOpacity={0.5}
+                activeOpacity={onPress ? 0.5 : 1}
                 onPress={onPress}
                 style={[AppStyles.scaleButtonShadowEffect, {borderRadius: 12,}, Platform.OS === 'ios' ? {} : {elevation: 2,}]}
             >
@@ -224,6 +249,7 @@ const ActivityTab = ({
 
 const SensorSession = ({
     activity,
+    activityIdLoading,
     askForNewMobilize,
     handleGetMobilize,
     handeRefresh,
@@ -239,30 +265,33 @@ const SensorSession = ({
         iconColor,
         iconName,
         iconType,
+        isCalculating,
         subtext,
         title,
-    } = PlanLogic.handleSingleSensorSessionCardRenderLogic(activity, userSesnorData);
+    } = PlanLogic.handleSingleSensorSessionCardRenderLogic(activity, userSesnorData, activityIdLoading);
     return (
         <TouchableOpacity
             activeOpacity={1}
             onLayout={onLayout ? event => onLayout(event) : null}
             onPress={
-                activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
-                    () => handeRefresh()
-                    : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
-                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
-                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
-                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
-                            : activityStatus === 'PROCESSING_COMPLETE' ?
-                                () => handleGetMobilize()
-                                : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
-                                    () => updateSensorSession(activity)
-                                    : activityStatus === 'NO_WIFI_SETUP' ?
-                                        () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
-                                        : activityStatus === 'NO_DATA' ?
-                                            () => {} // toggleContactUsWebView()
-                                            :
-                                            () => {}
+                (isCalculating || activityIdLoading) ?
+                    () => {}
+                    : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
+                        () => handeRefresh(activity.id)
+                        : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
+                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
+                            : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
+                                () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
+                                : activityStatus === 'PROCESSING_COMPLETE' ?
+                                    () => handleGetMobilize()
+                                    : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
+                                        () => updateSensorSession(activity)
+                                        : activityStatus === 'NO_WIFI_SETUP' ?
+                                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', })
+                                            : activityStatus === 'NO_DATA' ?
+                                                () => {} // toggleContactUsWebView()
+                                                :
+                                                () => {}
             }
             style={[AppStyles.scaleButtonShadowEffect, {backgroundColor: AppColors.white, borderRadius: 12, marginBottom: AppSizes.paddingMed, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingMed,}]}
         >
@@ -293,6 +322,11 @@ const SensorSession = ({
                             </View>
                         }
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), marginLeft: AppSizes.paddingSml,}}>{title}</Text>
+                        { isCalculating &&
+                            <View
+                                style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                            />
+                        }
                     </View>
                     { eventDate &&
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>{eventDate}</Text>
@@ -402,25 +436,64 @@ const SensorSession = ({
                         :
                         null
                 }
+                { isCalculating &&
+                    <View
+                        style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                    />
+                }
             </View>
             { activityStatus === 'PROCESSING_COMPLETE' ?
                 <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                     <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{`${askForNewMobilize ? 'Create' : 'Update'} Plan`}</Text>
+                    { isCalculating &&
+                        <View
+                            style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                        />
+                    }
                 </View>
                 : actionText ?
                     <View style={{alignItems: 'flex-end', paddingTop: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(11),}}>{actionText}</Text>
+                        { isCalculating &&
+                            <View
+                                style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                            />
+                        }
                     </View>
                     : activityStatus === 'CREATE_COMPLETE' && !activity.end_date ?
                         <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                             <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'End Workout'}</Text>
+                            { isCalculating &&
+                                <View
+                                    style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                                />
+                            }
                         </View>
                         : activityStatus === 'NO_WIFI_SETUP' ?
                             <View style={{alignSelf: 'center', backgroundColor: AppColors.zeplin.yellow, borderRadius: 22, marginTop: AppSizes.paddingSml, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthHalf,}}>
                                 <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Tap to connect wifi'}</Text>
+                                { isCalculating &&
+                                    <View
+                                        style={[StyleSheet.absoluteFill, {backgroundColor: AppColors.white,}]}
+                                    />
+                                }
                             </View>
                             :
                             null
+            }
+            { isCalculating &&
+                <View style={[styles.sensorSessionLoading,]}>
+                    <LottieView
+                        autoPlay={true}
+                        loop={true}
+                        progress={1}
+                        source={require('../../../assets/animation/checkingstatus.json')}
+                        style={[styles.animationWrapper,]}
+                    />
+                    <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.paddingSml,}}>
+                        {'Checking status...'}
+                    </Text>
+                </View>
             }
         </TouchableOpacity>
     );
@@ -450,6 +523,7 @@ class MyPlan extends Component {
         plan:                 PropTypes.object.isRequired,
         postReadinessSurvey:  PropTypes.func.isRequired,
         postSessionSurvey:    PropTypes.func.isRequired,
+        postSymptoms:         PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         setAppLogs:           PropTypes.func.isRequired,
         updateSensorSession:  PropTypes.func.isRequired,
@@ -594,7 +668,8 @@ class MyPlan extends Component {
             (
                 !user.first_time_experience.includes('plan_coach_1') ||
                 !user.first_time_experience.includes('plan_coach_2')
-            )
+            ) &&
+            !this.state.isPageCalculating
         ) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
@@ -603,10 +678,7 @@ class MyPlan extends Component {
     _closePrepareSessionsCompletionModal = () => {
         this.goToPageTimer = _.delay(() => {
             this.setState(
-                {
-                    dailyReadiness:                       _.cloneDeep(defaultPlanState.dailyReadiness),
-                    isPrepareSessionsCompletionModalOpen: false,
-                },
+                { dailyReadiness: _.cloneDeep(defaultPlanState.dailyReadiness), },
                 () => {
                     this._scrollToFirstActiveActivityTab();
                     this._timer = _.delay(() => this._checkCoachStatus(), 500);
@@ -618,10 +690,7 @@ class MyPlan extends Component {
     _closeTrainSessionsCompletionModal = () => {
         this.goToPageTimer = _.delay(() => {
             this.setState(
-                {
-                    isTrainSessionsCompletionModalOpen: false,
-                    postSession:                        _.cloneDeep(defaultPlanState.postSession),
-                },
+                { postSession: _.cloneDeep(defaultPlanState.postSession), },
                 () => {
                     this._scrollToFirstActiveActivityTab();
                     this._timer = _.delay(() => this._checkCoachStatus(), 500);
@@ -659,14 +728,16 @@ class MyPlan extends Component {
         );
     }
 
-    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback) => {
+    _handleAreaOfSorenessClick = (areaClicked, isDailyReadiness, isAllGood, resetSections, side, callback, isLogSymptoms) => {
         const { plan, } = this.props;
-        const { dailyReadiness, postSession, } = this.state;
-        let stateObject = isDailyReadiness ? dailyReadiness : postSession;
+        const { dailyReadiness, logSymptoms, postSession, } = this.state;
+        let stateObject = isDailyReadiness ? dailyReadiness : isLogSymptoms ? logSymptoms : postSession;
         let newSorenessFields = PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, isAllGood, plan.soreBodyParts, resetSections, side);
         let newFormFields = _.update( stateObject, 'soreness', () => newSorenessFields);
         if (isDailyReadiness) {
             this.setState({ dailyReadiness: newFormFields, }, () => callback && callback());
+        } else if(isLogSymptoms) {
+            this.setState({ logSymptoms: newFormFields, }, () => callback && callback());
         } else {
             this.setState({ postSession: newFormFields, }, () => callback && callback());
         }
@@ -693,6 +764,7 @@ class MyPlan extends Component {
         } = PlanLogic.handleReadinessSurveySubmitLogic(dailyReadiness, prepare, recover, healthData, user);
         this.setState(
             {
+                apiIndex:                   nonDeletedSessions.length !== 0 ? 1 : 0,
                 expandNotifications:        false,
                 dailyReadiness:             newDailyReadinessState,
                 healthData:                 _.cloneDeep(defaultPlanState.healthData),
@@ -702,40 +774,37 @@ class MyPlan extends Component {
                 recover:                    newRecoverObject,
             },
             () => {
-                this.goToPageTimer = _.delay(() => {
-                    this.setState({ isPrepareSessionsCompletionModalOpen: nonDeletedSessions.length !== 0, });
-                }, 500)
-            },
+                postReadinessSurvey(newDailyReadiness, user.id)
+                    .then(res => {
+                        getSensorFiles(user);
+                        return res;
+                    })
+                    .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
+                    .then(response => {
+                        clearHealthKitWorkouts();
+                        clearCompletedExercises();
+                        clearCompletedCoolDownExercises();
+                        // do we need to open 3-Sensor banner
+                        AppUtil._handle3SensorBanner(user, response[0]);
+                        // handle Coach related items
+                        if(!this.state.isPrepareSessionsCompletionModalOpen) {
+                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                        }
+                        // udpate RS first_time_experience
+                        if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
+                            this._handleUpdateFirstTimeExperience('rs_begin_page', () => this.setState({ apiIndex: null, isPageCalculating: false, }));
+                        } else {
+                            this.setState({ apiIndex: null, isPageCalculating: false, });
+                        }
+                    })
+                    .catch(error =>
+                        this.setState(
+                            { apiIndex: null, isPageCalculating: false, },
+                            () => _.delay(() => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey), 500),
+                        )
+                    );
+            }
         );
-        postReadinessSurvey(newDailyReadiness, user.id)
-            .then(res => {
-                getSensorFiles(user);
-                return res;
-            })
-            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
-            .then(response => {
-                clearHealthKitWorkouts();
-                clearCompletedExercises();
-                clearCompletedCoolDownExercises();
-                // do we need to open 3-Sensor banner
-                AppUtil._handle3SensorBanner(user, response[0]);
-                // handle Coach related items
-                if(!this.state.isPrepareSessionsCompletionModalOpen) {
-                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                }
-                // udpate RS first_time_experience
-                if(!this.props.user.first_time_experience.includes('rs_begin_page')) {
-                    this._handleUpdateFirstTimeExperience('rs_begin_page', () => this.setState({ isPageCalculating: false, }));
-                } else {
-                    this.setState({ isPageCalculating: false, });
-                }
-            })
-            .catch(error =>
-                this.setState(
-                    { isPageCalculating: false, },
-                    () => AppUtil.handleAPIErrorAlert(ErrorMessages.postReadinessSurvey),
-                )
-            );
     }
 
     _handleEnteringApp = callback => {
@@ -810,17 +879,17 @@ class MyPlan extends Component {
             });
     }
 
-    _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification) => {
+    _handleExerciseListRefresh = (shouldClearCompletedExercises, isFromPushNotification, cleanSessions = false) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getMyPlan, getSensorFiles, user, } = this.props;
         const { dailyReadiness, } = this.state;
         // clear timer
         clearInterval(this._timer);
         let userId = user.id;
         this.setState(
-            { isPageLoading: isFromPushNotification ? false : true, },
+            { isPageCalculating: isFromPushNotification ? false : true, isPageLoading: isFromPushNotification ? false : true, },
             () => {
                 getMyPlan(userId, moment().format('YYYY-MM-DD'))
-                    .then(() => getSensorFiles(user))
+                    .then(() => getSensorFiles(user, cleanSessions))
                     .then(response => {
                         if(shouldClearCompletedExercises) {
                             clearCompletedExercises();
@@ -839,14 +908,14 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = () => {
+    _handleGetMobilize = isFromAddButton => {
         const { getMobilize, user, } = this.props;
         this.setState(
-            { expandNotifications: false, isPageCalculating: true, },
+            { apiIndex: isFromAddButton ? 3 : 2, expandNotifications: false, isPageCalculating: true, },
             () =>
                 getMobilize(user.id)
-                    .then(res => this.setState({ isPageCalculating: false, }))
-                    .catch(() => this.setState({ isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
+                    .then(res => this.setState({ apiIndex: null, isPageCalculating: false, }))
+                    .catch(() => this.setState({ apiIndex: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
     }
 
@@ -867,6 +936,64 @@ class MyPlan extends Component {
         }, () => {
             if(callback) { callback(); }
         });
+    }
+
+    _handleLogSymptomsFormChange = (name, value, isPain = false, bodyPart, side, isClearCandidate, isMovementValue, callback) => {
+        const { logSymptoms, } = this.state;
+        const newFormFields = PlanLogic.handleDailyReadinessAndPostSessionFormChange(name, value, isPain, bodyPart, side, logSymptoms, isClearCandidate, isMovementValue);
+        this.setState(
+            { logSymptoms: newFormFields, },
+            () => callback && callback(),
+        );
+    }
+
+    _handleLogSymptomsFormSubmit = () => {
+        const { logSymptoms, } = this.state;
+        const { postSymptoms, user, } = this.props;
+        let clonedSoreness = _.cloneDeep(logSymptoms.soreness);
+        let updatedSoreness = _.filter(clonedSoreness, s => s.tight || s.ache || s.sore || s.tender || s.knots || s.sharp);
+        updatedSoreness = _.map(updatedSoreness, s => {
+            let newSoreness = _.cloneDeep(s);
+            newSoreness.ache = newSoreness.sore && newSoreness.sore > 0 ?
+                newSoreness.sore
+                : newSoreness.tender && newSoreness.tender > 0 ?
+                    newSoreness.tender
+                    :
+                    newSoreness.ache;
+            return newSoreness;
+        });
+        let newLogSymptoms = {
+            event_date: `${moment().toISOString(true).split('.')[0]}Z`,
+            soreness:   updatedSoreness,
+        };
+        this.setState(
+            {
+                apiIndex:               0,
+                isLogSymptomsModalOpen: false,
+                isPageCalculating:      true,
+                logSymptoms:            {
+                    soreness: [],
+                },
+            },
+            () => postSymptoms(newLogSymptoms, user.id)
+                .then(response =>
+                    this.setState(
+                        { apiIndex: null, isPageCalculating: false, },
+                        () => {
+                            // handle Coach related items
+                            if(!this.state.isTrainSessionsCompletionModalOpen) {
+                                this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                            }
+                        }
+                    )
+                )
+                .catch(error =>
+                    this.setState(
+                        { apiIndex: null, isPageCalculating: false, },
+                        () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                    )
+                ),
+        );
     }
 
     _handleNoSessions = () => {
@@ -901,6 +1028,7 @@ class MyPlan extends Component {
         } = PlanLogic.handlePostSessionSurveySubmitLogic(postSession, train, recover, healthData, user);
         this.setState(
             {
+                apiIndex:                     1,
                 expandNotifications:          false,
                 goToScreen:                   landingScreen,
                 healthData:                   [],
@@ -914,29 +1042,36 @@ class MyPlan extends Component {
                 },
                 recover: newRecoverObject,
             },
-            () => { this.goToPageTimer = _.delay(() => this.setState({ isTrainSessionsCompletionModalOpen: !areAllDeleted, }), 500); }
+            () => {
+                clearHealthKitWorkouts() // clear HK workouts right away
+                    .then(() => postSessionSurvey(newPostSession, user.id))
+                    .then(() => getSensorFiles(user))
+                    .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
+                    .then(response => {
+                        this.setState(
+                            { apiIndex: null, isPageCalculating: false, },
+                            () => {
+                                if(!areAllDeleted) {
+                                    clearCompletedExercises();
+                                    clearCompletedCoolDownExercises();
+                                }
+                                // scroll to first active activity tab
+                                // this._scrollToFirstActiveActivityTab();
+                                // handle Coach related items
+                                if(!this.state.isTrainSessionsCompletionModalOpen) {
+                                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                                }
+                            }
+                        );
+                    })
+                    .catch(error =>
+                        this.setState(
+                            { apiIndex: null, isPageCalculating: false, },
+                            () => _.delay(() => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey), 500),
+                        )
+                    );
+            }
         );
-        clearHealthKitWorkouts() // clear HK workouts right away
-            .then(() => postSessionSurvey(newPostSession, user.id))
-            .then(() => getSensorFiles(user))
-            .then(res => updateUserFlag ? this._handleUpdateFirstTimeExperience(updateUserFlag, () => res) : res)
-            .then(response => {
-                this.setState({ isPageCalculating: false, });
-                if(!areAllDeleted) {
-                    clearCompletedExercises();
-                    clearCompletedCoolDownExercises();
-                }
-                // scroll to first active activity tab
-                this._scrollToFirstActiveActivityTab();
-                // handle Coach related items
-                if(!this.state.isTrainSessionsCompletionModalOpen) {
-                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                }
-            })
-            .catch(error => {
-                this.setState({ isPageCalculating: false, });
-                AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey);
-            });
     }
 
     _handlePushNotification = props => {
@@ -968,16 +1103,16 @@ class MyPlan extends Component {
         );
     }
 
-    _handleSensorFilesRefresh = () => {
+    _handleSensorFilesRefresh = activityId => {
         const { getSensorFiles, user, } = this.props;
         this.setState(
-            { isPageCalculating: true, },
+            { activityIdLoading: activityId, isPageCalculating: true, },
             () => {
                 getSensorFiles(user)
-                    .then(res => this.setState({ isPageCalculating: false, }))
+                    .then(res => this.setState({ activityIdLoading: null, isPageCalculating: false, }))
                     .catch(err =>
                         this.setState(
-                            { isPageCalculating: false, },
+                            { activityIdLoading: null, isPageCalculating: false, },
                             () => AppUtil.handleAPIErrorAlert(ErrorMessages.getMyPlan),
                         )
                     );
@@ -1023,6 +1158,7 @@ class MyPlan extends Component {
         } = PlanLogic.handlePostSessionSurveySubmitLogic(updatedPostSession, train, recover, healthData, user);
         this.setState(
             {
+                apiIndex:                     1,
                 expandNotifications:          false,
                 goToScreen:                   landingScreen,
                 healthData:                   [],
@@ -1037,38 +1173,40 @@ class MyPlan extends Component {
                 recover:       newRecoverObject,
                 sensorSession: null,
             },
+            () =>
+                updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
+                    .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
+                    .then(() => {
+                        newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
+                        return postSessionSurvey(newPostSession, user.id);
+                    })
+                    .then(() => getSensorFiles(user))
+                    .then(response => {
+                        this.setState(
+                            {
+                                apiIndex:                 null,
+                                isPageCalculating:        false,
+                                isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
+                            },
+                            () => {
+                                clearCompletedExercises();
+                                clearCompletedCoolDownExercises();
+                                // scroll to first active activity tab
+                                // this._scrollToFirstActiveActivityTab();
+                                // handle Coach related items
+                                if(!this.state.isTrainSessionsCompletionModalOpen) {
+                                    this._timer = _.delay(() => this._checkCoachStatus(), 500);
+                                }
+                            },
+                        );
+                    })
+                    .catch(error =>
+                        this.setState(
+                            { apiIndex: null, isPageCalculating: false, },
+                            () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
+                        )
+                    ),
         );
-        updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
-            .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
-            .then(() => {
-                newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
-                return postSessionSurvey(newPostSession, user.id);
-            })
-            .then(() => getSensorFiles(user))
-            .then(response => {
-                this.setState(
-                    {
-                        isPageCalculating:        false,
-                        isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
-                    },
-                    () => {
-                        clearCompletedExercises();
-                        clearCompletedCoolDownExercises();
-                        // scroll to first active activity tab
-                        this._scrollToFirstActiveActivityTab();
-                        // handle Coach related items
-                        if(!this.state.isTrainSessionsCompletionModalOpen) {
-                            this._timer = _.delay(() => this._checkCoachStatus(), 500);
-                        }
-                    },
-                );
-            })
-            .catch(error =>
-                this.setState(
-                    { isPageCalculating: false, },
-                    () => AppUtil.handleAPIErrorAlert(ErrorMessages.postSessionSurvey),
-                )
-            );
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -1100,6 +1238,8 @@ class MyPlan extends Component {
                 { loading: true, showLoadingText: true, },
                 async () => {
                     let newSensorSession = _.cloneDeep(activity);
+                    newSensorSession.deleted = false;
+                    newSensorSession.ignored = false;
                     newSensorSession.hr_data = [];
                     newSensorSession.session_type = 6;
                     newSensorSession.source = 3;
@@ -1111,7 +1251,7 @@ class MyPlan extends Component {
                         soreness:         [],
                     };
                     try {
-                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/UTC');
+                        const timesyncApiCall = await fetch('http://worldtimeapi.org/api/timezone/America/New_York');
                         const timesyncResponse = await timesyncApiCall.json();
                         let dateTimeReturned = timesyncResponse.utc_datetime;
                         let indexOfDot = dateTimeReturned.indexOf('.');
@@ -1249,12 +1389,15 @@ class MyPlan extends Component {
 
     render = () => {
         let {
+            activityIdLoading,
+            apiIndex,
             appState,
             dailyReadiness,
             expandNotifications,
             healthData,
             isCoachModalOpen,
             isContactUsOpen,
+            isLogSymptomsModalOpen,
             isPageCalculating,
             isPageLoading,
             isPostSessionSurveyModalOpen,
@@ -1264,12 +1407,13 @@ class MyPlan extends Component {
             isStartSensorSessionModalOpen,
             isTrainSessionsCompletionModalOpen,
             loading,
+            logSymptoms,
             postSession,
             sensorSession,
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { createSensorSession, getSensorFiles, handleReadInsight, plan, updateSensorSession, updateUser, user, } = this.props;
+        let { createSensorSession, getSensorFiles, handleReadInsight, network, plan, updateSensorSession, updateUser, user, } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1299,11 +1443,14 @@ class MyPlan extends Component {
                         newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
                         handleReadInsight(newDailyPlan, insightType, user.id);
                     }}
+                    toggleCareModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
+                    togglePreventionModal={() => userHas3SensorSystem ? this.setState({ isStartSensorSessionModalOpen: true, }) : this.setState({ isNeedHelpModalOpen: true, })}
+                    toggleRecoveryModal={() => this._togglePostSessionSurveyModal()}
                     user={isReadinessSurveyCompleted && !isPageCalculating ? user : {}}
                 />
 
                 <Placeholder
-                    isReady={!isPageCalculating}
+                    isReady={true}//!isPageCalculating}
                     animation={'fade'}
                     whenReadyRender={() =>
                         <View style={{flex: 1,}}>
@@ -1320,6 +1467,7 @@ class MyPlan extends Component {
                                     { (userHas3SensorSystem && sensorSessions.length === 0 && !networkName) &&
                                         <SensorSession
                                             activity={{ status: 'NO_WIFI_SETUP', isNoWifiOrSessionsState: true, }}
+                                            activityIdLoading={activityIdLoading}
                                             userSesnorData={user.sensor_data}
                                         />
                                     }
@@ -1345,6 +1493,7 @@ class MyPlan extends Component {
                                     {_.map(sensorSessions, (activity, key) =>
                                         <SensorSession
                                             activity={activity}
+                                            activityIdLoading={activityIdLoading}
                                             askForNewMobilize={askForNewMobilize}
                                             handleGetMobilize={this._handleGetMobilize}
                                             handeRefresh={this._handleSensorFilesRefresh}
@@ -1362,7 +1511,14 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
+                                            onPress={
+                                                activityIdLoading ?
+                                                    null
+                                                    : activeModality.isBodyModality ?
+                                                        () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
+                                                        :
+                                                        () => AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })
+                                            }
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}
@@ -1394,7 +1550,14 @@ class MyPlan extends Component {
                                             id={activeModality.modality}
                                             key={key}
                                             onLayout={ev => this._onLayoutOfActivityTabs(ev)}
-                                            onPress={() => activeModality.isBodyModality ? AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, }) : AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })}
+                                            onPress={
+                                                activityIdLoading ?
+                                                    null
+                                                    : activeModality.isBodyModality ?
+                                                        () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
+                                                        :
+                                                        () => AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })
+                                            }
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
                                             title={activeModality.title}
@@ -1467,6 +1630,25 @@ class MyPlan extends Component {
                             buttonColor={AppColors.zeplin.yellow}
                             fixNativeFeedbackRadius={true}
                             hideShadow={true}
+                            onPress={() => _.delay(() => this.setState({ isLogSymptomsModalOpen: true, }), 200)}
+                            spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={'Log Symptoms'}
+                            useNativeFeedback={false}
+                        >
+                            <TabIcon
+                                color={AppColors.white}
+                                icon={'ios-body'}
+                                size={32}
+                                type={'ionicon'}
+                            />
+                        </ActionButton.Item>
+                        <ActionButton.Item
+                            activeOpacity={1}
+                            buttonColor={AppColors.zeplin.yellow}
+                            fixNativeFeedbackRadius={true}
+                            hideShadow={true}
                             onPress={() => this._togglePostSessionSurveyModal()}
                             spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                             textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
@@ -1485,7 +1667,7 @@ class MyPlan extends Component {
                                 buttonColor={AppColors.zeplin.yellow}
                                 fixNativeFeedbackRadius={true}
                                 hideShadow={true}
-                                onPress={() => this._handleGetMobilize()}
+                                onPress={() => this._handleGetMobilize(true)}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
@@ -1519,7 +1701,7 @@ class MyPlan extends Component {
                             </ActionButton.Item>
                         }
                     </ActionButton>
-                    : (isReadinessSurveyCompleted && !isPageCalculating && hasActive3SensorSession) ?
+                    : (isReadinessSurveyCompleted && !isPageLoading && (hasActive3SensorSession || !!activityIdLoading)) ?
                         <View style={[styles.disabledFABBtn,]}>
                             <TabIcon
                                 color={AppColors.white}
@@ -1547,6 +1729,7 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
+
                 <FathomModal isVisible={isPostSessionSurveyModalOpen}>
                     <PostSessionSurvey
                         handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
@@ -1565,7 +1748,8 @@ class MyPlan extends Component {
                         user={user}
                     />
                 </FathomModal>
-                <SessionsCompletionModal
+
+                {/*<SessionsCompletionModal
                     isModalOpen={isPrepareSessionsCompletionModalOpen}
                     onClose={this._closePrepareSessionsCompletionModal}
                     sessions={dailyReadiness.sessions && dailyReadiness.sessions.length > 0 ? dailyReadiness.sessions : []}
@@ -1574,19 +1758,22 @@ class MyPlan extends Component {
                     isModalOpen={isTrainSessionsCompletionModalOpen}
                     onClose={this._closeTrainSessionsCompletionModal}
                     sessions={postSession && postSession.sessions && postSession.sessions.length > 0 ? postSession.sessions : []}
-                />
+                />*/}
+
                 { isStartSensorSessionModalOpen &&
                     <StartSensorSessionModal
                         appState={appState}
                         createSensorSession={createSensorSession}
                         getSensorFiles={getSensorFiles}
                         isModalOpen={isStartSensorSessionModalOpen}
-                        onClose={() => this.setState({ isStartSensorSessionModalOpen: false, })}
+                        network={network}
+                        onClose={refreshPlan => this.setState({ isStartSensorSessionModalOpen: false, }, () => refreshPlan ? this._handleExerciseListRefresh(false, false, true) : null)}
                         updateSensorSession={updateSensorSession}
                         updateUser={updateUser}
                         user={user}
                     />
                 }
+
                 { loading ?
                     <Loading
                         text={showLoadingText ? trainLoadingScreenText : null}
@@ -1594,6 +1781,7 @@ class MyPlan extends Component {
                     :
                     null
                 }
+
                 <FathomModal
                     hasBackdrop={false}
                     isVisible={isCoachModalOpen}
@@ -1673,6 +1861,37 @@ class MyPlan extends Component {
                     isModalOpen={isReturnSensorsModalOpen}
                     updateUser={updateUser}
                     user={user}
+                />
+
+                <LoadingState
+                    apiIndex={apiIndex}
+                    isModalOpen={activityIdLoading ? false : isPageCalculating}
+                    onClose={() =>
+                        this.setState(
+                            { isPageCalculating: false, },
+                            () => {
+                                this._scrollToFirstActiveActivityTab();
+                                this._timer = _.delay(() => this._checkCoachStatus(), 750);
+                            }
+                        )
+                    }
+                />
+
+                <LogSymptomsModal
+                    handleAreaOfSorenessClick={this._handleAreaOfSorenessClick}
+                    handleClose={() => this.setState({ isLogSymptomsModalOpen: false, })}
+                    handleFormChange={this._handleLogSymptomsFormChange}
+                    handleFormSubmit={this._handleLogSymptomsFormSubmit}
+                    isModalOpen={isLogSymptomsModalOpen}
+                    soreBodyParts={plan.soreBodyParts}
+                    soreness={logSymptoms.soreness}
+                    user={user}
+                />
+
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !this.state.isNeedHelpModalOpen, })}
+                    isModalOpen={this.state.isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
                 />
 
             </View>

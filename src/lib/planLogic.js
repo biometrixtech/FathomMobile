@@ -972,7 +972,7 @@ const PlanLogic = {
         let workout = workouts[0];
         let filteredSport = _.filter(MyPlanConstants.teamSports, ['index', workout.sport_name]);
         let selectedSport = filteredSport && filteredSport.length > 0 ? filteredSport[0] : false;
-        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).utc().format('h:mma') : moment().format('hh:mma');
+        let sportStartTime = workout && workout.event_date ? moment(workout.event_date).format('h:mma') : moment().format('hh:mma');
         let sportText = workout.apple_health_kit_source_names && workout.apple_health_kit_source_names[0] ?
             [
                 `How was your ${sportStartTime} `,
@@ -1550,9 +1550,9 @@ const PlanLogic = {
         let offDaySelected = !dailyPlanObj.sessions_planned;
         let askForNewMobilize = (dailyPlanObj.train_later && (!dailyPlanObj.pre_active_rest[0] || dailyPlanObj.pre_active_rest[0].completed)) || (!dailyPlanObj.train_later && (!dailyPlanObj.post_active_rest[0] || dailyPlanObj.post_active_rest[0].completed));
         let noTriggerCoreLogic = !dailyPlanObj.heat && !dailyPlanObj.ice && !dailyPlanObj.cold_water_immersion && dailyPlanObj.cool_down.length === 0 && dailyPlanObj.pre_active_rest.length === 0 && dailyPlanObj.post_active_rest.length === 0;
-        let firstTrigger = offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
-        let secondTrigger = noTriggerCoreLogic && filteredTrainingSessions.length > 0;
-        let thirdTrigger = dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let firstTrigger = isReadinessSurveyCompleted && offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
+        let secondTrigger = isReadinessSurveyCompleted && noTriggerCoreLogic && filteredTrainingSessions.length > 0;
+        let thirdTrigger = isReadinessSurveyCompleted && dailyPlanObj.train_later && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let triggerStep = firstTrigger ?
             'Recovery isn\'t high priority today, but you can tap the "+" below for a recovery-focused Mobilize on demand.\n\nEnjoy your off day!'
             : secondTrigger ?
@@ -1569,7 +1569,7 @@ const PlanLogic = {
         }
         let newInsights = [];
         if(dailyPlanObj.trends) {
-            _.map(dailyPlanObj.trends.trend_categories, (alert, i) => {
+            _.map(dailyPlanObj.trends.insight_categories, (alert, i) => {
                 _.map(alert.plan_alerts, planAlert => {
                     if(alert.insight_type === planAlert.category) {
                         let newPlanAlert = _.cloneDeep(planAlert);
@@ -1579,8 +1579,8 @@ const PlanLogic = {
                 });
             });
         }
-        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
-        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories ? dailyPlanObj.trends.dashboard.trend_categories : [];
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.insight_categories ? dailyPlanObj.trends.insight_categories : [];
+        let trendDashboardCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.insight_categories ? dailyPlanObj.trends.dashboard.insight_categories : [];
         let trainingSessionsIds = _.map(completedTrainingSessions, o => o.session_id);
         let sensorSessions = userObj && userObj.sensor_data && userObj.sensor_data.sessions ?
             userObj.sensor_data.sessions
@@ -2158,7 +2158,10 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
+                    if(!updatedBodyPart.imageSource) {
+                        return {};
+                    }
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }
                 return [];
@@ -2170,7 +2173,10 @@ const PlanLogic = {
                 if(filteredBodyPart.length > 0) {
                     let updatedBodyPart = _.cloneDeep(filteredBodyPart[0]);
                     updatedBodyPart.imageSource = _getImageString(updatedBodyPart.image[bodyPart.side]);
-                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color);
+                    if(!updatedBodyPart.imageSource) {
+                        return {};
+                    }
+                    updatedBodyPart.tintColor = PlanLogic.returnBodyOverlayColorString(bodyPart.value, bodyPart.pain, bodyPart.color, bodyPart.customOpacity);
                     return updatedBodyPart;
                 }
                 return [];
@@ -2667,9 +2673,9 @@ const PlanLogic = {
         ];
     },
 
-    returnBodyOverlayColorString: (value, isPain, color) => {
+    returnBodyOverlayColorString: (value, isPain, color, customOpacity) => {
         if(color) {
-            return PlanLogic.returnInsightColorString(color);
+            return PlanLogic.returnInsightColorString(color, customOpacity);
         }
         return isPain === true ?
             value === 3 ?
@@ -2687,8 +2693,8 @@ const PlanLogic = {
                     AppColors.bodyOverlay.sorenessMild;
     },
 
-    returnInsightColorString: color => {
-        return color === 1 ?
+    returnInsightColorString: (color, customOpacity) => {
+        let newColor = color === 1 ?
             AppColors.zeplin.warningLight
             : color === 2 ?
                 AppColors.zeplin.errorLight
@@ -2720,8 +2726,41 @@ const PlanLogic = {
                                                                     AppColors.zeplin.splashXXLight
                                                                     : color === 16 ?
                                                                         AppColors.zeplin.warningXLight
-                                                                        :
-                                                                        AppColors.zeplin.errorLight;
+                                                                        : color === 17 ?
+                                                                            AppColors.zeplin.errorXLight
+                                                                            : color === 18 ?
+                                                                                AppColors.zeplin.errorXXLight
+                                                                                : color === 19 ?
+                                                                                    AppColors.zeplin.splashMLight
+                                                                                    : color === 20 ?
+                                                                                        AppColors.zeplin.successXLight
+                                                                                        : color === 21 ?
+                                                                                            AppColors.zeplin.successXXLight
+                                                                                            : color === 22 ?
+                                                                                                AppColors.zeplin.warningXXLight
+                                                                                                : color === 23 ?
+                                                                                                    AppColors.zeplin.yellowLight
+                                                                                                    : color === 24 ?
+                                                                                                        AppColors.zeplin.yellowXLight
+                                                                                                        : color === 25 ?
+                                                                                                            AppColors.zeplin.yellowXXLight
+                                                                                                            :
+                                                                                                            AppColors.zeplin.errorLight;
+        if(customOpacity && customOpacity !== 1) {
+            newColor = [2, 6, 17, 18].includes(color) ?
+                AppColors.zeplin.errorSuperLight
+                : [4, 7, 15, 19].includes(color) ?
+                    AppColors.zeplin.splashSuperLight
+                    : [1, 5, 16, 22].includes(color) ?
+                        AppColors.zeplin.warningSuperLight
+                        : [13, 20, 21].includes(color) ?
+                            AppColors.zeplin.successSuperLight
+                            : [23, 24, 25].includes(color) ?
+                                AppColors.zeplin.yellowSuperLight
+                                :
+                                AppColors.zeplin.errorLight;
+        }
+        return newColor;
     },
 
     returnStubBiomechanicsTrend: () => {
@@ -2753,7 +2792,7 @@ const PlanLogic = {
       * - MyPlan
       */
     // TODO: UNIT TEST ME
-    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData) => {
+    handleSingleSensorSessionCardRenderLogic: (activity, userSesnorData, activityIdLoading) => {
         let networkName = userSesnorData && userSesnorData.sensor_networks && userSesnorData.sensor_networks[0] ? userSesnorData.sensor_networks[0] : false;
         let activityStatus =  activity.status === 'CREATE_COMPLETE' && !activity.end_date ?
             activity.status
@@ -2829,6 +2868,8 @@ const PlanLogic = {
                                             :
                                             false;
         let eventDate = activity && activity.event_date ? moment(activity.event_date.replace('Z', '')).format('M/D, h:mma') : false;
+        let calculatingStatuses = ['UPLOAD_IN_PROGRESS', 'UPLOAD_PAUSED', 'PROCESSING_IN_PROGRESS', 'PROCESSING_COMPLETE', 'CREATE_COMPLETE'];
+        let isCalculating = calculatingStatuses.includes(activityStatus) && (activityIdLoading === activity.id);
         return {
             actionText,
             activityStatus,
@@ -2836,6 +2877,7 @@ const PlanLogic = {
             iconColor,
             iconName,
             iconType,
+            isCalculating,
             subtext,
             title,
         };
@@ -2853,10 +2895,10 @@ const PlanLogic = {
             { cleanedKey: 6, index: [307, 308, 327, 328, 347, 348, 349, 350, 368, 369, 370, 388, 389, 390], isFront: true, side: 2, },
             { cleanedKey: 7, index: [411, 412, 413, 431, 432, 433, 451, 452, 453], isFront: true, side: 1, },
             { cleanedKey: 7, index: [408, 409, 410, 428, 429, 430, 448, 449, 450], isFront: true, side: 2, },
-            { cleanedKey: 8, index: [471, 472, 473, 474, 475, 491, 492, 493, 494, 495, 511, 512, 513, 514, 515, 531, 532, 533, 534, 535], isFront: true, side: 1, },
-            { cleanedKey: 8, index: [466, 467, 468, 469, 470, 486, 487, 488, 489, 490, 506, 507, 508, 509, 510, 526, 527, 528, 529, 530], isFront: true, side: 2, },
-            { cleanedKey: 9, index: [551, 552, 553, 554], isFront: true, side: 1, },
-            { cleanedKey: 9, index: [547, 548, 549, 550], isFront: true, side: 2, },
+            { cleanedKey: 8, index: [471, 472, 473, 474, 475, 491, 492, 493, 494, 495, 511, 512, 513, 514, 515], isFront: true, side: 1, },
+            { cleanedKey: 8, index: [466, 467, 468, 469, 470, 486, 487, 488, 489, 490, 506, 507, 508, 509, 510], isFront: true, side: 2, },
+            { cleanedKey: 9, index: [551, 552, 553, 554, 531, 532, 533, 534, 535, 555], isFront: true, side: 1, },
+            { cleanedKey: 9, index: [547, 548, 549, 550, 526, 527, 528, 529, 530, 546], isFront: true, side: 2, },
             { cleanedKey: 10, index: [571, 572, 573, 574, 575, 591, 592, 593, 594, 595], isFront: true, side: 1, },
             { cleanedKey: 10, index: [566, 567, 568, 569, 570, 587, 586, 588, 589, 590], isFront: true, side: 2, },
             { cleanedKey: 11, index: [294, 295, 296, 315, 316, 335, 336, 337, 355, 356, 357, 374, 375, 376, 394, 395, 396], isFront: true, side: 1, },

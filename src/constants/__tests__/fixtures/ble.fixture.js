@@ -136,6 +136,7 @@ export default {
         READ_WIFI_CONNECT:              parseInt('0xDA', 16),
         READ_WIFI_SCAN_LONG:            parseInt('0xDD', 16),
         READ_WIFI_SCAN_SHORT:           parseInt('0xDC', 16),
+        WRITE_TIME:                     parseInt('0x0B', 16),
         WRITE_WIFI_CONNECT:             parseInt('0x5A', 16),
         WRITE_WIFI_NETWORK_RESET:       parseInt('0x5E', 16),
         WRITE_WIFI_PSW_LONG:            parseInt('0x53', 16),

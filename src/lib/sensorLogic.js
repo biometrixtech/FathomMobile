@@ -73,11 +73,11 @@ const SensorLogic = {
       */
     handleSensorFileRenderLogic: sensorData => {
         // last sync logic
-        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'hours') : 0;
-        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'days') : 0;
+        let hoursAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'hours', true) : 0;
+        let daysAgo = sensorData && sensorData.accessory && sensorData.accessory.last_sync_date ? moment().diff(sensorData.accessory.last_sync_date.replace('Z', ''), 'days', true) : 0;
         let lastSyncTime = hoursAgo > 48 ? daysAgo : hoursAgo;
-        let lastSyncExtraString = hoursAgo > 48 ? daysAgo === 1 || daysAgo === 0 ? 'day' : 'days' : hoursAgo === 1 || hoursAgo === 0 ? 'hr' : 'hrs';
-        let lastSyncString = `${lastSyncTime} ${lastSyncExtraString} ago`;
+        let lastSyncExtraString = hoursAgo > 48 ? daysAgo <= 1 || daysAgo === 0 ? 'day' : 'days' : hoursAgo <= 1 || hoursAgo === 0 ? 'hr' : 'hrs';
+        let lastSyncString = `${_.round(lastSyncTime)} ${lastSyncExtraString} ago`;
         // battery logic
         let batteryLevel = sensorData && sensorData.accessory && sensorData.accessory.battery_level ? _.round(sensorData.accessory.battery_level * 100) : 0;
         let batteryIconProps = { color: AppColors.zeplin.slate, icon: 'battery', iconStyle: [], size: 20, type: 'material-community', };
@@ -371,19 +371,26 @@ const SensorLogic = {
         return [
             {}, // will be manually set up
             {
-                buttonText: 'Next',
+                buttonText: 'My Kit LED is Blue',
                 image:      false,
+                navTitle:   'Setup Wifi',
                 subtitle:   [
-                    <Text key={0} robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml,}]}>
-                        {'Hold the button for 3 sec until battery LED turns '}
-                        <Text robotoBold style={{color: AppColors.blue,}}>{'solid blue'}</Text>
-                    </Text>,
-                    <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(make sure your phone\'s bluetooth is "on")'}
-                    </Text>
+                    <View key={0}>
+                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(22), lineHeight: AppFonts.scaleFont(30), marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                            {'Is your LED '}
+                            <Text robotoBold style={{color: AppColors.zeplin.blue,}}>{'solid blue'}</Text>
+                            {'?'}
+                        </Text>
+                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginBottom: AppSizes.paddingSml,}}>
+                            {'To setup your Fathom PRO, press and '}
+                            <Text robotoBold>{'hold the button'}</Text>
+                            {' for 4-6 seconds until the LED turns solid blue.'}
+                        </Text>
+                    </View>,
+                    <View key={1} />,
                 ],
-                title: <Text robotoMedium style={[styles.titleStyle,]}>{'Turn on Bluetooth'}</Text>,
-                video: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_on.mp4',
+                title: false,
+                video: {localFile: require('../../assets/videos/bluetooth_on.mp4'),},
             },
             {
                 animatedImage: Platform.OS === 'ios' ? {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone.png'} : {uri: 'https://d2xll36aqjtmhz.cloudfront.net/bluetooth_connect_phone_android.png'},
@@ -434,6 +441,48 @@ const SensorLogic = {
                 ],
                 title: <Text robotoMedium style={[styles.titleStyle,]}>{'Bring Kit to Wifi'}</Text>,
                 video: 'https://d2xll36aqjtmhz.cloudfront.net/upload_instructions.mp4',
+            },
+            {}, // will be manually set up
+            {
+                buttonText: 'It\'s Awake!',
+                image:      false,
+                navTitle:   'Wake your PRO Kit',
+                subtitle:   [
+                    <Text key={0} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginBottom: AppSizes.paddingSml, textAlign: 'center',}]}>
+                        {'Your PRO Kit is in "sleep mode" to conserve battery. To wake it, hold the button until you see the green LED\'s.'}
+                    </Text>,
+                    <Text key={1} robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>
+                        {'If it\'s already awake, you\'ll see an LED right away'}
+                    </Text>,
+                ],
+                title: false,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/wakeprokit.mp4',
+            },
+            {
+                buttonText: 'I\'m Ready!',
+                image:      false,
+                navTitle:   'Before Connecting',
+                subtitle:   [
+                    <View key={0}>
+                        <Text robotoLight style={[styles.subtitleStyle, {marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                            {'First make sure:'}
+                        </Text>
+                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                            {'1. Your sensors are in your PRO kit'}
+                        </Text>
+                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                            {'2.  All of the LEDs are off'}
+                        </Text>
+                        <Text robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginBottom: AppSizes.paddingSml, textAlign: 'left',}]}>
+                            {'3.  The lid of your PRO kit is firmly closed'}
+                        </Text>
+                    </View>,
+                    <Text key={1} robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18), marginBottom: AppSizes.paddingSml, textAlign: 'center',}}>
+                        {'If your sensor LEDs are blinking green while in the PRO Kit, they\'re syncing and may need up to 10 min to finish.'}
+                    </Text>,
+                ],
+                title: false,
+                video: 'https://d2xll36aqjtmhz.cloudfront.net/beforeconnecting.mp4',
             },
         ];
     },

@@ -6,17 +6,16 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import {
-    InteractionManager,
-    StyleSheet,
-    WebView,
-} from 'react-native';
+import { InteractionManager, StyleSheet, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppStyles, } from '../../constants';
 
 // Components
 import { Error, Loading, } from './';
+
+// import third-party libraries
+import { WebView, } from 'react-native-webview';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -73,7 +72,10 @@ class AppWebView extends Component {
         return (
             <WebView
                 automaticallyAdjustContentInsets={false}
+                cacheEnabled={false}
+                cacheMode={'LOAD_NO_CACHE'}
                 onNavigationStateChange={this.onNavigationStateChange}
+                originWhitelist={['*']}
                 scalesPageToFit={true}
                 source={{ uri: webViewURL, }}
                 startInLoadingState={true}

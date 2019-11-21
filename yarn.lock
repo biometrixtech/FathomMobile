@@ -778,9 +778,9 @@
     eslint-plugin-react-native "3.6.0"
     prettier "1.16.4"
 
-"@react-native-community/netinfo@^2.0.0":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-2.0.10.tgz#d28a446352e75754b78509557988359133cdbcca"
+"@react-native-community/netinfo@^4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.6.0.tgz#fc0b79a226da78371158f885a2f798ff07c926be"
 
 "@react-native-community/push-notification-ios@^1.0.1", "@react-native-community/push-notification-ios@^1.0.2":
   version "1.0.2"
@@ -2080,7 +2080,11 @@ escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
 
-escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
+escape-string-regexp@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz#a30304e99daa32e23b2fd20f51babd07cffca344"
+
+escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
@@ -5122,7 +5126,7 @@ react-native-app-intro-slider@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-native-app-intro-slider/-/react-native-app-intro-slider-2.0.1.tgz#947fece38d2332d9cdc5381344b0c47ab822984b"
 
-react-native-ble-plx@^1.0.3:
+react-native-ble-plx@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.1.0.tgz#95ba0025f9bfb507633c7f1d1ffd6eaa54296d4d"
 
@@ -5404,11 +5408,11 @@ react-native-view-overflow@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/react-native-view-overflow/-/react-native-view-overflow-0.0.4.tgz#36b2c00fbe7f270a0a92548eeb9ee147d2a4c3ae"
 
-react-native-webview@^5.12.0:
-  version "5.12.1"
-  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-5.12.1.tgz#5e2b124e9087d64fc40040d911c10ee5744b5d4d"
+react-native-webview@^7.4.3:
+  version "7.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-7.4.3.tgz#e00e92e17f7389d84d09f5900652501ff2665915"
   dependencies:
-    escape-string-regexp "1.0.5"
+    escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
 react-native@0.59.4:

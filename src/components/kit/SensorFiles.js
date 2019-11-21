@@ -7,14 +7,12 @@ import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOp
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-import _ from 'lodash';
-import moment from 'moment';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
-import { FathomModal, ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
+import { ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { AppUtil, SensorLogic, } from '../../lib';
-import SensorBackUpTutorial from './SensorBackUpTutorial';
+// import SensorBackUpTutorial from './SensorBackUpTutorial';
 
 const ICON_SIZE = 24;
 
@@ -89,7 +87,10 @@ class SensorFiles extends Component {
     _handleWifiClicked = sensorNetwork => {
         Alert.alert(
             '',
-            `"${sensorNetwork}"\nis currently your preferred wifi.\n\nTo change your preferred network, you must be in range of the new network.`,
+            sensorNetwork ?
+                `"${sensorNetwork}"\nis currently your preferred wifi.\n\nTo change your preferred network, you must be in range of the new network.`
+                :
+                'To setup your preferred network, you must be in range of the new network.',
             [
                 {
                     text:  'Cancel',
@@ -98,6 +99,20 @@ class SensorFiles extends Component {
                 {
                     text:    'Continue',
                     onPress: () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'connect', }),
+                },
+            ],
+            { cancelable: false, }
+        );
+    }
+
+    _handleWifiDisabledClicked = () => {
+        Alert.alert(
+            '',
+            'Hmm...we\'re having trouble changing your preferred wifi network. Please try to update your app or contact support at support@fathomai.com for assistance.',
+            [
+                {
+                    text:  'OK',
+                    style: 'cancel',
                 },
             ],
             { cancelable: false, }
