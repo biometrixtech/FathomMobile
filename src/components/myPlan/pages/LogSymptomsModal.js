@@ -57,7 +57,20 @@ class LogSymptomsModal extends Component {
             isSlideUpPanelExpanded:    true,
             isSlideUpPanelOpen:        false,
         };
+        this.defaultState = {
+            isBodyOverlayButtonLocked: false,
+            isBodyOverlayFront:        true,
+            isSlideUpPanelExpanded:    true,
+            isSlideUpPanelOpen:        false,
+        };
         this.areasOfSorenessRef = {};
+    }
+
+    componentDidUpdate = prevProps => {
+        if(prevProps.isModalOpen !== this.props.isModalOpen && !this.props.isModalOpen) {
+            // reset state when closed
+            this.setState(this.defaultState);
+        }
     }
 
     _toggleSlideUpPanel = (isExpanded = true) => {

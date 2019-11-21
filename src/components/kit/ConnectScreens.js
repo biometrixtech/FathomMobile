@@ -117,7 +117,7 @@ const TopNav = ({ darkColor, onBack, onClose, showClose = true, step, title, }) 
     );
 };
 
-const CVP = ({ currentPage, nextBtn, onClose, }) => (
+const CVP = ({ currentPage, nextBtn, onClose, toggleLearnMore = null, }) => (
     <View style={{flex: 1,}}>
         <Video
             paused={!currentPage}
@@ -138,12 +138,21 @@ const CVP = ({ currentPage, nextBtn, onClose, }) => (
                     <Spacer size={AppSizes.paddingLrg} />
                     <Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                        containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
+                        containerStyle={{alignItems: 'center', marginVertical: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
                         onPress={() => nextBtn()}
                         raised={true}
                         title={'Let\'s Get Started'}
                         titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                     />
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={toggleLearnMore}
+                        style={{width: AppSizes.screen.width,}}
+                    >
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', textDecorationLine: 'underline',}}>
+                            {'Don\'t have Fathom PRO? Learn more'}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -748,6 +757,7 @@ const Connect = ({
     page,
     pageFirst,
     showTopNavStep = true,
+    toggleLearnMore = null,
 }) => {
     if(page === 6) {
         return (
@@ -1001,14 +1011,25 @@ const Connect = ({
                         </View>
                     </View>
                     { !pageFirst &&
-                        <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                            containerStyle={{alignSelf: 'center', marginBottom: AppSizes.padding, marginTop: AppSizes.padding, width: '75%',}}
-                            onPress={() => nextBtn()}
-                            raised={true}
-                            title={'Connect Wifi Now'}
-                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
-                        />
+                        <View>
+                            <Button
+                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                containerStyle={{alignSelf: 'center', marginVertical: AppSizes.padding, width: '75%',}}
+                                onPress={() => nextBtn()}
+                                raised={true}
+                                title={'Connect Wifi Now'}
+                                titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                            />
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={toggleLearnMore}
+                                style={{width: (AppSizes.screen.width - (AppSizes.paddingLrg * 2)),}}
+                            >
+                                <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15), textAlign: 'center', textDecorationLine: 'underline',}}>
+                                    {'Don\'t have Fathom PRO? Learn more'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     }
                     {/*<Button
                         buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}

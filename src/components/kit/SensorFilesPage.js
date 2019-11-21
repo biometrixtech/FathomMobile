@@ -53,11 +53,9 @@ class SensorFilesPage extends Component {
     static componentName = 'SensorFilesPage';
 
     static propTypes = {
-        assignKitIndividual: PropTypes.func.isRequired,
-        getSensorFiles:      PropTypes.func.isRequired,
-        pageStep:            PropTypes.string.isRequired,
-        updateUser:          PropTypes.func.isRequired,
-        user:                PropTypes.shape({}).isRequired,
+        pageStep:   PropTypes.string.isRequired,
+        updateUser: PropTypes.func.isRequired,
+        user:       PropTypes.shape({}).isRequired,
     }
 
     static defaultProps = {}
@@ -128,25 +126,18 @@ class SensorFilesPage extends Component {
 
     _handleFinalSetup = (numberOfPages = 1) => {
         const { currentAccessoryData, } = this.state;
-        const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
+        const { updateUser, user, } = this.props;
+        // dont define owner here
+        if(currentAccessoryData.macAddress !== user.sensor_data.sensor_pid) {
+            // if user is updating wifi for a different access point - just auto progress
+            return this._renderNextPage(numberOfPages);
+        }
+        // if user is updating wifi for THEIR access point
         clearInterval(this._timer);
-        let newUserPayloadObj = {};
-        newUserPayloadObj.sensor_data = {};
-        newUserPayloadObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
-        newUserPayloadObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
-        newUserPayloadObj.sensor_data.system_type = '3-sensor';
         let newUserNetworksPayloadObj = {};
         newUserNetworksPayloadObj['@sensor_data'] = {};
         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = currentAccessoryData.ssid ? [currentAccessoryData.ssid] : [];
-        let newUserObj = _.cloneDeep(user);
-        newUserObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
-        newUserObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
-        newUserObj.sensor_data.sensor_networks = [currentAccessoryData.ssid];
-        newUserObj.sensor_data.system_type = '3-sensor';
-        return assignKitIndividual({wifiMacAddress: currentAccessoryData.macAddress,}, user) // 1. assign kit to individual
-            .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
-            .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
-            .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
+        return updateUser(newUserNetworksPayloadObj, user.id) // 1. PATCH user specific endpoint - handles network names
             .then(() => this._renderNextPage(numberOfPages));
     }
 
@@ -166,7 +157,6 @@ class SensorFilesPage extends Component {
 
     _handleTestConnection = isFinalChance => {
         const { currentAccessoryData, currentTime, } = this.state;
-        // const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
         let payload = {
             seconds_elapsed: moment().diff(currentTime, 'seconds'),
         };
@@ -356,7 +346,7 @@ class SensorFilesPage extends Component {
                                                         }
                                                     });
                                                 }
-                                                return this._renderPreviousPage(2, () => Alert.alert(
+                                                return this._renderPreviousPage(1, () => Alert.alert(
                                                     'Lost connection with FathomPRO network.',
                                                     'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                                     [

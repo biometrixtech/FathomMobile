@@ -19,6 +19,7 @@ import { AppAPI, AppUtil, } from '../../lib';
 import { CVP, Connect, TopNav, Train, } from './ConnectScreens';
 import { Button, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
+import { WebViewPageModal, } from '../general';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -44,6 +45,7 @@ class BluetoothConnect extends Component {
             isConnectionBtnActive:  false,
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
+            isNeedHelpModalOpen:    false,
             pageIndex:              0,
         };
         this.defaultState = {
@@ -53,6 +55,7 @@ class BluetoothConnect extends Component {
             isConnectionBtnActive:  false,
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
+            isNeedHelpModalOpen:    false,
             pageIndex:              0,
         };
         this._pages = {};
@@ -204,7 +207,15 @@ class BluetoothConnect extends Component {
     }
 
     render = () => {
-        const { currentAccessoryData, isDelaying, isConnectionBtnActive, isConnectionBtnLoading, isConnectionSuccessful, pageIndex, } = this.state;
+        const {
+            currentAccessoryData,
+            isDelaying,
+            isConnectionBtnActive,
+            isConnectionBtnLoading,
+            isConnectionSuccessful,
+            isNeedHelpModalOpen,
+            pageIndex,
+        } = this.state;
         return(
             <View style={{flex: 1,}}>
 
@@ -221,6 +232,7 @@ class BluetoothConnect extends Component {
                     <CVP
                         currentPage={pageIndex === 0}
                         nextBtn={this._renderNextPage}
+                        toggleLearnMore={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
                     />
 
                     {/* Connect - pages 1 - 8 */}
@@ -229,6 +241,7 @@ class BluetoothConnect extends Component {
                         nextBtn={this._renderNextPage}
                         page={0}
                         showTopNavStep={false}
+                        toggleLearnMore={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
                     />
                     <Connect
                         currentPage={pageIndex === 2}
@@ -268,12 +281,11 @@ class BluetoothConnect extends Component {
                     >
                         <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                         <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center',}}>
-                            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}} />
-                            <View style={{flex: 8, justifyContent: 'center',}}>
+                            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
                                 <Egg
                                     onCatch={() => Alert.alert(
-                                        '',
-                                        `Are you sure you want to define the owner of this kit (${currentAccessoryData.macAddress}) without setting up it\'s preferred wifi network?`,
+                                        'Add user to this PRO Kit',
+                                        `You\'re about to add this account as a user to Fathom PRO kit (${currentAccessoryData.macAddress}). To do so:\n- Open your phone's wifi settings\n- Disconnect from "FathomPRO" network\n- Come back & tap "continue"\n- Wait ~10s for the success screen`,
                                         [
                                             {
                                                 style: 'cancel',
@@ -287,11 +299,18 @@ class BluetoothConnect extends Component {
                                         { cancelable: true, }
                                     )}
                                     setps={'TTTTT'}
-                                    style={{alignItems: 'center', flex: 1,}}
+                                    style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
                                 >
-                                    <View />
+                                    <TabIcon
+                                        color={AppColors.zeplin.slateXLight}
+                                        icon={'clipboard-account-outline'}
+                                        reverse={false}
+                                        size={30}
+                                        type={'material-community'}
+                                    />
                                 </Egg>
                             </View>
+                            <View style={{flex: 8, justifyContent: 'center',}} />
                             <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
                                 <TabIcon
                                     color={AppColors.zeplin.slateLight}
@@ -358,7 +377,7 @@ class BluetoothConnect extends Component {
                                                 }
                                             });
                                         }
-                                        return this._renderPreviousPage(2, () => Alert.alert(
+                                        return this._renderPreviousPage(1, () => Alert.alert(
                                             'Lost connection with FathomPRO network.',
                                             'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                             [
@@ -544,6 +563,12 @@ class BluetoothConnect extends Component {
                     />
 
                 </Pages>
+
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
+                    isModalOpen={isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
+                />
 
             </View>
         )

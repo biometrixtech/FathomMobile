@@ -668,7 +668,8 @@ class MyPlan extends Component {
             (
                 !user.first_time_experience.includes('plan_coach_1') ||
                 !user.first_time_experience.includes('plan_coach_2')
-            )
+            ) &&
+            !this.state.isPageCalculating
         ) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }

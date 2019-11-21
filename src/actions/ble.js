@@ -229,9 +229,8 @@ const assignKitIndividual = (accessory, user) => {
 
 const getSensorDetails =  userObj => {
     let payload = {};
-    if(userObj.timezone) {
-        payload.timezone = userObj.timezone;
-    }
+    payload.accessory_id = userObj.sensor_data.sensor_pid;
+    payload.timezone = AppUtil.getFormattedTimezoneString();
     store.dispatch({
         type: Actions.START_REQUEST,
     });
@@ -266,10 +265,7 @@ const getSensorFiles = (userObj, cleanSessions, days = 14) => {
         return dispatch => new Promise((resolve, reject) => resolve());
     }
     let payload = {};
-    payload.accessory_id = userObj.sensor_data.sensor_pid;
-    if(userObj.timezone) {
-        payload.timezone = userObj.timezone;
-    }
+    payload.timezone = AppUtil.getFormattedTimezoneString();
     if(cleanSessions) {
         payload.cleanSessions = true;
     }
