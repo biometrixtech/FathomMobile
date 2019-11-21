@@ -53,6 +53,7 @@ export default {
     BLUETOOTH_DISCONNECT:                'BLUETOOTH_DISCONNECT',
     CHANGE_STATE:                        'CHANGE_STATE',
     CHECK_STATE:                         'CHECK_STATE',
+    CLEAR_DEVICES:                       'CLEAR_DEVICES',
     CONNECT_TO_ACCESSORY:                'CONNECT_TO_ACCESSORY',
     DEVICE_FOUND:                        'DEVICE_FOUND',
     ENABLE_BLUETOOTH:                    'ENABLE_BLUETOOTH',

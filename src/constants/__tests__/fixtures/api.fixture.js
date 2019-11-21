@@ -5,9 +5,9 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_5';
+const plansAPIVersion = '/plans/4_6';
 const preprocessingAPIVersion = '/preprocessing/2_0';
-const usersAPIVersion = '/users/2_3';
+const usersAPIVersion = '/users/2_4';
 
 export default {
     APIs: {
@@ -67,6 +67,7 @@ export default {
         ['post_readiness_survey', `${plansAPIVersion}/daily_readiness/{userId}`], // POST
         ['post_sensor_data',      `${plansAPIVersion}/session/{userId}/sensor_data`], // POST
         ['post_session_survey',   `${plansAPIVersion}/session/{userId}`], // POST
+        ['post_symptoms',         `${plansAPIVersion}/symptoms/{userId}`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
@@ -114,7 +115,8 @@ export default {
 
     preprocessingEndpoints: new Map([
         ['create_session', `${preprocessingAPIVersion}/session`], // POST
-        ['status',         `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['details',        `${preprocessingAPIVersion}/user/{userId}/status`], // POST
+        ['status',         `${preprocessingAPIVersion}/user/{userId}/sessions_today`], // POST
         ['update_session', `${preprocessingAPIVersion}/session/{sessionId}`], // PATCH
     ]),
 
@@ -131,6 +133,8 @@ export default {
     // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
-        ['accessory', `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['accessory',    `${hardwareAPIVersion}/accessory/{wifiMacAddress}`], // PATCH
+        ['check_sync',   `${hardwareAPIVersion}/accessory/{wifiMacAddress}/check_sync`], // POST
+        ['get_utc_time', `${hardwareAPIVersion}/misc/time`], // GET
     ]),
 };

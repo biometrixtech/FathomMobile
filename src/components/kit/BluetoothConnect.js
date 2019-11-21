@@ -3,9 +3,7 @@
  *
     <BluetoothConnect
         assignKitIndividual={assignKitIndividual}
-        bluetooth={bluetooth}
         getSensorFiles={getSensorFiles}
-        network={network}
         updateUser={updateUser}
         user={user}
     />
@@ -13,34 +11,27 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Alert,
-    Keyboard,
-    Platform,
-    PermissionsAndroid,
-    View,
-} from 'react-native';
+import { ActivityIndicator, Alert, Image, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
-import { AlertHelper, AppUtil, SensorLogic, } from '../../lib';
-import { Battery, CVP, Calibration, Complete, Connect, Placement, Session, TopNav, Train, } from './ConnectScreens';
-import { Button, Text, } from '../custom';
-import { Loading, } from '../general';
-import { ble, } from '../../actions';
+import { AppAPI, AppUtil, } from '../../lib';
+import { CVP, Connect, TopNav, Train, } from './ConnectScreens';
+import { Button, TabIcon, Text, } from '../custom';
 import { store, } from '../../store';
+import { WebViewPageModal, } from '../general';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import { Pages, } from 'react-native-pages';
+import { WebView, } from 'react-native-webview';
 import _ from 'lodash';
-import DialogInput from 'react-native-dialog-input';
+import Egg from 'react-native-egg';
 import LottieView from 'lottie-react-native';
-import Toast, { DURATION } from 'react-native-easy-toast';
+import moment from 'moment';
 
 // setup consts
 const FIRST_TIME_EXPERIENCE_PREFIX = '3Sensor-Onboarding-';
-const WIFI_PAGE_NUMBER = 5;
 
 /* Component ==================================================================== */
 class BluetoothConnect extends Component {
@@ -48,545 +39,151 @@ class BluetoothConnect extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            availableNetworks:     [],
-            bleState:              '',
-            currentWifiConnection: false,
-            isConnectingToSensor:  false,
-            isDialogVisible:       false,
-            isSubmittingDetails:   false,
-            isVideoMuted:          false,
-            isWifiScanDone:        false,
-            loading:               false,
-            pageIndex:             0,
+            currentAccessoryData:   {},
+            currentTime:            null,
+            isDelaying:             false,
+            isConnectionBtnActive:  false,
+            isConnectionBtnLoading: false,
+            isConnectionSuccessful: true,
+            isNeedHelpModalOpen:    false,
+            pageIndex:              0,
         };
-        this._isMounted = false;
+        this.defaultState = {
+            currentAccessoryData:   {},
+            currentTime:            null,
+            isDelaying:             false,
+            isConnectionBtnActive:  false,
+            isConnectionBtnLoading: false,
+            isConnectionSuccessful: true,
+            isNeedHelpModalOpen:    false,
+            pageIndex:              0,
+        };
         this._pages = {};
+        this._secondaryTimer = null;
+        this._thirdTimer = null;
         this._timer = null;
-        this.bluetoothLoadingAnimation1 = {};
-        this.bluetoothLoadingAnimation2 = {};
-    }
-
-    componentDidMount = () => {
-        AlertHelper.closeCancelableDropDown();
-        AlertHelper.closeDropDown();
-        // update user obj to say user is on first page
-        if(!this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}0`)) {
-            this._updateUserCheckpoint(0);
-        }
-        this._isMounted = true;
-    }
-
-    componentWillMount = () => {
-        // monitor when the BLE state changes
-        ble.startMonitor(state => this.setState({ bleState: state, }));
+        this._webview = {};
+        this.lottieAnimation1 = {};
+        this.lottieAnimation2 = {};
     }
 
     componentWillUnmount = () => {
-        this._pages = {};
-        ble.destroyInstance();
+        clearInterval(this._secondaryTimer);
+        clearInterval(this._thirdTimer);
         clearInterval(this._timer);
-        this._isMounted = false;
+        this._pages = {};
+        this._webview = {};
     }
 
-    _connectSensorToWifi = () => {
-        Keyboard.dismiss();
-        const { bluetooth, getSensorFiles, updateUser, user, } = this.props;
-        const { currentWifiConnection, } = this.state;
-        // setup ble write variables
-        let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-        let ssid = currentWifiConnection.ssid;
-        let password = currentWifiConnection.password;
-        let securityByte = currentWifiConnection.security ? currentWifiConnection.security.toByte : 'OPEN';
-        // setup user variables
+    _delayAndContinue = (delayTime = 5000, callback) => this.setState(
+        { isDelaying: true, },
+        () => {
+            this._timer = _.delay(
+                () => this.setState(
+                    { isDelaying: false, },
+                    () => _.delay(() => this._renderNextPage(1, callback), 250),
+                )
+                , delayTime)
+        },
+    )
+
+    _handleFinalSetup = (numberOfPages = 1) => {
+        const { currentAccessoryData, } = this.state;
+        const { assignKitIndividual, getSensorFiles, updateUser, user, } = this.props;
+        clearInterval(this._timer);
         let newUserPayloadObj = {};
         newUserPayloadObj.sensor_data = {};
-        newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-        newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
+        newUserPayloadObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
+        newUserPayloadObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
         newUserPayloadObj.sensor_data.system_type = '3-sensor';
         let newUserNetworksPayloadObj = {};
         newUserNetworksPayloadObj['@sensor_data'] = {};
-        newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [currentWifiConnection.ssid];
+        newUserNetworksPayloadObj['@sensor_data'].sensor_networks = currentAccessoryData.ssid ? [currentAccessoryData.ssid] : [];
         let newUserObj = _.cloneDeep(user);
-        newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
-        newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-        newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-        newUserObj.sensor_data.sensor_networks = [currentWifiConnection.ssid];
+        newUserObj.sensor_data.sensor_pid = currentAccessoryData.macAddress;
+        newUserObj.sensor_data.mobile_udid = AppUtil.getDeviceUUID();
+        newUserObj.sensor_data.sensor_networks = [currentAccessoryData.ssid];
         newUserObj.sensor_data.system_type = '3-sensor';
-        return ble.writeWifiDetailsToSensor(device, ssid, password, securityByte) // 1. write details to sensor
+        return assignKitIndividual({wifiMacAddress: currentAccessoryData.macAddress,}, user) // 1. assign kit to individual
             .then(() => updateUser(newUserPayloadObj, user.id)) // 2a. PATCH user specific endpoint - handles everything except for network name
             .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 2b. PATCH user specific endpoint - handles network names
-            .then(() => getSensorFiles(newUserObj)) // 4. grab sensor files as they may have changed
-            .then(() =>
-                this.setState(
-                    { loading: false, },
-                    () => _.delay(() => {
-                        this._renderNextPage();
-                        this._updateUserCheckpoint('Tutorial-User-Complete');
-                    }, 500),
-                ) // 3. route to next page
-            )
-            .catch(err => {
-                this.setState({ isSubmittingDetails: false, loading: false, }, () => _.delay(() => {
-                    if(err.errorMapping.errorCode === -2) {
-                        return AppUtil.handleAPIErrorAlert(err.errorMapping.message, 'Error!');
-                    } else if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                        return this._toggleWeakRSSIAlertNotification();
-                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
-                            if(isExit) {
-                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                            }
-                            this._renderPreviousPage(2);
-                        }, 500));
-                    } else if(err.isConnected && (err.errorMapping.errorCode === -1 || !err.errorMapping.errorCode)) {
-                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().errorWifiConnection, 'Please Try Again');
-                    }
-                    // TODO: THIS NEEDS TO BE FLUSHED OUT
-                    // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                    // let header = `STOP! _connectSensorToWifi-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                    // return AppUtil.handleAPIErrorAlert(message, header);
-                    return console.log(err);
-                }, 500));
-            });
+            .then(() => getSensorFiles(newUserObj)) // 3. grab sensor files as they may have changed
+            .then(() => this._renderNextPage(numberOfPages));
     }
 
-    _handleAlertHelper = (title = '', message, isCancelable) => {
-        Actions.pop();
-        if(isCancelable) {
-            AlertHelper.showCancelableDropDown('custom', title, message);
-        } else {
-            AlertHelper.showDropDown('custom', title, message);
-        }
-    }
-
-    _handleAlertPress = () => {
-        Alert.alert(
-            '',
-            'Oops! Your Sensors need to finish syncing with the Smart Charger.\n\nPlease return all of the Sensors to the Charger, firmly close the lid, & wait for the LEDs to finish breathing green.',
-            [
-                {
-                    text:  'OK',
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: false, }
-        );
-    }
-
-    _handleBLEPair = () => {
-        const { assignKitIndividual, user, } = this.props;
-        if(!this._timer) {
-            this._timer = _.delay(() => this._toggleTimedoutBringCloserAlert(true, isExit =>
-                _.delay(() => isExit ?
-                    Actions.pop()
-                    :
-                    ble.startMonitor(state =>
-                        this.setState(
-                            { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
-                        )
-                    )
-                , 500)
-            ), 60000);
-        }
-        ble.startDeviceScan((error, response, device, state) => {
-            if(!this._isMounted) {
-                return '';
-            }
-            if(state) {
-                this.setState(
-                    { bleState: state === 'Unknown' && this.state.bleState === 'PoweredOn' ? this.state.bleState : state, }
-                );
-            }
-            if(error) {
-                if (
-                    this.props.bluetooth.accessoryData &&
-                    !this.props.bluetooth.accessoryData.sensor_pid &&
-                    !this.props.bluetooth.accessoryData.mobile_udid &&
-                    !this.props.bluetooth.accessoryData.wifiMacAddress
-                ) {
-                    this.refs.toast.show(SensorLogic.errorMessages().pairError, (DURATION.LENGTH_SHORT * 2));
-                    return this._handleDisconnection(device, () => this._renderPreviousPage());
-                }
-                return this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, })));
-            }
-            if(
-                !response.accessory.owner_id || (response.accessory.owner_id === user.id)
-            ) {
-                clearTimeout(this._timer);
-                return assignKitIndividual({wifiMacAddress: response.accessory.mac_address,}, user)
-                    .then(res => this._toggleAlertNotification())
-                    .catch(err => this._toggleTimedoutBringCloserAlert(true, () => ble.startMonitor(newState => this.setState({ bleState: newState, }))));
-            }
-            return this._handleDisconnection(device, () => this._handleBLEPair(), false, false);
-        });
-    }
-
-    _handleDisconnection = (device, callback, shouldExitKitSetup, updateState = true) => {
-        const { bluetooth, } = this.props;
-        if(!this._isMounted) {
-            return '';
-        }
-        return this.setState(
-            { isConnectingToSensor: updateState ? false : true, },
-            () => {
-                if(shouldExitKitSetup) {
-                    if(!device) {
-                        device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-                    }
-                    return ble.exitKitSetup(device)
-                        .then(res => callback && callback())
-                        .catch(err => {
-                            if(!this._isMounted) {
-                                return '';
-                            }
-                            // TODO: THIS NEEDS TO BE FLUSHED OUT
-                            // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                            // let header = `STOP! _handleDisconnection-exitKitSetup-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                            // AppUtil.handleAPIErrorAlert(message, header);
-                            return callback && callback();
-                        });
-                }
-                if(!device) {
-                    device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-                    if(!device && callback) {
-                        return callback();
-                    }
-                }
-                return device.cancelConnection()
-                    .then(() => callback && callback())
-                    .catch(async err => {
-                        if(!this._isMounted) {
-                            return '';
-                        }
-                        // TODO: THIS NEEDS TO BE FLUSHED OUT
-                        // let errorObj = await ble.handleError(err, device);
-                        // let message = `rssi: ${err.rssi}\nreason: ${errorObj.errorMapping.reason}\niosErrorCode: ${errorObj.errorMapping.iosErrorCode}\nandroidErrorCode: ${errorObj.errorMapping.androidErrorCode}\nattErrorCode: ${errorObj.errorMapping.attErrorCode}`;
-                        // let header = `STOP! _handleDisconnection-cancelConnection-exception hit. Code: ${errorObj.errorMapping.errorCode} Message: ${errorObj.errorMapping.message}`;
-                        // AppUtil.handleAPIErrorAlert(message, header);
-                        return callback && callback();
-                    });
-            }
-        );
-    }
-
-    _handleNetworkPress = network => {
-        if(network.security.toByte !== 0) {
-            this.setState({ currentWifiConnection: network, isDialogVisible: true, isWifiScanDone: true, });
-        } else {
-            let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
-            newCurrentWifiConnection.password = false;
-            this.setState(
-                { currentWifiConnection: newCurrentWifiConnection, isWifiScanDone: true, },
-                () => {
-                    this._timer = _.delay(() => {
-                        this.setState(
-                            { isSubmittingDetails: true, loading: true, },
-                            () => this._connectSensorToWifi(),
-                        );
-                    }, 500);
-                },
-            );
-        }
-    }
-
-    _handleSyncOnBack = () => {
+    _handleTestConnection = isFinalChance => {
+        const { currentAccessoryData, currentTime, } = this.state;
+        let payload = {
+            seconds_elapsed: moment().diff(currentTime, 'seconds'),
+        };
         this.setState(
-            { isConnectingToSensor: false, },
-            () => {
-                clearTimeout(this._timer);
-                this._timer = null;
-                ble.destroyInstance();
-                _.delay(() => this._renderPreviousPage(), 500);
-            },
-        );
-    }
-
-    _handleSingleWifiConnectionFetch = (device, numberOfConnections, currentIndex) => {
-        if(!this._isMounted) {
-            return '';
-        }
-        if(
-            (numberOfConnections === 0 && currentIndex > numberOfConnections) ||
-            this.state.isWifiScanDone
-        ) {
-            return this.setState({ isWifiScanDone: true, });
-        }
-        return ble.getSingleWifiConnection(device, currentIndex)
-            .then(res => {
-                let newAvailableNetworks = _.cloneDeep(this.state.availableNetworks);
-                newAvailableNetworks.push(res);
-                newAvailableNetworks = _.uniqBy(newAvailableNetworks, 'ssid');
-                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.ssid.length > 0);
-                newAvailableNetworks = _.filter(newAvailableNetworks, o => o.rssi > SensorLogic.getMinRSSIDBM());
-                if(!this._isMounted) {
-                    return '';
-                }
-                return this.setState(
-                    { availableNetworks: newAvailableNetworks, },
-                    () => _.delay(() => {
-                        if(currentIndex === numberOfConnections) {
-                            this.setState({ isWifiScanDone: true, });
-                        } else {
-                            this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1))
+            { isConnectionBtnLoading: true, },
+            () => AppAPI.hardware.check_sync.post({ wifiMacAddress: currentAccessoryData.macAddress, }, payload)
+                .then(response => this.setState(
+                    { isConnectionBtnLoading: ((isFinalChance && response.sync_found) || (!isFinalChance && response.sync_found)) ? true : false, },
+                    () => {
+                        if(
+                            (isFinalChance && response.sync_found) ||
+                            (!isFinalChance && response.sync_found)
+                        ) {
+                            return this._handleFinalSetup();
+                        } else if(isFinalChance && !response.sync_found) {
+                            return this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage());
                         }
-                    }, 750),
-                );
-            })
-            .catch(err => {
-                if(!this._isMounted) {
-                    return '';
-                }
-                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                        return this._toggleWeakRSSIAlertNotification();
-                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
-                            if(isExit) {
-                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                            }
-                            this._renderPreviousPage();
-                        }, 500));
-                    } else if(err.errorMapping.errorCode === -1) {
-                        return this.setState({ isWifiScanDone: true, }, () => this._toggleTimedoutBringCloserAlert(false, () => this._handleWifiScan()));
-                    } else if(currentIndex === numberOfConnections) {
-                        return this.setState({ isWifiScanDone: true, });
+                        return this._handleTestConnectionAlert();
                     }
-                    return this._handleSingleWifiConnectionFetch(device, numberOfConnections, (currentIndex + 1));
-                });
-            });
-    };
-
-    _handleWifiNotInRange = () => {
-        Alert.alert(
-            '',
-            'To connect wifi, your PRO kit needs to be in range of your home network. If not currently in range, connect to wifi later to sync your training data.',
-            [
-                {
-                    text:    'Connect Later',
-                    onPress: () => {
-                        this._handleDisconnection(false, () => {
-                            if(this.props.user && this.props.user.sensor_data && (!this.props.user.sensor_data.mobile_udid || !this.props.user.sensor_data.sensor_pid)) {
-                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                            } else {
-                                Actions.pop();
-                            }
-                        }, true);
-                    },
-                },
-                {
-                    text:  'Connect Now',
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: false, }
+                ))
+                .catch(err => isFinalChance ?
+                    this.setState({ isConnectionSuccessful: false, }, () => this._renderNextPage())
+                    :
+                    this._handleTestConnectionAlert()
+                )
         );
     }
 
-    _handleWifiScan = () => {
-        const { bluetooth, updateUser, user, } = this.props;
-        if(!this._isMounted) {
-            return '';
-        }
-        this.setState({ availableNetworks: [], isWifiScanDone: false, });
-        let device = _.find(bluetooth.devicesFound, ['id', bluetooth.accessoryData.sensor_pid]);
-        return ble.writeWifiNetworkReset(device)
-            .then(res => { // update user obj clearing wifi information when successful
-                let newUserNetworksPayloadObj = {};
-                newUserNetworksPayloadObj['@sensor_data'] = {};
-                newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
-                updateUser(newUserNetworksPayloadObj, user.id);
-                return res;
-            })
-            .then(async () => await ble.sleeper(1000))
-            .then(() => ble.getScannedWifiConnections(device))
-            .then(res => {
-                if(!this._isMounted) {
-                    return '';
-                }
-                if(res === 0) {
-                    this.setState({ availableNetworks: [], isWifiScanDone: true, });
-                }
-                return this._handleSingleWifiConnectionFetch(device, res, 1);
-            })
-            .catch(err => {
-                if(!this._isMounted) {
-                    return '';
-                }
-                return this.setState({ availableNetworks: [], isWifiScanDone: true, }, () => {
-                    if(err.isConnected && err.rssi < SensorLogic.getMinRSSIDBM()) {
-                        return this._toggleWeakRSSIAlertNotification();
-                    } else if(!err.isConnected || err.errorMapping.errorCode === 102) {
-                        return this._toggleTimedoutBringCloserAlert(false, isExit => _.delay(() => {
-                            if(isExit) {
-                                this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false);
-                            }
-                            this._renderPreviousPage();
-                        }, 500));
-                    } else if(err.errorMapping.errorCode === -1) {
-                        // timedout
-                        return AppUtil.handleAPIErrorAlert(SensorLogic.errorMessages().outOfRange, 'Please Try Again!');
-                    }
-                    // TODO: THIS NEEDS TO BE FLUSHED OUT
-                    // let message = `rssi: ${err.rssi}\nreason: ${err.errorMapping.reason}\niosErrorCode: ${err.errorMapping.iosErrorCode}\nandroidErrorCode: ${err.errorMapping.androidErrorCode}\nattErrorCode: ${err.errorMapping.attErrorCode}`;
-                    // let header = `STOP! _handleWifiScan-exception hit. Code: ${err.errorMapping.errorCode} Message: ${err.errorMapping.message}`;
-                    // return AppUtil.handleAPIErrorAlert(message, header);
-                    return console.log(err);
-                });
-            });
-    }
+    _handleTestConnectionAlert = () => Alert.alert(
+        'Connection test not yet complete',
+        'Test is completed when LED on your PRO Kit turns green.',
+        [
+            {
+                style: 'cancel',
+                text:  'Continue Test',
+            },
+        ],
+        { cancelable: true, }
+    )
 
     _onPageScrollEnd = currentPage => {
-        const checkpointPages = [3, 8];
-        if(checkpointPages.includes(currentPage)) { // we're on a checkpoint page, update user obj
-            this._updateUserCheckpoint(currentPage);
+        let lottieAnimation1Page = 7;
+        let lottieAnimation2Page = 8;
+        if(currentPage === lottieAnimation1Page && this.lottieAnimation1 && this.lottieAnimation1.play) {
+            this.lottieAnimation1.play();
+        } else if(currentPage === lottieAnimation2Page && this.lottieAnimation2 && this.lottieAnimation2.play) {
+            this.lottieAnimation2.play();
         }
-        if(currentPage === 2) { // turn on BLE & connect to accessory
-            if (Platform.OS === 'android') {
-                ble.enable();
-            }
-            if (Platform.OS === 'android') {
-                PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then(result => {
-                    if (result) {
-                        console.log('Permission is OK');
-                    } else {
-                        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
-                            .then(res =>
-                                this.setState({
-                                    bleState: res === 'granted' ? 'PoweredOn' : res,
-                                })
-                            );
-                    }
-                });
-            }
-        } else if(currentPage === 3) {
-            if(this.bluetoothLoadingAnimation1 && this.bluetoothLoadingAnimation1.play) {
-                this.bluetoothLoadingAnimation1.play();
-            }
-        } else if(currentPage === WIFI_PAGE_NUMBER) { // wifi list, start scan
-            this._timer = _.delay(() => this._handleWifiScan(), 2000);
-        } else if(currentPage === (WIFI_PAGE_NUMBER + 1)) { // after we've successfully completed our actions, exit kit setup
-            if(this.bluetoothLoadingAnimation2 && this.bluetoothLoadingAnimation2.play) {
-                this.bluetoothLoadingAnimation2.play();
-            }
-            this._timer = _.delay(() => this._handleDisconnection(false, () => ble.destroyInstance(), true), 2000);
+        if(
+            (currentPage === 8 && this.state.isConnectionSuccessful) ||
+            currentPage === 10
+        ) { // we're on a checkpoint page, update user obj
+            this._updateUserCheckpoint(currentPage);
         }
     }
 
-    _renderNextPage = (numberOfPages = 1, assignUserToKit) => {
+    _renderNextPage = (numberOfPages = 1, callback) => {
         let nextPageIndex = (this.state.pageIndex + numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
         this.setState(
             { pageIndex: nextPageIndex, },
-            () => {
-                if(assignUserToKit) {
-                    const { bluetooth, getSensorFiles, updateUser, user, } = this.props;
-                    // setup user variables
-                    let newUserPayloadObj = {};
-                    newUserPayloadObj.sensor_data = {};
-                    newUserPayloadObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                    newUserPayloadObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    newUserPayloadObj.sensor_data.system_type = '3-sensor';
-                    let newUserNetworksPayloadObj = {};
-                    newUserNetworksPayloadObj['@sensor_data'] = {};
-                    newUserNetworksPayloadObj['@sensor_data'].sensor_networks = [];
-                    let newUserObj = _.cloneDeep(user);
-                    newUserObj.first_time_experience.push(`${FIRST_TIME_EXPERIENCE_PREFIX}Final`);
-                    newUserObj.sensor_data.sensor_pid = bluetooth.accessoryData.wifiMacAddress;
-                    newUserObj.sensor_data.mobile_udid = bluetooth.accessoryData.mobile_udid;
-                    newUserObj.sensor_data.sensor_networks = [];
-                    newUserObj.sensor_data.system_type = '3-sensor';
-                    updateUser(newUserPayloadObj, user.id) // 1a. PATCH user specific endpoint - handles everything except for network name
-                        .then(() => updateUser(newUserNetworksPayloadObj, user.id)) // 1b. PATCH user specific endpoint - handles network names
-                        .then(() => getSensorFiles(newUserObj)) // 2. grab sensor files as they may have changed
-                        .catch(err => console.log('assignUserToKit-err',err));
-                }
-            }
+            () => callback && callback(),
         );
     }
 
-    _renderPreviousPage = (numberOfPages = 1) => {
+    _renderPreviousPage = (numberOfPages = 1, callback) => {
         let nextPageIndex = (this.state.pageIndex - numberOfPages);
         this._pages.scrollToPage(nextPageIndex);
-        this.setState({ pageIndex: nextPageIndex, });
-    }
-
-    _submitPasswordInput = inputText => {
-        let newCurrentWifiConnection = _.cloneDeep(this.state.currentWifiConnection);
-        newCurrentWifiConnection.password = inputText;
         this.setState(
-            { currentWifiConnection: newCurrentWifiConnection, isDialogVisible: false, },
-            () => {
-                this._timer = _.delay(() => {
-                    this.setState(
-                        { isSubmittingDetails: true, loading: true, },
-                        () => this._connectSensorToWifi(),
-                    );
-                }, 500);
-            },
-        );
-    }
-
-    _toggleAlertNotification = () => {
-        if(this.state.pageIndex === 2) {
-            let nextNumberOfPages = this.props.user.first_time_experience.includes(`${FIRST_TIME_EXPERIENCE_PREFIX}3`) ?
-                2
-                :
-                1;
-            Alert.alert(
-                '',
-                'Did the LED turn green?',
-                [
-                    {
-                        text:    'No',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => this._renderPreviousPage(), true)),
-                        style:   'cancel',
-                    },
-                    {
-                        text:    'Yes',
-                        onPress: () => this.setState({ isConnectingToSensor: false, }, () => {this._timer = _.delay(() => this._renderNextPage(nextNumberOfPages), 500)}),
-                    },
-                ],
-                { cancelable: false, }
-            );
-        }
-    }
-
-    _toggleWeakRSSIAlertNotification = () => {
-        // TODO: CONFIRM MESSAGE WITH BIZ TEAM
-        Alert.alert(
-            '',
-            'Please bring your Kit closer to phone and try again.',
-            [
-                {
-                    text:  'Try Again',
-                    style: 'cancel',
-                },
-            ],
-            { cancelable: false, }
-        );
-    }
-
-    _toggleTimedoutBringCloserAlert = (destroyInstance, callback) => {
-        if(destroyInstance) {
-            clearTimeout(this._timer);
-            this._timer = null;
-            ble.destroyInstance();
-        }
-        Alert.alert(
-            '',
-            'We\'re not able to find your Kit. Try bringing your phone closer.',
-            [
-                {
-                    text:    'Exit Tutorial',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => this._handleDisconnection(false, () => callback && callback(true))),
-                    style:   'cancel',
-                },
-                {
-                    text:    'Try Again',
-                    onPress: () => this.setState({ isConnectingToSensor: false, }, () => callback && callback()),
-                },
-            ],
-            { cancelable: false, }
+            { pageIndex: nextPageIndex, },
+            () => callback && callback(),
         );
     }
 
@@ -611,18 +208,14 @@ class BluetoothConnect extends Component {
 
     render = () => {
         const {
-            availableNetworks,
-            bleState,
-            currentWifiConnection,
+            currentAccessoryData,
+            isDelaying,
+            isConnectionBtnActive,
+            isConnectionBtnLoading,
+            isConnectionSuccessful,
+            isNeedHelpModalOpen,
             pageIndex,
-            isConnectingToSensor,
-            isDialogVisible,
-            isSubmittingDetails,
-            isVideoMuted,
-            isWifiScanDone,
         } = this.state;
-        const { user, } = this.props;
-        const has3SensorConnected = user && user.sensor_data && user.sensor_data.mobile_udid && user.sensor_data.sensor_pid;
         return(
             <View style={{flex: 1,}}>
 
@@ -639,128 +232,343 @@ class BluetoothConnect extends Component {
                     <CVP
                         currentPage={pageIndex === 0}
                         nextBtn={this._renderNextPage}
+                        toggleLearnMore={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
                     />
 
-                    {/* Owner - pages 1-3 */}
+                    {/* Connect - pages 1 - 8 */}
                     <Connect
                         currentPage={pageIndex === 1}
-                        nextBtn={numberOfPages => this._renderNextPage(numberOfPages)}
-                        onBack={this._renderPreviousPage}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true)}
+                        nextBtn={this._renderNextPage}
                         page={0}
-                        pageFirst={true}
+                        showTopNavStep={false}
+                        toggleLearnMore={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
                     />
                     <Connect
                         currentPage={pageIndex === 2}
-                        isLoading={isConnectingToSensor}
-                        isNextDisabled={bleState !== 'PoweredOn'}
-                        nextBtn={() => this.setState({ isConnectingToSensor: true, }, () => this._handleBLEPair())}
-                        onBack={isConnectingToSensor ? null : () => this._handleSyncOnBack()}
-                        onClose={() =>
-                            this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true))
-                        }
-                        page={1}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={7}
+                        showTopNavStep={false}
                     />
-                    <View style={{flex: 1,}}>
-                        <TopNav
-                            darkColor={true}
-                            onClose={() => this._handleDisconnection(false, () => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect wifi and finish set-up. Tap here.', true), true)}
-                            step={1}
-                        />
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between',}}>
-                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(32), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                {'Success!'}
-                            </Text>
-                            <LottieView
-                                loop={false}
-                                ref={animation => {this.bluetoothLoadingAnimation1 = animation;}}
-                                source={require('../../../assets/animation/bluetoothloading.json')}
-                                style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
+                    <Connect
+                        currentPage={pageIndex === 3}
+                        nextBtn={this._renderNextPage}
+                        onBack={this._renderPreviousPage}
+                        page={8}
+                        showTopNavStep={false}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 4}
+                        isLoading={isDelaying}
+                        nextBtn={() => this._delayAndContinue(2000)}
+                        page={1}
+                        showTopNavStep={false}
+                    />
+                    <Connect
+                        currentPage={pageIndex === 5}
+                        isLoading={isDelaying}
+                        nextBtn={this._delayAndContinue}
+                        onBack={isDelaying ? () => {} : () => this._renderPreviousPage()}
+                        page={6}
+                        showTopNavStep={false}
+                    />
+                    <View
+                        style={{
+                            flex:   1,
+                            height: (AppSizes.screen.height * 0.75),
+                            width:  (AppSizes.screen.width),
+                        }}
+                    >
+                        <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
+                        <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center',}}>
+                            <View style={{flex: 3, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
+                                <Egg
+                                    onCatch={() => Alert.alert(
+                                        'Add user to this PRO Kit',
+                                        `You\'re about to add this account as a user to Fathom PRO kit (${currentAccessoryData.macAddress}).\n\nTo do so:\n1. Open your phone's wifi settings\n2. Disconnect from "FathomPRO" network\n3. Come back & tap "continue"\n4. Wait ~10s for the success screen`,
+                                        [
+                                            {
+                                                style: 'cancel',
+                                                text:  'Cancel',
+                                            },
+                                            {
+                                                onPress: () => this._handleFinalSetup(2),
+                                                text:    'Continue',
+                                            }
+                                        ],
+                                        { cancelable: true, }
+                                    )}
+                                    setps={'TTTTT'}
+                                    style={{alignItems: 'flex-start', flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
+                                >
+                                    <TabIcon
+                                        color={AppColors.zeplin.slateXLight}
+                                        icon={'clipboard-account-outline'}
+                                        reverse={false}
+                                        size={30}
+                                        type={'material-community'}
+                                    />
+                                </Egg>
+                            </View>
+                            <View style={{flex: 4, justifyContent: 'center',}} />
+                            <View style={{alignItems: 'flex-end', flex: 3, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+                                <TabIcon
+                                    color={AppColors.zeplin.slateLight}
+                                    icon={'close'}
+                                    onPress={() => Actions.pop()}
+                                    reverse={false}
+                                    size={30}
+                                />
+                            </View>
+                        </View>
+                        { pageIndex === 6 &&
+                            <WebView
+                                cacheEnabled={false}
+                                cacheMode={'LOAD_NO_CACHE'}
+                                onError={syntheticEvent => {
+                                    const { nativeEvent, } = syntheticEvent;
+                                    if(nativeEvent.code && (nativeEvent.code === -1001 || nativeEvent.code === '-1001')) {
+                                        return this._renderPreviousPage(
+                                            1,
+                                            () => Alert.alert(
+                                                'We were not able to communicate with your Kit.',
+                                                'Ensure you are connected to the FathomPRO network to continue setup. You may need to confirm the connection through a notification from your OS.',
+                                                [
+                                                    {
+                                                        style: 'cancel',
+                                                        text:  'OK',
+                                                    },
+                                                ],
+                                                { cancelable: true, }
+                                            )
+                                        );
+                                    }
+                                    return this._renderPreviousPage(1, () => Alert.alert(
+                                        'Your phone is not connected to FathomPRO network.',
+                                        'The LED on your PRO Kit must be solid blue and your phone must be connected to the Fathom PRO wifi network. If you see a notification saying "Wi-Fi has no Internet access." Tap it and select "Yes".',
+                                        [
+                                            {
+                                                style: 'cancel',
+                                                text:  'Try Again',
+                                            },
+                                        ],
+                                        { cancelable: true, }
+                                    ))
+                                }}
+                                onMessage={event => {
+                                    let data = JSON.parse(event.nativeEvent.data);
+                                    if(
+                                        data.error ||
+                                        (
+                                            !data.error &&
+                                            (
+                                                !data.macAddress ||
+                                                data.macAddress.length === 0 ||
+                                                !data.ssid ||
+                                                data.ssid.length === 0
+                                            )
+                                        )
+                                    ) {
+                                        if(data.macAddress && !data.ssid) {
+                                            return this.setState({
+                                                currentAccessoryData: {
+                                                    macAddress: data.macAddress.toUpperCase(),
+                                                    ssid:       null,
+                                                }
+                                            });
+                                        }
+                                        return this._renderPreviousPage(2, () => Alert.alert(
+                                            'Lost connection with FathomPRO network.',
+                                            'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
+                                            [
+                                                {
+                                                    style: 'cancel',
+                                                    text:  'Try Again',
+                                                },
+                                            ],
+                                            { cancelable: true, }
+                                        ));
+                                    }
+                                    this._timer = _.delay(() => this._handleTestConnection(true), 70000);
+                                    this._secondaryTimer = _.delay(() => this.setState({ isConnectionBtnActive: true, }), 10000);
+                                    return this._renderNextPage(1, () => {
+                                        this._thirdTimer = _.delay(() =>
+                                            this.setState(
+                                                {
+                                                    currentAccessoryData: {
+                                                        macAddress: data.macAddress.toUpperCase(),
+                                                        ssid:       data.ssid,
+                                                    },
+                                                    currentTime: moment(),
+                                                }
+                                            )
+                                        , 250);
+                                    });
+                                }}
+                                originWhitelist={['*']}
+                                ref={ref => {this._webview = ref;}}
+                                renderLoading={() =>
+                                    <View style={{alignItems: 'center', bottom: 0, flex: 1, justifyContent: 'center', left: 0, paddingHorizontal: AppSizes.padding, position: 'absolute', right: 0, top: 0,}}>
+                                        <ActivityIndicator
+                                            animating
+                                            color={AppColors.zeplin.yellow}
+                                            size={'large'}
+                                        />
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                            {'Searching for a connection to the FathomPRO network'}
+                                        </Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                            {'If your phone\'s not connect to the '}
+                                            <Text robotoBold>{'FathomPRO'}</Text>
+                                            {' wifi network. tap "Try Again" to go back.'}
+                                        </Text>
+                                        <Button
+                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                            containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '45%',}}
+                                            onPress={() => {
+                                                clearInterval(this._timer);
+                                                if(this._webview && this._webview.stopLoading) {
+                                                    this._webview.stopLoading();
+                                                }
+                                                return this._renderPreviousPage();
+                                            }}
+                                            raised={true}
+                                            title={'Try Again'}
+                                            titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                        />
+                                    </View>
+                                }
+                                source={{uri: 'http://192.168.240.1/gsprov.html'}}
+                                startInLoadingState={true}
+                                style={{flex: 1,}}
                             />
-                            <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22), marginHorizontal: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                {'Your kit is now connected to your account!'}
+                        }
+                    </View>
+                    <View style={{flex: 1,}}>
+                        <TopNav darkColor={true} onBack={null} showClose={false} showTopNavStep={false} />
+                        <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
+                                {'Testing Connection'}
                             </Text>
+                        </View>
+                        <View style={{flex: 1, justifyContent: 'space-between',}}>
+                            <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
+                                <View style={{alignItems: 'center',}}>
+                                    <LottieView
+                                        ref={animation => {this.lottieAnimation1 = animation;}}
+                                        source={require('../../../assets/animation/wifi-loading.json')}
+                                        style={{height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
+                                    />
+                                </View>
+                                <View>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), textAlign: 'center',}}>
+                                        {'We are checking for a strong wifi connection.\n\n'}
+                                        <Text robotoBold>{'The LED on your Fathom PRO Kit will turn green'}</Text>
+                                        {' when connection is a success!'}
+                                    </Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), lineHeight: AppFonts.scaleFont(18), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                                        {'(This may take up to 2 minutes, keep Kit closed)'}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
+                                <Button
+                                    buttonStyle={{backgroundColor: AppColors.zeplin.green, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                    containerStyle={{alignItems: 'center', alignSelf: 'center', marginTop: AppSizes.paddingSml, justifyContent: 'center', width: '75%',}}
+                                    loading={isConnectionBtnLoading}
+                                    loadingProps={{color: AppColors.white,}}
+                                    loadingStyle={{alignItems: 'center', justifyContent: 'center', width: '100%',}}
+                                    onPress={() => isConnectionBtnActive ? this._handleTestConnection() : this._handleTestConnectionAlert()}
+                                    raised={true}
+                                    title={'My Kit LED is Green'}
+                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{flex: 1,}}>
+                        <TopNav darkColor={true} onBack={null} showClose={!isConnectionSuccessful} showTopNavStep={false} />
+                        <View style={{paddingBottom: AppSizes.padding, paddingHorizontal: AppSizes.paddingLrg,}}>
+                            <Text robotoMedium style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>
+                                {isConnectionSuccessful ? 'Success!' : 'Connection Failed'}
+                            </Text>
+                        </View>
+                        <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
+                                <View style={{alignItems: 'center',}}>
+                                    {isConnectionSuccessful ?
+                                        <LottieView
+                                            loop={false}
+                                            ref={animation => {this.lottieAnimation2 = animation;}}
+                                            source={require('../../../assets/animation/bluetoothloading.json')}
+                                            style={{height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
+                                        />
+                                        :
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={require('../../../assets/images/standard/wifi-error.png')}
+                                            style={{alignSelf: 'center', height: AppSizes.screen.widthHalf, width: AppSizes.screen.widthHalf,}}
+                                        />
+                                    }
+                                    {isConnectionSuccessful ?
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                            {'Bring PRO Kit in range of '}
+                                            <Text robotoBold>{currentAccessoryData && currentAccessoryData.ssid || ''}</Text>
+                                            {' after every workout to upload your training data and update your Recovery Plan!'}
+                                        </Text>
+                                        :
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
+                                            {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
+                                        </Text>
+                                    }
+                                </View>
+                            </View>
                             <View style={{alignItems: 'center', paddingBottom: AppSizes.iphoneXBottomBarPadding > 0 ? AppSizes.iphoneXBottomBarPadding : AppSizes.padding,}}>
                                 <Button
                                     buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                                    containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
-                                    onPress={() => this._renderNextPage()}
+                                    containerStyle={{alignItems: 'center', alignSelf: 'center', marginTop: AppSizes.paddingSml, justifyContent: 'center', width: isConnectionSuccessful ? '45%' : '75%',}}
+                                    onPress={isConnectionSuccessful ?
+                                        () => this._renderNextPage()
+                                        :
+                                        () => {
+                                            let newState = _.cloneDeep(this.defaultState);
+                                            newState.pageIndex = 6;
+                                            this.setState(
+                                                { ...newState, },
+                                                () => this._renderPreviousPage(2),
+                                            );
+                                        }
+                                    }
                                     raised={true}
-                                    title={'Next'}
-                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
+                                    title={isConnectionSuccessful ? 'Next' : 'Try Again'}
+                                    titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
                                 />
                             </View>
                         </View>
                     </View>
 
-                    {/* Wifi - page 4-5 */}
-                    <Connect
-                        currentPage={pageIndex === 4}
-                        nextBtn={(numberOfPages, assignUserToKit) => this._renderNextPage(numberOfPages, assignUserToKit)}
-                        onClose={() => this._handleAlertHelper('RETURN TO TUTORIAL', 'to connect to wifi and sync your data. Tap here.', true)}
-                        page={0}
-                    />
-                    <Connect
-                        availableNetworks={availableNetworks}
-                        currentPage={pageIndex === WIFI_PAGE_NUMBER}
-                        handleNetworkPress={network => isDialogVisible || isSubmittingDetails ? {} : this._handleNetworkPress(network)}
-                        handleNotInRange={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiNotInRange()}
-                        handleWifiScan={() => isDialogVisible || isSubmittingDetails ? {} : this._handleWifiScan()}
-                        isWifiScanDone={isWifiScanDone}
-                        nextBtn={this._renderNextPage}
-                        onBack={() => this._renderPreviousPage()}
-                        onClose={() => this._handleDisconnection(false, () => this._handleAlertHelper('FINISH WIFI SET-UP TO SYNC YOUR DATA.', 'Tap here once in range of your preferred wifi.', false), true)}
-                        page={3}
-                    />
-
-                    {/* Success - page 6 */}
-                    <Complete
-                        animationRef={ref => {this.bluetoothLoadingAnimation2 = ref;}}
-                        currentNetwork={currentWifiConnection && currentWifiConnection.ssid ? currentWifiConnection.ssid : false}
-                        currentPage={pageIndex === 6}
-                        nextBtn={user.first_time_experience.includes('3Sensor-Onboarding-8') ? () => AppUtil.pushToScene('myPlan') : () => this._renderNextPage()}
-                        nextBtnText={user.first_time_experience.includes('3Sensor-Onboarding-8') ? 'Done' : 'Next'}
-                    />
-
-                    {/* Train - pages 7-9 */}
+                    {/* Train - pages 9 - 10 */}
                     <Train
-                        currentPage={pageIndex === 7}
+                        currentPage={pageIndex === 9}
                         nextBtn={this._renderNextPage}
-                        onBack={has3SensorConnected ? null : () => this._renderPreviousPage(3)}
                         page={0}
+                        showTopNavStep={false}
                     />
                     <Train
-                        currentPage={pageIndex === 8}
+                        currentPage={pageIndex === 10}
                         nextBtn={() => AppUtil.pushToScene('myPlan')}
                         onBack={this._renderPreviousPage}
                         page={1}
+                        showTopNavStep={false}
                     />
 
                 </Pages>
 
-                <Toast
-                    position={'bottom'}
-                    ref={'toast'}
+                <WebViewPageModal
+                    handleModalToggle={() => this.setState({ isNeedHelpModalOpen: !isNeedHelpModalOpen, })}
+                    isModalOpen={isNeedHelpModalOpen}
+                    webViewPageSource={'https://intercom.help/fathomai/'}
                 />
-
-                <DialogInput
-                    closeDialog={() => this.setState({ currentWifiConnection: false, isDialogVisible: false, })}
-                    dialogStyle={{marginBottom: 100,}}
-                    isDialogVisible={isDialogVisible}
-                    message={`"${currentWifiConnection ? currentWifiConnection.ssid : ''}"`}
-                    modalStyle={{backdropColor: AppColors.zeplin.darkNavy, backdropOpacity: 0.8,}}
-                    submitInput={inputText => this._submitPasswordInput(inputText)}
-                    submitText={'Save'}
-                    title={'Connect to Network'}
-                />
-
-                { this.state.loading ?
-                    <Loading
-                        text={'SAVING...'}
-                    />
-                    :
-                    null
-                }
 
             </View>
         )
@@ -769,9 +577,7 @@ class BluetoothConnect extends Component {
 
 BluetoothConnect.propTypes = {
     assignKitIndividual: PropTypes.func.isRequired,
-    bluetooth:           PropTypes.object.isRequired,
     getSensorFiles:      PropTypes.func.isRequired,
-    network:             PropTypes.object.isRequired,
     updateUser:          PropTypes.func.isRequired,
     user:                PropTypes.object.isRequired,
 };

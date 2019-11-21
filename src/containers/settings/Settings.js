@@ -13,12 +13,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect, } from 'react-redux';
 
-import { ble, init, user as userActions, } from '../../actions';
+import { ble as BluetoothActions, init, user as userActions, } from '../../actions';
 
 const Settings = ({
     Layout,
     accessoryData,
     changePassword,
+    getSensorDetails,
     logout,
     network,
     sessionToken,
@@ -29,6 +30,7 @@ const Settings = ({
     <Layout
         accessoryData={accessoryData}
         changePassword={changePassword}
+        getSensorDetails={getSensorDetails}
         logout={logout}
         network={network}
         sessionToken={sessionToken}
@@ -39,13 +41,14 @@ const Settings = ({
 );
 
 Settings.propTypes = {
-    Layout:          PropTypes.func.isRequired,
-    accessoryData:   PropTypes.object.isRequired,
-    logout:          PropTypes.func.isRequired,
-    network:         PropTypes.object.isRequired,
-    user:            PropTypes.object.isRequired,
-    updateUser:      PropTypes.func.isRequired,
-    userJoinAccount: PropTypes.func.isRequired,
+    Layout:           PropTypes.func.isRequired,
+    accessoryData:    PropTypes.object.isRequired,
+    getSensorDetails: PropTypes.func.isRequired,
+    logout:           PropTypes.func.isRequired,
+    network:          PropTypes.object.isRequired,
+    user:             PropTypes.object.isRequired,
+    updateUser:       PropTypes.func.isRequired,
+    userJoinAccount:  PropTypes.func.isRequired,
 };
 
 Settings.defaultProps = {};
@@ -58,10 +61,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    changePassword:  init.changePassword,
-    logout:          init.logout,
-    updateUser:      userActions.updateUser,
-    userJoinAccount: userActions.userJoinAccount,
+    changePassword:   init.changePassword,
+    getSensorDetails: BluetoothActions.getSensorDetails,
+    logout:           init.logout,
+    updateUser:       userActions.updateUser,
+    userJoinAccount:  userActions.userJoinAccount,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

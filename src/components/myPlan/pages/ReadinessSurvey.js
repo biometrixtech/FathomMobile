@@ -97,6 +97,7 @@ class ReadinessSurvey extends Component {
             isActionButtonVisible:       false,
             isAppleHealthKitLoading:     false,
             isAppleHealthModalOpen:      !user.first_time_experience.includes('apple_healthkit') && !user.health_enabled && Platform.OS === 'ios',
+            isBodyOverlayButtonLocked:   false,
             isBodyOverlayFront:          true,
             isCloseToBottom:             false,
             isDontAskChecked:            false,
@@ -346,6 +347,7 @@ class ReadinessSurvey extends Component {
         } = this.props;
         const {
             isActionButtonVisible,
+            isBodyOverlayButtonLocked,
             isBodyOverlayFront,
             isCloseToBottom,
             isDontAskChecked,
@@ -689,7 +691,13 @@ class ReadinessSurvey extends Component {
                                     // if(!body && isAllGood) {
                                     //     this.setState({ isActionButtonVisible: false, });
                                     // }
-                                    handleAreaOfSorenessClick(body, true, isAllGood, resetSections, side, callback);
+                                    if(!body && !side && !callback) {
+                                        return this.setState({ isBodyOverlayButtonLocked: false, });
+                                    }
+                                    return this.setState(
+                                        { isBodyOverlayButtonLocked: callback ? true : false, },
+                                        () => handleAreaOfSorenessClick(body, true, isAllGood, resetSections, side, callback),
+                                    );
                                 }}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
@@ -715,7 +723,14 @@ class ReadinessSurvey extends Component {
                                     buttons={['Front', 'Back']}
                                     containerStyle={{backgroundColor: `${AppColors.zeplin.splashXLight}${PlanLogic.returnHexOpacity(0.8)}`, borderRadius: AppSizes.paddingLrg, borderWidth: 0, marginLeft: 0, marginTop: 0,}}
                                     innerBorderStyle={{width: 0,}}
-                                    onPress={selectedIndex => this.setState({ isBodyOverlayFront: (selectedIndex === 0), })}
+                                    onPress={selectedIndex => isBodyOverlayButtonLocked ?
+                                        {}
+                                        :
+                                        this.setState(
+                                            { isBodyOverlayButtonLocked: true, isBodyOverlayFront: (selectedIndex === 0), },
+                                            () => _.delay(() => this.setState({ isBodyOverlayButtonLocked: false, }), 800)
+                                        )
+                                    }
                                     selectedButtonStyle={{backgroundColor: `${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.8)}`,}}
                                     selectedIndex={isBodyOverlayFront ? 0 : 1}
                                     selectedTextStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18),}}
@@ -725,7 +740,13 @@ class ReadinessSurvey extends Component {
                             <View style={{flex: 1,}}>
                                 <BackNextButtons
                                     addOpacityToSubmitBtn={0.8}
-                                    handleFormSubmit={areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ? () => handleFormSubmit(isSecondFunctionalStrength) : () => this.setState({ isSubmitSurveyModalOpen: true, })}
+                                    handleFormSubmit={isBodyOverlayButtonLocked ?
+                                        () => {}
+                                        : areaOfSorenessClicked.length > 0 || user.first_time_experience.includes('LAST_CHANCE_MODAL') ?
+                                            () => handleFormSubmit(isSecondFunctionalStrength)
+                                            :
+                                            () => this.setState({ isSubmitSurveyModalOpen: true, })
+                                    }
                                     isValid={this.areasOfSorenessRef && this.areasOfSorenessRef.state && !this.areasOfSorenessRef.state.isAllGood && !this.areasOfSorenessRef.state.showWholeArea ?
                                         true
                                         :

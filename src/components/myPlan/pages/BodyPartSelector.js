@@ -210,7 +210,7 @@ class BodyPartSelector extends Component {
             : image === 'R_OutsideKnee.svg' ?
                 require('../../../../assets/images/body/body_overlay_selector/R_OutsideKnee.png')
             :
-                require('../../../../assets/images/body/body_overlay_selector/Abs.png');
+                false;
         return imageName;
     }
 
@@ -230,7 +230,7 @@ class BodyPartSelector extends Component {
             () => foundSelectedBodyPartInReducer && !hasSeverity ?
                 handleBodyPartClick(selectedBodyPart, foundSelectedBodyPartInReducer.side)
                 :
-                null,
+                handleBodyPartClick(false, false),
         );
     }
 
@@ -362,6 +362,9 @@ class BodyPartSelector extends Component {
                                     bodyImage,
                                     tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, false, this._getImageString);
+                                if(!bodyImage) {
+                                    return(null);
+                                }
                                 return (
                                     <RNImage
                                         key={index}
@@ -394,6 +397,9 @@ class BodyPartSelector extends Component {
                                     bodyImage,
                                     tintColor,
                                 } = PlanLogic.handleSingleBodyPartSelectorRenderLogic(areaOfSorenessClicked, selectedBodyPart, body, true, this._getImageString);
+                                if(!bodyImage) {
+                                    return(null);
+                                }
                                 return (
                                     <RNImage
                                         key={index}
@@ -410,7 +416,11 @@ class BodyPartSelector extends Component {
                             })}
                         </View>
                     </Animated.View>
-                    <View style={{flexDirection: 'row', flexWrap: 'wrap', height: front.height, position: 'absolute', width: front.width,}}>
+                    <View style={[styles.leftRightHeader, {bottom: (_.round(front.height / NUMBER_OF_OVERLAY_GRIDS_HEIGHT) * 2),}]}>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}`}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}`}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row', flexWrap: 'wrap', height: front.height, position: 'absolute', width: front.width, zIndex: 100,}}>
                         {_.map(gridRange, key => (
                             <TouchableOpacity
                                 key={key}
@@ -423,11 +433,6 @@ class BodyPartSelector extends Component {
                             />
                         ))}
                     </View>
-                </View>
-
-                <View style={[styles.leftRightHeader, {bottom: (((AppSizes.padding * 2) + AppSizes.paddingXLrg) * 1.5),}]}>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Right': 'Left'}`}</Text>
-                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15),}}>{`${isBodyOverlayFront ? 'Left': 'Right'}`}</Text>
                 </View>
 
                 <Spacer size={(AppSizes.padding + AppSizes.paddingXLrg)} />

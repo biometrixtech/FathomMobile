@@ -23,6 +23,7 @@ const MyPlan = ({
     plan,
     postReadinessSurvey,
     postSessionSurvey,
+    postSymptoms,
     scheduledMaintenance,
     setAppLogs,
     updateSensorSession,
@@ -47,6 +48,7 @@ const MyPlan = ({
         plan={plan}
         postReadinessSurvey={postReadinessSurvey}
         postSessionSurvey={postSessionSurvey}
+        postSymptoms={postSymptoms}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
         updateSensorSession={updateSensorSession}
@@ -77,6 +79,7 @@ MyPlan.propTypes = {
     plan:                 PropTypes.object.isRequired,
     postReadinessSurvey:  PropTypes.func.isRequired,
     postSessionSurvey:    PropTypes.func.isRequired,
+    postSymptoms:         PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     setAppLogs:           PropTypes.func.isRequired,
     updateSensorSession:  PropTypes.func.isRequired,
@@ -111,6 +114,7 @@ const mapDispatchToProps = {
     noSessions:                      PlanActions.noSessions,
     postReadinessSurvey:             PlanActions.postReadinessSurvey,
     postSessionSurvey:               PlanActions.postSessionSurvey,
+    postSymptoms:                    PlanActions.postSymptoms,
     setAppLogs:                      PlanActions.setAppLogs,
     updateSensorSession:             BLEActions.updateSensorSession,
     updateUser:                      UserActions.updateUser,

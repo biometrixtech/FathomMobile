@@ -5,6 +5,8 @@ import { PlanLogic, } from '../lib';
  * Default MyPlan State
  */
 const defaultPlanState = {
+    activityIdLoading:  null,
+    apiIndex:           null,
     appState:           'active',
     currentTabLocation: 0,
     dailyReadiness:     {
@@ -27,6 +29,8 @@ const defaultPlanState = {
     },
     isCoachModalOpen:                     false,
     isContactUsOpen:                      false,
+    isLogSymptomsModalOpen:               false,
+    isNeedHelpModalOpen:                  false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,
@@ -36,10 +40,13 @@ const defaultPlanState = {
     isStartSensorSessionModalOpen:        false,
     isTrainSessionsCompletionModalOpen:   false,
     loading:                              false,
-    page0:                                {},
-    page1:                                {},
-    page2:                                {},
-    postSession:                          {
+    logSymptoms:                          {
+        soreness: [],
+    },
+    page0:       {},
+    page1:       {},
+    page2:       {},
+    postSession: {
         description:      '',
         sessions:         [PlanLogic.returnEmptySession()],
         sessions_planned: null,
@@ -52,7 +59,7 @@ const defaultPlanState = {
     train:           {
         postPracticeSurveys: [],
     },
-    trainLoadingScreenText: 'LOADING WORKOUTS...',
+    trainLoadingScreenText: 'Searching for workouts...',
 };
 
 /* Export ==================================================================== */
