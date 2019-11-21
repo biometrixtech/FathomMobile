@@ -134,6 +134,12 @@ class SensorFilesPage extends Component {
         }
         // if user is updating wifi for THEIR access point
         clearInterval(this._timer);
+        let newUserObj = _.cloneDeep(user);
+        newUserObj.sensor_data.sensor_networks = currentAccessoryData.ssid ? [currentAccessoryData.ssid] : [];
+        store.dispatch({
+            type: DispatchActions.USER_REPLACE,
+            data: newUserObj,
+        });
         let newUserNetworksPayloadObj = {};
         newUserNetworksPayloadObj['@sensor_data'] = {};
         newUserNetworksPayloadObj['@sensor_data'].sensor_networks = currentAccessoryData.ssid ? [currentAccessoryData.ssid] : [];
@@ -198,6 +204,7 @@ class SensorFilesPage extends Component {
     )
 
     _onPageScrollEnd = currentPage => {
+        const { currentAccessoryData, } = this.state;
         const { pageStep, updateUser, user, } = this.props;
         let lottieAnimation1Page = 3;
         let lottieAnimation2Page = 4;
@@ -206,7 +213,10 @@ class SensorFilesPage extends Component {
         } else if(currentPage === lottieAnimation2Page && pageStep === 'connect' && this.lottieAnimation2 && this.lottieAnimation2.play) {
             this.lottieAnimation2.play();
         }
-        if(currentPage === lottieAnimation1Page) {
+        if(
+            currentPage === lottieAnimation1Page &&
+            currentAccessoryData.macAddress === user.sensor_data.sensor_pid
+        ) {
             // clear user ssid
             let newUserNetworksPayloadObj = {};
             newUserNetworksPayloadObj['@sensor_data'] = {};
@@ -346,7 +356,7 @@ class SensorFilesPage extends Component {
                                                         }
                                                     });
                                                 }
-                                                return this._renderPreviousPage(1, () => Alert.alert(
+                                                return this._renderPreviousPage(2, () => Alert.alert(
                                                     'Lost connection with FathomPRO network.',
                                                     'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                                     [

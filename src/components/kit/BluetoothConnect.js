@@ -281,11 +281,11 @@ class BluetoothConnect extends Component {
                     >
                         <View style={{backgroundColor: AppColors.primary.grey.twentyPercent, color: AppColors.black, height: AppSizes.statusBarHeight,}} />
                         <View style={{backgroundColor: AppColors.white, flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center',}}>
-                            <View style={{flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
+                            <View style={{flex: 3, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}>
                                 <Egg
                                     onCatch={() => Alert.alert(
                                         'Add user to this PRO Kit',
-                                        `You\'re about to add this account as a user to Fathom PRO kit (${currentAccessoryData.macAddress}). To do so:\n- Open your phone's wifi settings\n- Disconnect from "FathomPRO" network\n- Come back & tap "continue"\n- Wait ~10s for the success screen`,
+                                        `You\'re about to add this account as a user to Fathom PRO kit (${currentAccessoryData.macAddress}).\n\nTo do so:\n1. Open your phone's wifi settings\n2. Disconnect from "FathomPRO" network\n3. Come back & tap "continue"\n4. Wait ~10s for the success screen`,
                                         [
                                             {
                                                 style: 'cancel',
@@ -299,7 +299,7 @@ class BluetoothConnect extends Component {
                                         { cancelable: true, }
                                     )}
                                     setps={'TTTTT'}
-                                    style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}
+                                    style={{alignItems: 'flex-start', flex: 1, justifyContent: 'center', paddingLeft: AppSizes.paddingSml,}}
                                 >
                                     <TabIcon
                                         color={AppColors.zeplin.slateXLight}
@@ -310,8 +310,8 @@ class BluetoothConnect extends Component {
                                     />
                                 </Egg>
                             </View>
-                            <View style={{flex: 8, justifyContent: 'center',}} />
-                            <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
+                            <View style={{flex: 4, justifyContent: 'center',}} />
+                            <View style={{alignItems: 'flex-end', flex: 3, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}}>
                                 <TabIcon
                                     color={AppColors.zeplin.slateLight}
                                     icon={'close'}
@@ -377,7 +377,7 @@ class BluetoothConnect extends Component {
                                                 }
                                             });
                                         }
-                                        return this._renderPreviousPage(1, () => Alert.alert(
+                                        return this._renderPreviousPage(2, () => Alert.alert(
                                             'Lost connection with FathomPRO network.',
                                             'Keep your PRO Kit near your phone while completing wifi setup. Make sure all of the sensors are inside the PRO Kit with the lid firmly closed.',
                                             [
@@ -535,7 +535,7 @@ class BluetoothConnect extends Component {
                                             newState.pageIndex = 6;
                                             this.setState(
                                                 { ...newState, },
-                                                () => this._renderPreviousPage(4),
+                                                () => this._renderPreviousPage(2),
                                             );
                                         }
                                     }
