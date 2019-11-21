@@ -538,7 +538,7 @@ const getSingleWifiConnection = async (device, index) => {
                 let longWifiSleep = await sleeper(1000);
                 let longCharacteristic = await longWifiCharacteristic.read(singleWifiLongTransactionId);
                 let longResponseHex = convertBase64ToHex(longCharacteristic.value);
-                if(convertByteArrayToString(longResponseHex) === '\\' || convertByteArrayToString(longResponseHex) ==='/') {
+                if(convertByteArrayToString(longResponseHex) === '\\' || convertByteArrayToString(longResponseHex) === '/') {
                     let errorObj = await handleError({}, device);
                     return reject(errorObj);
                 }

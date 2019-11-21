@@ -84,7 +84,7 @@ class SensorFilesPage extends Component {
         };
         this._pages = {};
         this._secondaryTimer = null;
-        this._secondaryTimer = null;
+        this._thirdTimer = null;
         this._timer = null;
         this._webview = {};
         this.lottieAnimation1 = {};

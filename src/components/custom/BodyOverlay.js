@@ -234,7 +234,7 @@ class BodyOverlay extends Component {
                 require('../../../assets/images/body/body_overlay/L_Transverse.png')
             : image === 'R_Transverse.svg' ?
                 require('../../../assets/images/body/body_overlay/R_Transverse.png')
-            : image ==='RectusAbs.svg' ?
+            : image === 'RectusAbs.svg' ?
                 require('../../../assets/images/body/body_overlay/RectusAbs.png')
             : image === 'L_LowerTraps.svg' ?
                 require('../../../assets/images/body/body_overlay/L_LowerTraps.png')
