@@ -388,7 +388,7 @@ class CustomMyPlanNavBar extends PureComponent {
                         :
                         <ParsedText
                             parse={parsedData}
-                            style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), textAlign: 'center',}}
+                            style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(15),  textAlign: 'center',}}
                         >
                             {selectedCategory.context_text}
                         </ParsedText>
