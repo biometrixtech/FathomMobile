@@ -704,6 +704,26 @@ class MyPlan extends Component {
         this.setState(
             { appState: nextAppState, },
             () => {
+                // NOTE: THE FOLLOWING LINES ARE TO HELP US WITH OUR MEMOERY LEAK ISSUES
+                if(nextAppState === 'background') {
+                    if (Platform.OS === 'android') {
+                        BackHandler.removeEventListener('hardwareBackPress');
+                    }
+                    AppState.removeEventListener('change', this._handleAppStateChange);
+                    // clear timers
+                    clearInterval(this._timer);
+                    clearInterval(this.goToPageTimer);
+                    clearInterval(this.scrollToTimer);
+                } else if(nextAppState === 'active') {
+                    if (Platform.OS === 'android') {
+                        BackHandler.addEventListener('hardwareBackPress', () => true);
+                    }
+                    AppState.addEventListener('change', this._handleAppStateChange);
+                    this._timer = null;
+                    this.goToPageTimer = null;
+                    this.scrollToTimer = null;
+                }
+                // NOTE: CONTINUE WITH OUR TRUE LOGIC
                 let clearMyPlan = (
                     !lastOpened ||
                     !lastOpened.date ||
