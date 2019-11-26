@@ -15,7 +15,6 @@ import Routes from './routes';
 import { Router, Stack, } from 'react-native-router-flux';
 import { NetworkMonitor, } from 'react-native-redux-connectivity';
 import * as Fabric from 'react-native-fabric';
-import DeviceInfo from 'react-native-device-info';
 import DropdownAlert from 'react-native-dropdownalert';
 import PushNotification from 'react-native-push-notification';
 import SplashScreen from 'react-native-splash-screen';
@@ -44,7 +43,6 @@ class Root extends Component {
         super(props);
         this.state = {
             hasError: false,
-            isTablet: DeviceInfo.isTablet() || DeviceInfo.getDeviceId().includes('iPad'),
         };
         this._networkMonitor = new NetworkMonitor(this.props.store);
         this._dropdown = null;
@@ -70,8 +68,8 @@ class Root extends Component {
         });
         // clear PN flag
         PushNotification.setApplicationIconBadgeNumber(0);
-        // if error or tablet, hide splash screen
-        if(this.state.isTablet || this.state.hasError) {
+        // if error, hide splash screen
+        if(this.state.hasError) {
             SplashScreen.hide();
         }
     }
@@ -171,8 +169,8 @@ class Root extends Component {
     }
 
     render = () => {
-        const { hasError, isTablet, } = this.state;
-        if(hasError || isTablet) {
+        const { hasError, } = this.state;
+        if(hasError) {
             return (
                 <View style={{flex: 1, justifyContent: 'space-between', marginTop: AppSizes.statusBarHeight,}}>
                     <View style={{alignItems: 'center', flex: 1,}}>
@@ -195,12 +193,7 @@ class Root extends Component {
                                 <Text oswaldMedium style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(35), textAlign: 'center',}}>{'UH OH!'}</Text>
                                 <Spacer size={AppSizes.padding} />
                                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
-                                    {
-                                        hasError ?
-                                            'We\'ve encountered an error. Please restart the app and try again.'
-                                            :
-                                            'Sorry, the Fathom mobile app is not compatible on this device.'
-                                    }
+                                    {'We\'ve encountered an error. Please restart the app and try again.'}
                                 </Text>
                             </View>
                         </View>
