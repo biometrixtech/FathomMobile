@@ -1381,7 +1381,7 @@ const PlanLogic = {
             return false;
         });
         let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
-        let goalsHeader = `${priorityText} routine to reduce effects of:`;
+        let goalsHeader = `${priorityText} routine to:`;
         return {
             buttons,
             exerciseList,

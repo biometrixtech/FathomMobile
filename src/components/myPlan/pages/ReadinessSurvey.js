@@ -701,7 +701,7 @@ class ReadinessSurvey extends Component {
                                 }}
                                 handleFormChange={handleFormChange}
                                 handleUpdateFirstTimeExperience={value => handleUpdateFirstTimeExperience(value)}
-                                headerTitle={'Do you have any areas of discomfort?'}//`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
+                                headerTitle={'Do you have any pain and soreness today?'}//`Do you have any${newSoreBodyParts && newSoreBodyParts.length > 0 ? ' other ' : ' new '}pain or soreness?`}
                                 isBodyOverlayFront={isBodyOverlayFront}
                                 ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                                 newSoreBodyParts={newSoreBodyParts}
