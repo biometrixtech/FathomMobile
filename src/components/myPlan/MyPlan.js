@@ -696,6 +696,7 @@ class MyPlan extends Component {
         let nonCompleteThreeSensorSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey) : [];
         if(trainingSessions && nonCompleteThreeSensorSession) {
             let newSensorSession = _.cloneDeep(nonCompleteThreeSensorSession);
+            newSensorSession.set_end_date = false;
             newSensorSession.hr_data = [];
             newSensorSession.post_session_survey = {
                 clear_candidates: [],
@@ -1220,7 +1221,7 @@ class MyPlan extends Component {
                 sensorSession: null,
             },
             () =>
-                updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id, user, newPostSession.sessions[0].set_end_date)
+                updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id || savedSensorSession.session_id, user, newPostSession.sessions[0].set_end_date)
                     .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
                     .then(() => {
                         newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
