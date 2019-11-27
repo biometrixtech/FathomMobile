@@ -558,6 +558,8 @@ class MyPlan extends Component {
         const { notification, plan, scheduledMaintenance, } = this.props;
         const { healthData, } = this.state;
         AppState.addEventListener('change', this._handleAppStateChange);
+        // check if we have an open 3S session that needs a PSS
+        this._checkThreeSensorSessions();
         if(!scheduledMaintenance.addressed) {
             let apiMaintenanceWindow = { end_date: scheduledMaintenance.end_date, start_date: scheduledMaintenance.start_date };
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
@@ -687,6 +689,28 @@ class MyPlan extends Component {
         }, 500);
     }
 
+    _checkThreeSensorSessions = () => {
+        const { plan, } = this.props;
+        const dailyPlan = plan.dailyPlan[0] || false;
+        let trainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
+        let nonCompleteThreeSensorSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey) : [];
+        if(trainingSessions && nonCompleteThreeSensorSession) {
+            let newSensorSession = _.cloneDeep(nonCompleteThreeSensorSession);
+            newSensorSession.hr_data = [];
+            newSensorSession.post_session_survey = {
+                clear_candidates: [],
+                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+                RPE:              null,
+                soreness:         [],
+            };
+            return this.setState(
+                { sensorSession: newSensorSession, },
+                () => this._togglePostSessionSurveyModal(),
+            );
+        }
+        return false;
+    }
+
     _closeTrainSessionsCompletionModal = () => {
         this.goToPageTimer = _.delay(() => {
             this.setState(
@@ -722,6 +746,8 @@ class MyPlan extends Component {
                     this._timer = null;
                     this.goToPageTimer = null;
                     this.scrollToTimer = null;
+                    // check if we have an open 3S session that needs a PSS
+                    this._checkThreeSensorSessions();
                 }
                 // NOTE: CONTINUE WITH OUR TRUE LOGIC
                 let clearMyPlan = (
@@ -1360,18 +1386,19 @@ class MyPlan extends Component {
 
     _togglePostSessionSurveyModal = () => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
-        const { isPostSessionSurveyModalOpen, } = this.state;
+        const { isPSSCloseLocked, isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
         this.setState(
-            { loading: isLoading, showLoadingText: true, },
+            { isPSSCloseLocked: true, loading: isLoading, showLoadingText: true, },
             () => {
-                if (!isPostSessionSurveyModalOpen) {
+                if (!isPostSessionSurveyModalOpen && !isPSSCloseLocked) {
                     getSoreBodyParts(user.id)
                         .then(soreBodyParts => {
                             let newPostSession = _.cloneDeep(defaultPlanState.postSession);
                             newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                             this.goToPageTimer = _.delay(() =>
                                 this.setState({
+                                    isPSSCloseLocked:             false,
                                     isPostSessionSurveyModalOpen: true,
                                     loading:                      false,
                                     postSession:                  newPostSession,
@@ -1384,6 +1411,7 @@ class MyPlan extends Component {
                             let newPostSession = _.cloneDeep(defaultPlanState.postSession);
                             newPostSession.soreness = [];
                             this.setState({
+                                isPSSCloseLocked:             false,
                                 isPostSessionSurveyModalOpen: true,
                                 loading:                      false,
                                 postSession:                  newPostSession,
@@ -1391,11 +1419,12 @@ class MyPlan extends Component {
                             });
                             AppUtil.handleAPIErrorAlert(ErrorMessages.getSoreBodyParts);
                         });
-                } else {
+                } else if(!isPSSCloseLocked) {
                     clearCompletedExercises();
                     clearCompletedCoolDownExercises();
                     this.goToPageTimer = _.delay(() => {
                         this.setState({
+                            isPSSCloseLocked:             false,
                             isPostSessionSurveyModalOpen: false,
                             loading:                      false,
                             postSession:                  _.cloneDeep(defaultPlanState.postSession),
