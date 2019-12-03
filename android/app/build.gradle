@@ -129,7 +129,7 @@ android {
         applicationId 'com.fathom.fathomai'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 48
+        versionCode 49
         versionName "3.10.0-beta.1"
     }
     configurations.all {
