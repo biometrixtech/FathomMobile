@@ -63,7 +63,6 @@ class BiomechanicsCharts extends PureComponent {
         let extraImageBackgroundStyles = dataType === 0 ? {} : {
             justifyContent: 'flex-end',
         };
-        let innerRadiusAddOn = dataType === 0 ? 0 : 20;
         let extraLeftStyles = dataType === 2 ?
             {
                 transform: [{rotate: `-${(_.parseInt(rotateDeg) * 2)}deg`,}],
@@ -189,33 +188,35 @@ class BiomechanicsCharts extends PureComponent {
                                     :
                                     require('../../../../assets/images/standard/hip_drop.png')
                             }
-                            style={[{height: pieDetails.pieLeftWrapperWidth, width: pieDetails.pieLeftWrapperWidth,}, extraImageBackgroundStyles,]}
+                            style={[{height: pieDetails.pieHeight, width: pieDetails.pieWidth,}, extraImageBackgroundStyles,]}
                         >
                             <View style={[{transform: [{rotate: rotateDeg,}]}, extraPieStyles,]}>
                                 <V.VictoryPie
+                                    containerComponent={<V.VictoryContainer responsive={false} />}
                                     cornerRadius={7}
                                     data={largerPieData}
-                                    height={pieDetails.pieLeftWrapperWidth}
+                                    height={pieDetails.pieHeight}
+                                    innerRadius={pieDetails.pieInnerRadius}
                                     labels={d => ''}
-                                    innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
-                                    padding={dataType === 0 ? 50 : 30}
+                                    padding={pieDetails.piePadding}
                                     style={{
                                         data: { fill: d => d.color, },
                                     }}
-                                    width={pieDetails.rightPieWidth}
+                                    width={pieDetails.pieWidth}
                                 />
-                                <View style={[{alignSelf: 'center', position: 'absolute', width: pieDetails.rightPieWidth,}, extraLeftStyles,]}>
+                                <View style={[{alignSelf: 'center', position: 'absolute', width: pieDetails.pieWidth,}, extraLeftStyles,]}>
                                     <V.VictoryPie
+                                        containerComponent={<V.VictoryContainer responsive={false} />}
                                         cornerRadius={7}
                                         data={smallerPieData}
-                                        height={pieDetails.pieLeftWrapperWidth}
-                                        innerRadius={(pieDetails.rightPieInnerRadius + innerRadiusAddOn)}
+                                        height={pieDetails.pieHeight}
+                                        innerRadius={pieDetails.pieInnerRadius}
                                         labels={d => ''}
-                                        padding={dataType === 0 ? 50 : 30}
+                                        padding={pieDetails.piePadding}
                                         style={{
                                             data: { fill: d => d.color, },
                                         }}
-                                        width={pieDetails.rightPieWidth}
+                                        width={pieDetails.pieWidth}
                                     />
                                 </View>
                             </View>

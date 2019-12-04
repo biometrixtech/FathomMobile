@@ -115,10 +115,10 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
     ]; // needs to be in order
     return (
         <View
-            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingVertical: AppSizes.paddingLrg,}]}
+            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}]}
         >
 
-            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
+            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(24),}}>
                     {_.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).label || ''}
                 </Text>
@@ -155,7 +155,7 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                             {session.score.text}
                         </Text>
                         <TabIcon
-                            color={AppColors.zeplin.slateLight}
+                            color={AppColors.zeplin.slateXLight}
                             containerStyle={[{justifyContent: 'flex-end',}]}
                             icon={'help-circle-outline'}
                             onPress={toggleSlideUpPanel}
@@ -166,7 +166,7 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                 </View>
             }
 
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 { _.map(session.summary_pills, (pill, i) =>
                     <View key={i} style={[styles.pillsWrapper(pill.color),]}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
@@ -180,16 +180,16 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
             { _.map(dataToDisplay, (data, i) => {
                 const sessionData = session[data.index];
                 console.log('sessionData',sessionData);
-                let pieWrapperWidth = (AppSizes.screen.widthHalf);
-                let pieLeftWrapperWidth = (pieWrapperWidth * 0.55);
-                let pieRightWrapperWidth = (pieWrapperWidth * 0.45);
-                let leftPieWidth = (pieLeftWrapperWidth - 35);
-                let leftPieInnerRadius = ((leftPieWidth * 99) / 350);
-                let rightPieWidth = pieLeftWrapperWidth;
-                let rightPieInnerRadius = ((rightPieWidth * 125) / 400);
-                let extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
-                rightPieInnerRadius = (rightPieInnerRadius - extraInnerRadiusToRemove);
-                let pieData = sessionData.summary_data;
+                const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+                const pieWrapperWidth = (AppSizes.screen.widthThird);
+                const pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
+                const pieDetails = {
+                    pieData:        sessionData.summary_data,
+                    pieHeight:      pieWrapperWidth,
+                    pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
+                    piePadding:     AppSizes.paddingSml,
+                    pieWidth:       pieWrapperWidth,
+                };
                 if(sessionData.active && (data.dataType || data.dataType === 0)) {
                     return (
                         <TouchableOpacity
@@ -199,51 +199,45 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                             style={[styles.sessionDataLineWrapper(i === 0, (i + 1) === dataToDisplay.length),]}
                         >
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                <View>
-                                    <BiomechanicsCharts
-                                        dataType={data.dataType}
-                                        pieDetails={{
-                                            leftPieInnerRadius,
-                                            leftPieWidth,
-                                            pieData,
-                                            pieLeftWrapperWidth,
-                                            pieRightWrapperWidth,
-                                            rightPieInnerRadius,
-                                            rightPieWidth,
-                                        }}
-                                        selectedSession={sessionData}
-                                        showRightSideDetails={false}
-                                        showDetails={false}
-                                    />
-                                </View>
-                                <View>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>
-                                        {sessionData.dashboard_title}
-                                    </Text>
-                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-start',}}>
-                                        { sessionData.score.active &&
-                                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.score.color), fontSize: AppFonts.scaleFont(25),}}>
-                                                {`${sessionData.score.value}%`}
-                                            </Text>
-                                        }
-                                        { sessionData.score.active &&
-                                            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginLeft: AppSizes.paddingSml,}}>
-                                                <TabIcon
-                                                    color={PlanLogic.returnInsightColorString(sessionData.change.color)}
-                                                    containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                    icon={sessionData.change.value && sessionData.change.value > 0 ? 'arrow-top-right' : 'arrow-bottom-right'}
-                                                    size={15}
-                                                    type={'material-community'}
-                                                />
-                                                <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
-                                                    {`${sessionData.change.value || sessionData.change.value === 0 ? sessionData.change.value : '--'} ${sessionData.change.text}`}
+                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
+                                    <View style={{marginRight: AppSizes.paddingMed,}}>
+                                        <BiomechanicsCharts
+                                            dataType={data.dataType}
+                                            pieDetails={pieDetails}
+                                            selectedSession={sessionData}
+                                            showRightSideDetails={false}
+                                            showDetails={false}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>
+                                            {sessionData.dashboard_title}
+                                        </Text>
+                                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-start',}}>
+                                            { sessionData.score.active &&
+                                                <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.score.color), fontSize: AppFonts.scaleFont(25),}}>
+                                                    {`${sessionData.score.value}%`}
                                                 </Text>
-                                            </View>
-                                        }
+                                            }
+                                            { sessionData.score.active &&
+                                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginLeft: AppSizes.paddingSml,}}>
+                                                    <TabIcon
+                                                        color={PlanLogic.returnInsightColorString(sessionData.change.color)}
+                                                        containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                                        icon={sessionData.change.value && sessionData.change.value > 0 ? 'arrow-top-right' : 'arrow-bottom-right'}
+                                                        size={15}
+                                                        type={'material-community'}
+                                                    />
+                                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
+                                                        {`${sessionData.change.value || sessionData.change.value === 0 ? sessionData.change.value : '--'} ${sessionData.change.text}`}
+                                                    </Text>
+                                                </View>
+                                            }
+                                        </View>
                                     </View>
                                 </View>
                                 <TabIcon
-                                    color={AppColors.zeplin.slateXLight}
+                                    color={`${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`}
                                     containerStyle={[{alignItems: 'flex-end', justifyContent: 'center',}]}
                                     icon={'arrow-right'}
                                     size={20}
@@ -261,11 +255,13 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
 }
 
 class Trends extends PureComponent {
+
     constructor(props) {
         super(props);
         this.state = {
-            isCoachModalOpen: false,
-            isContactUsOpen:  false,
+            isCoachModalOpen:        false,
+            isContactUsOpen:         false,
+            isSlideUpPanelModalOpen: false,
         };
         this._carousel = {};
         this._panel = {};
@@ -308,7 +304,7 @@ class Trends extends PureComponent {
     _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
 
     render = () => {
-        const { isCoachModalOpen, isContactUsOpen, } = this.state;
+        const { isCoachModalOpen, isContactUsOpen, isSlideUpPanelModalOpen, } = this.state;
         const { plan, } = this.props;
         let {
             biomechanicsSummary,
@@ -340,7 +336,7 @@ class Trends extends PureComponent {
                     style={{backgroundColor: AppColors.white, flex: 1,}}
                 >
 
-                    <View style={{backgroundColor: AppColors.zeplin.superLight, paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.statusBarHeight > 0 ? AppSizes.statusBarHeight : AppSizes.paddingLrg,}}>
+                    <View style={{paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.statusBarHeight > 0 ? AppSizes.statusBarHeight : AppSizes.paddingLrg,}}>
                         <View style={{flexDirection: 'row', height: AppSizes.navbarHeight, justifyContent: 'center',}}>
                             <View style={{flex: 1, justifyContent: 'center',}} />
                             <Image
@@ -419,7 +415,7 @@ class Trends extends PureComponent {
                                     key={i}
                                     plan={plan}
                                     session={session}
-                                    toggleSlideUpPanel={() => this._panel.show()}
+                                    toggleSlideUpPanel={() => this.setState({ isSlideUpPanelModalOpen: true, })}
                                 />
                             )
                         }
@@ -566,43 +562,50 @@ class Trends extends PureComponent {
                     isModalOpen={isContactUsOpen}
                 />
 
-                <SlidingUpPanel
-                    allowDragging={false}
-                    backdropOpacity={0.8}
-                    ref={ref => {this._panel = ref;}}
+                <FathomModal
+                    hasBackdrop={true}
+                    isVisible={isSlideUpPanelModalOpen}
+                    onModalShow={() => this._panel.show()}
                 >
-                    <View style={{flex: 1, flexDirection: 'column',}}>
-                        <View style={{flex: 1,}} />
-                        <View style={{backgroundColor: AppColors.white,}}>
-                            <View style={{backgroundColor: AppColors.primary.white.hundredPercent, flexDirection: 'row', padding: AppSizes.padding,}}>
-                                <Text robotoMedium style={{color: AppColors.zeplin.slate, flex: 9, fontSize: AppFonts.scaleFont(22),}}>
-                                    {'Movement Efficiency Score'}
-                                </Text>
-                                <TabIcon
-                                    containerStyle={[{flex: 1,}]}
-                                    icon={'close'}
-                                    iconStyle={[{color: AppColors.black}]}
-                                    onPress={() => this._panel.hide()}
-                                    reverse={false}
-                                    size={30}
-                                    type={'material-community'}
-                                />
-                            </View>
-                            <View style={{padding: AppSizes.paddingLrg,}}>
-                                <Text robotobol style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.padding,}}>
-                                    {'What is my Movement Efficiency Score?'}
-                                </Text>
-                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
-                                    {'Functional efficiency is the ability of the neuromuscular system to recruit correct muscle synergies, at the right time, with the appropriate amount of force to perform functional tasks with the least amount of energy and stress on the HMS. This helps prevent overtraining and the development of movement impairment syndromes.'}
-                                </Text>
+                    <SlidingUpPanel
+                        allowDragging={false}
+                        ref={ref => {this._panel = ref;}}
+                        showBackdrop={false}
+                    >
+                        <View style={{flex: 1, flexDirection: 'column',}}>
+                            <View style={{flex: 1,}} />
+                            <View style={{backgroundColor: AppColors.white,}}>
+                                <View style={{backgroundColor: AppColors.primary.white.hundredPercent, flexDirection: 'row', padding: AppSizes.padding,}}>
+                                    <Text robotoMedium style={{color: AppColors.zeplin.slate, flex: 9, fontSize: AppFonts.scaleFont(22),}}>
+                                        {'Movement Efficiency Score'}
+                                    </Text>
+                                    <TabIcon
+                                        containerStyle={[{flex: 1,}]}
+                                        icon={'close'}
+                                        iconStyle={[{color: AppColors.zeplin.slate,}]}
+                                        onPress={() => this.setState({ isSlideUpPanelModalOpen: false, }, () => this._panel.hide())}
+                                        reverse={false}
+                                        size={30}
+                                        type={'material-community'}
+                                    />
+                                </View>
+                                <View style={{padding: AppSizes.paddingLrg,}}>
+                                    <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.padding,}}>
+                                        {'What is my Movement Efficiency Score?'}
+                                    </Text>
+                                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
+                                        {'Functional efficiency is the ability of the neuromuscular system to recruit correct muscle synergies, at the right time, with the appropriate amount of force to perform functional tasks with the least amount of energy and stress on the HMS. This helps prevent overtraining and the development of movement impairment syndromes.'}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </SlidingUpPanel>
+                    </SlidingUpPanel>
+                </FathomModal>
 
             </View>
         );
     }
+
 }
 
 Trends.propTypes = {
