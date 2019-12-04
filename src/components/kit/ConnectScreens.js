@@ -155,6 +155,7 @@ const CVP = ({ currentPage, nextBtn, onClose, toggleLearnMore = null, }) => (
                     </TouchableOpacity>
                 </View>
             </View>
+            <Spacer size={Platform.OS === 'android' ? AppSizes.padding : 0} />
         </View>
     </View>
 );
@@ -770,7 +771,7 @@ const Connect = ({
                 />
                 <View style={{flex: 1,}}>
                     <View style={{flex: 1, justifyContent: 'space-between',}}>
-                        <View style={{justifyContent: '', paddingHorizontal: AppSizes.paddingLrg, paddingBottom: AppSizes.padding,}}>
+                        <View style={{justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingBottom: AppSizes.padding,}}>
                             <View style={{flexDirection: 'row',}}>
                                 <View style={[styles.circleBackground,]}>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(16),}}>{'1'}</Text>

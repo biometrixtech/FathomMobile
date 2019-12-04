@@ -199,6 +199,8 @@ iosBuild() {
                 xcodebuild clean -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 xcodebuild archive -project Fathom.xcodeproj -scheme Fathom -configuration Staging
                 cd ..
+                echo "Release ipa located at ${standout}'~/Library/Developer/Xcode/Archives/'${normal} as ${standout}FathomAI-X.Y.Z-beta.A.ipa${normal}"
+                open ~/Library/Developer/Xcode/Archives/
             fi
             ;;
         3)
@@ -254,7 +256,7 @@ androidBuild() {
                 cd android
                 ./gradlew clean assembleReleaseStaging
                 cd ..
-                echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}fathom-releaseStaging#.apk${normal}"
+                echo "Release apk located at ${standout}'android/app/build/outputs/apk/'${normal} as ${standout}FathomAI-X.Y.Z-beta.A.apk${normal}"
                 open android/app/build/outputs/apk/
             fi
             ;;
