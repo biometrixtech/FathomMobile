@@ -12,7 +12,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, Image as RNImage, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { Animated, Image as RNImage, Platform, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import resolveAssetSource from 'resolveAssetSource';
 
 // import third-party libraries
@@ -427,8 +427,8 @@ class BodyPartSelector extends Component {
                                 onLongPress={isClickLocked ? () => null : () => this.setState({ isClickLocked: true, }, () => this._handleGridLongPress(key))}
                                 onPress={isClickLocked ? () => null : () => this.setState({ isClickLocked: true, }, () => this._handleGridPress(key))}
                                 style={{
-                                    height: _.round(front.height / NUMBER_OF_OVERLAY_GRIDS_HEIGHT),
-                                    width:  _.round(front.width / NUMBER_OF_OVERLAY_GRIDS_WIDTH),
+                                    height: Platform.OS === 'ios' ? _.round(front.height / NUMBER_OF_OVERLAY_GRIDS_HEIGHT) : `${(100 / NUMBER_OF_OVERLAY_GRIDS_HEIGHT)}%`,
+                                    width:  Platform.OS === 'ios' ? _.round(front.width / NUMBER_OF_OVERLAY_GRIDS_WIDTH) : `${(100 / NUMBER_OF_OVERLAY_GRIDS_WIDTH)}%`,
                                 }}
                             />
                         ))}
