@@ -121,6 +121,8 @@
 		<string>Roboto-RegularItalic.ttf</string>
 		<string>Roboto-Thin.ttf</string>
 		<string>Roboto-ThinItalic.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>Fontisto.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
