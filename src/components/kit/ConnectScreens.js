@@ -332,8 +332,10 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         </Text>
                     </View>
                     :
-                    <View style={{flex: 1,}}>
-                        <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
+                    <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
+                        <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>
+                            {page === 2 ? 'Where to Start a Workout' : 'Calibrate Before Every Workout'}
+                        </Text>
                         <View>
                             {/*<TabIcon
                                 color={AppColors.zeplin.slateLight}
@@ -346,13 +348,17 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                                 paused={isVideoPaused}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4'}}
+                                source={{uri: page === 2 ? 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4' : 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
                         <View style={{flex: 1, justifyContent: 'flex-end', marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
-                                {'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'}
+                                {page === 2 ?
+                                    'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'
+                                    :
+                                    'Stand up. Stand still. Then March.  After that, your workout has started.'
+                                }
                             </Text>
                         </View>
                     </View>
@@ -382,7 +388,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
                             onPress={() => nextBtn()}
                             raised={true}
-                            title={nextBtnText ? nextBtnText : page === 1 ? 'Next' : 'Done'}
+                            title={nextBtnText ? nextBtnText : (page === 1 || page === 2) ? 'Next' : 'Done'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     </View>

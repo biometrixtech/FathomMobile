@@ -117,7 +117,7 @@ const zeplin = {
     successSuperLight: '#EAF8F4',
     successXLight:     '#94D9C9',
     successXXLight:    '#B7E6DB',
-    superLight:        '#F5F5F5',
+    superLight:        '#FCFCFC',
     warning:           '#EDA14A',
     warningLight:      '#F1B877',
     warningSuperLight: '#FDF5EB',

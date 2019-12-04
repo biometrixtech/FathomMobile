@@ -31,6 +31,7 @@ const defaultPlanState = {
     isContactUsOpen:                      false,
     isLogSymptomsModalOpen:               false,
     isNeedHelpModalOpen:                  false,
+    isPSSCloseLocked:                     false,
     isPageCalculating:                    false,
     isPageLoading:                        false,
     isPostSessionSurveyModalOpen:         false,

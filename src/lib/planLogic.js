@@ -1381,7 +1381,7 @@ const PlanLogic = {
             return false;
         });
         let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
-        let goalsHeader = `${priorityText} routine to reduce effects of:`;
+        let goalsHeader = `${priorityText} routine to:`;
         return {
             buttons,
             exerciseList,
@@ -1679,8 +1679,62 @@ const PlanLogic = {
       * - Trends
       */
     // TODO: UNIT TEST ME
-    handleTrendsRenderLogic: (plan, os) => {
-        let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
+    handleTrendsRenderLogic: plan => {
+        const dailyPlanObj = plan.dailyPlan[0] || false;
+        let trends = dailyPlanObj ? dailyPlanObj.trends : false;
+        let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : { active: false, };
+        let recoveryQuality = trends && trends.recovery_quality ? trends.recovery_quality : { active: false, };
+        let bodyResponse = trends && trends.body_response ? trends.body_response : [];
+        let workload = trends && trends.workload ? trends.workload : [];
+        let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
+        let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
+        let currentBodyResponseAlertText = PlanLogic.handleTrendsTitleRenderLogic(bodyResponse && bodyResponse.status ? bodyResponse.status.bolded_text : [], bodyResponse && bodyResponse.status ? bodyResponse.status.text : '');
+        let currentWorkloadAlertText = PlanLogic.handleTrendsTitleRenderLogic(workload && workload.status ? workload.status.bolded_text : [], workload && workload.status ? workload.status.text : '');
+        let {
+            icon: workloadIcon,
+            iconType: workloadIconType,
+            imageSource: workloadImageSource,
+            subtitleColor: workloadSubtitleColor,
+            sportName: workloadSportName,
+        } = PlanLogic.handleTrendRenderLogic(workload);
+        let {
+            icon: bodyResponseIcon,
+            iconType: bodyResponseIconType,
+            imageSource: bodyResponseImageSource,
+            subtitleColor: bodyResponseSubtitleColor,
+            sportName: bodyResponseSportName,
+        } = PlanLogic.handleTrendRenderLogic(bodyResponse);
+        let parsedSummaryTextData = [];
+        if(recoveryQuality.summary_text.active) {
+            parsedSummaryTextData = _.map(recoveryQuality.summary_text.bold_text, (prop, i) => {
+                let newParsedData = {};
+                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.style = [AppStyles.robotoBold];
+                return newParsedData;
+            });
+        }
+        return {
+            biomechanicsSummary,
+            bodyResponse,
+            bodyResponseIcon,
+            bodyResponseIconType,
+            bodyResponseImageSource,
+            bodyResponseSportName,
+            bodyResponseSubtitleColor,
+            currentBodyResponseAlertText,
+            currentWorkloadAlertText,
+            isBodyResponseLocked,
+            isWorkloadLocked,
+            parsedSummaryTextData,
+            recoveryQuality,
+            workload,
+            workloadIcon,
+            workloadIconType,
+            workloadImageSource,
+            workloadSportName,
+            workloadSubtitleColor,
+        };
+        /*let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : {};
         let currentStressAlert = trends && trends.stress && trends.stress.alerts && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
         let currentResponseAlert = trends && trends.response && trends.response.alerts && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
@@ -1722,7 +1776,7 @@ const PlanLogic = {
             isWorkloadLocked,
             trendCategories,
             workload,
-        };
+        };*/
     },
 
     /**
@@ -2558,7 +2612,7 @@ const PlanLogic = {
                 let newMultiplier = newPieData.multiplier;
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
                 let roundedLeftY = _.round(newPieData.left_y * newMultiplier);
-                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                if((selectedSession.asymmetry && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
                     largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL, true);
                     smallerPieData = emptyPieData;
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
@@ -2573,7 +2627,7 @@ const PlanLogic = {
                 }
             } else if(dataType === 1) {
                 const ANKLE_PITCH_CHART_RATIO = 360;
-                if(_.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 || (newPieData.right_y === newPieData.left_y)) {
+                if((selectedSession.asymmetry && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
                     let largerValue = newPieData.right_y;
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     largerPieData = [

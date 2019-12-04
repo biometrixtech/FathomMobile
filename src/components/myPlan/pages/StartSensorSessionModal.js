@@ -109,15 +109,15 @@ const Calibrating = ({ onClose, pageIndex, renderAccordionHeader, startOver, vid
     </View>
 );
 
-const CalibrationComplete = ({ onClose, pageIndex, startOver, }) => (
+const CalibrationComplete = ({ lottieRef, onClose, pageIndex, startOver, }) => (
     <View style={{flex: 1,}}>
         <TopNav darkColor={true} onClose={onClose} step={false} />
         <View style={{flex: 1, justifyContent: 'space-between',}}>
             <View />
             <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg,}}>
                 <LottieView
-                    autoPlay={pageIndex}
                     loop={false}
+                    ref={animation => lottieRef(animation)}
                     source={require('../../../../assets/animation/calibrationcomplete.json')}
                     style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                 />
@@ -183,6 +183,7 @@ class StartSensorSessionModal extends PureComponent {
         };
         this._pages = {};
         this._video = {};
+        this.lottieAnimation = {};
         this.timerId = null;
         this.widthAnimation = [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)];
     }
@@ -269,6 +270,15 @@ class StartSensorSessionModal extends PureComponent {
                 let newTimerValue = parseInt((this.state.timer - 1), 10);
                 this.setState({ timer: newTimerValue, });
             }, 1000);
+        }
+        if(
+            this.lottieAnimation.play &&
+            (
+                (isFirstTimeExperience && currentPage === 11) ||
+                (!isFirstTimeExperience && currentPage === 4)
+            )
+        ) {
+            this.lottieAnimation.play();
         }
     }
 
@@ -585,6 +595,7 @@ class StartSensorSessionModal extends PureComponent {
 
                         {/* Start Session - pages 11 (Calibration Complete) */}
                         <CalibrationComplete
+                            lottieRef={ev => {this.lottieAnimation = ev;}}
                             onClose={() => this._onClose()}
                             pageIndex={pageIndex === 11}
                             startOver={() => this._startOver(3, 'CREATE_ATTEMPT_FAILED')}
@@ -710,6 +721,7 @@ class StartSensorSessionModal extends PureComponent {
             />,
             <CalibrationComplete
                 key={9}
+                lottieRef={ev => {this.lottieAnimation = ev;}}
                 onClose={() => this._onClose()}
                 pageIndex={showPlacementPages ? pageIndex === 8 : showLEDPage ? pageIndex === 5 : pageIndex === 4}
                 startOver={() => this._startOver(3, 'CREATE_ATTEMPT_FAILED')}

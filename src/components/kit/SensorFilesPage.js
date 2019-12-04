@@ -540,8 +540,15 @@ class SensorFilesPage extends Component {
                                     currentPage={pageIndex === 0}
                                     handleUpdatePauseState={() => this.setState({ isVideoPaused: !this.state.isVideoPaused, })}
                                     isVideoPaused={isVideoPaused}
-                                    nextBtn={() => Actions.pop()}
+                                    nextBtn={() => this._renderNextPage()}
                                     page={2}
+                                    showTopNavStep={false}
+                                />
+                                <Calibration
+                                    currentPage={pageIndex === 1}
+                                    nextBtn={() => Actions.pop()}
+                                    onBack={() => this._renderPreviousPage()}
+                                    page={3}
                                     showTopNavStep={false}
                                 />
                             </Pages>
