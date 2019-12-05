@@ -54,11 +54,14 @@ class SensorFilesPage extends Component {
 
     static propTypes = {
         pageStep:   PropTypes.string.isRequired,
+        startPage:  PropTypes.number,
         updateUser: PropTypes.func.isRequired,
         user:       PropTypes.shape({}).isRequired,
     }
 
-    static defaultProps = {}
+    static defaultProps = {
+        startPage: 0,
+    }
 
     constructor(props) {
         super(props);
@@ -70,7 +73,7 @@ class SensorFilesPage extends Component {
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
             isVideoPaused:          false,
-            pageIndex:              0,
+            pageIndex:              props.startPage,
         };
         this.defaultState = {
             currentAccessoryData:   {},
@@ -80,7 +83,7 @@ class SensorFilesPage extends Component {
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
             isVideoPaused:          false,
-            pageIndex:              0,
+            pageIndex:              props.startPage,
         };
         this._pages = {};
         this._secondaryTimer = null;
