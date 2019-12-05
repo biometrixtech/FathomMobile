@@ -279,7 +279,7 @@ const SensorSession = ({
                     : activityStatus === 'UPLOAD_IN_PROGRESS' || activityStatus === 'UPLOAD_PAUSED' || activityStatus === 'PROCESSING_IN_PROGRESS' || (activityStatus === 'CREATE_COMPLETE' && activity.end_date) ?
                         () => handeRefresh(activity.id)
                         : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'CALIBRATION' ?
-                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', })
+                            () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'calibrate', startPage: 1, })
                             : activityStatus === 'PROCESSING_FAILED' && activity.cause_of_failure === 'PLACEMENT' ?
                                 () => AppUtil.pushToScene('sensorFilesPage', { pageStep: 'placement', })
                                 : activityStatus === 'PROCESSING_COMPLETE' ?

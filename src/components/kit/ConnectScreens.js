@@ -345,7 +345,8 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                                 size={20}
                             />*/}
                             <Video
-                                paused={isVideoPaused}
+                                //paused={isVideoPaused}
+                                paused={!currentPage}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                                 source={{uri: page === 2 ? 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4' : 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
