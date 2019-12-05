@@ -11,11 +11,13 @@ import { user as UserActions, } from '../../actions';
 const SensorFilesPage = ({
     Layout,
     pageStep,
+    startPage,
     updateUser,
     user,
 }) => (
     <Layout
         pageStep={pageStep}
+        startPage={startPage}
         updateUser={updateUser}
         user={user}
     />
@@ -23,15 +25,19 @@ const SensorFilesPage = ({
 
 SensorFilesPage.propTypes = {
     pageStep:   PropTypes.string.isRequired,
+    startPage:  PropTypes.number,
     updateUser: PropTypes.func.isRequired,
     user:       PropTypes.shape({}).isRequired,
 };
 
-SensorFilesPage.defaultProps = {};
+SensorFilesPage.defaultProps = {
+    startPage: 0,
+};
 
 const mapStateToProps = (state, props) => ({
-    pageStep: props.pageStep,
-    user:     state.user,
+    pageStep:  props.pageStep,
+    startPage: props.startPage,
+    user:      state.user,
 });
 
 const mapDispatchToProps = {
