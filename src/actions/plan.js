@@ -758,27 +758,22 @@ const getMobilize = userId => {
 /**
   * Get Biomechanics Details
   */
-const getBiomechanicsDetails = (currentPlan, dataType, userId) => {
-    const asymmetryIndex = dataType === 0 ? 'apt' : dataType === 1 ? 'ankle_pitch' : 'hip_drop';
-    const trendsIndex = dataType === 0 ? 'biomechanics_apt' : dataType === 1 ? 'biomechanics_ankle_pitch' : 'biomechanics_hip_drop';
-    let payload = {};
-    payload.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
-    payload.data_type = dataType;
-    return dispatch => AppAPI.biomechanics_detail.post({userId}, payload)
+const getBiomechanicsDetails = (userId, sessionId, currentPlan, dataToDisplay) => {
+    return dispatch => AppAPI.biomechanics_detail.get({userId, sessionId})
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
-            let mergedSessions = _.map(newPlan.trends[trendsIndex].sessions, obj => {
-                let clonedObj = _.cloneDeep(obj);
-                let returnedSession = _.find(response.sessions, ['session_id', clonedObj.session_id]);
-                let mergedAsymmetryAptObj = _.merge(clonedObj.asymmetry[asymmetryIndex], returnedSession.asymmetry[asymmetryIndex]);
-                clonedObj.asymmetry[asymmetryIndex] = mergedAsymmetryAptObj;
-                return clonedObj;
-            });
-            newPlan.trends[trendsIndex].sessions = mergedSessions;
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: [newPlan],
-            });
+            if(newPlan && newPlan.trends && newPlan.trends.biomechanics_summary) {
+                let sessionIndex = 0;//_.findIndex(newPlan.trends.biomechanics_summary.sessions, s => s.id === sessionId);// TODO: FIX ME
+                if(sessionIndex || sessionIndex === 0) {
+                    _.map(dataToDisplay, data => {
+                        newPlan.trends.biomechanics_summary.sessions[sessionIndex][data.index].asymmetry = response.session.asymmetry[data.index] || {};
+                    });
+                    dispatch({
+                        type: Actions.GET_MY_PLAN,
+                        data: [newPlan],
+                    });
+                }
+            }
             return Promise.resolve(response);
         })
         .catch(err => Promise.reject(AppAPI.handleError(err)));

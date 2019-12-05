@@ -90,29 +90,7 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
-    console.log('session',session);
-    const dataToDisplay = [
-        {
-            dataType: 0,
-            index:    'apt',
-        },
-        {
-            dataType: 2,
-            index:    'hip_drop',
-        },
-        {
-            dataType: 1,
-            index:    'ankle_pitch',
-        },
-        {
-            dataType: null,
-            index:    'knee_valgus',
-        },
-        {
-            dataType: null,
-            index:    'hip_rotation',
-        }
-    ]; // needs to be in order
+    const dataToDisplay = PlanLogic.returnTrendsTabs(); // session.data_point; // TODO: FIX NME
     return (
         <View
             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}]}
@@ -132,20 +110,19 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                     <AnimatedCircularProgress
                         arcSweepAngle={320}
                         backgroundColor={AppColors.zeplin.superLight}
+                        childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
                         fill={session.score.value}
                         lineCap={'round'}
                         rotation={200}
-                        size={AppSizes.screen.widthThird}
+                        size={AppSizes.screen.widthQuarter}
                         style={{marginRight: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
                         tintColor={PlanLogic.returnInsightColorString(session.score.color)}
-                        width={15}
-
-                        childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
+                        width={AppSizes.paddingSml}
                     >
                         {
                             (fill) => (
                                 <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(30),}}>
-                                    {`${session.score.value}%`}
+                                    {session.score.value}
                                 </Text>
                             )
                         }
@@ -176,12 +153,10 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                 )}
             </View>
 
-            {/*for each item session.apt, session.hip_drop, session.ankle_pitch, session.knee_valgus, session.hip_rotation*/}
             { _.map(dataToDisplay, (data, i) => {
                 const sessionData = session[data.index];
-                console.log('sessionData',sessionData);
                 const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
-                const pieWrapperWidth = (AppSizes.screen.widthThird);
+                const pieWrapperWidth = (AppSizes.screen.widthQuarter);
                 const pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
                 const pieDetails = {
                     pieData:        sessionData.summary_data,
@@ -195,7 +170,7 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                         <TouchableOpacity
                             activeOpacity={0.2}
                             key={i}
-                            onPress={() => console.log(`hi from ${data.dataType}: ${data.index}`)} // AppUtil.pushToScene('biomechanics', {dataType: data.dataType,})
+                            onPress={() => AppUtil.pushToScene('biomechanics', {dataType: data.dataType, index: data.index, session: session,})}
                             style={[styles.sessionDataLineWrapper(i === 0, (i + 1) === dataToDisplay.length),]}
                         >
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
@@ -213,23 +188,26 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(14),}}>
                                             {sessionData.dashboard_title}
                                         </Text>
-                                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-start',}}>
+                                        <View style={{alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'flex-start',}}>
                                             { sessionData.score.active &&
                                                 <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.score.color), fontSize: AppFonts.scaleFont(25),}}>
-                                                    {`${sessionData.score.value}%`}
+                                                    {sessionData.score.value}
+                                                    <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                        {' /100'}
+                                                    </Text>
                                                 </Text>
                                             }
                                             { sessionData.score.active &&
-                                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center', marginLeft: AppSizes.paddingSml,}}>
+                                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', marginLeft: AppSizes.paddingSml,}}>
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(sessionData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                        icon={sessionData.change.value && sessionData.change.value > 0 ? 'arrow-top-right' : 'arrow-bottom-right'}
+                                                        icon={sessionData.change.value && sessionData.change.value > 0 ? 'caretup' : 'caretdown'}
                                                         size={15}
-                                                        type={'material-community'}
+                                                        type={'antdesign'}
                                                     />
                                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
-                                                        {`${sessionData.change.value || sessionData.change.value === 0 ? sessionData.change.value : '--'} ${sessionData.change.text}`}
+                                                        {`${sessionData.change.value || sessionData.change.value === 0 ? Math.abs(sessionData.change.value) : '--'} ${sessionData.change.text}`}
                                                     </Text>
                                                 </View>
                                             }
@@ -327,7 +305,6 @@ class Trends extends PureComponent {
             workloadSportName,
             workloadSubtitleColor,
         } = PlanLogic.handleTrendsRenderLogic(plan);
-        console.log('biomechanicsSummary',biomechanicsSummary);
         return (
             <View style={{flex: 1,}}>
 
@@ -348,28 +325,35 @@ class Trends extends PureComponent {
                         { recoveryQuality.active &&
                             <View style={{flex: 1,}}>
                                 { recoveryQuality.change.active &&
-                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end',}}>
-                                        <TabIcon
-                                            color={PlanLogic.returnInsightColorString(recoveryQuality.change.color)}
-                                            containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                            icon={recoveryQuality.change.value && recoveryQuality.change.value > 0 ? 'arrow-top-right' : 'arrow-bottom-right'}
-                                            size={15}
-                                            type={'material-community'}
-                                        />
-                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.change.color), fontSize: AppFonts.scaleFont(12),}}>
-                                            {`${recoveryQuality.change.value || recoveryQuality.change.value === 0 ? recoveryQuality.change.value : '--'} ${recoveryQuality.change.text}`}
-                                        </Text>
+                                    <View>
+                                        <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end',}}>
+                                            <TabIcon
+                                                color={PlanLogic.returnInsightColorString(recoveryQuality.change.color)}
+                                                containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                                icon={recoveryQuality.change.value && recoveryQuality.change.value > 0 ? 'caretup' : 'caretdown'}
+                                                size={15}
+                                                type={'antdesign'}
+                                            />
+                                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.change.color), fontSize: AppFonts.scaleFont(12),}}>
+                                                {`${recoveryQuality.change.value || recoveryQuality.change.value === 0 ? Math.abs(recoveryQuality.change.value) : '--'} ${recoveryQuality.change.text}`}
+                                            </Text>
+                                        </View>
+                                        { (recoveryQuality.change.value && recoveryQuality.change.value !== 0) &&
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10), textAlign: 'right',}}>
+                                                {`${recoveryQuality.change.value && recoveryQuality.change.value > 0 ? 'more' : 'less'} than usual`}
+                                            </Text>
+                                        }
                                     </View>
                                 }
                                 { recoveryQuality.score.active &&
                                     <View>
-                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.score.color), fontSize: AppFonts.scaleFont(61),}}>
+                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.score.color), fontSize: AppFonts.scaleFont(61), lineHeight: AppFonts.scaleFont(61),}}>
                                             {recoveryQuality.score.value || recoveryQuality.score.value === 0 ? recoveryQuality.score.value : '--'}
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20),}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.scaleFont(20),}}>
                                                 {'/100'}
                                             </Text>
                                         </Text>
-                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.score.color), fontSize: AppFonts.scaleFont(15),}}>
+                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.score.color), fontSize: AppFonts.scaleFont(15), lineHeight: AppFonts.scaleFont(15),}}>
                                             {recoveryQuality.score.text}
                                         </Text>
                                     </View>

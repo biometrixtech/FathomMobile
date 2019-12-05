@@ -49,7 +49,7 @@ export default {
         ['active_recovery',       `${plansAPIVersion}/active_recovery/{userId}/exercise_modalities`], // POST/PATCH
         ['active_time',           `${plansAPIVersion}/active_recovery/{userId}/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/{userId}/app_logs`], // POST
-        ['biomechanics_detail',   `${plansAPIVersion}/three_sensor/{userId}/biomechanics_detail`], // POST
+        ['biomechanics_detail',   `${plansAPIVersion}/three_sensor/{userId}/biomechanics_detail/{sessionId}`], // GET
         ['body_active_recovery',  `${plansAPIVersion}/active_recovery/{userId}/body_part_modalities`], // POST/PATCH
         ['clear_fte_category',    `${plansAPIVersion}/trends/{userId}/first_time_experience/category`], // POST
         ['clear_fte_view',        `${plansAPIVersion}/trends/{userId}/first_time_experience/view`], // POST

@@ -313,7 +313,6 @@ lazyGit() {
     then
         echo "${red}ERROR: you did not pass any branch string"
     else
-        # echo "${green}DONE: $commentvar - $branchvar"
         git add .
         git commit -m "$commentvar"
         git push origin $branchvar
