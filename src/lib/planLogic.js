@@ -1734,49 +1734,6 @@ const PlanLogic = {
             workloadSportName,
             workloadSubtitleColor,
         };
-        /*let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let trends = dailyPlanObj ? dailyPlanObj.trends : {};
-        let currentStressAlert = trends && trends.stress && trends.stress.alerts && trends.stress.alerts.length > 0 ? trends.stress.alerts[0] : {};
-        let currentResponseAlert = trends && trends.response && trends.response.alerts && trends.response.alerts.length > 0 ? trends.response.alerts[0] : {};
-        let currentBiomechanicsAlert = trends && trends.biomechanics && trends.biomechanics.alerts && trends.biomechanics.alerts.length > 0 ? trends.biomechanics.alerts[0] : {};
-        let bodyResponse = trends && trends.body_response ? trends.body_response : [];
-        let currentBodyResponseAlert = trends && trends.body_response && trends.body_response.data && trends.body_response.data.length > 0 ? _.last(trends.body_response.data) : {};
-        let workload = trends && trends.workload ? trends.workload : [];
-        let biomechanicsHipDrop = trends && trends.biomechanics_hip_drop ? trends.biomechanics_hip_drop : {};
-        let biomechanicsAnklePitch = trends && trends.biomechanics_ankle_pitch ? trends.biomechanics_ankle_pitch : {};
-        let biomechanicsApt = trends && trends.biomechanics_apt ? trends.biomechanics_apt : {};
-        let currentWorkloadAlert = trends && trends.workload && trends.workload.data && trends.workload.data.length > 0 ? _.last(trends.workload.data) : {};
-        let extraBottomPadding = os === 'android' ? AppSizes.paddingMed : AppSizes.iphoneXBottomBarPadding;
-        let isBiomechanicsAnklePitchLocked = biomechanicsAnklePitch && biomechanicsAnklePitch.sessions && biomechanicsAnklePitch.sessions.length > 0 ? false : true;
-        let isBiomechanicsAptLocked = biomechanicsApt && biomechanicsApt.sessions && biomechanicsApt.sessions.length > 0 ? false : true;
-        let isBiomechanicsHipDropLocked = biomechanicsHipDrop && biomechanicsHipDrop.sessions && biomechanicsHipDrop.sessions.length > 0 ? false : true;
-        let isBodyResponseLocked = trends && trends.body_response ? trends.body_response.lockout : true;
-        let isResponseLocked = (currentResponseAlert.trigger_type || currentResponseAlert.trigger_type === 0) && currentResponseAlert.trigger_type >= 200;
-        let isStressLocked = (currentStressAlert.trigger_type || currentStressAlert.trigger_type === 0) && (currentStressAlert.trigger_type === 25 || currentStressAlert.trigger_type >= 200);
-        let isWorkloadLocked = trends && trends.workload ? trends.workload.lockout : true;
-        let trendCategories = trends && trends.dashboard && trends.dashboard.trend_categories && trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(trends.dashboard.trend_categories) : [];
-        trendCategories.push({});
-        return {
-            biomechanicsAnklePitch,
-            biomechanicsApt,
-            biomechanicsHipDrop,
-            bodyResponse,
-            currentBiomechanicsAlert,
-            currentBodyResponseAlert,
-            currentResponseAlert,
-            currentStressAlert,
-            currentWorkloadAlert,
-            extraBottomPadding,
-            isBiomechanicsAnklePitchLocked,
-            isBiomechanicsAptLocked,
-            isBiomechanicsHipDropLocked,
-            isBodyResponseLocked,
-            isResponseLocked,
-            isStressLocked,
-            isWorkloadLocked,
-            trendCategories,
-            workload,
-        };*/
     },
 
     /**
@@ -2597,8 +2554,11 @@ const PlanLogic = {
                 10;
             maxDomain = _.round(maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1));
             maxDomain = maxDomain % 2 === 0 ? maxDomain : (maxDomain + 1);
+            let chartLegend = (selectedSession && selectedSession[asymmetryIndex] && selectedSession[asymmetryIndex].asymmetry && selectedSession[asymmetryIndex].asymmetry.detail_legend) || [];
+            let chartActiveLegend = _.find(chartLegend, legend => legend.active);
             return {
                 asymmetryIndex,
+                chartActiveLegend,
                 largerPieData,
                 richDataYDomain: [-maxDomain, maxDomain],
                 rotateDeg,
@@ -2612,7 +2572,7 @@ const PlanLogic = {
                 let newMultiplier = newPieData.multiplier;
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
                 let roundedLeftY = _.round(newPieData.left_y * newMultiplier);
-                if((selectedSession.asymmetry && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
+                if((selectedSession && _.toInteger(selectedSession.body_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
                     largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL, true);
                     smallerPieData = emptyPieData;
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
@@ -2627,7 +2587,7 @@ const PlanLogic = {
                 }
             } else if(dataType === 1) {
                 const ANKLE_PITCH_CHART_RATIO = 360;
-                if((selectedSession.asymmetry && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
+                if((selectedSession && _.toInteger(selectedSession.body_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
                     let largerValue = newPieData.right_y;
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     largerPieData = [
@@ -2641,11 +2601,11 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
+                        { color: AppColors.zeplin.purpleLight, label: 'L', x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: smallerValue, },
+                        { color: AppColors.zeplin.splashLight, label: 'R', x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
@@ -2654,11 +2614,11 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
+                        { color: AppColors.zeplin.splashLight, label: 'R', x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: smallerValue, },
+                        { color: AppColors.zeplin.purpleLight, label: 'L', x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 }
@@ -2672,37 +2632,33 @@ const PlanLogic = {
                 let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                 let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                 largerPieData = [
-                    { color: leftColor, x: 0, y: largerValue, },
+                    { color: leftColor, label: 'L', x: 0, y: largerValue, },
                     { color: AppColors.transparent, x: 1, y: largerFullValue, },
                 ];
                 smallerPieData = [
                     { color: AppColors.transparent, x: 0, y: smallerFullValue, },
-                    { color: rightColor, x: 1, y: smallerValue, },
+                    { color: rightColor, label: 'R', x: 1, y: smallerValue, },
                 ];
             }
         }
-        let parsedSummaryData = [];
-        if(selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex]) {
-            _.map(selectedSession.asymmetry[asymmetryIndex].summary_bold_text, (prop, i) => {
+        const specificSessionAsymmetryData = selectedSession;
+        let parsedSummaryTextData = [];
+        if(specificSessionAsymmetryData && specificSessionAsymmetryData.summary_text && specificSessionAsymmetryData.summary_text.active) {
+            parsedSummaryTextData = _.map(specificSessionAsymmetryData.summary_text.bold_text, (prop, i) => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
-                let sessionColor = _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 1 ?
-                    10
-                    : _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 2 ?
-                        4
-                        :
-                        null;
-                newParsedData.style = [AppStyles.robotoBold, { color: PlanLogic.returnInsightColorString(sessionColor), }];
-                parsedSummaryData.push(newParsedData);
+                newParsedData.style = [AppStyles.robotoBold];
+                return newParsedData;
             });
         }
         return {
             asymmetryIndex,
             largerPieData,
-            parsedSummaryData,
+            parsedSummaryTextData,
             richDataYDomain,
             rotateDeg: (dataType === 0 || dataType === 2) ? rotateDeg : '150deg',
             smallerPieData,
+            specificSessionAsymmetryData,
         };
     },
 
@@ -2716,14 +2672,14 @@ const PlanLogic = {
                 AppColors.zeplin.splashLight;
         if(y < otherY) {
             return [
-                {color: AppColors.transparent, x: 0, y: ((otherY - y) / 2),},
-                {color: color, x: 1, y: y,},
-                {color: AppColors.transparent, x: 2, y: (total - (y + ((otherY - y) / 2))),},
+                {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 0, y: ((otherY - y) / 2),},
+                {color: color, label: isLeft ? 'L' : 'R', x: 1, y: y,},
+                {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 2, y: (total - (y + ((otherY - y) / 2))),},
             ];
         }
         return [
-            {color: color, x: 0, y: y,},
-            {color: AppColors.transparent, x: 1, y: (total - y),},
+            {color: color, label: isLeft ? 'L' : 'R', x: 0, y: y,},
+            {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 1, y: (total - y),},
         ];
     },
 
@@ -3056,6 +3012,34 @@ const PlanLogic = {
             tintColor,
         };
     },
+
+    returnTrendsTabs: () => [
+        {
+            dataType: 0,
+            index:    'apt',
+            page:     0,
+        },
+        {
+            dataType: 2,
+            index:    'hip_drop',
+            page:     1,
+        },
+        {
+            dataType: 1,
+            index:    'ankle_pitch',
+            page:     2,
+        },
+        {
+            dataType: null,
+            index:    'knee_valgus',
+            page:     null,
+        },
+        {
+            dataType: null,
+            index:    'hip_rotation',
+            page:     null,
+        }
+    ],
 
 };
 

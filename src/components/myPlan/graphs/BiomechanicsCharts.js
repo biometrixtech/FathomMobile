@@ -53,11 +53,13 @@ class BiomechanicsCharts extends PureComponent {
         const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showRightSideDetails, showDetails, showTitle, } = this.props;
         let {
             asymmetryIndex,
+            chartActiveLegend,
             largerPieData,
-            parsedSummaryData,
+            parsedSummaryTextData,
             richDataYDomain,
             rotateDeg,
             smallerPieData,
+            specificSessionAsymmetryData,
         } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
         let extraPieStyles = dataType === 0 ? {} : {};
         let extraImageBackgroundStyles = dataType === 0 ? {} : {
@@ -82,7 +84,7 @@ class BiomechanicsCharts extends PureComponent {
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{'00:00'}</Text>
                                 <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(10),}}>{sessionDuration}</Text>
                             </View>
-                            <Text robotoRegular style={{color: AppColors.zeplin.purpleLight, fontSize: AppFonts.scaleFont(10),}}>{'left'}</Text>
+                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(chartActiveLegend ? chartActiveLegend.color[0] : 2), fontSize: AppFonts.scaleFont(10),}}>{'left'}</Text>
                         </View>
                         <V.VictoryChart
                             domain={{ y: richDataYDomain, }}
@@ -131,7 +133,7 @@ class BiomechanicsCharts extends PureComponent {
                             />
                         </V.VictoryChart>
                         <View style={{marginBottom: AppSizes.paddingMed, paddingLeft: AppSizes.paddingLrg, paddingRight: AppSizes.paddingSml,}}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
+                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(chartActiveLegend ? chartActiveLegend.color[1] : 2), fontSize: AppFonts.scaleFont(10),}}>{'right'}</Text>
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: showTitle ? 'space-between' : 'center', marginHorizontal: AppSizes.paddingMed,}}>
                             { showTitle &&
@@ -143,7 +145,7 @@ class BiomechanicsCharts extends PureComponent {
                                 />
                             }
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
-                                {_.map(selectedSession.asymmetry[asymmetryIndex].detail_legend, (legend, i) => (
+                                {selectedSession[asymmetryIndex] && selectedSession[asymmetryIndex].asymmetry && _.map(selectedSession[asymmetryIndex].asymmetry.detail_legend, (legend, i) => legend.active ? (
                                     <View
                                         key={i}
                                         style={[
@@ -165,7 +167,7 @@ class BiomechanicsCharts extends PureComponent {
                                         )}
                                         <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>{legend.text}</Text>
                                     </View>
-                                ))}
+                                ) : (null))}
                             </View>
                             { showTitle &&
                                 <TabIcon
@@ -188,7 +190,7 @@ class BiomechanicsCharts extends PureComponent {
                                     :
                                     require('../../../../assets/images/standard/hip_drop.png')
                             }
-                            style={[{height: pieDetails.pieHeight, width: pieDetails.pieWidth,}, extraImageBackgroundStyles,]}
+                            style={[{height: pieDetails.pieHeight, marginRight: AppSizes.paddingSml, width: pieDetails.pieWidth,}, extraImageBackgroundStyles,]}
                         >
                             <View style={[{transform: [{rotate: rotateDeg,}]}, extraPieStyles,]}>
                                 <V.VictoryPie
@@ -197,7 +199,7 @@ class BiomechanicsCharts extends PureComponent {
                                     data={largerPieData}
                                     height={pieDetails.pieHeight}
                                     innerRadius={pieDetails.pieInnerRadius}
-                                    labels={d => ''}
+                                    labels={datum => ''}
                                     padding={pieDetails.piePadding}
                                     style={{
                                         data: { fill: d => d.color, },
@@ -211,7 +213,7 @@ class BiomechanicsCharts extends PureComponent {
                                         data={smallerPieData}
                                         height={pieDetails.pieHeight}
                                         innerRadius={pieDetails.pieInnerRadius}
-                                        labels={d => ''}
+                                        labels={datum => ''}
                                         padding={pieDetails.piePadding}
                                         style={{
                                             data: { fill: d => d.color, },
@@ -222,45 +224,62 @@ class BiomechanicsCharts extends PureComponent {
                             </View>
                         </ImageBackground>
                         { showRightSideDetails &&
-                            <View style={{flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
+                            <View style={{flex: 1, flexDirection: 'row', marginBottom: AppSizes.paddingSml, marginTop: AppSizes.paddingMed, paddingRight: AppSizes.paddingSml, width: pieDetails.pieRightWrapperWidth,}}>
                                 <View
                                     style={{
-                                        flex:           showTitle ? 9 : 1,
-                                        justifyContent: showDetails && selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ? 'flex-end' : 'space-between',
+                                        justifyContent: showDetails && specificSessionAsymmetryData && _.toInteger(specificSessionAsymmetryData.body_side) === 0 ? 'flex-end' : 'space-between',
                                     }}
                                 >
-                                    { showDetails ?
+                                    { (showDetails && specificSessionAsymmetryData) ?
                                         <View>
-                                            { showTitle &&
-                                                <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(24),}}>{'Pelvic Tilt'}</Text>
-                                            }
-                                            { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
+                                            {specificSessionAsymmetryData && _.toInteger(specificSessionAsymmetryData.body_side) === 0 ?
                                                 <Image
                                                     resizeMode={'contain'}
                                                     source={require('../../../../assets/images/standard/allcaughtup.png')}
                                                     style={{height: 55, tintColor: `${AppColors.zeplin.successLight}${PlanLogic.returnHexOpacity(0.6)}`, width: 55,}}
                                                 />
-                                                :
-                                                <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(selectedSession.asymmetry.body_side === 1 ? 10 : selectedSession.asymmetry.body_side === 2 ? 4 : 13), fontSize: AppFonts.scaleFont(38),}}>
-                                                    {`${_.round(selectedSession.asymmetry[asymmetryIndex].summary_percentage)}%`}
-                                                </Text>
+                                                : specificSessionAsymmetryData.score.active ?
+                                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.score.color), fontSize: AppFonts.scaleFont(46),}}>
+                                                        {specificSessionAsymmetryData.score.value}
+                                                        <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(25),}}>
+                                                            {' /100'}
+                                                        </Text>
+                                                    </Text>
+                                                    :
+                                                    null
                                             }
-                                            <ParsedText
-                                                parse={parsedSummaryData}
-                                                style={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),},]}
-                                            >
-                                                {selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] ? selectedSession.asymmetry[asymmetryIndex].summary_text : ''}
-                                            </ParsedText>
+                                            {specificSessionAsymmetryData.summary_text.active &&
+                                                <ParsedText
+                                                    parse={parsedSummaryTextData || []}
+                                                    style={{...AppStyles.robotoRegular, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18),}}
+                                                >
+                                                    {specificSessionAsymmetryData.summary_text.text}
+                                                </ParsedText>
+                                            }
+                                            { specificSessionAsymmetryData.change.active &&
+                                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-start',}}>
+                                                    <TabIcon
+                                                        color={PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color)}
+                                                        containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
+                                                        icon={specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'}
+                                                        size={20}
+                                                        type={'antdesign'}
+                                                    />
+                                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color), fontSize: AppFonts.scaleFont(16),}}>
+                                                        {`${specificSessionAsymmetryData.change.value || specificSessionAsymmetryData.change.value === 0 ? Math.abs(specificSessionAsymmetryData.change.value) : '--'} ${specificSessionAsymmetryData.change.text}`}
+                                                    </Text>
+                                                </View>
+                                            }
                                         </View>
                                         :
                                         <View />
                                     }
-                                    { selectedSession && selectedSession.asymmetry && selectedSession.asymmetry[asymmetryIndex] && _.toInteger(selectedSession.asymmetry[asymmetryIndex].summary_side) === 0 ?
+                                    { specificSessionAsymmetryData && _.toInteger(specificSessionAsymmetryData.body_side) === 0 ?
                                         <View>
                                             <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
                                                 <View
                                                     style={{
-                                                        backgroundColor: AppColors.zeplin.successLight,
+                                                        backgroundColor: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend_color),
                                                         borderRadius:    (10 / 2),
                                                         height:          10,
                                                         marginRight:     AppSizes.paddingSml,
@@ -275,44 +294,34 @@ class BiomechanicsCharts extends PureComponent {
                                             <View style={{alignItems: 'center', flexDirection: 'row', marginVertical: AppSizes.paddingSml,}}>
                                                 <View
                                                     style={{
-                                                        backgroundColor: AppColors.zeplin.purpleLight,
+                                                        backgroundColor: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend_color),
                                                         borderRadius:    (10 / 2),
                                                         height:          10,
                                                         marginRight:     AppSizes.paddingSml,
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                <Text robotoLight style={{color: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend_color), fontSize: AppFonts.scaleFont(12),}}>
                                                     {`${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend ? _.round(pieDetails.pieData.left_y_legend) : '0'}\u00B0 Left ROM`}
                                                 </Text>
                                             </View>
                                             <View style={{alignItems: 'center', flexDirection: 'row',}}>
                                                 <View
                                                     style={{
-                                                        backgroundColor: AppColors.zeplin.splashLight,
+                                                        backgroundColor: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend_color),
                                                         borderRadius:    (10 / 2),
                                                         height:          10,
                                                         marginRight:     AppSizes.paddingSml,
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
+                                                <Text robotoLight style={{color: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend_color), fontSize: AppFonts.scaleFont(12),}}>
                                                     {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Right ROM`}
                                                 </Text>
                                             </View>
                                         </View>
                                     }
                                 </View>
-                                { showTitle &&
-                                    <View style={{flex: 1, justifyContent: 'flex-end',}}>
-                                        <TabIcon
-                                            color={AppColors.zeplin.slateXLight}
-                                            icon={'chevron-right'}
-                                            size={20}
-                                            type={'material-community'}
-                                        />
-                                    </View>
-                                }
                             </View>
                         }
                     </View>
