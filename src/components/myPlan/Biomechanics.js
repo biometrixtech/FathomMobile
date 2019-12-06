@@ -267,7 +267,7 @@ class Biomechanics extends PureComponent {
         const { getBiomechanicsDetails, plan, session, user, } = this.props;
         const { dataToDisplay, } = this.state;
         const userId = user.id;
-        const sessionId = '62d579e7-ab04-515b-ad77-f4d129f1d4bf'; // session.id; // TODO: FIX ME
+        const sessionId = session.id;
         let doWeHaveRichData = true;
         _.map(dataToDisplay, data => {
             if(!session[data.index].asymmetry) {
@@ -295,8 +295,8 @@ class Biomechanics extends PureComponent {
         const { plan, session, } = this.props;
         const { dataToDisplay, initialPage, loading, } = this.state;
         let sportName = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).label || '';
-        const sessionDateMoment = moment(session.event_date.replace('Z', ''));
-        let isToday = moment().diff(sessionDateMoment, 'days');
+        const sessionDateMoment = moment(session.event_date_time.replace('Z', ''));
+        let isToday = moment().isSame(sessionDateMoment, 'day');
         let sessionDateTime = isToday ? `Today, ${sessionDateMoment.format('hh:mma')}` : sessionDateMoment.format('MMM DD, hh:mma');
         let sessionDuration = SensorLogic.convertMinutesToHrsMins(session.duration, true);
         const dailyPlanObj = plan.dailyPlan[0] || false;

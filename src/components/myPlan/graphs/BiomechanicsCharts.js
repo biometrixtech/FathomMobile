@@ -286,7 +286,9 @@ class BiomechanicsCharts extends PureComponent {
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}</Text>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                                                    {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}
+                                                </Text>
                                             </View>
                                         </View>
                                         :

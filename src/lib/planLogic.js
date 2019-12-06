@@ -1679,7 +1679,7 @@ const PlanLogic = {
       * - Trends
       */
     // TODO: UNIT TEST ME
-    handleTrendsRenderLogic: plan => {
+    handleTrendsRenderLogic: (plan, user, dates, sessionDateIndex, selectedTimeIndex) => {
         const dailyPlanObj = plan.dailyPlan[0] || false;
         let trends = dailyPlanObj ? dailyPlanObj.trends : false;
         let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : { active: false, };
@@ -1713,6 +1713,15 @@ const PlanLogic = {
                 return newParsedData;
             });
         }
+        let times = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].length > 0 ?
+            _.map(dates[sessionDateIndex], (date, i) => date)
+            :
+            [];
+        let selectedBiomechanicsSession = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].length > 0 ?
+            _.filter(biomechanicsSummary.sessions, s => s.id === dates[sessionDateIndex][selectedTimeIndex].sessionId)
+            :
+            [];
+        const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.sensor_pid ? true : false;
         return {
             biomechanicsSummary,
             bodyResponse,
@@ -1727,6 +1736,9 @@ const PlanLogic = {
             isWorkloadLocked,
             parsedSummaryTextData,
             recoveryQuality,
+            selectedBiomechanicsSession,
+            times,
+            userHas3SensorSystem,
             workload,
             workloadIcon,
             workloadIconType,
@@ -2754,8 +2766,10 @@ const PlanLogic = {
                                                                                                         AppColors.zeplin.yellowXLight
                                                                                                         : color === 25 ?
                                                                                                             AppColors.zeplin.yellowXXLight
-                                                                                                            :
-                                                                                                            AppColors.zeplin.errorLight;
+                                                                                                            : color === 26 ?
+                                                                                                                AppColors.zeplin.splash
+                                                                                                                :
+                                                                                                                AppColors.zeplin.errorLight;
         if(customOpacity && customOpacity !== 1) {
             newColor = [2, 6, 17, 18].includes(color) ?
                 AppColors.zeplin.errorSuperLight
