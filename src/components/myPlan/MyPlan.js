@@ -944,13 +944,14 @@ class MyPlan extends Component {
                         }
                         let newDailyReadiness = _.cloneDeep(dailyReadiness);
                         this.setState({
+                            activityIdLoading:          null,
                             dailyReadiness:             newDailyReadiness,
                             isPageCalculating:          false,
                             isPageLoading:              false,
                             isReadinessSurveyModalOpen: !response.daily_plans[0].daily_readiness_survey_completed,
                         });
                     })
-                    .catch(error => this.setState({ isPageCalculating: false, isPageLoading: false, }));
+                    .catch(error => this.setState({ activityIdLoading: null, isPageCalculating: false, isPageLoading: false, }));
             }
         );
     }
@@ -1332,11 +1333,11 @@ class MyPlan extends Component {
                     text:    'End Now',
                     onPress: () =>
                         this.setState(
-                            { isPageCalculating: true, },
+                            { activityIdLoading: activity.id, isPageCalculating: true, },
                             () =>
                                 updateSensorSession(false, 'TOO_SHORT', activity.id, user)
                                     .then(res => this._handleExerciseListRefresh(false, true))
-                                    .catch(err => this.setState({ isPageCalculating: false, })),
+                                    .catch(err => this.setState({ activityIdLoading: null, isPageCalculating: false, })),
                         )
                 },
                 {
