@@ -14,20 +14,17 @@
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { Platform, ScrollView, StyleSheet, View, } from 'react-native';
-// import { Image, TouchableOpacity, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
-import { AnimatedCircularProgress, Button, ParsedText, Spacer, TabIcon, Text, } from '../custom';
+import { AnimatedCircularProgress, Button, ParsedText, Spacer, TabIcon, Text, TrendsTabBar, } from '../custom';
 import { BiomechanicsCharts, } from './graphs';
 import { Loading, } from '../general';
 import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
-// import { Badge, Divider, } from 'react-native-elements';
 import _ from 'lodash';
-// import SlidingUpPanel from 'rn-sliding-up-panel';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import moment from 'moment';
 
@@ -311,7 +308,7 @@ class Biomechanics extends PureComponent {
                     style={{backgroundColor: AppColors.white, flex: 1,}}
                 >
 
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',  paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.statusBarHeight > 0 ? (AppSizes.statusBarHeight + AppSizes.paddingSml) : AppSizes.paddingLrg,}}>
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',  paddingHorizontal: AppSizes.padding, paddingTop: AppSizes.statusBarHeight > 0 ? (AppSizes.statusBarHeight + AppSizes.paddingSml) : AppSizes.paddingLrg,}}>
                         <TabIcon
                             color={AppColors.zeplin.slateLight}
                             icon={'chevron-left'}
@@ -336,13 +333,10 @@ class Biomechanics extends PureComponent {
                     <ScrollableTabView
                         initialPage={initialPage}
                         onChangeTab={details => this.setState({ currentTabDetails: details, })}
-                        // style={{
-                        //     flex:              1,
-                        //     paddingHorizontal: AppSizes.paddingMed,
-                        // }}
+                        renderTabBar={() => <TrendsTabBar />}
+                        style={{marginTop: AppSizes.paddingLrg,}}
                         tabBarActiveTextColor={AppColors.zeplin.slateLight}
                         tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
-                        tabBarTextStyle={{...AppFonts.robotoBold, backgroundColor: 'blue', fontSize: AppFonts.scaleFont(22),}}
                         tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
                         tabStyle={{backgroundColor: 'red',}}
                     >

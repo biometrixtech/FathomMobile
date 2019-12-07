@@ -2613,11 +2613,11 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.purpleLight, label: 'L', x: 0, y: largerValue, },
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.splashLight, label: 'R', x: 0, y: smallerValue, },
+                        { color: AppColors.zeplin.splashLight, x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
@@ -2626,11 +2626,11 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.splashLight, label: 'R', x: 0, y: largerValue, },
+                        { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.purpleLight, label: 'L', x: 0, y: smallerValue, },
+                        { color: AppColors.zeplin.purpleLight, x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 }
@@ -2644,12 +2644,12 @@ const PlanLogic = {
                 let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                 let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                 largerPieData = [
-                    { color: leftColor, label: 'L', x: 0, y: largerValue, },
+                    { color: leftColor, x: 0, y: largerValue, },
                     { color: AppColors.transparent, x: 1, y: largerFullValue, },
                 ];
                 smallerPieData = [
                     { color: AppColors.transparent, x: 0, y: smallerFullValue, },
-                    { color: rightColor, label: 'R', x: 1, y: smallerValue, },
+                    { color: rightColor, x: 1, y: smallerValue, },
                 ];
             }
         }
@@ -2684,14 +2684,14 @@ const PlanLogic = {
                 AppColors.zeplin.splashLight;
         if(y < otherY) {
             return [
-                {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 0, y: ((otherY - y) / 2),},
-                {color: color, label: isLeft ? 'L' : 'R', x: 1, y: y,},
-                {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 2, y: (total - (y + ((otherY - y) / 2))),},
+                {color: AppColors.transparent, x: 0, y: ((otherY - y) / 2),},
+                {color: color, x: 1, y: y,},
+                {color: AppColors.transparent, x: 2, y: (total - (y + ((otherY - y) / 2))),},
             ];
         }
         return [
-            {color: color, label: isLeft ? 'L' : 'R', x: 0, y: y,},
-            {color: AppColors.transparent, label: isLeft ? 'L' : 'R', x: 1, y: (total - y),},
+            {color: color, x: 0, y: y,},
+            {color: AppColors.transparent, x: 1, y: (total - y),},
         ];
     },
 

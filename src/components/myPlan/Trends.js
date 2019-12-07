@@ -18,7 +18,7 @@ import { Actions as DispatchActions, } from '../../constants';
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { BiomechanicsCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
-import { AnimatedCircularProgress, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
+import { AnimatedCircularProgress, Button, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
 import { ContactUsModal, } from '../general';
 import { store } from '../../store';
 
@@ -104,11 +104,11 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
+const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSlideUpPanel = () => {}, }) => {
     const dataToDisplay = PlanLogic.returnTrendsTabs(); // session.data_point; // TODO: FIX NME
     return (
         <View
-            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}]}
+            style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}, extraWrapperStyles,]}
         >
 
             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
@@ -228,13 +228,15 @@ const BiomechanicsSummary = ({ plan, session, toggleSlideUpPanel, }) => {
                                         </View>
                                     </View>
                                 </View>
-                                <TabIcon
-                                    color={`${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`}
-                                    containerStyle={[{alignItems: 'flex-end', justifyContent: 'center',}]}
-                                    icon={'arrow-right'}
-                                    size={20}
-                                    type={'simple-line-icon'}
-                                />
+                                { sessionData.active &&
+                                    <TabIcon
+                                        color={`${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`}
+                                        containerStyle={[{alignItems: 'flex-end', justifyContent: 'center',}]}
+                                        icon={'arrow-right'}
+                                        size={20}
+                                        type={'simple-line-icon'}
+                                    />
+                                }
                             </View>
                         </TouchableOpacity>
                     );
@@ -368,15 +370,6 @@ class Trends extends PureComponent {
             workloadSportName,
             workloadSubtitleColor,
         } = PlanLogic.handleTrendsRenderLogic(plan, user, dates, sessionDateIndex, selectedTimeIndex);
-        console.log('biomechanicsSummary-0',biomechanicsSummary);
-        // TODO: FIX ME //
-        // userHas3SensorSystem = false;
-        biomechanicsSummary = {
-            active: false, has_three_sensor_data: true,
-            // has_three_sensor_data: false,
-        }
-        // TODO: FIX ME //
-        console.log('biomechanicsSummary-1',biomechanicsSummary,userHas3SensorSystem);
         return (
             <View style={{flex: 1,}}>
 
@@ -551,9 +544,9 @@ class Trends extends PureComponent {
 
                         </View>
                         : (biomechanicsSummary.has_three_sensor_data && !biomechanicsSummary.active) ?
-                            <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.padding,}}>
-                                {/* START A PRO SESSION - my plan start session*/}
+                            <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.padding, paddingVertical: 0,}]}>
                                 <BiomechanicsSummary
+                                    extraWrapperStyles={{marginBottom: 0, paddingBottom: 0,}}
                                     plan={plan}
                                     session={{
                                         ankle_pitch:     this._returnEmptyBiomechanicsSummaryData(true, 'Leg Extension'),
@@ -569,11 +562,31 @@ class Trends extends PureComponent {
                                         sport_name:      17,
                                     }}
                                 />
-                                {userHas3SensorSystem ?
-                                    <View>{/* START A PRO SESSION - my plan start session*/}</View>
-                                    :
-                                    <View>{/* RE-CONNECT FATHOM PRO - Connect Fathom PRO CVP screen */}</View>
-                                }
+                                <View style={[styles.lockedCardWrapper, {paddingVertical: 0,}]}>
+                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                                        <TabIcon
+                                            color={AppColors.white}
+                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                                            icon={'lock'}
+                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                                            size={40}
+                                        />
+                                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginVertical: AppSizes.padding, textAlign: 'center',}}>
+                                            {'Wear Fathom PRO in your workout to unlock your session analysis.'}
+                                        </Text>
+                                        <Button
+                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                                            containerStyle={{alignItems: 'center', alignSelf: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                                            onPress={userHas3SensorSystem ?
+                                                () => AppUtil.pushToScene('myPlan')
+                                                :
+                                                () => AppUtil.pushToScene('bluetoothConnect')
+                                            }
+                                            title={userHas3SensorSystem ? 'Start a PRO Session' : 'Re-Connect Fathom PRO'}
+                                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                                        />
+                                    </View>
+                                </View>
                             </View>
                             :
                             null
