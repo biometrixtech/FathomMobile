@@ -1385,8 +1385,14 @@ class MyPlan extends Component {
 
     _preparePSSurvey = threeSensorSession => {
         let newSensorSession = _.cloneDeep(threeSensorSession);
+        newSensorSession.deleted = false;
+        newSensorSession.ignored = false;
         newSensorSession.set_end_date = false;
         newSensorSession.hr_data = [];
+        newSensorSession.sport_name = newSensorSession.sport_name || 17;
+        newSensorSession.end_date = newSensorSession.end_date || `${moment().toISOString(true).split('.')[0]}Z`;
+        newSensorSession.session_type = newSensorSession.session_type || 6;
+        newSensorSession.source = newSensorSession.source || 3;
         newSensorSession.post_session_survey = {
             RPE:              null,
             clear_candidates: [],
@@ -1574,7 +1580,7 @@ class MyPlan extends Component {
                                             activity={activity}
                                             activityIdLoading={activityIdLoading}
                                             askForNewMobilize={askForNewMobilize}
-                                            handleGetMobilize={console.log('hi - PL should updat this to new api')} // TODO: UPDATE PLAN INSTEAD
+                                            handleGetMobilize={() => console.log('hi - PL should updat this to new api')} // TODO: UPDATE PLAN INSTEAD
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
                                             onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
