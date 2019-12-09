@@ -690,28 +690,30 @@ class MyPlan extends Component {
     }
 
     _checkThreeSensorSessions = () => {
-        const { plan, } = this.props;
+        const { plan, user, } = this.props;
         const dailyPlan = plan.dailyPlan[0] || false;
         let trainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
-        let nonCompleteThreeSensorSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey) : [];
-        if(trainingSessions && nonCompleteThreeSensorSession) {
-            let newSensorSession = _.cloneDeep(nonCompleteThreeSensorSession);
-            newSensorSession.set_end_date = false;
-            newSensorSession.hr_data = [];
-            newSensorSession.post_session_survey = {
-                clear_candidates: [],
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                RPE:              null,
-                soreness:         [],
-            };
-            return this.setState(
-                { sensorSession: newSensorSession, },
-                () => this._togglePostSessionSurveyModal(),
-            );
+        let processingSessions = user.sensor_data && user.sensor_data.sessions ? user.sensor_data.sessions : false;
+
+        let inProcessSession = processingSessions ? _.find(processingSessions, session => session.status === 'PROCESSING_IN_PROGRESS' || 
+                                        session.status === 'UPLOAD_IN_PROGRESS' ||
+                                        session.status === 'UPLOAD_PAUSED') : false;
+        
+        let nonCompleteThreeSensorSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey) : false;
+
+        if(processingSessions && inProcessSession) {
+            let plansSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.session_id) : false;
+            if(trainingSessions && plansSession) {
+                return false;
+            }
+            return this._preparePSSurvey(inProcessSession);
+        }
+        else if(trainingSessions && nonCompleteThreeSensorSession) {
+            return this._preparePSSurvey(nonCompleteThreeSensorSession);
         }
         return false;
     }
-
+    
     _closeTrainSessionsCompletionModal = () => {
         this.goToPageTimer = _.delay(() => {
             this.setState(
@@ -1371,6 +1373,21 @@ class MyPlan extends Component {
 
     _onLayoutOfActivityTabs = ev => this._activeTabs.push({x: ev.nativeEvent.layout.x, y: ev.nativeEvent.layout.y,})
 
+    _preparePSSurvey = threeSensorSession => {
+        let newSensorSession = _.cloneDeep(threeSensorSession);
+        newSensorSession.set_end_date = false;
+        newSensorSession.hr_data = [];
+        newSensorSession.post_session_survey = {
+            RPE:              null,
+            clear_candidates: [],
+            event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+            soreness:         [],
+        };
+        return this.setState({ 
+            sensorSession: newSensorSession, 
+        }, () => this._togglePostSessionSurveyModal());
+    }
+    
     _scrollToFirstActiveActivityTab = () => {
         if(this._activeTabs[0] && this._scrollViewRef) {
             this.goToPageTimer = _.delay(() => {
