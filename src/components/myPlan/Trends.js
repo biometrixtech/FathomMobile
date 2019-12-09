@@ -2,7 +2,6 @@
  * Trends
  *
     <Trends
-        clearPlanAlert={clearPlanAlert}
         plan={plan}
         updateUser={updateUser}
         user={user}
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSlideUpPanel = () => {}, }) => {
-    const dataToDisplay = PlanLogic.returnTrendsTabs(); // session.data_point; // TODO: FIX NME
+    const dataToDisplay = session.data_points;
     return (
         <View
             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}, extraWrapperStyles,]}
@@ -179,19 +178,19 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                     piePadding:     AppSizes.paddingSml,
                     pieWidth:       pieWrapperWidth,
                 };
-                if(sessionData.active && (data.dataType || data.dataType === 0)) {
+                if(sessionData.active && (data.data_type || data.data_type === 0)) {
                     return (
                         <TouchableOpacity
                             activeOpacity={0.2}
                             key={i}
-                            onPress={() => AppUtil.pushToScene('biomechanics', {dataType: data.dataType, index: data.index, session: session,})}
+                            onPress={() => AppUtil.pushToScene('biomechanics', {dataType: data.data_type, index: data.index, session: session,})}
                             style={[styles.sessionDataLineWrapper(i === 0, (i + 1) === dataToDisplay.length),]}
                         >
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
                                     <View style={{marginRight: AppSizes.paddingMed,}}>
                                         <BiomechanicsCharts
-                                            dataType={data.dataType}
+                                            dataType={data.data_type}
                                             pieDetails={pieDetails}
                                             selectedSession={sessionData}
                                             showRightSideDetails={false}
@@ -211,7 +210,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                                                     </Text>
                                                 </Text>
                                             }
-                                            { sessionData.score.active &&
+                                            { sessionData.change.active &&
                                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-end', marginLeft: AppSizes.paddingSml,}}>
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(sessionData.change.color)}
@@ -829,10 +828,9 @@ class Trends extends PureComponent {
 }
 
 Trends.propTypes = {
-    clearPlanAlert: PropTypes.func.isRequired,
-    plan:           PropTypes.object.isRequired,
-    updateUser:     PropTypes.func.isRequired,
-    user:           PropTypes.object.isRequired,
+    plan:       PropTypes.object.isRequired,
+    updateUser: PropTypes.func.isRequired,
+    user:       PropTypes.object.isRequired,
 };
 
 Trends.defaultProps = {};

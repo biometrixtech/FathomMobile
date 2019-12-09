@@ -25,7 +25,7 @@ import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
+import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
 import moment from 'moment';
 
 /* Styles ==================================================================== */
@@ -46,58 +46,26 @@ const styles = StyleSheet.create({
 
 /* Component ==================================================================== */
 const BiomechanicsTabView = ({ data, session, }) => {
-    // TODO: MOVE TO UTIL FUNCTION
-    let sessionData = session[data.index];
-    let parsedDescriptionTextData = [];
-    if(sessionData.description.active) {
-        parsedDescriptionTextData = _.map(sessionData.description.bold_text, prop => {
-            let newParsedData = {};
-            newParsedData.pattern = new RegExp(prop.text, 'i');
-            newParsedData.style = [AppStyles.robotoBold];
-            return newParsedData;
-        });
-    }
-    let parsedAsymmetryDetailTextData = [];
-    if(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text.length > 0) {
-        parsedAsymmetryDetailTextData = _.map(sessionData.asymmetry.detail_bold_text, prop => {
-            let newParsedData = {};
-            newParsedData.pattern = new RegExp(prop.text, 'i');
-            newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
-            return newParsedData;
-        });
-    }
-    const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
-    const pieWrapperWidth = (AppSizes.screen.widthHalf);
-    const pieInnerRadius = (AppSizes.padding * 4);
-    const pieDetails = {
-        pieData:        sessionData.summary_data,
-        pieHeight:      pieWrapperWidth,
-        pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
-        piePadding:     AppSizes.paddingSml,
-        pieWidth:       pieWrapperWidth,
-    };
-    let chartLegend = (sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_legend) || [];
-    let chartActiveLegend = _.find(chartLegend, legend => legend.active);
-    let chartInactiveLegend = _.find(chartLegend, legend => !legend.active);
-    let chartData = (sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_data) || [];
-    let updatedChartData = _.map(chartData, (chartDetails, index) => {
-        let newDataObjLeft = {};
-        newDataObjLeft.x = chartDetails.x;
-        newDataObjLeft.y = chartDetails.y1;
-        newDataObjLeft.color = PlanLogic.returnInsightColorString(chartDetails.flag === 1 ? chartActiveLegend.color[0] : chartInactiveLegend.color[0]);
-        let newDataObjRight = {};
-        newDataObjRight.x = chartDetails.x;
-        newDataObjRight.y = chartDetails.y2;
-        newDataObjRight.color = PlanLogic.returnInsightColorString(chartDetails.flag === 1 ? chartActiveLegend.color[1] : chartInactiveLegend.color[1]);
-        return [newDataObjLeft, newDataObjRight];
-    });
-    let sessionHours = _.floor(session.duration / 3600);
-    let updatedTime = session.duration - sessionHours * 3600;
-    let sessionMinutes = _.floor(updatedTime / 60);
-    let sessionSeconds = (new Array(2 + 1).join('0') + (updatedTime - sessionMinutes * 60)).slice(-2);
-    let sessionDuration = `${sessionHours > 0 ? `${sessionHours}:` : ''}${sessionMinutes === 0 ? '00' : sessionHours > 0 && sessionMinutes < 10 ? `0${sessionMinutes}` : sessionMinutes}:${sessionSeconds === 0 ? '00' : sessionSeconds}`;
+    const {
+        parsedAsymmetryDetailTextData,
+        parsedDescriptionTextData,
+        pieDetails,
+        sessionData,
+        sessionDuration,
+        updatedChartData,
+    } = PlanLogic.handleBiomechanicsTabViewRenderLogic(session, data);
     return (
         <View style={{flex: 1,}}>
+            <View
+                style={{
+                    alignSelf:       'center',
+                    backgroundColor: AppColors.zeplin.slateLight,
+                    borderRadius:    100,
+                    height:          4,
+                    marginBottom:    AppSizes.padding,
+                    width:           AppSizes.screen.widthThird,
+                }}
+            />
             {sessionData.description.active &&
                 <View style={{paddingHorizontal: AppSizes.paddingSml,}}>
                     <ParsedText
@@ -126,7 +94,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
                 </View>
             }
             <BiomechanicsCharts
-                dataType={data.dataType}
+                dataType={data.data_type}
                 pieDetails={pieDetails}
                 selectedSession={sessionData}
             />
@@ -211,7 +179,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
                 <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Workout Timeline'}</Text>
                 <BiomechanicsCharts
                     chartData={_.flatten(updatedChartData)}
-                    dataType={data.dataType}
+                    dataType={data.data_type}
                     isRichDataView={true}
                     sessionDuration={sessionDuration}
                     selectedSession={session}
@@ -242,8 +210,8 @@ class Biomechanics extends PureComponent {
     constructor(props) {
         super(props);
         const { dataType, index, session, } = props;
-        const dataToDisplay = _.filter(PlanLogic.returnTrendsTabs(), tab => tab.dataType || tab.dataType === 0);  // session.data_point; // TODO: FIX NME
-        const initialPage = _.find(dataToDisplay, o => o.dataType === dataType && o.index === index).page || 0;
+        const dataToDisplay = _.filter(session.data_points, tab => tab.data_type || tab.data_type === 0);
+        const initialPage = _.find(dataToDisplay, o => o.data_type === dataType && o.index === index).page || 0;
         this.state  = {
             currentTabDetails: {
                 from: 0,
@@ -254,6 +222,7 @@ class Biomechanics extends PureComponent {
             initialPage,
             loading: false,
         };
+        this.tabView = {};
     }
 
     componentDidMount = () => {
@@ -290,7 +259,7 @@ class Biomechanics extends PureComponent {
 
     render = () => {
         const { plan, session, } = this.props;
-        const { dataToDisplay, initialPage, loading, } = this.state;
+        const { currentTabDetails, dataToDisplay, initialPage, loading, } = this.state;
         let sportName = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).label || '';
         const sessionDateMoment = moment(session.event_date_time.replace('Z', ''));
         let isToday = moment().isSame(sessionDateMoment, 'day');
@@ -333,18 +302,35 @@ class Biomechanics extends PureComponent {
                     <ScrollableTabView
                         initialPage={initialPage}
                         onChangeTab={details => this.setState({ currentTabDetails: details, })}
-                        renderTabBar={() => <TrendsTabBar />}
+                        page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
+                        ref={tabView => { this.tabView = tabView; }}
+                        renderTabBar={() =>
+                            <ScrollableTabBar
+                                renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) =>
+                                    TrendsTabBar.renderTab(
+                                        name,
+                                        page,
+                                        isTabActive,
+                                        onPressHandler,
+                                        onLayoutHandler,
+                                        subtitle,
+                                        this.tabView
+                                    )
+                                }
+                                style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
+                            />
+                        }
                         style={{marginTop: AppSizes.paddingLrg,}}
                         tabBarActiveTextColor={AppColors.zeplin.slateLight}
                         tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
-                        tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
-                        tabStyle={{backgroundColor: 'red',}}
+                        // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
+                        tabBarUnderlineStyle={{backgroundColor: AppColors.white, borderColor: AppColors.white, borderBottomWidth: 0, height: 0,}}
                     >
                         {_.map(dataToDisplay, (data, i) =>
                             <View
                                 key={i}
                                 tabLabel={session[data.index].child_title}
-                                style={{flex: 1, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.padding,}}
+                                style={{flex: 1, paddingHorizontal: AppSizes.paddingMed,}}
                             >
                                 <BiomechanicsTabView
                                     data={data}

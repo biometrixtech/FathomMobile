@@ -1,103 +1,59 @@
 import React from 'react';
-import createReactClass from 'create-react-class';
-import PropTypes from 'prop-types';
-import { Animated, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes, } from 'react-native';
-import { AppFonts, AppSizes, } from '../../constants';
+import { TouchableWithoutFeedback, View, } from 'react-native';
 
-const styles = StyleSheet.create({
-    tab: {
-        alignItems:     'center',
-        flex:           1,
-        justifyContent: 'center',
-        paddingBottom:  10,
-    },
-    tabs: {
-        flexDirection:  'row',
-        justifyContent: 'space-around',
-    },
-});
+import { AppColors, AppFonts, AppSizes, } from '../../constants';
+import { Text, } from './';
 
-const TrendsTabBar = createReactClass({
-    propTypes: {
-        activeTab:         PropTypes.number,
-        activeTextColor:   PropTypes.string,
-        backgroundColor:   PropTypes.string,
-        goToPage:          PropTypes.func,
-        inactiveTextColor: PropTypes.string,
-        renderTab:         PropTypes.func,
-        tabStyle:          ViewPropTypes.style,
-        tabs:              PropTypes.array,
-        textStyle:         Text.propTypes.style,
-        underlineStyle:    ViewPropTypes.style,
-    },
+import _ from 'lodash';
 
-    getDefaultProps() {
-        return {
-            activeTextColor:   'navy',
-            backgroundColor:   null,
-            inactiveTextColor: 'black',
-        };
-    },
+const TrendsTabBar = {
 
-    renderTabOption(name, page) {},
-
-    renderTab(name, page, isTabActive, onPressHandler) {
-        const { activeTextColor, inactiveTextColor, } = this.props;
-        let textStyle = {...AppFonts.robotoRegular, fontSize: AppFonts.scaleFont(isTabActive ? 18 : 14),};
-        if(isTabActive) {
-            textStyle = { ...textStyle, ...AppFonts.robotoBold, };
+    renderTab: (name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle, tabView) => {
+        const numberOfTabs = tabView && tabView.props ? tabView.props.children.length : 0;
+        const fontSize = isTabActive ? AppFonts.scaleFont(22) : AppFonts.scaleFont(15);
+        const textColor = isTabActive ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight;
+        let currentPage = tabView && tabView.state ? tabView.state.currentPage : 0;
+        let currentPageStyles = (currentPage === page && currentPage === 0) ?
+            {marginLeft: AppSizes.screen.widthQuarter, width: AppSizes.screen.widthHalf,}
+            : (currentPage === page && (currentPage + 1) === numberOfTabs) ?
+                {marginRight: AppSizes.screen.widthQuarter, width: AppSizes.screen.widthHalf,}
+                : currentPage === page ?
+                    {width: AppSizes.screen.widthHalf,}
+                    :
+                    {};
+        let currentPageExtraStyles = {};
+        if(currentPage === page && (currentPage === 0 || (currentPage + 1) === numberOfTabs)) {
+            currentPageExtraStyles = {};
+        } else {
+            if((currentPage + 1) === page || (currentPage - 1) === page) {
+                currentPageExtraStyles = {width: AppSizes.screen.widthQuarter,};
+            }
         }
-        const textColor = isTabActive ? activeTextColor : inactiveTextColor;
-        const fontWeight = isTabActive ? 'bold' : 'normal';
+        const wrapperStyles = [currentPageStyles, currentPageExtraStyles,];
         return (
-            <TouchableOpacity
-                accessibilityLabel={name}
-                accessibilityTraits={'button'}
+            <TouchableWithoutFeedback
                 accessible={true}
+                accessibilityLabel={name}
+                accessibilityTraits='button'
+                key={`${name}_${page}`}
+                onLayout={onLayoutHandler}
                 onPress={() => onPressHandler(page)}
-                key={name}
-                style={{flex: 1,}}
             >
-                <View style={[styles.tab, this.props.tabStyle,]}>
-                    <Text style={[{color: textColor, fontWeight,}, textStyle,]}>
-                        {name}
-                    </Text>
+                <View style={[wrapperStyles,]}>
+                    <View style={{alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
+                        <Text
+                            robotoBold={isTabActive}
+                            robotoRegular={!isTabActive}
+                            style={[{color: textColor, fontSize,},]}
+                        >
+                            {name}
+                        </Text>
+                    </View>
                 </View>
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
         );
     },
 
-    render() {
-        const containerWidth = this.props.containerWidth;
-        const numberOfTabs = this.props.tabs.length;
-        const wrapperPadding = AppSizes.padding;
-        const underLineWidth = ((containerWidth - (AppSizes.padding * 2)) / numberOfTabs);
-        const tabUnderlineStyle = {
-            backgroundColor: 'navy',
-            bottom:          0,
-            height:          4,
-            position:        'absolute',
-            width:           underLineWidth,
-        };
-        const translateX = this.props.scrollValue.interpolate({
-            inputRange:  [0, 1],
-            outputRange: [0,  underLineWidth],
-        });
-        return (
-            <View style={{paddingHorizontal: wrapperPadding,}}>
-                <View style={[styles.tabs, {backgroundColor: this.props.backgroundColor,}, this.props.style,]}>
-                    {this.props.tabs.map((name, page) => {
-                        const isTabActive = this.props.activeTab === page;
-                        const renderTab = this.props.renderTab || this.renderTab;
-                        return renderTab(name, page, isTabActive, this.props.goToPage);
-                    })}
-                    <Animated.View
-                        style={[tabUnderlineStyle, {transform: [{ translateX },]}, this.props.underlineStyle,]}
-                    />
-                </View>
-            </View>
-        );
-    },
-});
+}
 
-module.exports = TrendsTabBar;
+export default TrendsTabBar;

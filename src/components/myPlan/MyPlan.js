@@ -690,24 +690,35 @@ class MyPlan extends Component {
     }
 
     _checkThreeSensorSessions = () => {
-        const { plan, } = this.props;
+        const { plan, user, } = this.props;
         const dailyPlan = plan.dailyPlan[0] || false;
         let trainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
-        let nonCompleteThreeSensorSession = trainingSessions ? _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey) : [];
-        if(trainingSessions && nonCompleteThreeSensorSession) {
-            let newSensorSession = _.cloneDeep(nonCompleteThreeSensorSession);
-            newSensorSession.set_end_date = false;
-            newSensorSession.hr_data = [];
-            newSensorSession.post_session_survey = {
-                clear_candidates: [],
-                event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
-                RPE:              null,
-                soreness:         [],
-            };
-            return this.setState(
-                { sensorSession: newSensorSession, },
-                () => this._togglePostSessionSurveyModal(),
-            );
+        let processingSessions = user.sensor_data && user.sensor_data.sessions ? user.sensor_data.sessions : false;
+        let inProcessSession = processingSessions ?
+            _.find(
+                processingSessions,
+                session =>
+                    session.status === 'PROCESSING_IN_PROGRESS' ||
+                    session.status === 'UPLOAD_IN_PROGRESS' ||
+                    session.status === 'UPLOAD_PAUSED'
+            )
+            :
+            false;
+        let nonCompleteThreeSensorSession = trainingSessions ?
+            _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey)
+            :
+            false;
+        if(processingSessions && inProcessSession) {
+            let plansSession = trainingSessions ?
+                _.find(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.session_id)
+                :
+                false;
+            if(trainingSessions && plansSession) {
+                return false;
+            }
+            return this._preparePSSurvey(inProcessSession);
+        } else if(trainingSessions && nonCompleteThreeSensorSession) {
+            return this._preparePSSurvey(nonCompleteThreeSensorSession);
         }
         return false;
     }
@@ -956,12 +967,12 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = isFromAddButton => {
+    _handleGetMobilize = (isFromAddButton, type) => {
         const { getMobilize, user, } = this.props;
         this.setState(
             { apiIndex: isFromAddButton ? 3 : 2, expandNotifications: false, isPageCalculating: true, },
             () =>
-                getMobilize(user.id)
+                getMobilize(user.id, type)
                     .then(res => this.setState({ apiIndex: null, isPageCalculating: false, }))
                     .catch(() => this.setState({ apiIndex: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
@@ -1372,6 +1383,21 @@ class MyPlan extends Component {
 
     _onLayoutOfActivityTabs = ev => this._activeTabs.push({x: ev.nativeEvent.layout.x, y: ev.nativeEvent.layout.y,})
 
+    _preparePSSurvey = threeSensorSession => {
+        let newSensorSession = _.cloneDeep(threeSensorSession);
+        newSensorSession.set_end_date = false;
+        newSensorSession.hr_data = [];
+        newSensorSession.post_session_survey = {
+            RPE:              null,
+            clear_candidates: [],
+            event_date:       `${moment().toISOString(true).split('.')[0]}Z`,
+            soreness:         [],
+        };
+        return this.setState({
+            sensorSession: newSensorSession,
+        }, () => this._togglePostSessionSurveyModal());
+    }
+
     _scrollToFirstActiveActivityTab = () => {
         if(this._activeTabs[0] && this._scrollViewRef) {
             this.goToPageTimer = _.delay(() => {
@@ -1532,9 +1558,11 @@ class MyPlan extends Component {
 
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
+                                            // completed={completedLockedModality.completed}
                                             completed={completedLockedModality.isCompleted}
                                             isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
+                                            // locked={!completedLockedModality.active && !completedLockedModality.completed}
                                             locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}
                                             title={completedLockedModality.title}
@@ -1546,7 +1574,7 @@ class MyPlan extends Component {
                                             activity={activity}
                                             activityIdLoading={activityIdLoading}
                                             askForNewMobilize={askForNewMobilize}
-                                            handleGetMobilize={this._handleGetMobilize}
+                                            handleGetMobilize={console.log('hi - PL should updat this to new api')} // TODO: UPDATE PLAN INSTEAD
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
                                             onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
@@ -1718,7 +1746,7 @@ class MyPlan extends Component {
                                 buttonColor={AppColors.zeplin.yellow}
                                 fixNativeFeedbackRadius={true}
                                 hideShadow={true}
-                                onPress={() => this._handleGetMobilize(true)}
+                                onPress={() => this._handleGetModality(true, 1)}
                                 spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                                 textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                                 textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}

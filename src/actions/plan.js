@@ -716,13 +716,14 @@ const handleReadInsight = (dailyPlan, insightIndex, userId) => {
 /**
   * Log Device/App Information and Usage
   */
-const getMobilize = userId => {
+const getMobilize = (userId, type) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.type = type;
     store.dispatch({
         type: Actions.START_REQUEST,
     });
-    return dispatch => AppAPI.get_mobilize.post({userId}, bodyObj)
+    return dispatch => AppAPI.get_modality.post({userId}, bodyObj)
         .then(data => {
             // update My Plan reducer
             store.dispatch({
