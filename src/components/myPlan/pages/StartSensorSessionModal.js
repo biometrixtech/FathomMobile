@@ -118,7 +118,7 @@ const CalibrationComplete = ({ lottieRef, onClose, pageIndex, startOver, }) => (
                 <LottieView
                     loop={false}
                     ref={animation => lottieRef(animation)}
-                    source={require('../../../../assets/animation/calibrationcomplete.json')}
+                    source={require('../../../../assets/animation/bluetoothloading.json')}
                     style={{height: AppSizes.screen.widthThird, width: AppSizes.screen.widthThird,}}
                 />
                 <Spacer size={AppSizes.padding} />
