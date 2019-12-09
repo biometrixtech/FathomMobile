@@ -710,7 +710,7 @@ class MyPlan extends Component {
             false;
         if(processingSessions && inProcessSession) {
             let plansSession = trainingSessions ?
-                _.find(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.session_id)
+                _.find(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.id)
                 :
                 false;
             if(trainingSessions && plansSession) {
@@ -1389,6 +1389,7 @@ class MyPlan extends Component {
         newSensorSession.ignored = false;
         newSensorSession.set_end_date = false;
         newSensorSession.hr_data = [];
+        newSensorSession.session_id = newSensorSession.session_id || newSensorSession.id; 
         newSensorSession.sport_name = newSensorSession.sport_name || 17;
         newSensorSession.end_date = newSensorSession.end_date || `${moment().toISOString(true).split('.')[0]}Z`;
         newSensorSession.session_type = newSensorSession.session_type || 6;
