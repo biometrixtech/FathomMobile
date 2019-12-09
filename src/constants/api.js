@@ -57,7 +57,7 @@ export default {
         ['clear_user_data',       `${plansAPIVersion}/misc/{userId}/clear_user_data`], // POST
         ['coach_dashboard',       `${plansAPIVersion}/coach/{userId}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength/{userId}`], // POST/PATCH
-        ['get_mobilize',          `${plansAPIVersion}/active_recovery/{userId}/get_mobilize`], // POST
+        ['get_modality',          `${plansAPIVersion}/active_recovery/{userId}/get_modality`], // POST
         ['get_my_plan',           `${plansAPIVersion}/daily_plan/{userId}`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/{userId}/previous`], // POST
         ['health_data',           `${plansAPIVersion}/health_data/{userId}`], // POST

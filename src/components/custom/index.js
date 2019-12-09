@@ -34,6 +34,7 @@ import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
 import Text from './Text';
 import Tooltip from './Tooltip';
+import TrendsTabBar from './TrendsTabBar';
 import WebViewPage from './WebViewPage';
 import WheelScrollPicker from './WheelScrollPicker';
 
@@ -70,6 +71,7 @@ export {
     TabIcon,
     Text,
     Tooltip,
+    TrendsTabBar,
     WebViewPage,
     WheelScrollPicker,
 };

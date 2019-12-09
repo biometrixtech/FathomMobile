@@ -716,13 +716,14 @@ const handleReadInsight = (dailyPlan, insightIndex, userId) => {
 /**
   * Log Device/App Information and Usage
   */
-const getMobilize = userId => {
+const getMobilize = (userId, type) => {
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    bodyObj.type = type;
     store.dispatch({
         type: Actions.START_REQUEST,
     });
-    return dispatch => AppAPI.get_mobilize.post({userId}, bodyObj)
+    return dispatch => AppAPI.get_modality.post({userId}, bodyObj)
         .then(data => {
             // update My Plan reducer
             store.dispatch({
@@ -763,7 +764,7 @@ const getBiomechanicsDetails = (userId, sessionId, currentPlan, dataToDisplay) =
         .then(response => {
             let newPlan = _.cloneDeep(currentPlan);
             if(newPlan && newPlan.trends && newPlan.trends.biomechanics_summary) {
-                let sessionIndex = 0;//_.findIndex(newPlan.trends.biomechanics_summary.sessions, s => s.id === sessionId);// TODO: FIX ME
+                let sessionIndex = _.findIndex(newPlan.trends.biomechanics_summary.sessions, s => s.id === sessionId);
                 if(sessionIndex || sessionIndex === 0) {
                     _.map(dataToDisplay, data => {
                         newPlan.trends.biomechanics_summary.sessions[sessionIndex][data.index].asymmetry = response.session.asymmetry[data.index] || {};

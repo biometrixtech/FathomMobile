@@ -187,8 +187,12 @@ class BiomechanicsCharts extends PureComponent {
                                 require('../../../../assets/images/standard/apt_notilt.png')
                                 : dataType === 1 ?
                                     require('../../../../assets/images/standard/ankle_pitch.png')
-                                    :
-                                    require('../../../../assets/images/standard/hip_drop.png')
+                                    : dataType === 2 ?
+                                        require('../../../../assets/images/standard/hip_drop.png')
+                                        : dataType === 3 ?
+                                            require('../../../../assets/images/standard/knee_valgus.png')
+                                            :
+                                            require('../../../../assets/images/standard/lateral_rotation.png')
                             }
                             style={[{height: pieDetails.pieHeight, marginRight: AppSizes.paddingSml, width: pieDetails.pieWidth,}, extraImageBackgroundStyles,]}
                         >
@@ -286,7 +290,9 @@ class BiomechanicsCharts extends PureComponent {
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>{`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}</Text>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                                                    {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}
+                                                </Text>
                                             </View>
                                         </View>
                                         :
