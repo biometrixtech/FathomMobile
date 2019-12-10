@@ -51,7 +51,6 @@ class BiomechanicsCharts extends PureComponent {
 
     render = () => {
         const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showRightSideDetails, showDetails, showTitle, } = this.props;
-        console.log('BiomechanicsCharts',dataType,selectedSession);
         let {
             asymmetryIndex,
             chartActiveLegend,
@@ -98,7 +97,7 @@ class BiomechanicsCharts extends PureComponent {
                                 crossAxis={false}
                                 dependentAxis
                                 style={{
-                                    axis:       { stroke: AppColors.transparent, size: 0.5, },
+                                    axis:       { stroke: AppColors.transparent, size: 0, },
                                     grid:       { stroke: AppColors.zeplin.superLight, size: 0.5, },
                                     tickLabels: { ...AppFonts.robotoLight, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(6), },
                                 }}
