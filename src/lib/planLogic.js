@@ -2614,7 +2614,6 @@ const PlanLogic = {
         const isLeftDataEmpty = newPieData.left_y === 0;
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
-            console.log('hello',dataType,asymmetryIndex,selectedSession);
             if(dataType === 0 || dataType === 3) {
                 let newMultiplier = newPieData.multiplier;
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
