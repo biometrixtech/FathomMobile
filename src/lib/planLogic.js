@@ -2614,6 +2614,7 @@ const PlanLogic = {
         const isLeftDataEmpty = newPieData.left_y === 0;
         const isRightDataEmpty = newPieData.right_y === 0;
         if(!isLeftDataEmpty && !isRightDataEmpty) {
+            console.log('hello',dataType,asymmetryIndex,selectedSession);
             if(dataType === 0 || dataType === 3) {
                 let newMultiplier = newPieData.multiplier;
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
@@ -2806,8 +2807,10 @@ const PlanLogic = {
                                                                                                             AppColors.zeplin.yellowXXLight
                                                                                                             : color === 26 ?
                                                                                                                 AppColors.zeplin.splash
-                                                                                                                :
-                                                                                                                AppColors.zeplin.errorLight;
+                                                                                                                : color === 27 ?
+                                                                                                                    AppColors.zeplin.error
+                                                                                                                    :
+                                                                                                                    AppColors.zeplin.errorLight;
         if(customOpacity && customOpacity !== 1) {
             newColor = [2, 6, 17, 18].includes(color) ?
                 AppColors.zeplin.errorSuperLight

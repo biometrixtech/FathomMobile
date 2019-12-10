@@ -13,7 +13,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, ScrollView, StyleSheet, View, } from 'react-native';
+import { Image, Platform, ScrollView, StyleSheet, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
@@ -109,17 +109,65 @@ const BiomechanicsTabView = ({ data, session, }) => {
                         return newParsedData;
                     });
                 }
+                let imageSource = false;
+                if(card.type === 2 && card.icon) {
+                    switch (card.icon) {
+                    case 0:
+                        imageSource = require('../../../assets/images/standard/thumbs_up.png');
+                        break;
+                    case 1:
+                        imageSource = require('../../../assets/images/standard/thumbs_down.png');
+                        break;
+                    case 2:
+                        imageSource = require('../../../assets/images/standard/fatigued_yes.png');
+                        break;
+                    case 3:
+                        imageSource = require('../../../assets/images/standard/fatigued_no.png');
+                        break;
+                    case 4:
+                        imageSource = require('../../../assets/images/standard/trending_up.png');
+                        break;
+                    case 5:
+                        imageSource = require('../../../assets/images/standard/trending_down.png');
+                        break;
+                    }
+                }
+                let range = card.type === 0 && card.max_value ? _.range(0, card.max_value) : false;
+                let asymmetryBars = [];
+                if(range) {
+                    _.each(range, value => {
+                        height = ((value + 1) === 1) || (value + 1) > 0 && (value + 1) < card.max_value ?
+                            ((AppSizes.screen.widthQuarter - AppSizes.paddingMed) * ((0.5 * (value / card.max_value) + 0.5)))
+                            :
+                            (AppSizes.screen.widthQuarter - AppSizes.paddingMed);
+                        asymmetryBars.push(
+                            <View
+                                key={value}
+                                style={{
+                                    backgroundColor: (value + 1) <= card.value ? PlanLogic.returnInsightColorString(card.color) : AppColors.zeplin.superLight,
+                                    borderRadius:    100,
+                                    height,
+                                    marginRight:     AppSizes.paddingXSml,
+                                    width:           ((AppSizes.screen.widthQuarter - AppSizes.paddingMed) / card.max_value),
+                                }}
+                            />
+                        );
+                    });
+                }
                 return (
                     <View
                         key={key}
                         style={[styles.dataCard,]}
                     >
                         { card.type === 0 ?
-                            <View>{/*cell bars*/}</View>
+                            <View style={{alignItems: 'flex-end', flexDirection: 'row', marginRight: AppSizes.paddingMed,}}>
+                                {asymmetryBars}
+                            </View>
                             : card.type === 1 ?
                                 <AnimatedCircularProgress
                                     arcSweepAngle={320}
                                     backgroundColor={AppColors.zeplin.superLight}
+                                    childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
                                     fill={card.value}
                                     lineCap={'round'}
                                     rotation={200}
@@ -127,8 +175,6 @@ const BiomechanicsTabView = ({ data, session, }) => {
                                     style={{marginRight: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
                                     tintColor={PlanLogic.returnInsightColorString(card.color)}
                                     width={15}
-
-                                    childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
                                 >
                                     {
                                         (fill) => (
@@ -139,7 +185,19 @@ const BiomechanicsTabView = ({ data, session, }) => {
                                     }
                                 </AnimatedCircularProgress>
                                 :
-                                <View>{/*fatigue*/}</View>
+                                <View style={{marginLeft: AppSizes.paddingMed, marginRight: AppSizes.paddingMed,}}>
+                                    {imageSource &&
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={imageSource}
+                                            style={{
+                                                height:    (AppSizes.screen.widthQuarter - AppSizes.paddingMed),
+                                                tintColor: PlanLogic.returnInsightColorString(card.color),
+                                                width:     (AppSizes.screen.widthQuarter - AppSizes.paddingMed),
+                                            }}
+                                        />
+                                    }
+                                </View>
                         }
                         <View style={{flexShrink: 1, justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>
                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
@@ -225,7 +283,7 @@ class Biomechanics extends PureComponent {
     }
 
     componentDidMount = () => {
-        _.delay(() => this._toggleRichDataView(), 10);
+        // _.delay(() => this._toggleRichDataView(), 10); // TODO: BRING ME BACK
         _.delay(() => {
             const initialPage = _.find(this.state.dataToDisplay, o => o.data_type === this.props.dataType && o.index === this.props.index).page || 0;
             return this.tabView && this.tabView.goToPage && this.tabView.goToPage(initialPage);
@@ -290,14 +348,14 @@ class Biomechanics extends PureComponent {
                             type={'material-community'}
                         />
                         <View>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
-                                {`${sportName}, `}
-                                <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(13),}}>
-                                    {`${session.score.value}%`}
+                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(13), textAlign: 'right',}}>
+                                {`${session.score.value}`}
+                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
+                                    {'/100'}
                                 </Text>
                             </Text>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
-                                {`${sessionDateTime}, ${sessionDuration}`}
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
+                                {sessionDateTime}
                             </Text>
                         </View>
                     </View>

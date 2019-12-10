@@ -171,6 +171,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
 
             { _.map(dataToDisplay, (data, i) => {
                 const sessionData = session[data.index];
+                console.log('BiomechanicsSummary',data,sessionData,data.data_type);
                 const pieDetails = {
                     pieData:        sessionData.summary_data,
                     pieHeight:      pieWrapperWidth,
@@ -240,7 +241,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                         </TouchableOpacity>
                     );
                 }
-                return null;
+                return (null);
             })}
 
         </View>
