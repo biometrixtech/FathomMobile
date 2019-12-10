@@ -283,7 +283,7 @@ class Biomechanics extends PureComponent {
     }
 
     componentDidMount = () => {
-        // _.delay(() => this._toggleRichDataView(), 10); // TODO: BRING ME BACK
+        _.delay(() => this._toggleRichDataView(), 10);
         _.delay(() => {
             const initialPage = _.find(this.state.dataToDisplay, o => o.data_type === this.props.dataType && o.index === this.props.index).page || 0;
             return this.tabView && this.tabView.goToPage && this.tabView.goToPage(initialPage);
