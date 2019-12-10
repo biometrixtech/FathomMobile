@@ -413,7 +413,7 @@ class Trends extends PureComponent {
                                     <View>
                                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.score.color), fontSize: AppFonts.scaleFont(61), lineHeight: AppFonts.scaleFont(61),}}>
                                             {recoveryQuality.score.value || recoveryQuality.score.value === 0 ? recoveryQuality.score.value : '--'}
-                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.scaleFont(20),}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), lineHeight: AppFonts.scaleFont(61),}}>
                                                 {'/100'}
                                             </Text>
                                         </Text>
