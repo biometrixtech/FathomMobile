@@ -98,7 +98,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
                 pieDetails={pieDetails}
                 selectedSession={sessionData}
             />
-            <Spacer size={sessionData.data_cards.length > 0 ? AppSizes.paddingSml : 0} />
+            <Spacer size={sessionData && sessionData.data_cards.length > 0 ? AppSizes.paddingSml : 0} />
             {_.map(sessionData.data_cards, (card, key) => {
                 let parsedCardSummaryTextTextData = [];
                 if(card.summary_text.active) {
@@ -145,7 +145,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
                                 {card.title_text}
                             </Text>
-                            {(card.summary_text.active && card.summary_text.text.length > 0) &&
+                            {(card && card.summary_text.active && card.summary_text.text.length > 0) &&
                                 <ParsedText
                                     parse={parsedCardSummaryTextTextData || []}
                                     style={{...AppStyles.robotoRegular, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18), marginTop: AppSizes.paddingSml,}}
@@ -186,7 +186,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
                     showTitle={false}
                 />
             </View>
-            {(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text.length > 0) &&
+            {(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text && sessionData.asymmetry.detail_text.length > 0) &&
                 <ParsedText
                     parse={parsedAsymmetryDetailTextData || []}
                     style={{...AppStyles.robotoRegular, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(22), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}
@@ -211,15 +211,14 @@ class Biomechanics extends PureComponent {
         super(props);
         const { dataType, index, session, } = props;
         const dataToDisplay = _.filter(session.data_points, tab => tab.data_type || tab.data_type === 0);
-        const initialPage = _.find(dataToDisplay, o => o.data_type === dataType && o.index === index).page || 0;
         this.state  = {
             currentTabDetails: {
                 from: 0,
-                i:    initialPage,
+                i:    0,
                 ref:  {},
             },
             dataToDisplay,
-            initialPage,
+            initialPage: 0,
             loading: false,
         };
         this.tabView = {};
@@ -227,6 +226,10 @@ class Biomechanics extends PureComponent {
 
     componentDidMount = () => {
         _.delay(() => this._toggleRichDataView(), 10);
+        _.delay(() => {
+            const initialPage = _.find(this.state.dataToDisplay, o => o.data_type === this.props.dataType && o.index === this.props.index).page || 0;
+            return this.tabView && this.tabView.goToPage && this.tabView.goToPage(initialPage);
+        }, 500);
     }
 
     _toggleRichDataView = () => {
@@ -320,7 +323,7 @@ class Biomechanics extends PureComponent {
                                 style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
                             />
                         }
-                        style={{marginTop: AppSizes.paddingLrg,}}
+                        style={{flex: 1, marginTop: AppSizes.paddingLrg,}}
                         tabBarActiveTextColor={AppColors.zeplin.slateLight}
                         tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
                         // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}

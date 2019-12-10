@@ -3110,7 +3110,7 @@ const PlanLogic = {
             });
         }
         let parsedAsymmetryDetailTextData = [];
-        if(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text.length > 0) {
+        if(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text && sessionData.asymmetry.detail_text.length > 0) {
             parsedAsymmetryDetailTextData = _.map(sessionData.asymmetry.detail_bold_text, prop => {
                 let newParsedData = {};
                 newParsedData.pattern = new RegExp(prop.text, 'i');
