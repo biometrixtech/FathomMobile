@@ -1389,7 +1389,7 @@ class MyPlan extends Component {
         newSensorSession.ignored = false;
         newSensorSession.set_end_date = false;
         newSensorSession.hr_data = [];
-        newSensorSession.session_id = newSensorSession.session_id || newSensorSession.id; 
+        newSensorSession.session_id = newSensorSession.session_id || newSensorSession.id;
         newSensorSession.sport_name = newSensorSession.sport_name || 17;
         newSensorSession.end_date = newSensorSession.end_date || `${moment().toISOString(true).split('.')[0]}Z`;
         newSensorSession.session_type = newSensorSession.session_type || 6;
@@ -1565,12 +1565,12 @@ class MyPlan extends Component {
 
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
-                                            // completed={completedLockedModality.completed}
-                                            completed={completedLockedModality.isCompleted}
+                                            completed={completedLockedModality.completed}
+                                            // completed={completedLockedModality.isCompleted}
                                             isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
-                                            // locked={!completedLockedModality.active && !completedLockedModality.completed}
-                                            locked={completedLockedModality.isLocked}
+                                            locked={!completedLockedModality.active && !completedLockedModality.completed}
+                                            // locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}
                                             title={completedLockedModality.title}
                                         />
