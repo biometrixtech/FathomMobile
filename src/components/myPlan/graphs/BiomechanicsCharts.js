@@ -12,7 +12,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, View, } from 'react-native';
+import { Image, ImageBackground, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import * as V from 'victory-native';
@@ -265,9 +265,13 @@ class BiomechanicsCharts extends PureComponent {
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                        icon={specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'}
+                                                        icon={Platform.OS === 'ios' ?
+                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'
+                                                            :
+                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caret-up' : 'caret-down'
+                                                        }
                                                         size={20}
-                                                        type={'antdesign'}
+                                                        type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                                     />
                                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color), fontSize: AppFonts.scaleFont(16),}}>
                                                         {`${specificSessionAsymmetryData.change.value || specificSessionAsymmetryData.change.value === 0 ? Math.abs(specificSessionAsymmetryData.change.value) : '--'} ${specificSessionAsymmetryData.change.text}`}

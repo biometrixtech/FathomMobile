@@ -3125,13 +3125,14 @@ const PlanLogic = {
                 return newParsedData;
             });
         }
-        const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
+        const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : AppSizes.padding;
         const pieWrapperWidth = (AppSizes.screen.widthHalf);
+        const platformRadiusAddOn = Platform.OS === 'ios' ? 0 : AppSizes.padding;
         const pieInnerRadius = (AppSizes.padding * 4);
         const pieDetails = {
             pieData:        sessionData.summary_data,
             pieHeight:      pieWrapperWidth,
-            pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
+            pieInnerRadius: ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn),
             piePadding:     AppSizes.paddingSml,
             pieWidth:       pieWrapperWidth,
         };

@@ -45,6 +45,15 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const TabViewWrapper = props => Platform.OS === 'ios' ?
+    <View style={{flex: 1, paddingHorizontal: AppSizes.paddingMed,}}>
+        {props.children}
+    </View>
+    :
+    <ScrollView contentContainerStyle={{flexGrow: 1, paddingHorizontal: AppSizes.paddingMed,}} showsVerticalScrollIndicator={false}>
+        {props.children}
+    </ScrollView>;
+
 const BiomechanicsTabView = ({ data, session, }) => {
     const {
         parsedAsymmetryDetailTextData,
@@ -55,7 +64,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
         updatedChartData,
     } = PlanLogic.handleBiomechanicsTabViewRenderLogic(session, data);
     return (
-        <View style={{flex: 1,}}>
+        <TabViewWrapper>
             <View
                 style={{
                     alignSelf:       'center',
@@ -262,14 +271,14 @@ const BiomechanicsTabView = ({ data, session, }) => {
                 title={'Go to your plan'}
                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
             />
-        </View>
+        </TabViewWrapper>
     );
 }
 
 class Biomechanics extends PureComponent {
     constructor(props) {
         super(props);
-        const { dataType, index, session, } = props;
+        const { session, } = props;
         const dataToDisplay = _.filter(session.data_points, tab => tab.data_type || tab.data_type === 0);
         this.state  = {
             currentTabDetails: {
@@ -279,7 +288,7 @@ class Biomechanics extends PureComponent {
             },
             dataToDisplay,
             initialPage: 0,
-            loading: false,
+            loading:     false,
         };
         this.tabView = {};
     }
@@ -333,87 +342,84 @@ class Biomechanics extends PureComponent {
         let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : false;
         let sessionDetails = biomechanicsSummary && _.find(biomechanicsSummary.sessions, s => s.id === session.id) || {};
         return (
-            <View style={{flex: 1,}}>
+            <ScrollView
+                contentContainerStyle={Platform.OS === 'ios' ? {} : {flex: 1,}}
+                nestedScrollEnabled={true}
+                style={{backgroundColor: AppColors.white, flex: 1,}}
+            >
 
-                <ScrollView
-                    nestedScrollEnabled={true}
-                    style={{backgroundColor: AppColors.white, flex: 1,}}
-                >
-
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',  paddingHorizontal: AppSizes.padding, paddingTop: AppSizes.statusBarHeight > 0 ? (AppSizes.statusBarHeight + AppSizes.paddingSml) : AppSizes.paddingLrg,}}>
-                        <TabIcon
-                            color={AppColors.zeplin.slateLight}
-                            icon={'chevron-left'}
-                            onPress={() => Actions.pop()}
-                            reverse={false}
-                            size={30}
-                            type={'material-community'}
-                        />
-                        <View>
-                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(13), textAlign: 'right',}}>
-                                {`${session.score.value}`}
-                                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
-                                    {'/100'}
-                                </Text>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',  paddingHorizontal: AppSizes.padding, paddingTop: AppSizes.statusBarHeight > 0 ? (AppSizes.statusBarHeight + AppSizes.paddingSml) : AppSizes.paddingLrg,}}>
+                    <TabIcon
+                        color={AppColors.zeplin.slateLight}
+                        icon={'chevron-left'}
+                        onPress={() => Actions.pop()}
+                        reverse={false}
+                        size={30}
+                        type={'material-community'}
+                    />
+                    <View>
+                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(13), textAlign: 'right',}}>
+                            {`${session.score.value}`}
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
+                                {'/100'}
                             </Text>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
-                                {sessionDateTime}
-                            </Text>
-                        </View>
+                        </Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
+                            {sessionDateTime}
+                        </Text>
                     </View>
+                </View>
 
-                    <ScrollableTabView
-                        initialPage={initialPage}
-                        onChangeTab={details => this.setState({ currentTabDetails: details, })}
-                        page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
-                        ref={tabView => { this.tabView = tabView; }}
-                        renderTabBar={() =>
-                            <ScrollableTabBar
-                                renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) =>
-                                    TrendsTabBar.renderTab(
-                                        name,
-                                        page,
-                                        isTabActive,
-                                        onPressHandler,
-                                        onLayoutHandler,
-                                        subtitle,
-                                        this.tabView
-                                    )
-                                }
-                                style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
-                            />
-                        }
-                        style={{flex: 1, marginTop: AppSizes.paddingLrg,}}
-                        tabBarActiveTextColor={AppColors.zeplin.slateLight}
-                        tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
-                        // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
-                        tabBarUnderlineStyle={{backgroundColor: AppColors.white, borderColor: AppColors.white, borderBottomWidth: 0, height: 0,}}
-                    >
-                        {_.map(dataToDisplay, (data, i) =>
-                            <View
-                                key={i}
-                                tabLabel={session[data.index].child_title}
-                                style={{flex: 1, paddingHorizontal: AppSizes.paddingMed,}}
-                            >
-                                <BiomechanicsTabView
-                                    data={data}
-                                    session={sessionDetails}
-                                />
-                            </View>
-                        )}
-                    </ScrollableTabView>
-
-                    { loading ?
-                        <Loading
-                            text={'Loading data...'}
+                <ScrollableTabView
+                    initialPage={initialPage}
+                    onChangeTab={details => this.setState({ currentTabDetails: details, })}
+                    page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
+                    ref={tabView => { this.tabView = tabView; }}
+                    renderTabBar={() =>
+                        <ScrollableTabBar
+                            renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) =>
+                                TrendsTabBar.renderTab(
+                                    name,
+                                    page,
+                                    isTabActive,
+                                    onPressHandler,
+                                    onLayoutHandler,
+                                    subtitle,
+                                    this.tabView
+                                )
+                            }
+                            style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
                         />
-                        :
-                        null
                     }
+                    style={{flex: 1, marginTop: AppSizes.paddingLrg,}}
+                    tabBarActiveTextColor={AppColors.zeplin.slateLight}
+                    tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
+                    // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
+                    tabBarUnderlineStyle={{backgroundColor: AppColors.white, borderColor: AppColors.white, borderBottomWidth: 0, height: 0,}}
+                >
+                    {_.map(dataToDisplay, (data, i) =>
+                        <View
+                            key={i}
+                            tabLabel={session[data.index].child_title}
+                            style={{flex: 1,}}
+                        >
+                            <BiomechanicsTabView
+                                data={data}
+                                session={sessionDetails}
+                            />
+                        </View>
+                    )}
+                </ScrollableTabView>
 
-                </ScrollView>
+                { loading ?
+                    <Loading
+                        text={'Loading data...'}
+                    />
+                    :
+                    null
+                }
 
-            </View>
+            </ScrollView>
         );
     }
 }

@@ -215,9 +215,13 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(sessionData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                        icon={sessionData.change.value >= 0 ? 'caretup' : 'caretdown'}
+                                                        icon={Platform.OS === 'ios' ?
+                                                            sessionData.change.value >= 0 ? 'caretup' : 'caretdown'
+                                                            :
+                                                            sessionData.change.value >= 0 ? 'caret-up' : 'caret-down'
+                                                        }
                                                         size={15}
-                                                        type={'antdesign'}
+                                                        type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                                     />
                                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
                                                         {`${sessionData.change.value || sessionData.change.value === 0 ? Math.abs(sessionData.change.value) : '--'} ${sessionData.change.text}`}
@@ -394,9 +398,13 @@ class Trends extends PureComponent {
                                             <TabIcon
                                                 color={PlanLogic.returnInsightColorString(recoveryQuality.change.color)}
                                                 containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                icon={recoveryQuality.change.value >= 0 ? 'caretup' : 'caretdown'}
+                                                icon={Platform.OS === 'ios' ?
+                                                    recoveryQuality.change.value >= 0 ? 'caretup' : 'caretdown'
+                                                    :
+                                                    recoveryQuality.change.value >= 0 ? 'caret-up' : 'caret-down'
+                                                }
                                                 size={15}
-                                                type={'antdesign'}
+                                                type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                             />
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.change.color), fontSize: AppFonts.scaleFont(12),}}>
                                                 {`${recoveryQuality.change.value || recoveryQuality.change.value === 0 ? Math.abs(recoveryQuality.change.value) : '--'} ${recoveryQuality.change.text}`}
