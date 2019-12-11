@@ -130,13 +130,15 @@ const BiomechanicsTabView = ({ data, session, }) => {
                     case 5:
                         imageSource = require('../../../assets/images/standard/trending_down.png');
                         break;
+                    default:
+                        imageSource = false;
                     }
                 }
                 let range = card.type === 0 && card.max_value ? _.range(0, card.max_value) : false;
                 let asymmetryBars = [];
                 if(range) {
                     _.each(range, value => {
-                        height = ((value + 1) === 1) || (value + 1) > 0 && (value + 1) < card.max_value ?
+                        let height = ((value + 1) === 1) || (value + 1) > 0 && (value + 1) < card.max_value ?
                             ((AppSizes.screen.widthQuarter - AppSizes.paddingMed) * ((0.5 * (value / card.max_value) + 0.5)))
                             :
                             (AppSizes.screen.widthQuarter - AppSizes.paddingMed);

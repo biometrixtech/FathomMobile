@@ -2581,7 +2581,16 @@ const PlanLogic = {
       */
     // TODO: UNIT TEST ME
     handleBiomechanicsChartsRenderLogic: (pieData, selectedSession, isRichDataView, chartData, dataType) => {
-        const asymmetryIndex = dataType === 0 ? 'apt' : dataType === 1 ? 'ankle_pitch' : 'hip_drop';
+        const asymmetryIndex = dataType === 0 ?
+            'apt'
+            : dataType === 1 ?
+                'ankle_pitch'
+                : dataType === 2 ?
+                    'hip_drop'
+                    : dataType === 3 ?
+                        'knee_valgus'
+                        :
+                        'hip_rotation';
         const APT_CHART_TOTAL = (360 / 6);
         let newPieData = _.cloneDeep(pieData);
         const emptyPieData = [
@@ -2613,7 +2622,7 @@ const PlanLogic = {
         }
         const isLeftDataEmpty = newPieData.left_y === 0;
         const isRightDataEmpty = newPieData.right_y === 0;
-        if(!isLeftDataEmpty && !isRightDataEmpty) {
+        if(!isLeftDataEmpty || !isRightDataEmpty) {
             if(dataType === 0 || dataType === 3) {
                 let newMultiplier = newPieData.multiplier;
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
@@ -2808,8 +2817,10 @@ const PlanLogic = {
                                                                                                                 AppColors.zeplin.splash
                                                                                                                 : color === 27 ?
                                                                                                                     AppColors.zeplin.error
-                                                                                                                    :
-                                                                                                                    AppColors.zeplin.errorLight;
+                                                                                                                    : color === 28 ?
+                                                                                                                        AppColors.zeplin.superLight
+                                                                                                                        :
+                                                                                                                        AppColors.zeplin.errorLight;
         if(customOpacity && customOpacity !== 1) {
             newColor = [2, 6, 17, 18].includes(color) ?
                 AppColors.zeplin.errorSuperLight
