@@ -49,6 +49,20 @@ class BiomechanicsCharts extends PureComponent {
         showTitle:            false,
     };
 
+
+    _getBarWidth = chartData => {
+        const dataLength = _.size(chartData);
+        if(dataLength === 0) {
+            return 0;
+        }
+        const range = [chartData[0].x, chartData[(dataLength - 1)].x];
+        const extent = Math.abs(range[1] - range[0]);
+        const bars = (dataLength + 2);
+        const barRatio = 0.5;
+        const defaultWidth = barRatio * (dataLength < 2 ? 8 : extent / bars);
+        return Math.max(1, defaultWidth);
+    }
+
     render = () => {
         const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showRightSideDetails, showDetails, showTitle, } = this.props;
         let {
@@ -71,6 +85,14 @@ class BiomechanicsCharts extends PureComponent {
             }
             :
             {};
+        const chartWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        const barWidth = isRichDataView && selectedSession.duration <= 6 ?
+            AppSizes.padding
+            : isRichDataView ?
+                this._getBarWidth(chartData)
+                :
+                0;
+        const cornerRadius = {bottom: (barWidth / 2), top: (barWidth / 2),};
         return (
             <View pointerEvents={'none'}>
 
@@ -90,7 +112,7 @@ class BiomechanicsCharts extends PureComponent {
                             domain={{ y: richDataYDomain, }}
                             height={((AppSizes.screen.width - (AppSizes.paddingMed * 2)) * 0.5)}
                             padding={{bottom: AppSizes.paddingSml, left: AppSizes.paddingLrg, right: AppSizes.paddingSml, top: AppSizes.paddingSml,}}
-                            width={(AppSizes.screen.width - (AppSizes.paddingMed * 2))}
+                            width={chartWidth}
                         >
                             {/* Y-Axis */}
                             <V.VictoryAxis
@@ -125,10 +147,11 @@ class BiomechanicsCharts extends PureComponent {
                             />
                             {/* Bar Chart */}
                             <V.VictoryBar
-                                alignment={selectedSession.duration <= 360 ? 'start' : 'middle'}
-                                barWidth={selectedSession.duration <= 360 ? 20 : null}
+                                alignment={selectedSession.duration <= 6 ? 'start' : 'middle'}
+                                barWidth={selectedSession.duration <= 6 ? AppSizes.padding : null}
+                                cornerRadius={cornerRadius}
                                 data={chartData}
-                                domainPadding={selectedSession.duration <= 360 ? { x: 20, } : null}
+                                domainPadding={selectedSession.duration <= 6 ? { x: AppSizes.padding, } : null}
                                 style={{ data: { fill: d => d.color, }, }}
                             />
                         </V.VictoryChart>
