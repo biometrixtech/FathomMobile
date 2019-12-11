@@ -2640,10 +2640,7 @@ const PlanLogic = {
                     smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.left_y_legend_color));
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
-                if(dataType === 3) {
-                    // console.log('pieData',pieData);
-                    rotateDeg = '-180deg';
-                }
+                rotateDeg = dataType === 3 ? '-180deg' : rotateDeg;
             } else if(dataType === 1) {
                 const ANKLE_PITCH_CHART_RATIO = 360;
                 if((selectedSession && _.toInteger(selectedSession.body_side) === 0) || (newPieData.right_y === newPieData.left_y)) {

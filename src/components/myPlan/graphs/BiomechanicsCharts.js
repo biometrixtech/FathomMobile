@@ -64,7 +64,17 @@ class BiomechanicsCharts extends PureComponent {
     }
 
     render = () => {
-        const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showRightSideDetails, showDetails, showTitle, } = this.props;
+        const {
+            chartData,
+            dataType,
+            isRichDataView,
+            pieDetails,
+            sessionDuration,
+            selectedSession,
+            showRightSideDetails,
+            showDetails,
+            showTitle,
+        } = this.props;
         let {
             asymmetryIndex,
             chartActiveLegend,
@@ -75,10 +85,16 @@ class BiomechanicsCharts extends PureComponent {
             smallerPieData,
             specificSessionAsymmetryData,
         } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
-        let extraPieStyles = dataType === 0 ? {} : {};
-        let extraImageBackgroundStyles = dataType === 0 ? {} : {
-            justifyContent: 'flex-end',
-        };
+        let extraPieStyles = dataType === 3 ?
+            {alignSelf: 'center', alignItems: 'center', height: (pieDetails.pieHeight * 0.4), width: (pieDetails.pieWidth * 0.4),}
+            :
+            {};
+        let extraImageBackgroundStyles = dataType === 0 ?
+            {}
+            : dataType === 3 ?
+                {justifyContent: 'flex-start',}
+                :
+                {justifyContent: 'flex-end',};
         let extraLeftStyles = dataType === 2 ?
             {
                 transform: [{rotate: `-${(_.parseInt(rotateDeg) * 2)}deg`,}],
