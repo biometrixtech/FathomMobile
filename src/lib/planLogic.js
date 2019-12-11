@@ -2619,16 +2619,16 @@ const PlanLogic = {
                 let roundedRightY = _.round(newPieData.right_y * newMultiplier);
                 let roundedLeftY = _.round(newPieData.left_y * newMultiplier);
                 if((selectedSession && _.toInteger(selectedSession.body_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL, true);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.left_y_legend_color));
                     smallerPieData = emptyPieData;
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 } else if(newPieData.left_y > newPieData.right_y) {
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, true, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.left_y_legend_color));
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.right_y_legend_color));
                     rotateDeg = `${(100 - (3 * roundedLeftY))}deg`;
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
-                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, false, APT_CHART_TOTAL);
-                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, true, APT_CHART_TOTAL);
+                    largerPieData = PlanLogic.returnPieChartAptCleanedData(roundedRightY, roundedLeftY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.right_y_legend_color));
+                    smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.left_y_legend_color));
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
                 if(dataType === 3) {
@@ -2641,7 +2641,8 @@ const PlanLogic = {
                     let largerValue = newPieData.right_y;
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.successLight, x: 0, y: largerValue, },
+                        // backend sends the same color in L and R for symmetric cases
+                        { color: PlanLogic.returnInsightColorString(pieData.left_y_legend_color), x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = emptyPieData;
@@ -2651,11 +2652,11 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: largerValue, },
+                        { color: PlanLogic.returnInsightColorString(newPieData.left_y_legend_color), x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: smallerValue, },
+                        { color: PlanLogic.returnInsightColorString(newPieData.right_y_legend_color), x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 } else if((newPieData.right_y === newPieData.left_y) || (newPieData.right_y > newPieData.left_y)) {
@@ -2664,18 +2665,18 @@ const PlanLogic = {
                     let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                     let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                     largerPieData = [
-                        { color: AppColors.zeplin.splashLight, x: 0, y: largerValue, },
+                        { color: PlanLogic.returnInsightColorString(newPieData.right_y_legend_color), x: 0, y: largerValue, },
                         { color: AppColors.transparent, x: 1, y: largerFullValue, },
                     ];
                     smallerPieData = [
-                        { color: AppColors.zeplin.purpleLight, x: 0, y: smallerValue, },
+                        { color: PlanLogic.returnInsightColorString(newPieData.left_y_legend_color), x: 0, y: smallerValue, },
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 }
             } else if(dataType === 2) {
                 rotateDeg = '75deg';
-                let leftColor = newPieData.right_y === newPieData.left_y ? AppColors.zeplin.successLight: AppColors.zeplin.splashLight;
-                let rightColor = newPieData.right_y === newPieData.left_y ? AppColors.zeplin.successLight: AppColors.zeplin.purpleLight;
+                let leftColor = PlanLogic.returnInsightColorString(newPieData.left_y_legend_color);
+                let rightColor = PlanLogic.returnInsightColorString(newPieData.right_y_legend_color);
                 const ANKLE_PITCH_CHART_RATIO = (360 / 6);
                 let largerValue = _.round(newPieData.right_y * newPieData.multiplier);
                 let smallerValue = _.round(newPieData.left_y * newPieData.multiplier);
@@ -2712,23 +2713,16 @@ const PlanLogic = {
         };
     },
 
-    returnPieChartAptCleanedData: (y, otherY, isLeft, total, isSymmetry) => {
-        let color = isSymmetry ?
-            AppColors.zeplin.successLight
-            :
-            isLeft ?
-                AppColors.zeplin.purpleLight
-                :
-                AppColors.zeplin.splashLight;
+    returnPieChartAptCleanedData: (y, otherY, total, chartColor) => {
         if(y < otherY) {
             return [
                 {color: AppColors.transparent, x: 0, y: ((otherY - y) / 2),},
-                {color: color, x: 1, y: y,},
+                {color: chartColor, x: 1, y: y,},
                 {color: AppColors.transparent, x: 2, y: (total - (y + ((otherY - y) / 2))),},
             ];
         }
         return [
-            {color: color, x: 0, y: y,},
+            {color: chartColor, x: 0, y: y,},
             {color: AppColors.transparent, x: 1, y: (total - y),},
         ];
     },

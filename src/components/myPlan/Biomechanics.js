@@ -320,7 +320,7 @@ class Biomechanics extends PureComponent {
                                 style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
                             />
                         }
-                        style={{marginTop: AppSizes.paddingLrg,}}
+                        style={{flex: 1, marginTop: AppSizes.paddingLrg,}}
                         tabBarActiveTextColor={AppColors.zeplin.slateLight}
                         tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
                         // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
