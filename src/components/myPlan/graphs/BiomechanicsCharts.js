@@ -85,8 +85,14 @@ class BiomechanicsCharts extends PureComponent {
             smallerPieData,
             specificSessionAsymmetryData,
         } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
+        const heightWidthMulitplier = dataType === 3 ? 0.4 : 1;
         let extraPieStyles = dataType === 3 ?
-            {alignSelf: 'center', alignItems: 'center', height: (pieDetails.pieHeight * 0.4), width: (pieDetails.pieWidth * 0.4),}
+            {
+                alignItems: 'center',
+                alignSelf:  'center',
+                height:     (pieDetails.pieHeight * heightWidthMulitplier),
+                width:      (pieDetails.pieWidth * heightWidthMulitplier),
+            }
             :
             {};
         let extraImageBackgroundStyles = dataType === 0 ?
@@ -240,28 +246,28 @@ class BiomechanicsCharts extends PureComponent {
                                     containerComponent={<V.VictoryContainer responsive={false} />}
                                     cornerRadius={7}
                                     data={largerPieData}
-                                    height={pieDetails.pieHeight}
+                                    height={(pieDetails.pieHeight * heightWidthMulitplier)}
                                     innerRadius={pieDetails.pieInnerRadius}
                                     labels={datum => ''}
                                     padding={pieDetails.piePadding}
                                     style={{
                                         data: { fill: d => d.color, },
                                     }}
-                                    width={pieDetails.pieWidth}
+                                    width={(pieDetails.pieWidth * heightWidthMulitplier)}
                                 />
-                                <View style={[{alignSelf: 'center', position: 'absolute', width: pieDetails.pieWidth,}, extraLeftStyles,]}>
+                                <View style={[{alignSelf: 'center', position: 'absolute', width: (pieDetails.pieWidth * heightWidthMulitplier),}, extraLeftStyles,]}>
                                     <V.VictoryPie
                                         containerComponent={<V.VictoryContainer responsive={false} />}
                                         cornerRadius={7}
                                         data={smallerPieData}
-                                        height={pieDetails.pieHeight}
+                                        height={(pieDetails.pieHeight * heightWidthMulitplier)}
                                         innerRadius={pieDetails.pieInnerRadius}
                                         labels={datum => ''}
                                         padding={pieDetails.piePadding}
                                         style={{
                                             data: { fill: d => d.color, },
                                         }}
-                                        width={pieDetails.pieWidth}
+                                        width={(pieDetails.pieWidth * heightWidthMulitplier)}
                                     />
                                 </View>
                             </View>

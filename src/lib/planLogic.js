@@ -2619,7 +2619,19 @@ const PlanLogic = {
                     smallerPieData = PlanLogic.returnPieChartAptCleanedData(roundedLeftY, roundedRightY, APT_CHART_TOTAL, PlanLogic.returnInsightColorString(pieData.left_y_legend_color));
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
-                rotateDeg = dataType === 3 ? '-180deg' : rotateDeg;
+                if(dataType === 3) {
+                    rotateDeg = '-190deg';
+                    smallerPieData = _.map(smallerPieData, (data, key) => {
+                        let newData = _.cloneDeep(data);
+                        newData.y = key === 0 ?
+                            (newData.y * 2)
+                            : key === 1 ?
+                                newData.y
+                                :
+                                (newData.y - smallerPieData[0].y);
+                        return newData;
+                    });
+                }
             } else if(dataType === 1) {
                 const ANKLE_PITCH_CHART_RATIO = 360;
                 if((selectedSession && _.toInteger(selectedSession.body_side) === 0) || (newPieData.right_y === newPieData.left_y)) {
@@ -3104,12 +3116,15 @@ const PlanLogic = {
         const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : AppSizes.padding;
         const pieWrapperWidth = (AppSizes.screen.widthHalf);
         const platformRadiusAddOn = Platform.OS === 'ios' ? 0 : AppSizes.padding;
-        const pieInnerRadius = (AppSizes.padding * 4);
+        const pieInnerRadiusMultiplier = 4;
+        let pieInnerRadius = (AppSizes.padding * pieInnerRadiusMultiplier);
+        pieInnerRadius = data.data_type === 3 ? (AppSizes.padding + AppSizes.paddingXSml) : pieInnerRadius;
+        const piePadding = data.data_type === 3 ? AppSizes.paddingXSml : AppSizes.paddingSml;
         const pieDetails = {
             pieData:        sessionData.summary_data,
             pieHeight:      pieWrapperWidth,
             pieInnerRadius: ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn),
-            piePadding:     AppSizes.paddingSml,
+            piePadding:     piePadding,
             pieWidth:       pieWrapperWidth,
         };
         let chartLegend = (sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_legend) || [];
