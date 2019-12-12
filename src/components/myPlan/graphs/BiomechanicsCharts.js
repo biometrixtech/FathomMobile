@@ -12,7 +12,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, View, } from 'react-native';
+import { Image, ImageBackground, Platform, View, } from 'react-native';
 
 // import third-party libraries
 import * as V from 'victory-native';
@@ -49,8 +49,32 @@ class BiomechanicsCharts extends PureComponent {
         showTitle:            false,
     };
 
+
+    _getBarWidth = chartData => {
+        const dataLength = _.size(chartData);
+        if(dataLength === 0) {
+            return 0;
+        }
+        const range = [chartData[0].x, chartData[(dataLength - 1)].x];
+        const extent = Math.abs(range[1] - range[0]);
+        const bars = (dataLength + 2);
+        const barRatio = 0.5;
+        const defaultWidth = barRatio * (dataLength < 2 ? 8 : extent / bars);
+        return Math.max(1, defaultWidth);
+    }
+
     render = () => {
-        const { chartData, dataType, isRichDataView, pieDetails, sessionDuration, selectedSession, showRightSideDetails, showDetails, showTitle, } = this.props;
+        const {
+            chartData,
+            dataType,
+            isRichDataView,
+            pieDetails,
+            sessionDuration,
+            selectedSession,
+            showRightSideDetails,
+            showDetails,
+            showTitle,
+        } = this.props;
         let {
             asymmetryIndex,
             chartActiveLegend,
@@ -61,16 +85,36 @@ class BiomechanicsCharts extends PureComponent {
             smallerPieData,
             specificSessionAsymmetryData,
         } = PlanLogic.handleBiomechanicsChartsRenderLogic(pieDetails.pieData, selectedSession, isRichDataView, chartData, dataType);
-        let extraPieStyles = dataType === 0 ? {} : {};
-        let extraImageBackgroundStyles = dataType === 0 ? {} : {
-            justifyContent: 'flex-end',
-        };
-        let extraLeftStyles = dataType === 2 ?
+        const heightWidthMulitplier = dataType === 3 ? 0.4 : 1;
+        let extraPieStyles = dataType === 3 ?
+            {
+                alignItems: 'center',
+                alignSelf:  'center',
+                height:     (pieDetails.pieHeight * heightWidthMulitplier),
+                width:      (pieDetails.pieWidth * heightWidthMulitplier),
+            }
+            :
+            {};
+        let extraImageBackgroundStyles = dataType === 0 ?
+            {}
+            : dataType === 3 ?
+                {justifyContent: 'flex-start',}
+                :
+                {justifyContent: 'flex-end',};
+        let extraLeftStyles = dataType === 2 || dataType === 4 ?
             {
                 transform: [{rotate: `-${(_.parseInt(rotateDeg) * 2)}deg`,}],
             }
             :
             {};
+        const chartWidth = (AppSizes.screen.width - (AppSizes.paddingMed * 2));
+        const barWidth = isRichDataView && selectedSession.duration <= 6 ?
+            AppSizes.padding
+            : isRichDataView ?
+                this._getBarWidth(chartData)
+                :
+                0;
+        const cornerRadius = {bottom: (barWidth / 2), top: (barWidth / 2),};
         return (
             <View pointerEvents={'none'}>
 
@@ -90,7 +134,7 @@ class BiomechanicsCharts extends PureComponent {
                             domain={{ y: richDataYDomain, }}
                             height={((AppSizes.screen.width - (AppSizes.paddingMed * 2)) * 0.5)}
                             padding={{bottom: AppSizes.paddingSml, left: AppSizes.paddingLrg, right: AppSizes.paddingSml, top: AppSizes.paddingSml,}}
-                            width={(AppSizes.screen.width - (AppSizes.paddingMed * 2))}
+                            width={chartWidth}
                         >
                             {/* Y-Axis */}
                             <V.VictoryAxis
@@ -125,10 +169,11 @@ class BiomechanicsCharts extends PureComponent {
                             />
                             {/* Bar Chart */}
                             <V.VictoryBar
-                                alignment={selectedSession.duration <= 360 ? 'start' : 'middle'}
-                                barWidth={selectedSession.duration <= 360 ? 20 : null}
+                                alignment={selectedSession.duration <= 6 ? 'start' : 'middle'}
+                                barWidth={selectedSession.duration <= 6 ? AppSizes.padding : null}
+                                cornerRadius={cornerRadius}
                                 data={chartData}
-                                domainPadding={selectedSession.duration <= 360 ? { x: 20, } : null}
+                                domainPadding={selectedSession.duration <= 6 ? { x: AppSizes.padding, } : null}
                                 style={{ data: { fill: d => d.color, }, }}
                             />
                         </V.VictoryChart>
@@ -201,28 +246,28 @@ class BiomechanicsCharts extends PureComponent {
                                     containerComponent={<V.VictoryContainer responsive={false} />}
                                     cornerRadius={7}
                                     data={largerPieData}
-                                    height={pieDetails.pieHeight}
+                                    height={(pieDetails.pieHeight * heightWidthMulitplier)}
                                     innerRadius={pieDetails.pieInnerRadius}
                                     labels={datum => ''}
                                     padding={pieDetails.piePadding}
                                     style={{
                                         data: { fill: d => d.color, },
                                     }}
-                                    width={pieDetails.pieWidth}
+                                    width={(pieDetails.pieWidth * heightWidthMulitplier)}
                                 />
-                                <View style={[{alignSelf: 'center', position: 'absolute', width: pieDetails.pieWidth,}, extraLeftStyles,]}>
+                                <View style={[{alignSelf: 'center', position: 'absolute', width: (pieDetails.pieWidth * heightWidthMulitplier),}, extraLeftStyles,]}>
                                     <V.VictoryPie
                                         containerComponent={<V.VictoryContainer responsive={false} />}
                                         cornerRadius={7}
                                         data={smallerPieData}
-                                        height={pieDetails.pieHeight}
+                                        height={(pieDetails.pieHeight * heightWidthMulitplier)}
                                         innerRadius={pieDetails.pieInnerRadius}
                                         labels={datum => ''}
                                         padding={pieDetails.piePadding}
                                         style={{
                                             data: { fill: d => d.color, },
                                         }}
-                                        width={pieDetails.pieWidth}
+                                        width={(pieDetails.pieWidth * heightWidthMulitplier)}
                                     />
                                 </View>
                             </View>
@@ -265,9 +310,13 @@ class BiomechanicsCharts extends PureComponent {
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                        icon={specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'}
+                                                        icon={Platform.OS === 'ios' ?
+                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'
+                                                            :
+                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caret-up' : 'caret-down'
+                                                        }
                                                         size={20}
-                                                        type={'antdesign'}
+                                                        type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                                     />
                                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color), fontSize: AppFonts.scaleFont(16),}}>
                                                         {`${specificSessionAsymmetryData.change.value || specificSessionAsymmetryData.change.value === 0 ? Math.abs(specificSessionAsymmetryData.change.value) : '--'} ${specificSessionAsymmetryData.change.text}`}

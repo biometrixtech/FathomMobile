@@ -28,7 +28,6 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 
 const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
 const pieWrapperWidth = (AppSizes.screen.widthQuarter);
-const pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -171,11 +170,14 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
 
             { _.map(dataToDisplay, (data, i) => {
                 const sessionData = session[data.index];
+                let platformRadiusAddOn = Platform.OS === 'ios' ? 0 : AppSizes.padding;
+                let pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
+                pieInnerRadius = data.data_type === 3 ? (AppSizes.paddingSml) : pieInnerRadius;
                 const pieDetails = {
                     pieData:        sessionData.summary_data,
                     pieHeight:      pieWrapperWidth,
-                    pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
-                    piePadding:     AppSizes.paddingSml,
+                    pieInnerRadius: ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn),
+                    piePadding:     data.data_type === 3 ? AppSizes.paddingXSml : AppSizes.paddingSml,
                     pieWidth:       pieWrapperWidth,
                 };
                 if(sessionData.active && (data.data_type || data.data_type === 0)) {
@@ -215,9 +217,13 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                                                     <TabIcon
                                                         color={PlanLogic.returnInsightColorString(sessionData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                        icon={sessionData.change.value >= 0 ? 'caretup' : 'caretdown'}
+                                                        icon={Platform.OS === 'ios' ?
+                                                            sessionData.change.value >= 0 ? 'caretup' : 'caretdown'
+                                                            :
+                                                            sessionData.change.value >= 0 ? 'caret-up' : 'caret-down'
+                                                        }
                                                         size={15}
-                                                        type={'antdesign'}
+                                                        type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                                     />
                                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
                                                         {`${sessionData.change.value || sessionData.change.value === 0 ? Math.abs(sessionData.change.value) : '--'} ${sessionData.change.text}`}
@@ -240,7 +246,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                         </TouchableOpacity>
                     );
                 }
-                return null;
+                return (null);
             })}
 
         </View>
@@ -394,9 +400,13 @@ class Trends extends PureComponent {
                                             <TabIcon
                                                 color={PlanLogic.returnInsightColorString(recoveryQuality.change.color)}
                                                 containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
-                                                icon={recoveryQuality.change.value >= 0 ? 'caretup' : 'caretdown'}
+                                                icon={Platform.OS === 'ios' ?
+                                                    recoveryQuality.change.value >= 0 ? 'caretup' : 'caretdown'
+                                                    :
+                                                    recoveryQuality.change.value >= 0 ? 'caret-up' : 'caret-down'
+                                                }
                                                 size={15}
-                                                type={'antdesign'}
+                                                type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                             />
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.change.color), fontSize: AppFonts.scaleFont(12),}}>
                                                 {`${recoveryQuality.change.value || recoveryQuality.change.value === 0 ? Math.abs(recoveryQuality.change.value) : '--'} ${recoveryQuality.change.text}`}
@@ -720,7 +730,7 @@ class Trends extends PureComponent {
                                                 left_start_angle:     0,
                                             },
                                             pieHeight:      (pieWrapperWidth * 2),
-                                            pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
+                                            pieInnerRadius: (((AppSizes.padding * 2) + AppSizes.paddingSml) - extraInnerRadiusToRemove),
                                             piePadding:     AppSizes.paddingSml,
                                             pieWidth:       (pieWrapperWidth * 2),
                                         }}

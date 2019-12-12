@@ -64,7 +64,7 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
             } else {
                 // setup variables to be used
                 let isPreActiveRest = response.daily_plans[0].pre_active_rest[0] && response.daily_plans[0].pre_active_rest[0].active;
-                let activeRestObj = isPreActiveRest ? response.daily_plans[0].pre_active_rest[0] : response.daily_plans[0].post_active_rest[0];
+                let activeRestObj = _.filter(response.daily_plans[0].modalities, modality => modality.active && !modality.completed);
                 let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
                 let coolDownGoals = PlanLogic.handleFindGoals(response.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
                 let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
@@ -264,7 +264,7 @@ const postReadinessSurvey = (dailyReadinessObj, userId) => {
         .then(myPlanData => {
             // setup variables to be used
             let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
-            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest[0] : myPlanData.daily_plans[0].post_active_rest[0];
+            let activeRestObj = _.filter(myPlanData.daily_plans[0].modalities, modality => modality.active && !modality.completed);
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
@@ -318,7 +318,7 @@ const postSessionSurvey = (postSessionObj, userId) => {
         .then(myPlanData => {
             // setup variables to be used
             let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
-            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest[0] : myPlanData.daily_plans[0].post_active_rest[0];
+            let activeRestObj = _.filter(myPlanData.daily_plans[0].modalities, modality => modality.active && !modality.completed);
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
@@ -355,7 +355,7 @@ const postSymptoms = (postSymptomsObj, userId) => {
         .then(myPlanData => {
             // setup variables to be used
             let isPreActiveRest = myPlanData.daily_plans[0].pre_active_rest[0] && myPlanData.daily_plans[0].pre_active_rest[0].active;
-            let activeRestObj = isPreActiveRest ? myPlanData.daily_plans[0].pre_active_rest[0] : myPlanData.daily_plans[0].post_active_rest[0];
+            let activeRestObj = _.filter(myPlanData.daily_plans[0].modalities, modality => modality.active && !modality.completed);
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let coolDownGoals = PlanLogic.handleFindGoals(myPlanData.daily_plans[0].cool_down[0], MyPlanConstants.coolDownExerciseListOrder);
@@ -732,7 +732,7 @@ const getMobilize = (userId, type) => {
             });
             // setup variables to be used
             let isPreActiveRest = data.daily_plans[0].pre_active_rest[0] && data.daily_plans[0].pre_active_rest[0].active;
-            let activeRestObj = isPreActiveRest ? data.daily_plans[0].pre_active_rest[0] : data.daily_plans[0].post_active_rest[0];
+            let activeRestObj = _.filter(data.daily_plans[0].modalities, modality => modality.active && !modality.completed);
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let currentActiveRestGoals = store.getState().plan.activeRestGoals;
