@@ -1768,7 +1768,7 @@ const PlanLogic = {
     // TODO: UNIT TEST ME
     handleTrendChildRenderLogic: (insightType, plan) => {
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
-        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.trend_categories ? dailyPlanObj.trends.trend_categories : [];
+        let trendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.insight_categories ? dailyPlanObj.trends.insight_categories : [];
         let selectedTrendCategory = _.filter(trendCategories, ['insight_type', insightType]);
         let selectedTrends = _.map(selectedTrendCategory[0].trends, (trend, i) => {
             let newTrend = _.cloneDeep(trend);
@@ -1776,7 +1776,7 @@ const PlanLogic = {
             return newTrend;
         });
         selectedTrends = _.filter(selectedTrends, ['visible', true]);
-        let dashboardTrendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.trend_categories && dailyPlanObj.trends.dashboard.trend_categories.length > 0 ? _.cloneDeep(dailyPlanObj.trends.dashboard.trend_categories) : [];
+        let dashboardTrendCategories = dailyPlanObj && dailyPlanObj.trends && dailyPlanObj.trends.dashboard && dailyPlanObj.trends.dashboard.insight_categories && dailyPlanObj.trends.dashboard.insight_categories.length > 0 ? _.cloneDeep(dailyPlanObj.trends.dashboard.insight_categories) : [];
         let trendContextState = [];
         _.map(selectedTrends, trend => {
             let newObj = {};

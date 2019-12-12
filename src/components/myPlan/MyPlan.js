@@ -1523,8 +1523,8 @@ class MyPlan extends Component {
                     categories={trendCategories}
                     handleReadInsight={insightType => {
                         let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
-                        let trendCategoryIndex = _.findIndex(newDailyPlan.trends.trend_categories, ['insight_type', insightType]);
-                        newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
+                        let trendCategoryIndex = _.findIndex(newDailyPlan.trends.insight_categories, ['insight_type', insightType]);
+                        newDailyPlan.trends.insight_categories[trendCategoryIndex].first_time_experience = false;
                         handleReadInsight(newDailyPlan, insightType, user.id);
                     }}
                     toggleCareModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
