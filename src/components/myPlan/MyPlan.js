@@ -188,7 +188,7 @@ const ActivityTab = ({
                                         style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
                                     />
                                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
-                                        {moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
+                                        {isSensorSession && moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
                                     </Text>
                                 </View>
                             }

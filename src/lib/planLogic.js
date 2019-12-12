@@ -1231,7 +1231,6 @@ const PlanLogic = {
             }
             newCompletedActivity.title = title;
             let timingTime = '0 min, ';
-            console.log('newCompletedActivity',newCompletedActivity);
             if(newCompletedActivity.minutes) {
                 timingTime = `${newCompletedActivity.minutes} min, `;
             } else {
@@ -1554,7 +1553,12 @@ const PlanLogic = {
         let completedLockedModalities = _.concat(trainingSessions, completedModalities, missedModalities, filteredCompletedModalities);
         completedLockedModalities = _.map(completedLockedModalities, modality => {
             let newModality = _.cloneDeep(modality);
-            newModality.sort_date_time = newModality.completed_date_time ? moment(newModality.completed_date_time.replace('Z', '')) : moment(newModality.event_date_time.replace('Z', ''));
+            newModality.sort_date_time = newModality.completed_date_time ?
+                moment(newModality.completed_date_time.replace('Z', ''))
+                : newModality.event_date_time ?
+                    moment(newModality.event_date_time.replace('Z', ''))
+                    :
+                    moment(newModality.event_date.replace('Z', ''));
             return newModality;
         });
         completedLockedModalities = _.orderBy(completedLockedModalities, ['sort_date_time'], ['asc']);
