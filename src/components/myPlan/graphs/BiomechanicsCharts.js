@@ -101,7 +101,7 @@ class BiomechanicsCharts extends PureComponent {
                 {justifyContent: 'flex-start',}
                 :
                 {justifyContent: 'flex-end',};
-        let extraLeftStyles = dataType === 2 ?
+        let extraLeftStyles = dataType === 2 || dataType === 4 ?
             {
                 transform: [{rotate: `-${(_.parseInt(rotateDeg) * 2)}deg`,}],
             }

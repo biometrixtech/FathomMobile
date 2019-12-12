@@ -2670,7 +2670,7 @@ const PlanLogic = {
                         { color: AppColors.transparent, x: 1, y: smallerFullValue, },
                     ];
                 }
-            } else if(dataType === 2) {
+            } else if(dataType === 2 || dataType === 4) {
                 rotateDeg = '75deg';
                 let leftColor = PlanLogic.returnInsightColorString(newPieData.left_y_legend_color);
                 let rightColor = PlanLogic.returnInsightColorString(newPieData.right_y_legend_color);
@@ -2687,6 +2687,9 @@ const PlanLogic = {
                     { color: AppColors.transparent, x: 0, y: smallerFullValue, },
                     { color: rightColor, x: 1, y: smallerValue, },
                 ];
+                if(dataType === 4) {
+                    rotateDeg = '255deg';
+                }
             }
         }
         const specificSessionAsymmetryData = selectedSession;
@@ -2704,7 +2707,7 @@ const PlanLogic = {
             largerPieData,
             parsedSummaryTextData,
             richDataYDomain,
-            rotateDeg: (dataType === 0 || dataType === 2 || dataType === 3) ? rotateDeg : '150deg',
+            rotateDeg: dataType === 1 ? '150deg' : rotateDeg,
             smallerPieData,
             specificSessionAsymmetryData,
         };

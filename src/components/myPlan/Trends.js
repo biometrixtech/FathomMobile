@@ -28,7 +28,6 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 
 const extraInnerRadiusToRemove = Platform.OS === 'ios' ? 0 : 20;
 const pieWrapperWidth = (AppSizes.screen.widthQuarter);
-let pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -172,6 +171,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
             { _.map(dataToDisplay, (data, i) => {
                 const sessionData = session[data.index];
                 let platformRadiusAddOn = Platform.OS === 'ios' ? 0 : AppSizes.padding;
+                let pieInnerRadius = ((AppSizes.padding * 2) + AppSizes.paddingSml);
                 pieInnerRadius = data.data_type === 3 ? (AppSizes.paddingSml) : pieInnerRadius;
                 const pieDetails = {
                     pieData:        sessionData.summary_data,
@@ -730,7 +730,7 @@ class Trends extends PureComponent {
                                                 left_start_angle:     0,
                                             },
                                             pieHeight:      (pieWrapperWidth * 2),
-                                            pieInnerRadius: (pieInnerRadius - extraInnerRadiusToRemove),
+                                            pieInnerRadius: (((AppSizes.padding * 2) + AppSizes.paddingSml) - extraInnerRadiusToRemove),
                                             piePadding:     AppSizes.paddingSml,
                                             pieWidth:       (pieWrapperWidth * 2),
                                         }}
