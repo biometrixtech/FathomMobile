@@ -1223,7 +1223,9 @@ const PlanLogic = {
             newCompletedActivity.timing = [timingTime, timingAddOn];
             newCompletedActivity.modality = modality;
             newCompletedActivity.isBodyModality = modality === 'heat' || modality === 'ice' || modality === 'cwi';
-            if(backgroundImage) {
+            if(newCompletedActivity.display_image && newCompletedActivity.display_image.length > 0) {
+                newCompletedActivity.backgroundImage = PlanLogic.returnModalitiesDisplayImage(newCompletedActivity.display_image, true);
+            } else if(backgroundImage) {
                 newCompletedActivity.backgroundImage = backgroundImage;
             }
             return newCompletedActivity;
@@ -1309,7 +1311,7 @@ const PlanLogic = {
         let goals = plan.activeRestGoals;
         let recoveryObj = _.find(dailyPlanObj.modalities, ['id', index]) || {};
         let imageId = `${_.toLower(recoveryObj.title) || index}CareActivate`;
-        let imageSource = require('../../assets/images/standard/mobilize.png'); // TODO: NEED TO FIGURE THIS OUT
+        let imageSource = PlanLogic.returnModalitiesDisplayImage(recoveryObj.display_image, false);
         let pageSubtitle = recoveryObj.when;
         let pageTitle = _.upperFirst(_.toLower(recoveryObj.title));
         let recoveryType = '';//'pre_active_rest'; // TODO: NEED TO FIGURE THIS OUT
@@ -1526,7 +1528,7 @@ const PlanLogic = {
         activeModalities = _.orderBy(activeModalities, modality => moment(modality.event_date_time.replace('Z', '')), ['asc']);
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let offDaySelected = !dailyPlanObj.sessions_planned;
-        let askForNewMobilize = dailyPlanObj.modalities_available_on_demand.length > 0 ? true : false; //(dailyPlanObj.train_later && (!dailyPlanObj.pre_active_rest[0] || dailyPlanObj.pre_active_rest[0].completed)) || (!dailyPlanObj.train_later && (!dailyPlanObj.post_active_rest[0] || dailyPlanObj.post_active_rest[0].completed));
+        let askForNewMobilize = dailyPlanObj.modalities_available_on_demand.length > 0 ? true : false;
         let noTriggerCoreLogic = !dailyPlanObj.heat && !dailyPlanObj.ice && !dailyPlanObj.cold_water_immersion && dailyPlanObj.cool_down.length === 0 && activeModalities.length === 0;
         let firstTrigger = isReadinessSurveyCompleted && offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let secondTrigger = isReadinessSurveyCompleted && noTriggerCoreLogic && filteredTrainingSessions.length > 0;
@@ -3049,6 +3051,39 @@ const PlanLogic = {
             page:     5,
         }
     ],
+
+    returnModalitiesDisplayImage: (displayName, isTab) => {
+        /* eslint-disable indent */
+        let image = displayName === 'dynamic_stretch' && isTab ?
+            require('../../assets/images/standard/dynamic_stretch_tab.png')
+            : displayName === 'dynamic_stretch' && !isTab ?
+            require('../../assets/images/standard/dynamic_stretch_activity.png')
+            : displayName === 'integrate_power' && isTab ?
+            require('../../assets/images/standard/integrate_power_tab.png')
+            : displayName === 'integrate_power' && !isTab ?
+            require('../../assets/images/standard/integrate_power_activity.png')
+            : displayName === 'integreate_speed' && isTab ?
+            require('../../assets/images/standard/integreate_speed_tab.png')
+            : displayName === 'integreate_speed' && !isTab ?
+            require('../../assets/images/standard/integreate_speed_activity.png')
+            : displayName === 'isolated_activation' && isTab ?
+            require('../../assets/images/standard/isolated_activation_tab.png')
+            : displayName === 'isolated_activation' && !isTab ?
+            require('../../assets/images/standard/isolated_activation_activity.png')
+            : displayName === 'static_integrate' && isTab ?
+            require('../../assets/images/standard/static_integrate_tab.png')
+            : displayName === 'static_integrate' && !isTab ?
+            require('../../assets/images/standard/static_integrate_activity.png')
+            : displayName === 'static_stretch' && isTab ?
+            require('../../assets/images/standard/static_stretch_tab.png')
+            : displayName === 'static_stretch' && !isTab ?
+            require('../../assets/images/standard/static_stretch_activity.png')
+            : displayName === 'inhibit' && isTab ?
+            require('../../assets/images/standard/inhibit_tab.png')
+            :
+            require('../../assets/images/standard/inhibit_activity.png');
+        return image;
+    },
 
     /**
       * Handle Biomechanics Tab View Render Logic
