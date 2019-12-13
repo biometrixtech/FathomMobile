@@ -70,7 +70,10 @@ const getMyPlan = (userId, startDate, endDate, clearMyPlan = false) => {
                 let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
                 let warmUpGoals = PlanLogic.handleFindGoals(response.daily_plans[0].warm_up[0], MyPlanConstants.warmUpExerciseListOrder);
                 let currentActiveRestGoals = store.getState().plan.activeRestGoals;
-                let areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoals, currentActiveRestGoals, 'goal_type').length;
+                let areActiveRestGoalsAlreadySet = 0;
+                _.map(activeRestGoals, (activeRestGoal, i) => {
+                    areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoal, currentActiveRestGoals[i], 'goal_type').length;
+                });
                 let currentCoolDownGoals = store.getState().plan.coolDownGoals;
                 let areCoolDownGoalsAlreadySet = _.differenceBy(coolDownGoals, currentCoolDownGoals, 'goal_type').length;
                 let currentWarmUpGoals = store.getState().plan.warmUpGoals;
@@ -736,8 +739,10 @@ const getMobilize = (userId, type) => {
             let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
             let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
             let currentActiveRestGoals = store.getState().plan.activeRestGoals;
-            let areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoals, currentActiveRestGoals, 'goal_type').length;
-            // update goals if readiness survey is completed
+            let areActiveRestGoalsAlreadySet = 0;
+            _.map(activeRestGoals, (activeRestGoal, i) => {
+                areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoal, currentActiveRestGoals[i], 'goal_type').length;
+            }); // update goals if readiness survey is completed
             dispatch({
                 type: Actions.SET_ACTIVE_REST_GOALS,
                 data: areActiveRestGoalsAlreadySet > 0 ? activeRestGoals : currentActiveRestGoals,

@@ -967,7 +967,7 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = (isFromAddButton, type) => {
+    _handleGetModality = (isFromAddButton, type) => {
         const { getMobilize, user, } = this.props;
         this.setState(
             { apiIndex: isFromAddButton ? 3 : 2, expandNotifications: false, isPageCalculating: true, },
@@ -1642,7 +1642,7 @@ class MyPlan extends Component {
                                                     : activeModality.isBodyModality ?
                                                         () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
                                                         :
-                                                        () => AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })
+                                                        () => AppUtil.pushToScene('exerciseModality', { index: activeModality.id, modality: activeModality.modality, })
                                             }
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}

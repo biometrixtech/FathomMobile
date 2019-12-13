@@ -213,11 +213,8 @@ class Biomechanics extends PureComponent {
                         type={'material-community'}
                     />
                     <View>
-                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(13), textAlign: 'right',}}>
+                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(14), textAlign: 'right',}}>
                             {`${session.score.value}`}
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(13),}}>
-                                {'/100'}
-                            </Text>
                         </Text>
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
                             {sessionDateTime}

@@ -850,26 +850,9 @@ const PlanLogic = {
         /*eslint dot-notation: 0*/
         let isStaticExercise = _.find(cleanedExerciseList['STATIC STRETCH'], { library_id: selectedExercise.library_id, });
         let flatListExercises = [];
-        if(modality === 'prepare') {
-            let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
-            let staticStretchExercises = cleanedExerciseList['STATIC STRETCH'] ? cleanedExerciseList['STATIC STRETCH'] : [];
-            let activeStretchExercises = cleanedExerciseList['ACTIVE STRETCH'] ? cleanedExerciseList['ACTIVE STRETCH'] : [];
-            let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
-            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
-            flatListExercises = _.concat(foamRollExercises, staticStretchExercises, activeStretchExercises, activateExercises, integrateExercises);
-        } else if(modality === 'recover') {
-            let foamRollExercises = cleanedExerciseList['FOAM ROLL'] ? cleanedExerciseList['FOAM ROLL'] : [];
-            let staticStretchExercises = cleanedExerciseList['STATIC STRETCH'] ? cleanedExerciseList['STATIC STRETCH'] : [];
-            let activateExercises = cleanedExerciseList['ACTIVATE'] ? cleanedExerciseList['ACTIVATE'] : [];
-            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
-            flatListExercises = _.concat(foamRollExercises, staticStretchExercises, activateExercises, integrateExercises);
-        } else if(modality === 'warmUp') {
-            flatListExercises = [];
-        } else if(modality === 'coolDown') {
-            let stretchExercises = cleanedExerciseList['DYNAMIC STRETCH'] ? cleanedExerciseList['DYNAMIC STRETCH'] : [];
-            let integrateExercises = cleanedExerciseList['INTEGRATE'] ? cleanedExerciseList['INTEGRATE'] : [];
-            flatListExercises = _.concat(stretchExercises,integrateExercises);
-        }
+        _.map(cleanedExerciseList, (exList, index) => {
+            flatListExercises = _.concat(flatListExercises, exList);
+        });
         let availableSectionsCount = 0;
         let totalLength = 0;
         let firstItemIndex = _.findIndex(flatListExercises, o => o.library_id+'-'+o.set_number === selectedExercise.library_id+'-'+selectedExercise.set_number);
@@ -1226,8 +1209,8 @@ const PlanLogic = {
         return _.map(newDailyPlanObj, activity => {
             let newCompletedActivity = _.cloneDeep(activity);
             let goals = PlanLogic.handleFindGoals(newCompletedActivity, exerciseListOrder);
-            if(goals && goals.length > 0) {
-                newCompletedActivity.subtitle = _.map(goals, g => g.text).join(', ');
+            if(goals && goals[newCompletedActivity.id] && goals[newCompletedActivity.id].length > 0) {
+                newCompletedActivity.subtitle = _.map(goals[newCompletedActivity.id], g => g.text).join(', ');
             }
             newCompletedActivity.title = title;
             let timingTime = '0 min, ';
@@ -1253,8 +1236,8 @@ const PlanLogic = {
       */
     handleFindGoals: (object, exerciseListOrder) => {
         // setup variables
-        let tmpGoals = [];
-        let goals = [];
+        let tmpGoals = {};
+        let goals = {};
         // return empty if we don't have an *_active_rest
         if(!object) {
             return goals;
@@ -1267,29 +1250,30 @@ const PlanLogic = {
             _.map(obj.exercise_phases, exercisePhase =>
                 _.map(exercisePhase.exercises, exercise =>
                     _.map(exercise.dosages, dosage => {
-                        tmpGoals = _.concat(tmpGoals, dosage.goal);
+                        tmpGoals[obj.id] = _.concat(tmpGoals[obj.id], dosage.goal);
                     })
                 )
             )
         );
-        // filter unique goal object(s)
-        tmpGoals = _.uniqBy(tmpGoals, 'text'); // TODO: REFERNCE "TEXT" INDEX
-        // run through all goals to make sure if its selected or not
-        _.map(tmpGoals, goal => {
+        // run through all goals: filter unique goal object(s) & to make sure if its selected or not
+        _.map(tmpGoals, (goal, i) => {
             let newGoal = _.cloneDeep(goal);
-            let goalsIndex = object.default_plan === 'Efficient' ?
+            newGoal = _.filter(newGoal);
+            newGoal = _.uniqBy(newGoal, 'text');
+            let selectedObject = _.find(object, ['id', i]);
+            let goalsIndex = selectedObject && selectedObject.default_plan === 'Efficient' ?
                 'efficient_active'
-                : object.default_plan === 'Complete' ?
+                : selectedObject && selectedObject.default_plan === 'Complete' ?
                     'complete_active'
                     :
                     'comprehensive_active';
-            if(object.goals) {
-                let goalStatus = object.goals && object.goals[newGoal.goal_type] ? object.goals[newGoal.goal_type][goalsIndex] : false;
-                newGoal.isSelected = goalStatus;
-            } else {
-                newGoal.isSelected = true;
-            }
-            goals.push(newGoal);
+            newGoal = _.map(newGoal, (g, key) => {
+                let newG = _.cloneDeep(g);
+                let foundGoal = selectedObject.goals ? _.find(selectedObject.goals, (selectedGoal, index) => index === g.text) : false;
+                newG.isSelected = foundGoal ? foundGoal[goalsIndex] : true;
+                return newG;
+            });
+            goals[i] = newGoal;
         });
         // return array of object(s)
         return goals;
@@ -1321,46 +1305,16 @@ const PlanLogic = {
       * Handle Exercises Modality Render Logic
       * - ExerciseModality
       */
-    handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index = 0) => {
+    handleExerciseModalityRenderLogic: (dailyPlanObj, plan, priority, modality, index) => {
         let goals = plan.activeRestGoals;
-        let imageId = 'prepareCareActivate';
-        let imageSource = require('../../assets/images/standard/mobilize.png');
-        let pageSubtitle = 'Anytime before training';
-        let pageTitle = 'Mobilize';
-        let recoveryObj = dailyPlanObj.pre_active_rest ? dailyPlanObj.pre_active_rest[index] : {};
-        let recoveryType = 'pre_active_rest';
-        let sceneId = 'prepareScene';
-        let textId = 'prepareCareActivate';
-        if(dailyPlanObj.post_active_rest && dailyPlanObj.post_active_rest[index] && dailyPlanObj.post_active_rest[index].active && modality === 'recover') {
-            goals = plan.activeRestGoals;
-            imageId = 'recoverCareActivate';
-            pageSubtitle = 'Anytime';
-            pageTitle = 'Mobilize';
-            recoveryObj = dailyPlanObj.post_active_rest[index];
-            recoveryType = 'post_active_rest';
-            sceneId = 'recoverScene';
-            textId = 'recoverCareActivate';
-        } else if(dailyPlanObj.warm_up && dailyPlanObj.warm_up[index] && dailyPlanObj.warm_up[index].active && modality === 'warmUp') {
-            goals = plan.warmUpGoals;
-            imageId = 'warmUp';
-            // imageSource = require('../../assets/images/standard/warm_up.png');
-            pageSubtitle = 'Anytime before training';
-            pageTitle = 'Warm Up';
-            recoveryObj = dailyPlanObj.warm_up[index];
-            recoveryType = 'warm_up';
-            sceneId = 'warmUpScene';
-            textId = 'warmUp';
-        } else if(dailyPlanObj.cool_down && dailyPlanObj.cool_down[index] && dailyPlanObj.cool_down[index].active && modality === 'coolDown') {
-            goals = plan.coolDownGoals;
-            imageId = 'coolDown';
-            imageSource = require('../../assets/images/standard/active_recovery.png');
-            pageSubtitle = 'Immediately after training';
-            pageTitle = 'Active Recovery';
-            recoveryObj = dailyPlanObj.cool_down[index];
-            recoveryType = 'cool_down';
-            sceneId = 'coolDownScene';
-            textId = 'coolDown';
-        }
+        let recoveryObj = _.find(dailyPlanObj.modalities, ['id', index]) || {};
+        let imageId = `${_.toLower(recoveryObj.title) || index}CareActivate`;
+        let imageSource = require('../../assets/images/standard/mobilize.png'); // TODO: NEED TO FIGURE THIS OUT
+        let pageSubtitle = recoveryObj.when;
+        let pageTitle = _.upperFirst(_.toLower(recoveryObj.title));
+        let recoveryType = '';//'pre_active_rest'; // TODO: NEED TO FIGURE THIS OUT
+        let sceneId = `${_.toLower(recoveryObj.title) || index}Scene`;
+        let textId = `${_.toLower(recoveryObj.title) || index}CareActivate`;
         let buttons = [
             `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 0, goals, modality).totalSeconds / 60))} minutes`,
             `${(_.round(MyPlanConstants.cleanExerciseList(recoveryObj, 1, goals, modality).totalSeconds / 60))} minutes`,
@@ -1377,6 +1331,7 @@ const PlanLogic = {
         });
         let priorityText = priority === 0 ? 'Efficient' : priority === 1 ? 'Complete' : 'Comprehensive';
         let goalsHeader = `${priorityText} routine to:`;
+        goals = _.find(plan.activeRestGoals, (g, key) => key === index) || [];
         return {
             buttons,
             exerciseList,
@@ -1500,6 +1455,7 @@ const PlanLogic = {
             );
             filteredTrainingSessions = _.filter(filteredTrainingSessions, o => o && o.event_date);
         }
+        // TODO: THIS STUFF IS PROBABLY COMING BACK SOON
         // let completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'Heat', PlanLogic.handleFindGoals(dailyPlanObj.completed_heat));
         // let completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', PlanLogic.handleFindGoals(dailyPlanObj.completed_cold_water_immersion));
         // let completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', PlanLogic.handleFindGoals(dailyPlanObj.completed_ice));
@@ -1559,6 +1515,9 @@ const PlanLogic = {
                     moment(newModality.event_date_time.replace('Z', ''))
                     :
                     moment(newModality.event_date.replace('Z', ''));
+            if(newModality.goals) {
+                newModality.subtitle = _.map(newModality.goals, (goal, index) => index).join(', ');
+            }
             return newModality;
         });
         completedLockedModalities = _.orderBy(completedLockedModalities, ['sort_date_time'], ['asc']);
@@ -1605,7 +1564,7 @@ const PlanLogic = {
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
         return {
-            activeAfterModalities:           [],//activeModalities,
+            activeAfterModalities:           activeModalities,
             activeBeforeModalities:          [],
             askForNewMobilize,
             beforeCompletedLockedModalities: completedLockedModalities,
