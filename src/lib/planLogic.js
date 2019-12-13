@@ -3054,7 +3054,15 @@ const PlanLogic = {
 
     returnModalitiesDisplayImage: (displayName, isTab) => {
         /* eslint-disable indent */
-        let image = displayName === 'dynamic_stretch' && isTab ?
+        let image = displayName === 'dynamic_flexibility' && isTab ?
+            require('../../assets/images/standard/dynamic_flexibility_tab.png')
+            : displayName === 'dynamic_flexibility' && !isTab ?
+            require('../../assets/images/standard/dynamic_flexibility_activity.png')
+            : displayName === 'weighted_static_integrate' && isTab ?
+            require('../../assets/images/standard/weighted_static_integrate_tab.png')
+            : displayName === 'weighted_static_integrate' && !isTab ?
+            require('../../assets/images/standard/weighted_static_integrate_activity.png')
+            : displayName === 'dynamic_stretch' && isTab ?
             require('../../assets/images/standard/dynamic_stretch_tab.png')
             : displayName === 'dynamic_stretch' && !isTab ?
             require('../../assets/images/standard/dynamic_stretch_activity.png')
