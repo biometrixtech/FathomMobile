@@ -785,6 +785,47 @@ const getBiomechanicsDetails = (userId, sessionId, currentPlan, dataToDisplay) =
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 
+const updatePlan = userId => {
+    let bodyObj = {};
+    bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
+    store.dispatch({
+        type: Actions.START_REQUEST,
+    });
+    return dispatch => AppAPI.update_plan.post({userId}, bodyObj)
+        .then(data => {
+            // update My Plan reducer
+            store.dispatch({
+                type: Actions.GET_MY_PLAN,
+                data: data.daily_plans,
+            });
+            // setup variables to be used
+            let isPreActiveRest = data.daily_plans[0].pre_active_rest[0] && data.daily_plans[0].pre_active_rest[0].active;
+            let activeRestObj = _.filter(data.daily_plans[0].modalities, modality => modality.active && !modality.completed);
+            let exerciseListOrder = isPreActiveRest ? MyPlanConstants.preExerciseListOrder : MyPlanConstants.postExerciseListOrder;
+            let activeRestGoals = PlanLogic.handleFindGoals(activeRestObj, exerciseListOrder);
+            let currentActiveRestGoals = store.getState().plan.activeRestGoals;
+            let areActiveRestGoalsAlreadySet = 0;
+            _.map(activeRestGoals, (activeRestGoal, i) => {
+                areActiveRestGoalsAlreadySet = _.differenceBy(activeRestGoal, currentActiveRestGoals[i], 'goal_type').length;
+            }); // update goals if readiness survey is completed
+            dispatch({
+                type: Actions.SET_ACTIVE_REST_GOALS,
+                data: areActiveRestGoalsAlreadySet > 0 ? activeRestGoals : currentActiveRestGoals,
+            });
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            // resolve promise
+            return Promise.resolve(data);
+        })
+        .catch(err => {
+            dispatch({
+                type: Actions.STOP_REQUEST,
+            });
+            return Promise.reject(AppAPI.handleError(err));
+        });
+}
+
 export default {
     activateFunctionalStrength,
     clearCompletedCoolDownExercises,
@@ -823,4 +864,5 @@ export default {
     toggleActiveRestGoal,
     toggleCoolDownGoal,
     toggleWarmUpGoal,
+    updatePlan,
 };

@@ -1551,6 +1551,7 @@ const PlanLogic = {
         let isReadinessSurveyCompleted = dailyPlanObj.daily_readiness_survey_completed;
         let offDaySelected = !dailyPlanObj.sessions_planned;
         let askForNewMobilize = dailyPlanObj.modalities_available_on_demand.length > 0 ? true : false;
+        let onDemandModalities = dailyPlanObj.modalities_available_on_demand;
         let noTriggerCoreLogic = !dailyPlanObj.heat && !dailyPlanObj.ice && !dailyPlanObj.cold_water_immersion && dailyPlanObj.cool_down.length === 0 && activeModalities.length === 0;
         let firstTrigger = isReadinessSurveyCompleted && offDaySelected && noTriggerCoreLogic && filteredTrainingSessions.length === 0;
         let secondTrigger = isReadinessSurveyCompleted && noTriggerCoreLogic && filteredTrainingSessions.length > 0;
@@ -1598,6 +1599,7 @@ const PlanLogic = {
             networkName,
             newInsights,
             offDaySelected,
+            onDemandModalities,
             sensorSessions,
             trendCategories,
             trendDashboardCategories,
@@ -3065,6 +3067,23 @@ const PlanLogic = {
             require('../../assets/images/standard/inhibit_tab.png')
             :
             require('../../assets/images/standard/inhibit_activity.png');
+        return image;
+    },
+
+    returnOnDemandModalitiesImage: imageString => {
+        /* eslint-disable indent */
+        let image = imageString === 'pre_active_rest' ?
+            require('../../assets/images/sports_images/pre_active_rest.png')
+            : imageString === 'post_active_rest' ?
+                require('../../assets/images/sports_images/post_active_rest.png')
+            : imageString === 'warm_up' ?
+                require('../../assets/images/sports_images/warm_up.png')
+            : imageString === 'cool_down' ?
+                require('../../assets/images/sports_images/cool_down.png')
+            : imageString === 'functional_strength' ?
+                require('../../assets/images/sports_images/functional_strength.png')
+            :
+            require('../../assets/images/sports_images/pre_active_rest.png');
         return image;
     },
 
