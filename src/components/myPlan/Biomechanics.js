@@ -50,16 +50,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
     } = PlanLogic.handleBiomechanicsTabViewRenderLogic(session, data);
     return (
         <TabViewWrapper>
-            <View
-                style={{
-                    alignSelf:       'center',
-                    backgroundColor: AppColors.zeplin.slateLight,
-                    borderRadius:    100,
-                    height:          4,
-                    marginBottom:    AppSizes.padding,
-                    width:           AppSizes.screen.widthThird,
-                }}
-            />
+            <Spacer size={AppSizes.paddingSml} />
             {sessionData.description.active &&
                 <View style={{paddingHorizontal: AppSizes.paddingSml,}}>
                     <ParsedText
@@ -131,6 +122,7 @@ const BiomechanicsTabView = ({ data, session, }) => {
 }
 
 class Biomechanics extends PureComponent {
+
     constructor(props) {
         super(props);
         const { session, } = props;
@@ -187,15 +179,10 @@ class Biomechanics extends PureComponent {
     render = () => {
         const { plan, session, } = this.props;
         const { currentTabDetails, dataToDisplay, initialPage, loading, } = this.state;
-        let sportName = _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).label || '';
-        const sessionDateMoment = moment(session.event_date_time.replace('Z', ''));
-        let isToday = moment().isSame(sessionDateMoment, 'day');
-        let sessionDateTime = isToday ? `Today, ${sessionDateMoment.format('hh:mma')}` : sessionDateMoment.format('MMM DD, hh:mma');
-        let sessionDuration = SensorLogic.convertMinutesToHrsMins(session.duration, true);
-        const dailyPlanObj = plan.dailyPlan[0] || false;
-        let trends = dailyPlanObj ? dailyPlanObj.trends : false;
-        let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : false;
-        let sessionDetails = biomechanicsSummary && _.find(biomechanicsSummary.sessions, s => s.id === session.id) || {};
+        let {
+            sessionDateTime,
+            sessionDetails,
+        } = PlanLogic.handleBiomechanicsSelectedSessionRenderLogic(plan, session);
         return (
             <ScrollView
                 contentContainerStyle={Platform.OS === 'ios' ? {} : {flex: 1,}}
@@ -213,7 +200,7 @@ class Biomechanics extends PureComponent {
                         type={'material-community'}
                     />
                     <View>
-                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(14), textAlign: 'right',}}>
+                        <Text robotoBold style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>
                             {`${session.score.value}`}
                         </Text>
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
@@ -226,6 +213,7 @@ class Biomechanics extends PureComponent {
                     initialPage={initialPage}
                     onChangeTab={details => this.setState({ currentTabDetails: details, })}
                     page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
+                    prerenderingSiblingsNumber={(dataToDisplay.length - 1)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
                         <ScrollableTabBar
@@ -240,13 +228,13 @@ class Biomechanics extends PureComponent {
                                     this.tabView
                                 )
                             }
-                            style={{backgroundColor: AppColors.white, borderBottomWidth: 0,}}
+                            style={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.superLight,}}
+                            tabsContainerStyle={{justifyContent: 'center',}}
                         />
                     }
-                    style={{flex: 1, marginTop: AppSizes.paddingLrg,}}
+                    style={{flex: 1, marginTop: AppSizes.padding,}}
                     tabBarActiveTextColor={AppColors.zeplin.slateLight}
                     tabBarInactiveTextColor={AppColors.zeplin.slateXLight}
-                    // tabBarUnderlineStyle={{borderColor: AppColors.zeplin.slateLight, borderRadius: 100, borderWidth: 4,}}
                     tabBarUnderlineStyle={{backgroundColor: AppColors.white, borderColor: AppColors.white, borderBottomWidth: 0, height: 0,}}
                 >
                     {_.map(dataToDisplay, (data, i) =>

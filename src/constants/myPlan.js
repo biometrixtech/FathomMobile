@@ -723,9 +723,9 @@ const exerciseListButtonStyles = (completedExercises, recoveryObj, isFSCompleteV
         completedExercises = [];
     }
     let buttonTitle = completedExercises.length > 0 ?
-        `Complete ${_.upperFirst(_.toLower(recoveryObj.title))}`
+        `Complete ${_.startCase(_.toLower(recoveryObj.title))}`
         :
-        `Check Boxes to Complete ${_.upperFirst(_.toLower(recoveryObj.title))}`;
+        `Check Boxes to Complete ${_.startCase(_.toLower(recoveryObj.title))}`;
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.slateXLight,};
