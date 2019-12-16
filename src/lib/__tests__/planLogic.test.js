@@ -1407,6 +1407,7 @@ describe('Add Title To Active Modality', () => {
     it('NO OBJ', () => {
         expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
     });
+    /*
     it('MOBILIZE', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
@@ -1433,6 +1434,7 @@ describe('Add Title To Active Modality', () => {
         }];
         expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
     });
+    */
     it('CWI', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
@@ -1588,13 +1590,13 @@ it('Exercise Progress Pills Logic - 5 Pills', () => {
     expect(PlanLogic.handleExercisesProgressPillsLogic(5, cleanedExerciseList, [], exerciseList, 'A', selectedExercise, totalLength)).toEqual(expectedResult);
 });
 
-it('Find Goals - WITHOUT OBJECT', () => {
-    let object = null;
-    let exerciseListOrder = MyPlanConstants.preExerciseListOrder;
-    let expectedResult = [];
-    expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
+/* it('Find Goals - WITHOUT OBJECT', () => {
+     let object = null;
+     let exerciseListOrder = MyPlanConstants.preExerciseListOrder;
+     let expectedResult = [];
+     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
 });
-
+*/
 /*it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
     let object = {
         dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 5, text: 'Personalized Prepare for Training',}}]}],
@@ -1769,6 +1771,7 @@ it('Body Part Modality Render Logic - CWI', () => {
     expect(PlanLogic.handleBodyModalityRenderLogic(dailyPlanObj, modality)).toEqual(expectedResult);
 });
 
+/*
 it('Exercise Modality Render Logic - MOBILIZE (PRE)', () => {
     let dailyPlanObj = {pre_active_rest: [{}]};
     let plan = {activeRestGoals: [{}, {}]};
@@ -1888,7 +1891,7 @@ it('Exercise Modality Render Logic - WARM UP', () => {
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
-
+*/
 // NOTE: THESE 3 ARE BROKEN AND NEED TO BE FIXED!
 // it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
 //     let workout = {
