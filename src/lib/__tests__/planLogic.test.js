@@ -1418,6 +1418,7 @@ describe('Add Title To Active Modality', () => {
     it('NO OBJ', () => {
         expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
     });
+    /*
     it('MOBILIZE', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
@@ -1444,6 +1445,7 @@ describe('Add Title To Active Modality', () => {
         }];
         expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
     });
+    */
     it('CWI', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
