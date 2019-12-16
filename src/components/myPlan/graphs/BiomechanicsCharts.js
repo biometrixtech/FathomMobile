@@ -339,7 +339,7 @@ class BiomechanicsCharts extends PureComponent {
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                                                     {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Left & Right ROM`}
                                                 </Text>
                                             </View>
@@ -356,7 +356,7 @@ class BiomechanicsCharts extends PureComponent {
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend_color), fontSize: AppFonts.scaleFont(12),}}>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                                                     {`${pieDetails && pieDetails.pieData && pieDetails.pieData.left_y_legend ? _.round(pieDetails.pieData.left_y_legend) : '0'}\u00B0 Left ROM`}
                                                 </Text>
                                             </View>
@@ -370,7 +370,7 @@ class BiomechanicsCharts extends PureComponent {
                                                         width:           10,
                                                     }}
                                                 />
-                                                <Text robotoLight style={{color: PlanLogic.returnInsightColorString(pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend_color), fontSize: AppFonts.scaleFont(12),}}>
+                                                <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                                                     {`${pieDetails && pieDetails.pieData && pieDetails.pieData.right_y_legend ? _.round(pieDetails.pieData.right_y_legend) : '0'}\u00B0 Right ROM`}
                                                 </Text>
                                             </View>

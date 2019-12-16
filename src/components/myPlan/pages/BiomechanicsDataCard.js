@@ -146,10 +146,11 @@ class BiomechanicsDataCard extends PureComponent {
             card.summary_text.text;
         return (
             <TouchableOpacity
-                onPress={() => this._toggleText()}
+                activeOpacity={initialTrimText ? 0.2 : 1}
+                onPress={() => initialTrimText ? this._toggleText() : null}
                 style={[styles.dataCard,]}
             >
-                <View style={{flexDirection: 'row',}}>
+                <View style={{flex: initialTrimText ? 9.5 : 1, flexDirection: 'row',}}>
                     { card.type === 0 ?
                         <View style={{alignItems: 'flex-end', flexDirection: 'row', marginRight: AppSizes.paddingMed,}}>
                             {asymmetryBars}
@@ -162,10 +163,10 @@ class BiomechanicsDataCard extends PureComponent {
                                 fill={card.value}
                                 lineCap={'round'}
                                 rotation={200}
-                                size={AppSizes.screen.widthQuarter}
-                                style={{marginRight: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
+                                size={(AppSizes.screen.widthQuarter - AppSizes.paddingMed)}
+                                style={{marginRight: AppSizes.padding, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
                                 tintColor={PlanLogic.returnInsightColorString(card.color)}
-                                width={15}
+                                width={AppSizes.paddingMed}
                             >
                                 {
                                     (fill) => (
@@ -190,7 +191,7 @@ class BiomechanicsDataCard extends PureComponent {
                                 }
                             </View>
                     }
-                    <View style={{flexShrink: 1, justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>
+                    <View style={{flex: 1, justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
                             {card.title_text}
                         </Text>
@@ -222,8 +223,8 @@ class BiomechanicsDataCard extends PureComponent {
                         })}
                     </View>
                 </View>
-                <View style={{justifyContent: 'flex-end',}}>
-                    { initialTrimText &&
+                { initialTrimText &&
+                    <View style={{flex: 0.5, justifyContent: 'flex-end',}}>
                         <Animated.View style={[animatedStyle,]}>
                             <TabIcon
                                 color={AppColors.zeplin.slateXLight}
@@ -231,8 +232,8 @@ class BiomechanicsDataCard extends PureComponent {
                                 size={20}
                             />
                         </Animated.View>
-                    }
-                </View>
+                    </View>
+                }
             </TouchableOpacity>
         );
     }

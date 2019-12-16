@@ -308,30 +308,20 @@ function cleanExerciseList(recoveryObj, planSelection = 1, goals, modality) {
     let cleanedExerciseList = {};
     let equipmentRequired = [];
     let totalSeconds = 0;
-    let exerciseListOrder = modality === 'prepare' ?
-        preExerciseListOrder
-        : modality === 'recover' ?
-            postExerciseListOrder
-            : modality === 'warmUp' ?
-                warmUpExerciseListOrder
-                : modality === 'coolDown' ?
-                    coolDownExerciseListOrder
-                    :
-                    preExerciseListOrder;
     // loop through our exercise order and sections
-    _.map(exerciseListOrder, list => {
+    _.map(recoveryObj.exercise_phases, exercisePhase => {
         // setup our variable
-        cleanedExerciseList[list.title] = [];
+        cleanedExerciseList[exercisePhase.title] = [];
         let updatedCurrentExerciseArray = [];
         let currentExercisesBySet = {};
         // loop through exercises to setup specific important values
-        _.map(recoveryObj[list.index], (exercise, key) => {
+        _.map(exercisePhase.exercises, (exercise, key) => {
             // setup variables
             let newExercise = _.cloneDeep(exercise);
             equipmentRequired = _.concat(equipmentRequired, newExercise.equipment_required);
-            let filteredReducerGoals = _.filter(goals, ['isSelected', true]);
-            let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
-            let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+            let filteredReducerGoals = _.filter(goals[recoveryObj.id], ['isSelected', true]);
+            let goalTypes = _.map(filteredReducerGoals, y => y.text);
+            let dosage = _.filter(newExercise.dosages, o => goalTypes.includes(o.goal.text));
             dosage = _.orderBy(dosage, ['ranking'], ['asc']);
             // calculate exercise sets
             let exerciseSetsAssigned = 0;
@@ -377,7 +367,7 @@ function cleanExerciseList(recoveryObj, planSelection = 1, goals, modality) {
             // if a duration - update our main variables
             if(exercise.calculated_duration > 0) {
                 totalSeconds += exercise.calculated_duration;
-                cleanedExerciseList[list.title].push(exercise);
+                cleanedExerciseList[exercisePhase.title].push(exercise);
                 totalLength += 1;
             }
         });
@@ -440,10 +430,11 @@ function isFSCompletedValid(functionalStrength, exerciseList) {
     return isWarmUpValid && isDynamicMovementValid && isStabilityValid;
 }
 
-function cleanExercise(exercise, planSelection, goals) {
-    let filteredReducerGoals = _.filter(goals, {isSelected: true,});
-    let goalTypes = _.map(filteredReducerGoals, y => y.goal_type);
-    let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.goal_type));
+function cleanExercise(exercise, planSelection, goals, parentId) {
+    planSelection = planSelection === 'Efficient' ? 0 : planSelection === 'Complete' ? 1 : 2
+    let filteredReducerGoals = _.filter(parentId ? goals[parentId] : exercise.parentId ? goals[exercise.parentId] : goals, ['isSelected', true]);
+    let goalTypes = _.map(filteredReducerGoals, y => y.text);
+    let dosage = _.filter(exercise.dosages, o => goalTypes.includes(o.goal.text));
     dosage = _.orderBy(dosage, ['ranking'], ['asc']);
     let cleanedExercise = _.cloneDeep(exercise);
     cleanedExercise.library_id = exercise.library_id;
@@ -467,6 +458,7 @@ function cleanExercise(exercise, planSelection, goals) {
     // cleanedExercise.thumbnailUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.png`;
     cleanedExercise.videoUrl = `https://dd4o7zw7l62dt.cloudfront.net/${exercise.library_id}.mp4`;
     // cleanedExercise.videoUrl = `https://s3-us-west-2.amazonaws.com/biometrix-excercises/${exercise.library_id}.mp4`;
+    cleanedExercise.videoUrl = 'https://dd4o7zw7l62dt.cloudfront.net/soflete_test.mp4'; // TODO: REMOVE ME
     cleanedExercise.localImageUrl = exercise.localImageUrl;
     cleanedExercise.youtubeId = exercise && exercise.youtube_id && exercise.youtube_id.length > 0 ? `https://www.youtube.com/embed/${exercise.youtube_id}?version=3&playlist=${exercise.youtube_id}&rel=0&autoplay=1&showinfo=0&playsinline=1&loop=1&controls=0&modestbranding=1` : false;
     return cleanedExercise;
@@ -726,11 +718,14 @@ const cleanedPostSessionName = (postPracticeSurvey) => {
     }
 };
 
-const exerciseListButtonStyles = (completedExercises, modality, isFSCompleteValid, isFunctionalStrength) => {
-    let buttonTitle = completedExercises.length > 0 ? 'Complete Mobilize' : 'Check Boxes to Complete Mobilize';
-    if(modality === 'coolDown') {
-        buttonTitle = completedExercises.length > 0 ? 'Complete Active Recovery' : 'Check Boxes to Complete Active Recovery';
+const exerciseListButtonStyles = (completedExercises, recoveryObj, isFSCompleteValid, isFunctionalStrength) => {
+    if(!completedExercises) {
+        completedExercises = [];
     }
+    let buttonTitle = completedExercises.length > 0 ?
+        `Complete ${_.startCase(_.toLower(recoveryObj.title))}`
+        :
+        `Check Boxes to Complete ${_.startCase(_.toLower(recoveryObj.title))}`;
     let isButtonDisabled = completedExercises.length > 0 ? false : true;
     let isButtonOutlined = isButtonDisabled || completedExercises.length === 0 ? true : false;
     let buttonDisabledStyle = {backgroundColor: AppColors.zeplin.slateXLight,};

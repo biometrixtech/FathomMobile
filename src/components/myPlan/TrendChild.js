@@ -72,10 +72,10 @@ class TrendChild extends PureComponent {
         const { clearFTECategory, clearFTEView, plan, user, } = this.props;
         let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
         if(isCategory) {
-            newDailyPlan.trends.trend_categories[0].first_time_experience = false;
+            newDailyPlan.trends.insight_categories[0].first_time_experience = false;
             clearFTECategory(newDailyPlan, insightType, user.id);
-        } else if(!isCategory && newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience) {
-            newDailyPlan.trends.trend_categories[0].trends[props.key].first_time_experience = false;
+        } else if(!isCategory && newDailyPlan.trends.insight_categories[0].trends[props.key].first_time_experience) {
+            newDailyPlan.trends.insight_categories[0].trends[props.key].first_time_experience = false;
             clearFTEView(newDailyPlan, insightType, visualizationType, user.id);
         }
         if(callback) {
