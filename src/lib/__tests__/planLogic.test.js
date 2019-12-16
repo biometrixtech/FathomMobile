@@ -1595,7 +1595,7 @@ it('Find Goals - WITHOUT OBJECT', () => {
     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
 });
 
-it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
+/*it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
     let object = {
         dynamic_integrate_exercises: [{}, {}, {}, {dosages: [{goal: {goal_type: 5, text: 'Personalized Prepare for Training',}}]}],
         dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
@@ -1619,7 +1619,7 @@ it('Find Goals - WITH OBJECT (GOALS 0 & 2)', () => {
         {goal_type: 0, text: 'Care for Pain', isSelected: true,},
     ];
     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
-});
+});*/
 
 it('Body Modality, Body Part Details - LOWER BACK, SELECTED', () => {
     let body = {active: true, body_part_location: 12, side: 0,};

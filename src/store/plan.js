@@ -20,12 +20,12 @@ const recoveryObj = {
 };
 
 export default {
-    activeRestGoals:            [],
+    activeRestGoals:            {},
     coachesDashboardData:       [],
     completedCoolDownExercises: [],
-    completedExercises:         [],
+    completedExercises:         {},
     completedFSExercises:       [],
-    coolDownGoals:              [],
+    coolDownGoals:              {},
     dailyPlan:                  [{
         cold_water_immersion:             null,
         completed_cold_water_immersion:   [],
@@ -67,5 +67,5 @@ export default {
     postSession:     {},
     soreBodyParts:   {},
     typicalSessions: [],
-    warmUpGoals:     [],
+    warmUpGoals:     {},
 };

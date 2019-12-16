@@ -110,6 +110,7 @@ class Exercises extends PureComponent {
         this.state = {
             currentSlideIndex:   null,
             isScrollEnabled:     true,
+            parentId:            this.props.selectedExercise.parentId,
             progressPillsHeight: 0,
             selectedExercise:    this.props.selectedExercise,
             // timer related state items
@@ -131,8 +132,8 @@ class Exercises extends PureComponent {
 
     _renderItem = ({item, index}, nextItem, progressPillsHeight, planActiveRestGoals, priority, isStaticExercise) => {
         const { closeModal, completedExercises, handleCompleteExercise, handleUpdateFirstTimeExperience, user, } = this.props;
-        const { currentSlideIndex, } = this.state;
-        const exercise = MyPlanConstants.cleanExercise(item, priority, planActiveRestGoals);
+        const { currentSlideIndex, parentId, } = this.state;
+        const exercise = MyPlanConstants.cleanExercise(item, priority, planActiveRestGoals, parentId);
         const nextExercise = nextItem ? MyPlanConstants.cleanExercise(nextItem, priority, planActiveRestGoals) : null;
         const { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval, } = PlanLogic.handleExercisesTimerLogic(exercise);
         let timer = { number_of_sets, pre_start_time, seconds_per_set, switch_sides_time, up_next_interval };
@@ -267,8 +268,8 @@ Exercises.propTypes = {
     handleCompleteExercise:          PropTypes.func.isRequired,
     handleUpdateFirstTimeExperience: PropTypes.func.isRequired,
     modality:                        PropTypes.string,
-    planActiveRestGoals:             PropTypes.array.isRequired,
-    priority:                        PropTypes.number.isRequired,
+    planActiveRestGoals:             PropTypes.object.isRequired,
+    priority:                        PropTypes.string.isRequired,
     selectedExercise:                PropTypes.object.isRequired,
     user:                            PropTypes.object.isRequired,
 };

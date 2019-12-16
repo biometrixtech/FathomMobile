@@ -21,7 +21,7 @@ export default function planReducer(state = initialState, action) {
     switch (action.type) {
     case Actions.CLEAR_COMPLETED_EXERCISES:
         return Object.assign({}, state, {
-            completedExercises: [],
+            completedExercises: {},
         });
     case Actions.CLEAR_COMPLETED_COOL_DOWN_EXERCISES:
         return Object.assign({}, state, {

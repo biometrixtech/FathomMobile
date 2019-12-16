@@ -526,6 +526,7 @@ class MyPlan extends Component {
         postSymptoms:         PropTypes.func.isRequired,
         scheduledMaintenance: PropTypes.object,
         setAppLogs:           PropTypes.func.isRequired,
+        updatePlan:           PropTypes.func.isRequired,
         updateSensorSession:  PropTypes.func.isRequired,
         updateUser:           PropTypes.func.isRequired,
         user:                 PropTypes.object.isRequired,
@@ -967,7 +968,7 @@ class MyPlan extends Component {
         );
     }
 
-    _handleGetMobilize = (isFromAddButton, type) => {
+    _handleGetModality = (isFromAddButton, type) => {
         const { getMobilize, user, } = this.props;
         this.setState(
             { apiIndex: isFromAddButton ? 3 : 2, expandNotifications: false, isPageCalculating: true, },
@@ -1497,7 +1498,17 @@ class MyPlan extends Component {
             showLoadingText,
             trainLoadingScreenText,
         } = this.state;
-        let { createSensorSession, getSensorFiles, handleReadInsight, network, plan, updateSensorSession, updateUser, user, } = this.props;
+        let {
+            createSensorSession,
+            getSensorFiles,
+            handleReadInsight,
+            network,
+            plan,
+            updatePlan,
+            updateSensorSession,
+            updateUser,
+            user,
+        } = this.props;
         let dailyPlanObj = plan ? plan.dailyPlan[0] : false;
         const {
             activeAfterModalities,
@@ -1510,6 +1521,7 @@ class MyPlan extends Component {
             networkName,
             newInsights,
             offDaySelected,
+            onDemandModalities,
             sensorSessions,
             trendCategories,
             trendDashboardCategories,
@@ -1523,8 +1535,8 @@ class MyPlan extends Component {
                     categories={trendCategories}
                     handleReadInsight={insightType => {
                         let newDailyPlan = _.cloneDeep(plan.dailyPlan[0]);
-                        let trendCategoryIndex = _.findIndex(newDailyPlan.trends.trend_categories, ['insight_type', insightType]);
-                        newDailyPlan.trends.trend_categories[trendCategoryIndex].first_time_experience = false;
+                        let trendCategoryIndex = _.findIndex(newDailyPlan.trends.insight_categories, ['insight_type', insightType]);
+                        newDailyPlan.trends.insight_categories[trendCategoryIndex].first_time_experience = false;
                         handleReadInsight(newDailyPlan, insightType, user.id);
                     }}
                     toggleCareModal={() => this.setState({ isLogSymptomsModalOpen: true, })}
@@ -1581,7 +1593,7 @@ class MyPlan extends Component {
                                             activity={activity}
                                             activityIdLoading={activityIdLoading}
                                             askForNewMobilize={askForNewMobilize}
-                                            handleGetMobilize={() => console.log('hi - PL should updat this to new api')} // TODO: UPDATE PLAN INSTEAD
+                                            handleGetMobilize={() => updatePlan(user.id)}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
                                             onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
@@ -1642,7 +1654,7 @@ class MyPlan extends Component {
                                                     : activeModality.isBodyModality ?
                                                         () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
                                                         :
-                                                        () => AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })
+                                                        () => AppUtil.pushToScene('exerciseModality', { index: activeModality.id, modality: activeModality.modality, })
                                             }
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}
@@ -1747,24 +1759,31 @@ class MyPlan extends Component {
                                 style={{height: 32, tintColor: AppColors.white, width: 32,}}
                             />
                         </ActionButton.Item>
-                        { askForNewMobilize &&
-                            <ActionButton.Item
-                                activeOpacity={1}
-                                buttonColor={AppColors.zeplin.yellow}
-                                fixNativeFeedbackRadius={true}
-                                hideShadow={true}
-                                onPress={() => this._handleGetModality(true, 1)}
-                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'Add Mobilize'}
-                                useNativeFeedback={false}
-                            >
-                                <Image
-                                    source={require('../../../assets/images/sports_images/icons8-warm-up-200.png')}
-                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                />
-                            </ActionButton.Item>
+                        { (askForNewMobilize && onDemandModalities.length > 0) &&
+                            _.map(onDemandModalities, (modality, i) =>
+                                <ActionButton.Item
+                                    activeOpacity={1}
+                                    buttonColor={AppColors.zeplin.yellow}
+                                    fixNativeFeedbackRadius={true}
+                                    hideShadow={true}
+                                    key={i}
+                                    onPress={() => this._handleGetModality(true, modality.type)}
+                                    spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                                    textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                                    textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                                    title={modality.name}
+                                    useNativeFeedback={false}
+                                >
+                                    { modality.image ?
+                                        <Image
+                                            source={PlanLogic.returnOnDemandModalitiesImage(modality.image)}
+                                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                                        />
+                                        :
+                                        null
+                                    }
+                                </ActionButton.Item>
+                            )
                         }
                         { userHas3SensorSystem &&
                             <ActionButton.Item

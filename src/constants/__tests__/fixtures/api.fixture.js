@@ -69,6 +69,7 @@ export default {
         ['post_session_survey',   `${plansAPIVersion}/session/{userId}`], // POST
         ['post_symptoms',         `${plansAPIVersion}/symptoms/{userId}`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
+        ['update_plan',           `${plansAPIVersion}/daily_plan/{userId}/update`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
         // systems test routes
