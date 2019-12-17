@@ -281,21 +281,15 @@ class BiomechanicsCharts extends PureComponent {
                                 >
                                     { (showDetails && specificSessionAsymmetryData) ?
                                         <View>
-                                            {specificSessionAsymmetryData && _.toInteger(specificSessionAsymmetryData.body_side) === 0 ?
-                                                <Image
-                                                    resizeMode={'contain'}
-                                                    source={require('../../../../assets/images/standard/allcaughtup.png')}
-                                                    style={{height: 55, tintColor: `${AppColors.zeplin.successLight}${PlanLogic.returnHexOpacity(0.6)}`, width: 55,}}
-                                                />
-                                                : specificSessionAsymmetryData.score.active ?
-                                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.score.color), fontSize: AppFonts.scaleFont(46),}}>
-                                                        {specificSessionAsymmetryData.score.value}
-                                                        <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(25),}}>
-                                                            {' /100'}
-                                                        </Text>
+                                            {specificSessionAsymmetryData && specificSessionAsymmetryData.score.active ?
+                                                <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(specificSessionAsymmetryData.score.color), fontSize: AppFonts.scaleFont(46),}}>
+                                                    {specificSessionAsymmetryData.score.value}
+                                                    <Text robotoRegular style={{color: AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(25),}}>
+                                                        {' /100'}
                                                     </Text>
-                                                    :
-                                                    null
+                                                </Text>
+                                                :
+                                                null
                                             }
                                             {specificSessionAsymmetryData.summary_text.active &&
                                                 <ParsedText
@@ -311,9 +305,9 @@ class BiomechanicsCharts extends PureComponent {
                                                         color={PlanLogic.returnInsightColorString(specificSessionAsymmetryData.change.color)}
                                                         containerStyle={[{marginRight: AppSizes.paddingXSml,}]}
                                                         icon={Platform.OS === 'ios' ?
-                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caretup' : 'caretdown'
+                                                            specificSessionAsymmetryData.change.value >= 0 ? 'caretup' : 'caretdown'
                                                             :
-                                                            specificSessionAsymmetryData.change.value && specificSessionAsymmetryData.change.value > 0 ? 'caret-up' : 'caret-down'
+                                                            specificSessionAsymmetryData.change.value >= 0 ? 'caret-up' : 'caret-down'
                                                         }
                                                         size={20}
                                                         type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}

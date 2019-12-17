@@ -29,6 +29,7 @@ import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
 import Slider from './Slider';
+import SmoothPicker from './SmoothPicker';
 import Spacer from './Spacer';
 import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
@@ -66,6 +67,7 @@ export {
     ProgressCircle,
     RadioButton,
     Slider,
+    SmoothPicker,
     Spacer,
     SVGImage,
     TabIcon,

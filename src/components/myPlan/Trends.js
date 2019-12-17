@@ -17,7 +17,7 @@ import { Actions as DispatchActions, } from '../../constants';
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { BiomechanicsCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
-import { AnimatedCircularProgress, Button, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
+import { AnimatedCircularProgress, Button, FathomModal, ParsedText, SmoothPicker, TabIcon, Text, } from '../custom';
 import { ContactUsModal, } from '../general';
 import { store } from '../../store';
 
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         // borderTopLeftRadius:     2, // i need to be half of borderBottomWidth
         // borderTopRightRadius:    2, // i need to be half of borderBottomWidth
         marginLeft:        AppSizes.paddingLrg,
-        marginRight:       (sessionIndex + 1) === dateObjLength ? AppSizes.paddingLrg : 0,
+        // marginRight:       isDateActive ? AppSizes.paddingLrg : 0,
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
     }),
@@ -119,7 +119,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
             </View>
 
             { session.score.active &&
-                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.padding, }}>
+                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                     <AnimatedCircularProgress
                         arcSweepAngle={320}
                         backgroundColor={AppColors.zeplin.superLight}
@@ -140,7 +140,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                             )
                         }
                     </AnimatedCircularProgress>
-                    <View style={{alignSelf: 'flex-end', flex: 1, flexDirection: 'row',}}>
+                    <View style={[{alignSelf: 'flex-end', flex: 1, flexDirection: 'row',}, Platform.OS === 'ios' ? {} : {marginRight: AppSizes.padding,}]}>
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
                             {session.score.text}
                         </Text>
@@ -176,7 +176,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                 const pieDetails = {
                     pieData:        sessionData.summary_data,
                     pieHeight:      pieWrapperWidth,
-                    pieInnerRadius: ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn),
+                    pieInnerRadius: data.data_type === 3 ? ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn) : (AppSizes.paddingSml + (pieWrapperWidth * 0.35)),
                     piePadding:     data.data_type === 3 ? AppSizes.paddingXSml : AppSizes.paddingSml,
                     pieWidth:       pieWrapperWidth,
                 };
@@ -275,17 +275,24 @@ class Trends extends PureComponent {
                 });
             });
         }
+        let datesAsArray = _.map(dates, (date, key) => {
+            let newObj = {};
+            newObj.text = key;
+            newObj.data = date;
+            return newObj;
+        });
         this.state = {
-            dates,
+            dates:                   datesAsArray,
             isCoachModalOpen:        false,
             isContactUsOpen:         false,
             isSlideUpPanelModalOpen: false,
-            sessionDateIndex:        _.last(_.keys(dates)),
+            sessionDateIndex:        _.findLastIndex(datesAsArray),
             selectedTimeIndex:       0,
         };
         this._carousel = {};
         this._panel = {};
         this._scrollViewRef = {};
+        this._smoothPickerRef = {};
         this._timer = null;
     }
 
@@ -294,8 +301,10 @@ class Trends extends PureComponent {
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
-        if(this._scrollViewRef && this._scrollViewRef.scrollToEnd) {
-            this._timer = _.delay(() => this._scrollViewRef.scrollToEnd(), 500);
+        if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
+            this._timer = _.delay(() =>
+                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({ animated: true, index: this.state.sessionDateIndex, viewOffset: -30, })
+            , 500);
         }
     }
 
@@ -468,7 +477,7 @@ class Trends extends PureComponent {
                     {((userHas3SensorSystem || biomechanicsSummary.has_three_sensor_data) && biomechanicsSummary.active) ?
                         <View>
 
-                            <ScrollView
+                            {/*<ScrollView
                                 contentContainerStyle={{
                                     alignItems:     'center',
                                     flex:           1,
@@ -503,40 +512,81 @@ class Trends extends PureComponent {
                                         </TouchableOpacity>
                                     );
                                 })}
-                            </ScrollView>
-
-                            <ScrollView
-                                automaticallyAdjustContentInsets={true}
-                                centerContent={true}
-                                contentContainerStyle={{
-                                    alignItems:     'center',
-                                    flex:           1,
-                                    flexDirection:  'row',
-                                    justifyContent: 'center',
-                                    paddingTop:     AppSizes.padding,
-                                }}
-                                horizontal={true}
-                                style={{}}
-                            >
-                                {(times.length > 1) && _.map(times, (time, i) =>
-                                    <TouchableOpacity
-                                        key={i}
-                                        onPress={() => this.setState({ selectedTimeIndex: i, })}
-                                        style={{marginHorizontal: AppSizes.paddingXLrg,}}
-                                    >
-                                        <Text
-                                            robotoBold={i === selectedTimeIndex}
-                                            robotoRegular={i !== selectedTimeIndex}
-                                            style={{
-                                                color:    i === selectedTimeIndex ? `${AppColors.zeplin.slate}${PlanLogic.returnHexOpacity(0.5)}` : AppColors.zeplin.slateLight,
-                                                fontSize: AppFonts.scaleFont(i === selectedTimeIndex ? 15 : 12),
-                                            }}
+                            </ScrollView>*/}
+                            <SmoothPicker
+                                bounces={true}
+                                data={dates}
+                                initialScrollToIndex={sessionDateIndex}
+                                keyExtractor={(item, index) => index.toString()}
+                                magnet
+                                offsetSelection={-20}
+                                onScrollToIndexFailed={() => {}}
+                                ref={ref => (this._smoothPickerRef = ref)}
+                                renderItem={({ item, index}) => {
+                                    let dateObjLength = _.size(dates);
+                                    let sessionIndex = index;
+                                    let isDateActive = index === sessionDateIndex;
+                                    return (
+                                        <TouchableOpacity
+                                            key={sessionIndex}
+                                            onPress={() =>
+                                                this.setState({ sessionDateIndex: index, selectedTimeIndex: 0, })
+                                            }
+                                            style={[styles.datesWrapper(isDateActive, sessionIndex, dateObjLength),]}
                                         >
-                                            {time.timeText}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-                            </ScrollView>
+                                            <Text
+                                                robotoBold={isDateActive}
+                                                robotoRegular={!isDateActive}
+                                                style={{
+                                                    color:    isDateActive ? AppColors.zeplin.slateLight : `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.5)}`,
+                                                    fontSize: AppFonts.scaleFont(isDateActive ? 18 : 15),
+                                                }}
+                                            >
+                                                {item.text}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    );
+                                }}
+                                scrollAnimation
+                                showsHorizontalScrollIndicator={false}
+                                snapToAlignment={'center'}
+                                snapToEnd={true}
+                            />
+
+                            {(times.length > 1) &&
+                                <ScrollView
+                                    automaticallyAdjustContentInsets={true}
+                                    centerContent={true}
+                                    contentContainerStyle={{
+                                        alignItems:     'center',
+                                        flex:           1,
+                                        flexDirection:  'row',
+                                        justifyContent: 'center',
+                                        paddingTop:     AppSizes.padding,
+                                    }}
+                                    horizontal={true}
+                                    style={{}}
+                                >
+                                    {_.map(times, (time, i) =>
+                                        <TouchableOpacity
+                                            key={i}
+                                            onPress={() => this.setState({ selectedTimeIndex: i, })}
+                                            style={{marginHorizontal: AppSizes.paddingXLrg,}}
+                                        >
+                                            <Text
+                                                robotoBold={i === selectedTimeIndex}
+                                                robotoRegular={i !== selectedTimeIndex}
+                                                style={{
+                                                    color:    i === selectedTimeIndex ? `${AppColors.zeplin.slate}${PlanLogic.returnHexOpacity(0.5)}` : AppColors.zeplin.slateLight,
+                                                    fontSize: AppFonts.scaleFont(i === selectedTimeIndex ? 15 : 12),
+                                                }}
+                                            >
+                                                {time.timeText}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </ScrollView>
+                            }
 
                             <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.padding,}}>
                                 { biomechanicsSummary.active &&

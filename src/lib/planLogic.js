@@ -1715,8 +1715,8 @@ const PlanLogic = {
             _.map(dates[sessionDateIndex], (date, i) => date)
             :
             [];
-        let selectedBiomechanicsSession = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].length > 0 ?
-            _.filter(biomechanicsSummary.sessions, s => s.id === dates[sessionDateIndex][selectedTimeIndex].sessionId)
+        let selectedBiomechanicsSession = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].data.length > 0 ?
+            _.filter(biomechanicsSummary.sessions, s => s.id === dates[sessionDateIndex].data[selectedTimeIndex].sessionId)
             :
             [];
         const userHas3SensorSystem = user && user.sensor_data && user.sensor_data.system_type && user.sensor_data.sensor_pid ? true : false;
@@ -3122,7 +3122,7 @@ const PlanLogic = {
         const pieDetails = {
             pieData:        sessionData.summary_data,
             pieHeight:      pieWrapperWidth,
-            pieInnerRadius: ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn),
+            pieInnerRadius: data.data_type === 3 ? ((pieInnerRadius - extraInnerRadiusToRemove) + platformRadiusAddOn) : (piePadding + (pieWrapperWidth * 0.35)),
             piePadding:     piePadding,
             pieWidth:       pieWrapperWidth,
         };
