@@ -26,7 +26,7 @@ import { BiomechanicsDataCard, } from './pages';
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
 import _ from 'lodash';
-import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
+import ScrollableTabView, { DefaultTabBar, } from 'react-native-scrollable-tab-view';
 import moment from 'moment';
 
 /* Component ==================================================================== */
@@ -91,7 +91,9 @@ const BiomechanicsTabView = ({ data, session, }) => {
                 />
             )}
             <View style={{marginBottom: AppSizes.paddingMed, marginTop: AppSizes.paddingLrg,}}>
-                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>{'Workout Timeline'}</Text>
+                <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.paddingSml, marginHorizontal: AppSizes.paddingLrg,}}>
+                    {`${sessionData.child_title} ROM Timeline`}
+                </Text>
                 <BiomechanicsCharts
                     chartData={_.flatten(updatedChartData)}
                     dataType={data.data_type}
@@ -213,20 +215,20 @@ class Biomechanics extends PureComponent {
                     initialPage={initialPage}
                     onChangeTab={details => this.setState({ currentTabDetails: details, })}
                     page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
-                    prerenderingSiblingsNumber={(dataToDisplay.length - 1)}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
-                        <ScrollableTabBar
+                        <DefaultTabBar
                             renderTab={(name, page, isTabActive, onPressHandler, onLayoutHandler, subtitle) =>
-                                TrendsTabBar.renderTab(
-                                    name,
-                                    page,
-                                    isTabActive,
-                                    onPressHandler,
-                                    onLayoutHandler,
-                                    subtitle,
-                                    this.tabView
-                                )
+                                <TrendsTabBar
+                                    name={name}
+                                    page={page}
+                                    isTabActive={isTabActive}
+                                    key={page}
+                                    onPressHandler={onPressHandler}
+                                    onLayoutHandler={onLayoutHandler}
+                                    subtitle={subtitle}
+                                    tabView={this.tabView}
+                                />
                             }
                             style={{backgroundColor: AppColors.white, borderColor: AppColors.zeplin.superLight,}}
                             tabsContainerStyle={{justifyContent: 'center',}}

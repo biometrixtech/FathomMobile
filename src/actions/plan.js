@@ -432,15 +432,20 @@ const patchBodyActiveRecovery = (completed_body_parts, recovery_type, userId) =>
     let bodyObj = {};
     bodyObj.event_date = `${moment().toISOString(true).split('.')[0]}Z`;
     bodyObj.recovery_type = recovery_type;
-    bodyObj.completed_body_parts = completed_body_parts;
-    return dispatch => AppAPI.body_active_recovery.patch({userId}, bodyObj)
-        .then(myPlanData => {
-            dispatch({
-                type: Actions.GET_MY_PLAN,
-                data: myPlanData.daily_plans,
-            });
-            return Promise.resolve(myPlanData);
-        })
+    if(completed_body_parts) {
+        bodyObj.completed_body_parts = completed_body_parts;
+        return dispatch => AppAPI.body_active_recovery.patch({userId}, bodyObj)
+            .then(myPlanData => {
+                dispatch({
+                    type: Actions.GET_MY_PLAN,
+                    data: myPlanData.daily_plans,
+                });
+                return Promise.resolve(myPlanData);
+            })
+            .catch(err => Promise.reject(AppAPI.handleError(err)));
+    }
+    return dispatch => AppAPI.body_active_recovery.post({userId}, bodyObj)
+        .then(myPlanData => Promise.resolve(myPlanData))
         .catch(err => Promise.reject(AppAPI.handleError(err)));
 };
 

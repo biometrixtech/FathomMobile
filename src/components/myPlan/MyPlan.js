@@ -1528,6 +1528,124 @@ class MyPlan extends Component {
             triggerStep,
             userHas3SensorSystem,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
+        let actionButtons = [];
+        if(isReadinessSurveyCompleted && !isPageCalculating && !hasActive3SensorSession) {
+            if(!offDaySelected && filteredTrainingSessions.length === 0) {
+                actionButtons.push(
+                    <ActionButton.Item
+                        activeOpacity={1}
+                        buttonColor={AppColors.zeplin.yellow}
+                        fixNativeFeedbackRadius={true}
+                        hideShadow={true}
+                        key={'off-day'}
+                        onPress={() => this._handleNoSessions()}
+                        spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                        textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                        textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                        title={'Off Day'}
+                        useNativeFeedback={false}
+                    >
+                        <Image
+                            source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
+                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                        />
+                    </ActionButton.Item>
+                );
+            }
+            actionButtons.push(
+                <ActionButton.Item
+                    activeOpacity={1}
+                    buttonColor={AppColors.zeplin.yellow}
+                    fixNativeFeedbackRadius={true}
+                    hideShadow={true}
+                    key={'log-symptoms'}
+                    onPress={() => _.delay(() => this.setState({ isLogSymptomsModalOpen: true, }), 200)}
+                    spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                    textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                    textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                    title={'Log Symptoms'}
+                    useNativeFeedback={false}
+                >
+                    <TabIcon
+                        color={AppColors.white}
+                        icon={'ios-body'}
+                        size={32}
+                        type={'ionicon'}
+                    />
+                </ActionButton.Item>
+            );
+            actionButtons.push(
+                <ActionButton.Item
+                    activeOpacity={1}
+                    buttonColor={AppColors.zeplin.yellow}
+                    fixNativeFeedbackRadius={true}
+                    hideShadow={true}
+                    key={'log-training'}
+                    onPress={() => this._togglePostSessionSurveyModal()}
+                    spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                    textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                    textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                    title={'Log Training'}
+                    useNativeFeedback={false}
+                >
+                    <Image
+                        source={require('../../../assets/images/sports_images/icons8-exercise-200.png')}
+                        style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                    />
+                </ActionButton.Item>
+            );
+            if(askForNewMobilize && onDemandModalities.length > 0) {
+                _.map(onDemandModalities, (modality, i) =>
+                    actionButtons.push(
+                        <ActionButton.Item
+                            activeOpacity={1}
+                            buttonColor={AppColors.zeplin.yellow}
+                            fixNativeFeedbackRadius={true}
+                            hideShadow={true}
+                            key={i}
+                            onPress={() => this._handleGetModality(true, modality.type)}
+                            spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                            title={modality.name}
+                            useNativeFeedback={false}
+                        >
+                            { modality.image ?
+                                <Image
+                                    source={PlanLogic.returnOnDemandModalitiesImage(modality.image)}
+                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                                />
+                                :
+                                null
+                            }
+                        </ActionButton.Item>
+                    )
+                );
+            }
+            if(userHas3SensorSystem) {
+                actionButtons.push(
+                    <ActionButton.Item
+                        activeOpacity={1}
+                        buttonColor={AppColors.zeplin.yellow}
+                        fixNativeFeedbackRadius={true}
+                        hideShadow={true}
+                        key={'run-with-pro'}
+                        onPress={() => this.setState({ isStartSensorSessionModalOpen: true, })}
+                        spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
+                        textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
+                        textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
+                        title={'Start a run with PRO'}
+                        useNativeFeedback={false}
+                    >
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../assets/images/standard/kitpaused.png')}
+                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
+                        />
+                    </ActionButton.Item>
+                );
+            }
+        }
         return (
             <View style={{backgroundColor: AppColors.white, flex: 1,}}>
 
@@ -1639,7 +1757,9 @@ class MyPlan extends Component {
                                     }
 
                                     { (dailyPlanObj.train_later && !triggerStep) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>
+                                            {'Tap "+" to log training or an off day'}
+                                        </Text>
                                     }
 
                                     {_.map(activeAfterModalities, (activeModality, key) => (
@@ -1704,107 +1824,7 @@ class MyPlan extends Component {
                         size={65}
                         useNativeFeedback={false}
                     >
-                        { (!offDaySelected && filteredTrainingSessions.length === 0) &&
-                            <ActionButton.Item
-                                activeOpacity={1}
-                                buttonColor={AppColors.zeplin.yellow}
-                                fixNativeFeedbackRadius={true}
-                                hideShadow={true}
-                                onPress={() => this._handleNoSessions()}
-                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'Off Day'}
-                                useNativeFeedback={false}
-                            >
-                                <Image
-                                    source={require('../../../assets/images/sports_images/icons8-meditation-200.png')}
-                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                />
-                            </ActionButton.Item>
-                        }
-                        <ActionButton.Item
-                            activeOpacity={1}
-                            buttonColor={AppColors.zeplin.yellow}
-                            fixNativeFeedbackRadius={true}
-                            hideShadow={true}
-                            onPress={() => _.delay(() => this.setState({ isLogSymptomsModalOpen: true, }), 200)}
-                            spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                            title={'Log Symptoms'}
-                            useNativeFeedback={false}
-                        >
-                            <TabIcon
-                                color={AppColors.white}
-                                icon={'ios-body'}
-                                size={32}
-                                type={'ionicon'}
-                            />
-                        </ActionButton.Item>
-                        <ActionButton.Item
-                            activeOpacity={1}
-                            buttonColor={AppColors.zeplin.yellow}
-                            fixNativeFeedbackRadius={true}
-                            hideShadow={true}
-                            onPress={() => this._togglePostSessionSurveyModal()}
-                            spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                            textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                            textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                            title={'Log Training'}
-                            useNativeFeedback={false}
-                        >
-                            <Image
-                                source={require('../../../assets/images/sports_images/icons8-exercise-200.png')}
-                                style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                            />
-                        </ActionButton.Item>
-                        { (askForNewMobilize && onDemandModalities.length > 0) &&
-                            _.map(onDemandModalities, (modality, i) =>
-                                <ActionButton.Item
-                                    activeOpacity={1}
-                                    buttonColor={AppColors.zeplin.yellow}
-                                    fixNativeFeedbackRadius={true}
-                                    hideShadow={true}
-                                    key={i}
-                                    onPress={() => this._handleGetModality(true, modality.type)}
-                                    spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                    textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                                    textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                    title={modality.name}
-                                    useNativeFeedback={false}
-                                >
-                                    { modality.image ?
-                                        <Image
-                                            source={PlanLogic.returnOnDemandModalitiesImage(modality.image)}
-                                            style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                        />
-                                        :
-                                        null
-                                    }
-                                </ActionButton.Item>
-                            )
-                        }
-                        { userHas3SensorSystem &&
-                            <ActionButton.Item
-                                activeOpacity={1}
-                                buttonColor={AppColors.zeplin.yellow}
-                                fixNativeFeedbackRadius={true}
-                                hideShadow={true}
-                                onPress={() => this.setState({ isStartSensorSessionModalOpen: true, })}
-                                spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
-                                textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
-                                textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
-                                title={'Start a run with PRO'}
-                                useNativeFeedback={false}
-                            >
-                                <Image
-                                    resizeMode={'contain'}
-                                    source={require('../../../assets/images/standard/kitpaused.png')}
-                                    style={{height: 32, tintColor: AppColors.white, width: 32,}}
-                                />
-                            </ActionButton.Item>
-                        }
+                        {actionButtons}
                     </ActionButton>
                     : (isReadinessSurveyCompleted && !isPageLoading && (hasActive3SensorSession || !!activityIdLoading)) ?
                         <View style={[styles.disabledFABBtn,]}>
