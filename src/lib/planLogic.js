@@ -1166,7 +1166,7 @@ const PlanLogic = {
       * Helper Function for Completed Modalities
       * - PlanLogic
       */
-    addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive, exerciseListOrder) => {
+    addTitleToCompletedModalitiesHelper: (array, title, subtitle, filterOutActive, exerciseListOrder, modality) => {
         if(!array || !array[0]) {
             return [];
         }
@@ -1181,7 +1181,7 @@ const PlanLogic = {
             }
             newCompletedActivity.title = newTitle;
             if(subtitle) {
-                let goals = PlanLogic.handleFindGoals(newCompletedActivity, exerciseListOrder);
+                let goals = PlanLogic.handleFindGoals(newCompletedActivity, exerciseListOrder, modality);
                 if(goals && goals.length > 0) {
                     newCompletedActivity.subtitle = _.map(goals, g => g.text).join(', ');
                 }
@@ -1238,6 +1238,10 @@ const PlanLogic = {
       * - /actions/plan.js
       */
     handleFindGoals: (object, exerciseListOrder, modality) => {
+        if(!modality && object && object.title) {
+            let cleanedTitle = _.toLower(object.title);
+            modality = cleanedTitle === 'cold water bath' ? 'cwi' : cleanedTitle === 'heat' ? 'heat' : cleanedTitle === 'ice' ? 'ice' : 'prepare';
+        }
         // setup variables
         let tmpGoals = {};
         let goals = {};
@@ -1473,18 +1477,19 @@ const PlanLogic = {
             );
             filteredTrainingSessions = _.filter(filteredTrainingSessions, o => o && o.event_date);
         }
-        const completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'Heat', true);
-        const completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', true);
-        const completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', true);
-        const completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', true, true);
-        const completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', true, true);
-        const completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', true, true);
+        const completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'Heat', true, false, false, 'heat');
+        const completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', true, false, false, 'cwi');
+        const completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', true, false, false, 'ice');
+        const completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', true, true, false, 'heat');
+        const completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', true, true, false, 'cwi');
+        const completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', true, true, false, 'ice');
         const completedBodyModalities = _.concat(completedHeat, completedCWI, completedIce, completedCurrentHeat, completedCurrentCWI, completedCurrentIce);
         const activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'Heat', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         const activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'Ice', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
         const activeCWI = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', 'after all training is complete', false, 'cwi', require('../../assets/images/standard/cwi_tab.png'));
         const activeBodyModalities = _.concat(activeHeat, activeIce, activeCWI);
-        const completedModalities = _.concat(dailyPlanObj.completed_modalities, completedBodyModalities);
+        const completedExerciseModalities = _.filter(dailyPlanObj.modalities, modality => modality.completed);
+        const completedModalities = _.concat(dailyPlanObj.completed_modalities, completedBodyModalities, completedExerciseModalities);
         const activeExerciseModalities = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.modalities, 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
         const mergedActiveModalities = _.concat(activeExerciseModalities, activeBodyModalities);
         const cleanedModalities = _.map(mergedActiveModalities, activeModality => {
@@ -1505,11 +1510,6 @@ const PlanLogic = {
             let isLocked = modality && !modality.active && !modality.completed;
             if(isLocked && !modality.sport_name) {
                 newModality.subtitle = `Sorry, you missed the optimal window for ${_.startCase(_.toLower(newModality.title))} today.`;
-            } else {
-                let goals = PlanLogic.handleFindGoals(newModality, PlanLogic.handleFindGoals(dailyPlanObj.completed_modalities));
-                if(goals && goals.length > 0) {
-                    newModality.subtitle = _.map(goals, g => g.text).join(', ');
-                }
             }
             return newModality;
         });
@@ -1540,7 +1540,7 @@ const PlanLogic = {
             if(isLocked && newModality.locked_text && newModality.locked_text.length > 0) {
                 newModality.subtitle = newModality.locked_text;
             } else if(newModality.goals) {
-                newModality.subtitle = _.map(newModality.goals, (goal, index) => index).join(', ');
+                newModality.subtitle = _.map(newModality.goals, (goal, index) => _.isArray(newModality.goals) ? goal.text : index).join(', ');
             }
             newModality.title = _.startCase(_.toLower(newModality.title));
             return newModality;
@@ -1589,8 +1589,8 @@ const PlanLogic = {
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
         return {
-            activeAfterModalities:           activeModalities,
-            activeBeforeModalities:          [],
+            activeAfterModalities:           [],
+            activeBeforeModalities:          activeModalities,
             askForNewMobilize,
             beforeCompletedLockedModalities: completedLockedModalities,
             filteredTrainingSessions,

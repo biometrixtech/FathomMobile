@@ -213,7 +213,7 @@ class Biomechanics extends PureComponent {
                     initialPage={initialPage}
                     onChangeTab={details => this.setState({ currentTabDetails: details, })}
                     page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
-                    prerenderingSiblingsNumber={(dataToDisplay.length - 1)}
+                    // prerenderingSiblingsNumber={Platform.OS === 'ios' ? (dataToDisplay.length - 1) : 0}
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
                         <ScrollableTabBar

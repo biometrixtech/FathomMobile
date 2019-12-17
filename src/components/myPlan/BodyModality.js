@@ -97,7 +97,7 @@ class BodyModality extends Component {
     _toggleTimer = time => {
         const { modality, markStartedRecovery, user, } = this.props;
         let updatedModality = modality === 'cwi' ? 'cold_water_immersion' : modality;
-        markStartedRecovery(updatedModality, user.id);
+        markStartedRecovery(false, updatedModality, user.id);
         this.setState(
             { showInstructions: false, },
             () => {

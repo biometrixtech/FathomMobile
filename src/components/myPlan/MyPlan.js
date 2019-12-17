@@ -1528,7 +1528,6 @@ class MyPlan extends Component {
             triggerStep,
             userHas3SensorSystem,
         } = PlanLogic.handleMyPlanRenderLogic(dailyPlanObj, user);
-        console.log('onDemandModalities',onDemandModalities,askForNewMobilize);
         let actionButtons = [];
         if(isReadinessSurveyCompleted && !isPageCalculating && !hasActive3SensorSession) {
             if(!offDaySelected && filteredTrainingSessions.length === 0) {
@@ -1758,7 +1757,9 @@ class MyPlan extends Component {
                                     }
 
                                     { (dailyPlanObj.train_later && !triggerStep) &&
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>{'Tap "+" to log training or an off day'}</Text>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>
+                                            {'Tap "+" to log training or an off day'}
+                                        </Text>
                                     }
 
                                     {_.map(activeAfterModalities, (activeModality, key) => (
