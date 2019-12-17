@@ -1895,7 +1895,7 @@ it('Exercise Modality Render Logic - WARM UP', () => {
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
-
+/*
 it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {
         sport_name: 79,
@@ -1946,7 +1946,7 @@ it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
     );
     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
 });
-
+*/
 it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
     let selectedExercise = {library_id: 8, set_number: 1,};
