@@ -1733,7 +1733,7 @@ class MyPlan extends Component {
                                                     : activeModality.isBodyModality ?
                                                         () => AppUtil.pushToScene('bodyModality', { modality: activeModality.modality, })
                                                         :
-                                                        () => AppUtil.pushToScene('exerciseModality', { index: key, modality: activeModality.modality, })
+                                                        () => AppUtil.pushToScene('exerciseModality', { index: activeModality.id, modality: activeModality.modality, })
                                             }
                                             subtitle={activeModality.subtitle}
                                             timing={activeModality.timing}

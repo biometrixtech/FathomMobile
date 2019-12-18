@@ -1900,7 +1900,7 @@ it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
     let workout = {
         sport_name: 79,
         duration:   100,
-        event_date: '2019-01-10T18:00:00',
+        event_date: '2019-01-10T18:00:00Z',
     };
     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
         'evening',
@@ -1917,7 +1917,7 @@ it('HealthKit Workout Page Render Logic - Afternoon Tennis', () => {
     let workout = {
         sport_name: 16,
         duration:   60,
-        event_date: '2019-01-10T11:00:00',
+        event_date: '2019-01-10T11:00:00Z',
     };
     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
         'afternoon',
@@ -1934,7 +1934,7 @@ it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
     let workout = {
         sport_name: 14,
         duration:   90,
-        event_date: '2019-01-10T06:00:00',
+        event_date: '2019-01-10T06:00:00Z',
     };
     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
         'morning',
