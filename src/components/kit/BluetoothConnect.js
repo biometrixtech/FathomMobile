@@ -11,7 +11,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, Image, View, } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
@@ -494,7 +494,7 @@ class BluetoothConnect extends Component {
                             </Text>
                         </View>
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
-                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: Platform.OS === 'ios' ? AppSizes.paddingLrg : AppSizes.padding, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
                                 <View style={{alignItems: 'center',}}>
                                     {isConnectionSuccessful ?
                                         <LottieView
