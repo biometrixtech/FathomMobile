@@ -301,11 +301,6 @@ class Trends extends PureComponent {
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
-        if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
-            this._timer = _.delay(() =>
-                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({ animated: true, index: this.state.sessionDateIndex, viewOffset: -30, })
-            , 500);
-        }
     }
 
     componentWillUnmount = () => {
@@ -477,21 +472,17 @@ class Trends extends PureComponent {
                     {((userHas3SensorSystem || biomechanicsSummary.has_three_sensor_data) && biomechanicsSummary.active) ?
                         <View>
 
-                            {/*<ScrollView
-                                contentContainerStyle={{
-                                    alignItems:     'center',
-                                    flex:           1,
-                                    flexDirection:  'row',
-                                    justifyContent: 'flex-end',
-                                }}
-                                horizontal={true}
-                                ref={ref => {this._scrollViewRef = ref;}}
-                                showsHorizontalScrollIndicator={false}
-                                style={{alignSelf: 'flex-end',}}
-                            >
-                                {_.map(dates, (date, index) => {
-                                    let dateObjLength = _.keys(dates).length;
-                                    let sessionIndex = _.indexOf(_.keys(dates), index);
+                            <SmoothPicker
+                                bounces={true}
+                                data={dates}
+                                initialScrollToIndex={sessionDateIndex}
+                                keyExtractor={(item, index) => index.toString()}
+                                offsetSelection={-20}
+                                onScrollToIndexFailed={() => {}}
+                                ref={ref => (this._smoothPickerRef = ref)}
+                                renderItem={({ item, index}) => {
+                                    let dateObjLength = _.size(dates);
+                                    let sessionIndex = index;
                                     let isDateActive = index === sessionDateIndex;
                                     return (
                                         <TouchableOpacity
@@ -507,50 +498,14 @@ class Trends extends PureComponent {
                                                     fontSize: AppFonts.scaleFont(isDateActive ? 18 : 15),
                                                 }}
                                             >
-                                                {index}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    );
-                                })}
-                            </ScrollView>*/}
-                            <SmoothPicker
-                                bounces={true}
-                                data={dates}
-                                initialScrollToIndex={sessionDateIndex}
-                                keyExtractor={(item, index) => index.toString()}
-                                magnet
-                                offsetSelection={-20}
-                                onScrollToIndexFailed={() => {}}
-                                ref={ref => (this._smoothPickerRef = ref)}
-                                renderItem={({ item, index}) => {
-                                    let dateObjLength = _.size(dates);
-                                    let sessionIndex = index;
-                                    let isDateActive = index === sessionDateIndex;
-                                    return (
-                                        <TouchableOpacity
-                                            key={sessionIndex}
-                                            onPress={() =>
-                                                this.setState({ sessionDateIndex: index, selectedTimeIndex: 0, })
-                                            }
-                                            style={[styles.datesWrapper(isDateActive, sessionIndex, dateObjLength),]}
-                                        >
-                                            <Text
-                                                robotoBold={isDateActive}
-                                                robotoRegular={!isDateActive}
-                                                style={{
-                                                    color:    isDateActive ? AppColors.zeplin.slateLight : `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.5)}`,
-                                                    fontSize: AppFonts.scaleFont(isDateActive ? 18 : 15),
-                                                }}
-                                            >
                                                 {item.text}
                                             </Text>
                                         </TouchableOpacity>
                                     );
                                 }}
-                                scrollAnimation
+                                scrollAnimation={true}
                                 showsHorizontalScrollIndicator={false}
                                 snapToAlignment={'center'}
-                                snapToEnd={true}
                             />
 
                             {(times.length > 1) &&
