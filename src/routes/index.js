@@ -13,7 +13,8 @@ import StackViewStyleInterpolator from 'react-navigation-stack/dist/views/StackV
 
 // Consts, Libs, and Utils
 import { CustomNavBar, CustomTabBar, TabIcon, } from '../components/custom';
-import { AppColors, } from '../constants';
+import { Actions as DispatchActions, AppColors, } from '../constants';
+import { store } from '../store';
 import { View, } from 'react-native';
 
 // import components
@@ -215,6 +216,12 @@ const Index = (
                     key={'myPlan'}
                     panHandlers={null}
                     tabBarLabel={'Plan'}
+
+                    onEnter={() => store.dispatch({
+                        type: DispatchActions.UPDATE_CURRENT_TAB,
+                        tab:  'myPlan'
+                    })}
+                    // onExit={() => console.log('myPlan-onExit')}
                 />
                 <Scene
                     Layout={TrendsComponent}
@@ -223,6 +230,12 @@ const Index = (
                     key={'trends'}
                     tabBarLabel={'Trends'}
                     panHandlers={null}
+
+                    onEnter={() => store.dispatch({
+                        type: DispatchActions.UPDATE_CURRENT_TAB,
+                        tab:  'trends'
+                    })}
+                    // onExit={() => console.log('trends-onExit')}
                 />
                 <Scene
                     Layout={SettingsComponent}
@@ -233,6 +246,12 @@ const Index = (
                     panHandlers={null}
                     tabBarLabel={'Settings'}
                     title={'SETTINGS'}
+
+                    onEnter={() => store.dispatch({
+                        type: DispatchActions.UPDATE_CURRENT_TAB,
+                        tab:  'settings'
+                    })}
+                    // onExit={() => console.log('settings-onExit')}
                 />
             </Scene>
             <Scene
