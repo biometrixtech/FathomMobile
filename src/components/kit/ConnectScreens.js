@@ -853,6 +853,7 @@ const Connect = ({
         );
     }
     let content = SensorLogic.getConnectContent(styles)[page];
+    let platformVideoMultiplier = Platform.OS === 'ios' ? 1 : 0.85;
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
@@ -872,7 +873,7 @@ const Connect = ({
                             repeat={true}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                             source={content.video.localFile ? content.video.localFile : {uri: content.video}}
-                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.heightTwoFifths * platformVideoMultiplier),}]}
                         />
                         :
                         null
