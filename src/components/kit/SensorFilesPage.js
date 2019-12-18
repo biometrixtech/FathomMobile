@@ -86,6 +86,7 @@ class SensorFilesPage extends Component {
             pageIndex:              props.startPage,
         };
         this._pages = {};
+        this._scrollTimer = null;
         this._secondaryTimer = null;
         this._thirdTimer = null;
         this._timer = null;
@@ -101,6 +102,7 @@ class SensorFilesPage extends Component {
     }
 
     componentWillUnmount = () => {
+        clearInterval(this._scrollTimer);
         clearInterval(this._secondaryTimer);
         clearInterval(this._thirdTimer);
         clearInterval(this._timer);
@@ -239,7 +241,7 @@ class SensorFilesPage extends Component {
         this._pages.scrollToPage(nextPageIndex);
         this.setState(
             { pageIndex: nextPageIndex, },
-            () => callback && callback(),
+            () => { this._scrollTimer = _.delay(() => callback && callback(), 750); }
         );
     }
 

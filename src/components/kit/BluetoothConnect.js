@@ -59,6 +59,7 @@ class BluetoothConnect extends Component {
             pageIndex:              0,
         };
         this._pages = {};
+        this._scrollTimer = null;
         this._secondaryTimer = null;
         this._thirdTimer = null;
         this._timer = null;
@@ -68,6 +69,7 @@ class BluetoothConnect extends Component {
     }
 
     componentWillUnmount = () => {
+        clearInterval(this._scrollTimer);
         clearInterval(this._secondaryTimer);
         clearInterval(this._thirdTimer);
         clearInterval(this._timer);
@@ -174,7 +176,7 @@ class BluetoothConnect extends Component {
         this._pages.scrollToPage(nextPageIndex);
         this.setState(
             { pageIndex: nextPageIndex, },
-            () => callback && callback(),
+            () => { this._scrollTimer = _.delay(() => callback && callback(), 750); }
         );
     }
 
