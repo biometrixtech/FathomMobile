@@ -13,7 +13,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Platform, ScrollView, View, } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
@@ -204,6 +204,9 @@ class Biomechanics extends PureComponent {
                     <View>
                         <Text robotoBold style={{color: PlanLogic.returnInsightColorString(session.score.color), fontSize: AppFonts.scaleFont(15), textAlign: 'right',}}>
                             {`${session.score.value}`}
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
+                                {' /100'}
+                            </Text>
                         </Text>
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11), textAlign: 'right',}}>
                             {sessionDateTime}
@@ -215,6 +218,15 @@ class Biomechanics extends PureComponent {
                     initialPage={initialPage}
                     onChangeTab={details => this.setState({ currentTabDetails: details, })}
                     page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
+                    prerenderingSiblingsComponent={
+                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-start', paddingTop: (AppSizes.paddingXLrg * 2),}} tabLabel={'loading-state'}>
+                            <ActivityIndicator
+                                animating
+                                color={AppColors.zeplin.slateLight}
+                                size={'large'}
+                            />
+                        </View>
+                    }
                     ref={tabView => { this.tabView = tabView; }}
                     renderTabBar={() =>
                         <DefaultTabBar

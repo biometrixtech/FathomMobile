@@ -158,7 +158,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                 </View>
             }
 
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 { _.map(session.summary_pills, (pill, i) =>
                     <View key={i} style={[styles.pillsWrapper(pill.color),]}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
@@ -300,6 +300,12 @@ class Trends extends PureComponent {
         const { user, } = this.props;
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
+        }
+        if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
+            let newIndex = this.state.sessionDateIndex === 0 || this.state.sessionDateIndex < 0 ? this.state.sessionDateIndex : (this.state.sessionDateIndex - 1);
+            this._timer = _.delay(() =>
+                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({ animated: true, index: newIndex, viewOffset: -AppSizes.paddingMed, })
+            , 500);
         }
     }
 
@@ -477,7 +483,6 @@ class Trends extends PureComponent {
                                 data={dates}
                                 initialScrollToIndex={sessionDateIndex}
                                 keyExtractor={(item, index) => index.toString()}
-                                offsetSelection={-20}
                                 onScrollToIndexFailed={() => {}}
                                 ref={ref => (this._smoothPickerRef = ref)}
                                 renderItem={({ item, index}) => {
@@ -505,7 +510,7 @@ class Trends extends PureComponent {
                                 }}
                                 scrollAnimation={true}
                                 showsHorizontalScrollIndicator={false}
-                                snapToAlignment={'center'}
+                                snapToAlignment={'end'}
                             />
 
                             {(times.length > 1) &&
