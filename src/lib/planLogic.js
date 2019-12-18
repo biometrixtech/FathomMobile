@@ -1711,11 +1711,11 @@ const PlanLogic = {
                 return newParsedData;
             });
         }
-        let times = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].length > 0 ?
-            _.map(dates[sessionDateIndex], (date, i) => date)
+        let times = (sessionDateIndex || sessionDateIndex === 0) && dates && dates[sessionDateIndex] && dates[sessionDateIndex].data.length > 0 ?
+            _.map(dates[sessionDateIndex].data, (date, i) => date)
             :
             [];
-        let selectedBiomechanicsSession = sessionDateIndex && dates && dates[sessionDateIndex] && dates[sessionDateIndex].data.length > 0 ?
+        let selectedBiomechanicsSession = (sessionDateIndex || sessionDateIndex === 0) && dates && dates[sessionDateIndex] && dates[sessionDateIndex].data.length > 0 ?
             _.filter(biomechanicsSummary.sessions, s => s.id === dates[sessionDateIndex].data[selectedTimeIndex].sessionId)
             :
             [];
