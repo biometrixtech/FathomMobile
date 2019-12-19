@@ -7,11 +7,13 @@ import { Alert, BackHandler, Image, Platform, ScrollView, StatusBar, TouchableOp
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
+import _ from 'lodash';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
 import { ListItem, Spacer, TabIcon, Text, Tooltip, } from '../custom';
 import { AppUtil, SensorLogic, } from '../../lib';
+import { Loading, } from '../general';
 // import SensorBackUpTutorial from './SensorBackUpTutorial';
 
 const ICON_SIZE = 24;
@@ -39,9 +41,10 @@ class SensorFiles extends Component {
     static componentName = 'SensorFiles';
 
     static propTypes = {
-        getSensorFiles: PropTypes.func.isRequired,
-        updateUser:     PropTypes.func.isRequired,
-        user:           PropTypes.object.isRequired,
+        assignKitIndividual: PropTypes.func.isRequired,
+        getSensorFiles:      PropTypes.func.isRequired,
+        updateUser:          PropTypes.func.isRequired,
+        user:                PropTypes.object.isRequired,
     }
 
     static defaultProps = {}
@@ -52,6 +55,7 @@ class SensorFiles extends Component {
         this.state = {
             isTooltipOpen: false,
             // isTutorialModalOpen: !user.first_time_experience.includes('3Sensor-Onboarding-Tutorial-User-Complete'),
+            loading:       false,
         };
     }
 
@@ -83,6 +87,44 @@ class SensorFiles extends Component {
             .then(res => this.setState({ isTutorialModalOpen: false, }))
             .catch(err => this.setState({ isTutorialModalOpen: false, }));
     }
+
+    _handleRemoveAccount = () => {
+        const { assignKitIndividual, updateUser, user, } = this.props;
+        // NOTE: THIS LOGIC HERE DOESN'T SEEM TO WORK
+        let newUserPayloadObj = {};
+        newUserPayloadObj['¬sensor_data'] = {};
+        newUserPayloadObj['¬sensor_data'].sensor_pid = null;
+        newUserPayloadObj['¬sensor_data'].mobile_udid = null;
+        this.setState(
+            { loading: true, },
+            () => assignKitIndividual({wifiMacAddress: user.sensor_data.sensor_pid,}, {})
+                .then(() => updateUser(newUserPayloadObj, user.id, false, false))
+                .then(() => this.setState(
+                    { loading: false, },
+                    () => _.delay(() => Actions.pop(), 250),
+                ))
+                .catch(err => this.setState(
+                    { loading: false, },
+                    () => _.delay(() => this._handleRemoveAccountError(), 250),
+                )),
+        );
+    }
+
+    _handleRemoveAccountError = () => Alert.alert(
+        '',
+        'We\'re unable to remove Fathom PRO from your account.',
+        [
+            {
+                text:  'Cancel',
+                style: 'cancel',
+            },
+            {
+                text:    'Try Again',
+                onPress: () => this._handleRemoveAccount(),
+            },
+        ],
+        { cancelable: false, }
+    )
 
     _handleWifiClicked = sensorNetwork => {
         Alert.alert(
@@ -121,7 +163,7 @@ class SensorFiles extends Component {
 
     render = () => {
         const { user, } = this.props;
-        const { isTooltipOpen, isTutorialModalOpen, } = this.state;
+        const { isTooltipOpen, isTutorialModalOpen, loading, } = this.state;
         let sensorData = user.sensor_data;
         const {
             batteryIconProps,
@@ -254,6 +296,40 @@ class SensorFiles extends Component {
                         titleProps={{allowFontScaling: false, numberOfLines: 1,}}
                         titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
                     />
+                    {/*<Spacer isDivider />
+                    <ListItem
+                        containerStyle={{paddingVertical: AppSizes.padding,}}
+                        leftIcon={{
+                            color:     AppColors.zeplin.splash,
+                            iconStyle: { paddingLeft: AppSizes.padding, shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1, },
+                            name:      'account-remove',
+                            size:      ICON_SIZE,
+                            type:      'material-community',
+                        }}
+                        onPress={() => Alert.alert(
+                            'Are you sure you want to remove the Fathom PRO Kit from your account?',
+                            'Before capturing another Workout, you will need to associate a Fathom PRO Kit with your account.',
+                            [
+                                {
+                                    text:  'Cancel',
+                                    style: 'cancel',
+                                },
+                                {
+                                    text:    'Remove',
+                                    onPress: () => this._handleRemoveAccount(),
+                                },
+                            ],
+                            { cancelable: false, }
+                        )}
+                        rightIcon={{
+                            color: AppColors.zeplin.slateLight,
+                            name:  'chevron-right',
+                            size:  ICON_SIZE,
+                        }}
+                        title={'Remove Fathom PRO'}
+                        titleProps={{allowFontScaling: false, numberOfLines: 1,}}
+                        titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), paddingLeft: AppSizes.paddingMed,}}
+                    />*/}
                     <View style={{backgroundColor: AppColors.zeplin.superLight, paddingLeft: AppSizes.padding, paddingVertical: AppSizes.paddingSml,}}>
                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13),}}>{'Tutorial'}</Text>
                     </View>
@@ -313,6 +389,14 @@ class SensorFiles extends Component {
                     handleOnClose={this._handleBackUpTutorialOnClose}
                     isVisible={isTutorialModalOpen}
                 />*/}
+
+                { loading ?
+                    <Loading
+                        text={'Removing account...'}
+                    />
+                    :
+                    null
+                }
             </ScrollView>
         );
     }
