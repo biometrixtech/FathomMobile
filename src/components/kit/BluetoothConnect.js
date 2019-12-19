@@ -520,7 +520,7 @@ class BluetoothConnect extends Component {
                                         </Text>
                                         :
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                            {'You may have entered the wrong password, your phone lost connection with you PRO Kit, or your Kit is no longer in range of the wifi network.'}
+                                            {'You may have entered the wrong password, your phone lost connection with your PRO Kit, or your Kit is no longer in range of the wifi network.'}
                                         </Text>
                                     }
                                 </View>
