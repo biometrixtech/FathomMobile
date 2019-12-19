@@ -2988,13 +2988,23 @@ const PlanLogic = {
                             : body.tight && body.tight > 0 ?
                                 body.tight
                                 :
-                                10;
-        let tintColor = severityValue > 0 && severityValue <= 3 ?
-            '#F7E3AB'
-            : severityValue > 3 && severityValue <= 6 ?
-                '#F1CF6C'
-                :
-                AppColors.zeplin.yellow;
+                                0;
+        const {
+            mildValues,
+            moderateValues,
+            severeValues,
+            maxValues,
+        } = PlanLogic.returnSliderValues();
+        let tintColor = mildValues.includes(severityValue) ?
+            AppColors.zeplin.yellowLight
+            : moderateValues.includes(severityValue) ?
+                AppColors.zeplin.warningLight
+                : severeValues.includes(severityValue) ?
+                    AppColors.zeplin.errorLight
+                    : maxValues.includes(severityValue) ?
+                        AppColors.zeplin.error
+                        :
+                        AppColors.zeplin.slateLight;
         return {
             bodyImage,
             tintColor,
@@ -3156,6 +3166,15 @@ const PlanLogic = {
         };
     },
 
+    returnSliderValues: () => {
+        return {
+            noneValues:     [0],
+            mildValues:     [1, 2, 3],
+            moderateValues: [4, 5, 6],
+            severeValues:   [7, 8, 9],
+            maxValues:      [10],
+        }
+    },
 };
 
 /* Export ==================================================================== */
