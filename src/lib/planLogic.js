@@ -1521,6 +1521,20 @@ const PlanLogic = {
                 `${_.filter(MyPlanConstants.teamSports, ['index', trainingSession.sport_name])[0].label}`
                 :
                 'Distance Run';
+            if(
+                newTrainingSession.source === 3 &&
+                newTrainingSession.asymmetry &&
+                dailyPlanObj.trends &&
+                dailyPlanObj.trends.biomechanics_summary &&
+                dailyPlanObj.trends.biomechanics_summary.active
+            ) {
+                let sessionFromTrends = _.find(dailyPlanObj.trends.biomechanics_summary.sessions, s => s.id === newTrainingSession.session_id);
+                if(sessionFromTrends) {
+                    let summaryPills = sessionFromTrends.summary_pills;
+                    let score = { ...sessionFromTrends.score, };
+                    newTrainingSession.asymmetry = { ...newTrainingSession.asymmetry, summary_pills: summaryPills, score, };
+                }
+            }
             return newTrainingSession;
         });
         const missedModalities = _.filter(cleanedModalities, modality => !modality.active && !modality.completed);
@@ -1588,6 +1602,7 @@ const PlanLogic = {
         const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
+        console.log('completedLockedModalities',completedLockedModalities);
         return {
             activeAfterModalities:           [],
             activeBeforeModalities:          activeModalities,
@@ -2988,13 +3003,23 @@ const PlanLogic = {
                             : body.tight && body.tight > 0 ?
                                 body.tight
                                 :
-                                10;
-        let tintColor = severityValue > 0 && severityValue <= 3 ?
-            '#F7E3AB'
-            : severityValue > 3 && severityValue <= 6 ?
-                '#F1CF6C'
-                :
-                AppColors.zeplin.yellow;
+                                0;
+        const {
+            mildValues,
+            moderateValues,
+            severeValues,
+            maxValues,
+        } = PlanLogic.returnSliderValues();
+        let tintColor = mildValues.includes(severityValue) ?
+            AppColors.zeplin.yellowLight
+            : moderateValues.includes(severityValue) ?
+                AppColors.zeplin.warningLight
+                : severeValues.includes(severityValue) ?
+                    AppColors.zeplin.errorLight
+                    : maxValues.includes(severityValue) ?
+                        AppColors.zeplin.error
+                        :
+                        AppColors.zeplin.slateLight;
         return {
             bodyImage,
             tintColor,
@@ -3156,6 +3181,15 @@ const PlanLogic = {
         };
     },
 
+    returnSliderValues: () => {
+        return {
+            noneValues:     [0],
+            mildValues:     [1, 2, 3],
+            moderateValues: [4, 5, 6],
+            severeValues:   [7, 8, 9],
+            maxValues:      [10],
+        }
+    },
 };
 
 /* Export ==================================================================== */

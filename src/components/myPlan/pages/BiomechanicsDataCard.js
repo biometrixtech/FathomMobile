@@ -176,7 +176,7 @@ class BiomechanicsDataCard extends PureComponent {
                                     {
                                         (fill) => (
                                             <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
-                                                {`${card.value}%`}
+                                                {card.value}
                                             </Text>
                                         )
                                     }

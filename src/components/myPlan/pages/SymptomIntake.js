@@ -17,6 +17,7 @@ import { StyleSheet, TouchableOpacity, View, } from 'react-native';
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../../constants';
 import { FathomModal, FathomSlider, SVGImage, Spacer, TabIcon, Text, } from '../../custom';
+import { PlanLogic, } from '../../../lib';
 
 // import third-party libraries
 import _ from 'lodash';
@@ -183,6 +184,22 @@ class SymptomIntake extends Component {
         );
     }
 
+    _returnSliderValueTextColor = value => {
+        const {
+            mildValues,
+            moderateValues,
+            severeValues,
+        } = PlanLogic.returnSliderValues();
+        return mildValues.includes(value) ?
+            AppColors.zeplin.yellowLight
+            : moderateValues.includes(value) ?
+                AppColors.zeplin.warningLight
+                : severeValues.includes(value) ?
+                    AppColors.zeplin.errorLight
+                    :
+                    AppColors.zeplin.error;
+    }
+
     _validateForm = (validateBtn, updatedPills) => {
         const { pills, } = this.state;
         if(validateBtn) {
@@ -270,7 +287,19 @@ class SymptomIntake extends Component {
                         )}
                     </View>
                     <Spacer size={AppSizes.paddingLrg} />
-                    <Text robotoRegular style={{color: isValid ? AppColors.zeplin.slate : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>{'Rate the severity'}</Text>
+                    <Text robotoRegular style={{color: isValid ? AppColors.zeplin.slate : AppColors.zeplin.slateXLight, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
+                        {'Rate the severity:'}
+                        {(sliderValue && sliderValue > 0) ?
+                            <Text
+                                robotoBold
+                                style={{color: this._returnSliderValueTextColor(sliderValue),}}
+                            >
+                                {` ${sliderValue}`}
+                            </Text>
+                            :
+                            null
+                        }
+                    </Text>
                     <Spacer size={AppSizes.paddingLrg} />
                     <FathomSlider
                         disabled={!isValid}

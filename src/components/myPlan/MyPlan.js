@@ -51,12 +51,12 @@ import moment from 'moment';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, AppStyles, ErrorMessages, } from '../../constants';
-import { AppUtil, PlanLogic, } from '../../lib';
+import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
 import { store } from '../../store';
 import defaultPlanState from '../../states/plan';
 
 // Components
-import { CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
+import { AnimatedCircularProgress, CustomMyPlanNavBar, DeckCards, FathomModal, TabIcon, Text, } from '../custom';
 import {
     LoadingState,
     LogSymptomsModal,
@@ -80,6 +80,11 @@ const styles = StyleSheet.create({
         height:         50,
         justifyContent: 'center',
         width:          50,
+    },
+    completedLockedActivityTabWrapper: {
+        borderRadius:      12,
+        paddingHorizontal: AppSizes.paddingMed,
+        paddingVertical:   AppSizes.paddingSml,
     },
     completedSubtitle: {
         fontSize: AppFonts.scaleFont(14),
@@ -111,6 +116,14 @@ const styles = StyleSheet.create({
         fontSize: AppFonts.scaleFont(18),
         opacity:  0.4,
     },
+    pillsWrapper: color => ({
+        backgroundColor:   `${PlanLogic.returnInsightColorString(color)}${PlanLogic.returnHexOpacity(0.15)}`,
+        borderRadius:      100,
+        marginHorizontal:  AppSizes.paddingXSml,
+        marginTop:         AppSizes.paddingSml,
+        paddingHorizontal: AppSizes.paddingSml,
+        paddingVertical:   AppSizes.paddingXSml,
+    }),
     sensorSessionLoading: {
         alignItems:      'center',
         backgroundColor: `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`,
@@ -121,6 +134,13 @@ const styles = StyleSheet.create({
         position:        'absolute',
         right:           0,
         top:             0,
+    },
+    shadowStyles: {
+        elevation:     2,
+        shadowColor:   'rgba(0, 0, 0, 0.16)',
+        shadowOffset:  { height: 3, width: 0, },
+        shadowOpacity: 1,
+        shadowRadius:  8,
     },
     unreadNotificationsWrapper: {
         alignItems:      'center',
@@ -136,9 +156,32 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
+const ActivityTabWrapper = props => (props.isSensorSession && props.asymmetry && props.onPress) ?
+    <TouchableOpacity
+        onPress={props.onPress}
+        style={[
+            styles.completedLockedActivityTabWrapper,
+            {backgroundColor: AppColors.white,},
+            styles.shadowStyles,
+        ]}
+    >
+        {props.children}
+    </TouchableOpacity>
+    :
+    <View
+        style={[
+            styles.completedLockedActivityTabWrapper,
+            {backgroundColor: AppColors.zeplin.superLight,},
+        ]}
+    >
+        {props.children}
+    </View>;
+
 const ActivityTab = ({
+    asymmetry,
     backgroundImage = false,
     completed,
+    duration,
     id,
     isSensorSession,
     locked,
@@ -150,7 +193,11 @@ const ActivityTab = ({
 }) => (
     <View onLayout={onLayout ? event => onLayout(event) : null} style={{marginBottom: AppSizes.paddingMed,}}>
         { completed || locked ?
-            <View style={{backgroundColor: AppColors.zeplin.superLight, borderRadius: 12, paddingHorizontal: AppSizes.paddingMed, paddingVertical: AppSizes.paddingSml,}}>
+            <ActivityTabWrapper
+                asymmetry={asymmetry}
+                isSensorSession={isSensorSession}
+                onPress={asymmetry && isSensorSession ? () => AppUtil.pushToScene('trends') : null}
+            >
                 <View style={{flexDirection: 'row',}}>
                     { completed ?
                         <View style={{alignSelf: 'center', height: AppFonts.scaleFont(24), width: AppFonts.scaleFont(24),}}>
@@ -180,17 +227,25 @@ const ActivityTab = ({
                             >
                                 {title}
                             </Text>
-                            { isSensorSession &&
-                                <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={require('../../../assets/images/standard/kitactive.png')}
-                                        style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
-                                    />
+                            {   isSensorSession && asymmetry ?
+                                <View>
                                     <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
-                                        {isSensorSession && moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
+                                        {`${moment(isSensorSession.replace('Z', '')).format('h:mma')}, ${SensorLogic.convertMinutesToHrsMins(duration, true)}`}
                                     </Text>
                                 </View>
+                                : isSensorSession ?
+                                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={require('../../../assets/images/standard/kitactive.png')}
+                                            style={{height: 15, marginRight: AppSizes.paddingSml, tintColor: AppColors.zeplin.slateLight, width: 30,}}
+                                        />
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
+                                            {isSensorSession && moment(isSensorSession.replace('Z', '')).format('M/D, h:mma')}
+                                        </Text>
+                                    </View>
+                                    :
+                                    null
                             }
                         </View>
                         { (subtitle && subtitle.length > 0) &&
@@ -204,7 +259,56 @@ const ActivityTab = ({
                         }
                     </View>
                 </View>
-            </View>
+                { (asymmetry && asymmetry.score && asymmetry.score.active) &&
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+                        <AnimatedCircularProgress
+                            arcSweepAngle={320}
+                            backgroundColor={AppColors.zeplin.superLight}
+                            childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
+                            fill={asymmetry.score.value}
+                            lineCap={'round'}
+                            rotation={200}
+                            size={AppSizes.screen.widthFifth}
+                            style={{marginRight: AppSizes.paddingSml, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
+                            tintColor={PlanLogic.returnInsightColorString(asymmetry.score.color)}
+                            width={(AppSizes.paddingSml - 2)}
+                        >
+                            {
+                                (fill) => (
+                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(asymmetry.score.color), fontSize: AppFonts.scaleFont(25),}}>
+                                        {asymmetry.score.value}
+                                    </Text>
+                                )
+                            }
+                        </AnimatedCircularProgress>
+                        <View style={[{alignSelf: 'flex-end', flex: 1, flexDirection: 'row',}, Platform.OS === 'ios' ? {} : {marginRight: AppSizes.padding,}]}>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                                {asymmetry.score.text}
+                            </Text>
+                        </View>
+                    </View>
+                }
+                { (asymmetry && asymmetry.summary_pills) &&
+                    <View style={{flexDirection: 'row',}}>
+                        <View style={{flex: 9, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+                            { _.map(asymmetry.summary_pills, (pill, i) =>
+                                <View key={i} style={[styles.pillsWrapper(pill.color),]}>
+                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
+                                        {pill.text}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={{alignItems: 'flex-end', flex: 1, justifyContent: 'flex-end',}}>
+                            <TabIcon
+                                color={`${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`}
+                                icon={'chevron-right'}
+                                size={20}
+                            />
+                        </View>
+                    </View>
+                }
+            </ActivityTabWrapper>
             :
             <TouchableOpacity
                 activeOpacity={onPress ? 0.5 : 1}
@@ -1705,12 +1809,12 @@ class MyPlan extends Component {
 
                                     {_.map(beforeCompletedLockedModalities, (completedLockedModality, key) => (
                                         <ActivityTab
+                                            asymmetry={completedLockedModality.asymmetry}
                                             completed={completedLockedModality.completed}
-                                            // completed={completedLockedModality.isCompleted}
+                                            duration={completedLockedModality.duration_minutes}
                                             isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}
                                             locked={!completedLockedModality.active && !completedLockedModality.completed}
-                                            // locked={completedLockedModality.isLocked}
                                             subtitle={completedLockedModality.subtitle}
                                             title={completedLockedModality.title}
                                         />
