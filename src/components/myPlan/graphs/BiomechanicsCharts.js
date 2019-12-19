@@ -90,13 +90,10 @@ class BiomechanicsCharts extends PureComponent {
                 alignItems: 'center',
                 alignSelf:  'center',
                 height:     (pieDetails.pieHeight * heightWidthMulitplier),
-                transform:  [{rotate: rotateDeg,}, {scaleY: -1,}],
                 width:      (pieDetails.pieWidth * heightWidthMulitplier),
             }
             :
-            {
-                transform: [{rotate: rotateDeg,}]
-            };
+            {};
         let extraImageBackgroundStyles = dataType === 0 ?
             {}
             : dataType === 3 ?
@@ -235,7 +232,7 @@ class BiomechanicsCharts extends PureComponent {
                             }
                             style={[{height: pieDetails.pieHeight, marginRight: AppSizes.paddingSml, width: pieDetails.pieWidth,}, extraImageBackgroundStyles,]}
                         >
-                            <View style={[extraPieStyles,]}>
+                            <View style={[{transform: [{rotate: rotateDeg,}],}, extraPieStyles,]}>
                                 <V.VictoryPie
                                     containerComponent={<V.VictoryContainer responsive={false} />}
                                     cornerRadius={7}

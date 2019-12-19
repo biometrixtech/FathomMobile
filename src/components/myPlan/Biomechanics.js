@@ -136,18 +136,19 @@ class Biomechanics extends PureComponent {
                 ref:  {},
             },
             dataToDisplay,
-            initialPage: 0,
-            loading:     false,
+            initialPage:    0,
+            isScrollLocked: true,
+            loading:        false,
         };
         this.tabView = {};
     }
 
     componentDidMount = () => {
         _.delay(() => this._toggleRichDataView(), 10);
-        _.delay(() => {
+        _.delay(() => this.setState({ isScrollLocked: false, }, () => {
             const initialPage = _.find(this.state.dataToDisplay, o => o.data_type === this.props.dataType && o.index === this.props.index).page || 0;
             return this.tabView && this.tabView.goToPage && this.tabView.goToPage(initialPage);
-        }, 500);
+        }), 500);
     }
 
     _toggleRichDataView = () => {
@@ -180,7 +181,7 @@ class Biomechanics extends PureComponent {
 
     render = () => {
         const { plan, session, } = this.props;
-        const { currentTabDetails, dataToDisplay, initialPage, loading, } = this.state;
+        const { currentTabDetails, dataToDisplay, initialPage, isScrollLocked, loading, } = this.state;
         let {
             sessionDateTime,
             sessionDetails,
@@ -216,10 +217,11 @@ class Biomechanics extends PureComponent {
 
                 <ScrollableTabView
                     initialPage={initialPage}
+                    locked={isScrollLocked}
                     onChangeTab={details => this.setState({ currentTabDetails: details, })}
                     page={currentTabDetails && currentTabDetails.i ? currentTabDetails.i : initialPage}
                     prerenderingSiblingsComponent={
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-start', paddingTop: (AppSizes.paddingXLrg * 2),}} tabLabel={'loading-state'}>
+                        <View style={{alignItems: 'center', flexGrow: 1, justifyContent: 'flex-start', paddingTop: (AppSizes.paddingXLrg * 2),}} tabLabel={'loading-state'}>
                             <ActivityIndicator
                                 animating
                                 color={AppColors.zeplin.slateLight}

@@ -2572,7 +2572,7 @@ const PlanLogic = {
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
                 if(dataType === 3) {
-                    rotateDeg = '30deg';
+                    rotateDeg = '-150deg';
                     smallerPieData = _.map(smallerPieData, (data, key) => {
                         let newData = _.cloneDeep(data);
                         newData.y = key === 0 ?
@@ -2581,6 +2581,18 @@ const PlanLogic = {
                                 newData.y
                                 :
                                 (newData.y - smallerPieData[0].y);
+                        return newData;
+                    });
+                    largerPieData = _.reverse(largerPieData);
+                    largerPieData = _.map(largerPieData, (data, key) => {
+                        let newData = _.cloneDeep(data);
+                        newData.x = key;
+                        return newData;
+                    });
+                    smallerPieData = _.reverse(smallerPieData);
+                    smallerPieData = _.map(smallerPieData, (data, key) => {
+                        let newData = _.cloneDeep(data);
+                        newData.x = key;
                         return newData;
                     });
                 }

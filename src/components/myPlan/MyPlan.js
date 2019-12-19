@@ -116,10 +116,10 @@ const styles = StyleSheet.create({
         fontSize: AppFonts.scaleFont(18),
         opacity:  0.4,
     },
-    pillsWrapper: color => ({
+    pillsWrapper: (color, isLast) => ({
         backgroundColor:   `${PlanLogic.returnInsightColorString(color)}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:      100,
-        marginHorizontal:  AppSizes.paddingXSml,
+        marginRight:       isLast ? 0 :AppSizes.paddingXSml,
         marginTop:         AppSizes.paddingSml,
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
@@ -260,7 +260,7 @@ const ActivityTab = ({
                     </View>
                 </View>
                 { (asymmetry && asymmetry.score && asymmetry.score.active) &&
-                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+                    <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: AppSizes.paddingSml,}}>
                         <AnimatedCircularProgress
                             arcSweepAngle={320}
                             backgroundColor={AppColors.zeplin.superLight}
@@ -290,9 +290,9 @@ const ActivityTab = ({
                 }
                 { (asymmetry && asymmetry.summary_pills) &&
                     <View style={{flexDirection: 'row',}}>
-                        <View style={{flex: 9, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+                        <View style={{flex: 9, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml,}}>
                             { _.map(asymmetry.summary_pills, (pill, i) =>
-                                <View key={i} style={[styles.pillsWrapper(pill.color),]}>
+                                <View key={i} style={[styles.pillsWrapper(pill.color, (i + 1) === asymmetry.summary_pills.length),]}>
                                     <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
                                         {pill.text}
                                     </Text>
@@ -762,14 +762,7 @@ class MyPlan extends Component {
     }
 
     componentWillUnmount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress');
-        }
-        AppState.removeEventListener('change', this._handleAppStateChange);
-        // clear timers
-        clearInterval(this._timer);
-        clearInterval(this.goToPageTimer);
-        clearInterval(this.scrollToTimer);
+        this._checkAppState('background');
     }
 
     _checkCoachStatus = () => {

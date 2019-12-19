@@ -10,7 +10,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { AppState, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, } from '../../constants';
@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
         shadowOpacity:     1,
         shadowRadius:      20,
     },
-    pillsWrapper: color => ({
+    pillsWrapper: (color, isLast) => ({
         backgroundColor:   `${PlanLogic.returnInsightColorString(color)}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:      100,
-        marginHorizontal:  AppSizes.paddingXSml,
+        marginRight:       isLast ? 0 :AppSizes.paddingXSml,
         marginTop:         AppSizes.paddingSml,
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
@@ -160,7 +160,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
 
             <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 { _.map(session.summary_pills, (pill, i) =>
-                    <View key={i} style={[styles.pillsWrapper(pill.color),]}>
+                    <View key={i} style={[styles.pillsWrapper(pill.color, (i + 1) === session.summary_pills.length),]}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
                             {pill.text}
                         </Text>
@@ -298,6 +298,7 @@ class Trends extends PureComponent {
 
     componentDidMount = () => {
         const { user, } = this.props;
+        AppState.addEventListener('change', this._handleAppStateChange);
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
@@ -309,9 +310,27 @@ class Trends extends PureComponent {
         }
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(prevProps.currentSelectedTab !== this.props.currentSelectedTab) {
+            this._checkAppState(this.props.currentSelectedTab === 'trends' ? 'active' : 'background');
+        }
+    }
+
     componentWillUnmount = () => {
-        // clear timers
-        clearInterval(this._timer);
+        this._checkAppState('background');
+    }
+
+    _checkAppState = nextAppState => {
+        if(nextAppState === 'background') {
+            // clear timers
+            clearInterval(this._timer);
+        } else if(nextAppState === 'active') {
+            this._timer = null;
+        }
+    }
+
+    _handleAppStateChange = nextAppState => {
+        this._checkAppState(nextAppState);
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -848,9 +867,10 @@ class Trends extends PureComponent {
 }
 
 Trends.propTypes = {
-    plan:       PropTypes.object.isRequired,
-    updateUser: PropTypes.func.isRequired,
-    user:       PropTypes.object.isRequired,
+    currentSelectedTab: PropTypes.string.isRequired,
+    plan:               PropTypes.object.isRequired,
+    updateUser:         PropTypes.func.isRequired,
+    user:               PropTypes.object.isRequired,
 };
 
 Trends.defaultProps = {};
