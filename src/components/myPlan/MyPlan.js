@@ -1768,7 +1768,7 @@ class MyPlan extends Component {
 
                                     { (dailyPlanObj.train_later && !triggerStep) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>
-                                            {'Tap "+" to log training or an off day'}
+                                            {'Tap "+" to log training or symptoms'}
                                         </Text>
                                     }
 

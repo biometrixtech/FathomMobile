@@ -225,7 +225,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                                                         size={15}
                                                         type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                                     />
-                                                    <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(sessionData.change.color), fontSize: AppFonts.scaleFont(12),}}>
+                                                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                                                         {`${sessionData.change.value || sessionData.change.value === 0 ? Math.abs(sessionData.change.value) : '--'} ${sessionData.change.text}`}
                                                     </Text>
                                                 </View>
@@ -418,7 +418,7 @@ class Trends extends PureComponent {
                                                 size={15}
                                                 type={Platform.OS === 'ios' ? 'antdesign' : 'font-awesome'}
                                             />
-                                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(recoveryQuality.change.color), fontSize: AppFonts.scaleFont(12),}}>
+                                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(12),}}>
                                                 {`${recoveryQuality.change.value || recoveryQuality.change.value === 0 ? Math.abs(recoveryQuality.change.value) : '--'} ${recoveryQuality.change.text}`}
                                             </Text>
                                         </View>
