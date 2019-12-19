@@ -17,6 +17,10 @@ const initialState = Store;
 
 export default function initReducer(state = initialState, action) {
     switch (action.type) {
+    case Actions.UPDATE_CURRENT_TAB:
+        return Object.assign({}, state, {
+            currentSelectedTab: action.tab,
+        });
     case Actions.UPDATE_SCHEDULED_MAINTENANCE:
         return Object.assign({}, state, {
             scheduledMaintenance: {

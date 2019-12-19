@@ -1706,7 +1706,7 @@ const PlanLogic = {
         if(recoveryQuality.summary_text.active) {
             parsedSummaryTextData = _.map(recoveryQuality.summary_text.bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 newParsedData.style = [AppStyles.robotoBold];
                 return newParsedData;
             });
@@ -1830,7 +1830,7 @@ const PlanLogic = {
         if(props && props.trend_data) {
             _.map(props.trend_data.bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 newParsedData.style = [AppStyles.robotoBold, styles.cardText, { color: PlanLogic.returnInsightColorString(prop.color), }];
                 parsedData.push(newParsedData);
             });
@@ -2558,7 +2558,7 @@ const PlanLogic = {
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
                 if(dataType === 3) {
-                    rotateDeg = '-190deg';
+                    rotateDeg = '30deg';
                     smallerPieData = _.map(smallerPieData, (data, key) => {
                         let newData = _.cloneDeep(data);
                         newData.y = key === 0 ?
@@ -2635,7 +2635,7 @@ const PlanLogic = {
         if(specificSessionAsymmetryData && specificSessionAsymmetryData.summary_text && specificSessionAsymmetryData.summary_text.active) {
             parsedSummaryTextData = _.map(specificSessionAsymmetryData.summary_text.bold_text, (prop, i) => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 newParsedData.style = [AppStyles.robotoBold];
                 return newParsedData;
             });
@@ -3098,7 +3098,7 @@ const PlanLogic = {
         if(sessionData.description.active) {
             parsedDescriptionTextData = _.map(sessionData.description.bold_text, prop => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 newParsedData.style = [AppStyles.robotoBold];
                 return newParsedData;
             });
@@ -3107,7 +3107,7 @@ const PlanLogic = {
         if(sessionData && sessionData.asymmetry && sessionData.asymmetry.detail_text && sessionData.asymmetry.detail_text.length > 0) {
             parsedAsymmetryDetailTextData = _.map(sessionData.asymmetry.detail_bold_text, prop => {
                 let newParsedData = {};
-                newParsedData.pattern = new RegExp(prop.text, 'i');
+                newParsedData.pattern = new RegExp(` ${prop.text} `, 'i');
                 newParsedData.style = [AppStyles.robotoBold, {color: PlanLogic.returnInsightColorString(prop.color),}];
                 return newParsedData;
             });

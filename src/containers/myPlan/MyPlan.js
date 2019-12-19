@@ -10,6 +10,7 @@ const MyPlan = ({
     clearCompletedExercises,
     clearHealthKitWorkouts,
     createSensorSession,
+    currentSelectedTab,
     getMobilize,
     getMyPlan,
     getSensorFiles,
@@ -36,6 +37,7 @@ const MyPlan = ({
         clearCompletedExercises={clearCompletedExercises}
         clearHealthKitWorkouts={clearHealthKitWorkouts}
         createSensorSession={createSensorSession}
+        currentSelectedTab={currentSelectedTab}
         getMobilize={getMobilize}
         getMyPlan={getMyPlan}
         getSensorFiles={getSensorFiles}
@@ -65,6 +67,7 @@ MyPlan.propTypes = {
     clearCompletedExercises:         PropTypes.func.isRequired,
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
     createSensorSession:             PropTypes.func.isRequired,
+    currentSelectedTab:              PropTypes.string.isRequired,
     getMobilize:                     PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
     getSensorFiles:                  PropTypes.func.isRequired,
@@ -95,6 +98,7 @@ MyPlan.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    currentSelectedTab:   state.init.currentSelectedTab,
     healthData:           state.plan.healthData,
     lastOpened:           state.plan.lastOpened,
     network:              state.network,

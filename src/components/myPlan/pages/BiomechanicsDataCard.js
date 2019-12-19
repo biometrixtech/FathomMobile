@@ -19,6 +19,7 @@ import { PlanLogic, } from '../../../lib';
 import _ from 'lodash';
 
 const cardSummaryTextLengthCatch = 80;
+const cardLeftItemWidth = (AppSizes.screen.widthFifth - AppSizes.paddingMed);
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -117,9 +118,9 @@ class BiomechanicsDataCard extends PureComponent {
         if(range) {
             _.each(range, value => {
                 let height = ((value + 1) === 1) || (value + 1) > 0 && (value + 1) < card.max_value ?
-                    ((AppSizes.screen.widthQuarter - AppSizes.paddingMed) * ((0.5 * (value / card.max_value) + 0.5)))
+                    (cardLeftItemWidth * ((0.5 * (value / card.max_value) + 0.5)))
                     :
-                    (AppSizes.screen.widthQuarter - AppSizes.paddingMed);
+                    cardLeftItemWidth;
                 asymmetryBars.push(
                     <View
                         key={value}
@@ -128,7 +129,7 @@ class BiomechanicsDataCard extends PureComponent {
                             borderRadius:    100,
                             height,
                             marginRight:     AppSizes.paddingXSml,
-                            width:           ((AppSizes.screen.widthQuarter - AppSizes.paddingMed) / card.max_value),
+                            width:           (cardLeftItemWidth / card.max_value),
                         }}
                     />
                 );
@@ -144,6 +145,7 @@ class BiomechanicsDataCard extends PureComponent {
             (card.summary_text.text.substring(0, cardSummaryTextLengthCatch - ending.length) + ending)
             :
             card.summary_text.text;
+        const cardLeftItemFullWidth = (cardLeftItemWidth + (AppSizes.paddingXSml * 4));
         return (
             <TouchableOpacity
                 activeOpacity={initialTrimText ? 0.2 : 1}
@@ -152,43 +154,50 @@ class BiomechanicsDataCard extends PureComponent {
             >
                 <View style={{flex: initialTrimText ? 9.5 : 1, flexDirection: 'row',}}>
                     { card.type === 0 ?
-                        <View style={{alignItems: 'flex-end', flexDirection: 'row', marginRight: AppSizes.paddingMed,}}>
-                            {asymmetryBars}
+                        <View style={{width: cardLeftItemFullWidth,}}>
+                            <View style={{alignSelf: 'flex-start', alignItems: 'flex-end', flexDirection: 'row',}}>
+                                {asymmetryBars}
+                            </View>
                         </View>
                         : card.type === 1 ?
-                            <AnimatedCircularProgress
-                                arcSweepAngle={320}
-                                backgroundColor={AppColors.zeplin.superLight}
-                                childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
-                                fill={card.value}
-                                lineCap={'round'}
-                                rotation={200}
-                                size={(AppSizes.screen.widthQuarter - AppSizes.paddingMed)}
-                                style={{marginRight: AppSizes.padding, paddingHorizontal: AppSizes.paddingXSml, paddingVertical: AppSizes.paddingXSml,}}
-                                tintColor={PlanLogic.returnInsightColorString(card.color)}
-                                width={AppSizes.paddingMed}
-                            >
-                                {
-                                    (fill) => (
-                                        <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
-                                            {`${card.value}%`}
-                                        </Text>
-                                    )
-                                }
-                            </AnimatedCircularProgress>
+                            <View style={{width: cardLeftItemFullWidth,}}>
+                                <AnimatedCircularProgress
+                                    arcSweepAngle={320}
+                                    backgroundColor={AppColors.zeplin.superLight}
+                                    childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
+                                    fill={card.value}
+                                    lineCap={'round'}
+                                    rotation={200}
+                                    size={cardLeftItemFullWidth}
+                                    style={{alignSelf: 'center', paddingVertical: AppSizes.paddingXSml,}}
+                                    tintColor={PlanLogic.returnInsightColorString(card.color)}
+                                    width={AppSizes.paddingSml}
+                                >
+                                    {
+                                        (fill) => (
+                                            <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(card.color), fontSize: AppFonts.scaleFont(18),}}>
+                                                {`${card.value}%`}
+                                            </Text>
+                                        )
+                                    }
+                                </AnimatedCircularProgress>
+                            </View>
                             :
-                            <View style={{marginLeft: AppSizes.paddingMed, marginRight: AppSizes.paddingMed,}}>
-                                {imageSource &&
-                                    <Image
-                                        resizeMode={'contain'}
-                                        source={imageSource}
-                                        style={{
-                                            height:    (AppSizes.screen.widthQuarter - AppSizes.paddingMed),
-                                            tintColor: PlanLogic.returnInsightColorString(card.color),
-                                            width:     (AppSizes.screen.widthQuarter - AppSizes.paddingMed),
-                                        }}
-                                    />
-                                }
+                            <View style={{width: cardLeftItemFullWidth,}}>
+                                <View>
+                                    {imageSource &&
+                                        <Image
+                                            resizeMode={'contain'}
+                                            source={imageSource}
+                                            style={{
+                                                alignSelf: 'center',
+                                                height:    cardLeftItemWidth,
+                                                tintColor: PlanLogic.returnInsightColorString(card.color),
+                                                width:     cardLeftItemWidth,
+                                            }}
+                                        />
+                                    }
+                                </View>
                             </View>
                     }
                     <View style={{flex: 1, justifyContent: 'center', marginLeft: AppSizes.paddingMed,}}>

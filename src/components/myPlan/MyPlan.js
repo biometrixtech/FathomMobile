@@ -507,6 +507,7 @@ class MyPlan extends Component {
         clearCompletedExercises:         PropTypes.func.isRequired,
         clearHealthKitWorkouts:          PropTypes.func.isRequired,
         createSensorSession:             PropTypes.func.isRequired,
+        currentSelectedTab:              PropTypes.string.isRequired,
         getMobilize:                     PropTypes.func.isRequired,
         getMyPlan:                       PropTypes.func.isRequired,
         getSensorFiles:                  PropTypes.func.isRequired,
@@ -589,6 +590,7 @@ class MyPlan extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
+        // clear
         const {
             isPageCalculating,
             isPrepareSessionsCompletionModalOpen,
@@ -643,6 +645,10 @@ class MyPlan extends Component {
             // clear timer
             clearInterval(this._timer);
         }
+        // NOTE: THE FOLLOWING LINES ARE TO HELP US WITH OUR MEMOERY LEAK ISSUES
+        if(prevProps.currentSelectedTab !== this.props.currentSelectedTab) {
+            this._checkAppState(this.props.currentSelectedTab === 'myPlan' ? 'active' : 'background');
+        }
     }
 
     componentWillMount = () => {
@@ -688,6 +694,29 @@ class MyPlan extends Component {
                 },
             );
         }, 500);
+    }
+
+    _checkAppState = nextAppState => {
+        if(nextAppState === 'background') {
+            if (Platform.OS === 'android') {
+                BackHandler.removeEventListener('hardwareBackPress');
+            }
+            AppState.removeEventListener('change', this._handleAppStateChange);
+            // clear timers
+            clearInterval(this._timer);
+            clearInterval(this.goToPageTimer);
+            clearInterval(this.scrollToTimer);
+        } else if(nextAppState === 'active') {
+            if (Platform.OS === 'android') {
+                BackHandler.addEventListener('hardwareBackPress', () => true);
+            }
+            AppState.addEventListener('change', this._handleAppStateChange);
+            this._timer = null;
+            this.goToPageTimer = null;
+            this.scrollToTimer = null;
+            // check if we have an open 3S session that needs a PSS
+            this._checkThreeSensorSessions();
+        }
     }
 
     _checkThreeSensorSessions = () => {
@@ -742,26 +771,7 @@ class MyPlan extends Component {
             { appState: nextAppState, },
             () => {
                 // NOTE: THE FOLLOWING LINES ARE TO HELP US WITH OUR MEMOERY LEAK ISSUES
-                if(nextAppState === 'background') {
-                    if (Platform.OS === 'android') {
-                        BackHandler.removeEventListener('hardwareBackPress');
-                    }
-                    AppState.removeEventListener('change', this._handleAppStateChange);
-                    // clear timers
-                    clearInterval(this._timer);
-                    clearInterval(this.goToPageTimer);
-                    clearInterval(this.scrollToTimer);
-                } else if(nextAppState === 'active') {
-                    if (Platform.OS === 'android') {
-                        BackHandler.addEventListener('hardwareBackPress', () => true);
-                    }
-                    AppState.addEventListener('change', this._handleAppStateChange);
-                    this._timer = null;
-                    this.goToPageTimer = null;
-                    this.scrollToTimer = null;
-                    // check if we have an open 3S session that needs a PSS
-                    this._checkThreeSensorSessions();
-                }
+                this._checkAppState(nextAppState);
                 // NOTE: CONTINUE WITH OUR TRUE LOGIC
                 let clearMyPlan = (
                     !lastOpened ||
@@ -1758,7 +1768,7 @@ class MyPlan extends Component {
 
                                     { (dailyPlanObj.train_later && !triggerStep) &&
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), marginBottom: AppSizes.paddingMed, textAlign: 'center',}}>
-                                            {'Tap "+" to log training or an off day'}
+                                            {'Tap "+" to log training or symptoms'}
                                         </Text>
                                     }
 
