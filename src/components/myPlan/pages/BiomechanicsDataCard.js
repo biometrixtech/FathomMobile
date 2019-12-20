@@ -164,7 +164,7 @@ class BiomechanicsDataCard extends PureComponent {
                                 <AnimatedCircularProgress
                                     arcSweepAngle={320}
                                     backgroundColor={AppColors.zeplin.superLight}
-                                    childrenContainerStyle={{marginLeft: 5, marginTop: AppSizes.paddingXSml,}}
+                                    childrenContainerStyle={{marginTop: AppSizes.paddingXSml,}}
                                     fill={card.value}
                                     lineCap={'round'}
                                     rotation={200}
@@ -223,7 +223,7 @@ class BiomechanicsDataCard extends PureComponent {
                                 <View key={i} style={{flexShrink: 1, flexDirection: 'row',}}>
                                     <ParsedText
                                         parse={parsedTextItemsData || []}
-                                        style={{...AppStyles.robotoLight, color: AppColors.zeplin.slate, flexShrink: 1, flexWrap: 'wrap', fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18),}}
+                                        style={{...AppStyles.robotoRegular, color: AppColors.zeplin.slateLight, flexShrink: 1, flexWrap: 'wrap', fontSize: AppFonts.scaleFont(12), lineHeight: AppFonts.scaleFont(18),}}
                                     >
                                         {`\u2022 ${text.text}`}
                                     </ParsedText>

@@ -392,7 +392,7 @@ class BodyModality extends Component {
                                                             size={AppFonts.scaleFont(15)}
                                                             type={'material-community'}
                                                         />
-                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12), marginLeft: AppSizes.paddingXSml,}}>
+                                                        <Text robotoLight style={{color: AppColors.zeplin.slate, flex: 1, fontSize: AppFonts.scaleFont(12), marginLeft: AppSizes.paddingXSml,}}>
                                                             { modality === 'heat' ?
                                                                 'When using heat, be very careful to use moderate heat for a limited time to avoid burns.'
                                                                 : modality === 'ice' ?

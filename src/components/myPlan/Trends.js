@@ -10,7 +10,7 @@
  */
 import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
+import { AppState, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, } from '../../constants';
@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
         shadowOpacity:     1,
         shadowRadius:      20,
     },
-    pillsWrapper: color => ({
+    pillsWrapper: (color, isLast) => ({
         backgroundColor:   `${PlanLogic.returnInsightColorString(color)}${PlanLogic.returnHexOpacity(0.15)}`,
         borderRadius:      100,
-        marginHorizontal:  AppSizes.paddingXSml,
+        marginRight:       isLast ? 0 :AppSizes.paddingXSml,
         marginTop:         AppSizes.paddingSml,
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
@@ -140,7 +140,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                             )
                         }
                     </AnimatedCircularProgress>
-                    <View style={[{alignSelf: 'flex-end', flex: 1, flexDirection: 'row',}, Platform.OS === 'ios' ? {} : {marginRight: AppSizes.padding,}]}>
+                    <View style={[{alignSelf: 'flex-end', flex: 1, flexDirection: 'row', justifyContent: 'space-between'}, Platform.OS === 'ios' ? {} : {marginRight: AppSizes.padding,}]}>
                         <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
                             {session.score.text}
                         </Text>
@@ -160,7 +160,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
 
             <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 { _.map(session.summary_pills, (pill, i) =>
-                    <View key={i} style={[styles.pillsWrapper(pill.color),]}>
+                    <View key={i} style={[styles.pillsWrapper(pill.color, (i + 1) === session.summary_pills.length),]}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
                             {pill.text}
                         </Text>
@@ -298,6 +298,7 @@ class Trends extends PureComponent {
 
     componentDidMount = () => {
         const { user, } = this.props;
+        AppState.addEventListener('change', this._handleAppStateChange);
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
@@ -309,9 +310,27 @@ class Trends extends PureComponent {
         }
     }
 
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(prevProps.currentSelectedTab !== this.props.currentSelectedTab) {
+            this._checkAppState(this.props.currentSelectedTab === 'trends' ? 'active' : 'background');
+        }
+    }
+
     componentWillUnmount = () => {
-        // clear timers
-        clearInterval(this._timer);
+        this._checkAppState('background');
+    }
+
+    _checkAppState = nextAppState => {
+        if(nextAppState === 'background') {
+            // clear timers
+            clearInterval(this._timer);
+        } else if(nextAppState === 'active') {
+            this._timer = null;
+        }
+    }
+
+    _handleAppStateChange = nextAppState => {
+        this._checkAppState(nextAppState);
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -816,7 +835,11 @@ class Trends extends PureComponent {
                             <View style={{backgroundColor: AppColors.white,}}>
                                 <View style={{backgroundColor: AppColors.primary.white.hundredPercent, flexDirection: 'row', padding: AppSizes.padding,}}>
                                     <Text robotoMedium style={{color: AppColors.zeplin.slate, flex: 9, fontSize: AppFonts.scaleFont(22),}}>
-                                        {'Movement Efficiency Score'}
+                                        {selectedBiomechanicsSession[0] && selectedBiomechanicsSession[0].score && selectedBiomechanicsSession[0].score.text ?
+                                            _.startCase(_.toLower(selectedBiomechanicsSession[0].score.text))
+                                            :
+                                            'Movement Efficiency Score'
+                                        }
                                     </Text>
                                     <TabIcon
                                         containerStyle={[{flex: 1,}]}
@@ -829,11 +852,11 @@ class Trends extends PureComponent {
                                     />
                                 </View>
                                 <View style={{padding: AppSizes.paddingLrg,}}>
-                                    <Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.padding,}}>
+                                    {/*<Text robotoBold style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14), marginBottom: AppSizes.padding,}}>
                                         {'What is my Movement Efficiency Score?'}
-                                    </Text>
+                                    </Text>*/}
                                     <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(14),}}>
-                                        {'Functional efficiency is the ability of the neuromuscular system to recruit correct muscle synergies, at the right time, with the appropriate amount of force to perform functional tasks with the least amount of energy and stress on the HMS. This helps prevent overtraining and the development of movement impairment syndromes.'}
+                                        {'Each session is analyzed by combining discrete measures of functional efficiency from your hip and lower extremity movement into a single assessment of how well you moved in your workout.\n\nFunctional efficiency is the ability of the neuromuscular system to recruit and activate optimal muscle synergies, at the right time, and with the appropriate amount of force to perform functional tasks. The goal is to perform a task with the least amount of energy expended and stress concentrated on the body. This helps prevent overtraining and the development of movement impairment syndromes and subsequently, preventable injury.'}
                                     </Text>
                                 </View>
                             </View>
@@ -848,9 +871,10 @@ class Trends extends PureComponent {
 }
 
 Trends.propTypes = {
-    plan:       PropTypes.object.isRequired,
-    updateUser: PropTypes.func.isRequired,
-    user:       PropTypes.object.isRequired,
+    currentSelectedTab: PropTypes.string.isRequired,
+    plan:               PropTypes.object.isRequired,
+    updateUser:         PropTypes.func.isRequired,
+    user:               PropTypes.object.isRequired,
 };
 
 Trends.defaultProps = {};

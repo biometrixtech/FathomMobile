@@ -1602,7 +1602,6 @@ const PlanLogic = {
         const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
-        console.log('completedLockedModalities',completedLockedModalities);
         return {
             activeAfterModalities:           [],
             activeBeforeModalities:          activeModalities,
@@ -2573,7 +2572,7 @@ const PlanLogic = {
                     rotateDeg = `${(100 - (3 * roundedRightY))}deg`;
                 }
                 if(dataType === 3) {
-                    rotateDeg = '30deg';
+                    rotateDeg = '-150deg';
                     smallerPieData = _.map(smallerPieData, (data, key) => {
                         let newData = _.cloneDeep(data);
                         newData.y = key === 0 ?
@@ -2582,6 +2581,18 @@ const PlanLogic = {
                                 newData.y
                                 :
                                 (newData.y - smallerPieData[0].y);
+                        return newData;
+                    });
+                    largerPieData = _.reverse(largerPieData);
+                    largerPieData = _.map(largerPieData, (data, key) => {
+                        let newData = _.cloneDeep(data);
+                        newData.x = key;
+                        return newData;
+                    });
+                    smallerPieData = _.reverse(smallerPieData);
+                    smallerPieData = _.map(smallerPieData, (data, key) => {
+                        let newData = _.cloneDeep(data);
+                        newData.x = key;
                         return newData;
                     });
                 }

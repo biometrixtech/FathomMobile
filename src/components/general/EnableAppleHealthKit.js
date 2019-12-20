@@ -11,7 +11,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, StyleSheet, TouchableHighlight, View, } from 'react-native';
+import { Image, StyleSheet, TouchableHighlight, View, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, } from '../../constants';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     imageBackgroundStyle: {
         alignItems:      'center',
         alignSelf:       'stretch',
-        backgroundColor: AppColors.transparent,
+        backgroundColor: AppColors.white,
         flex:            1,
         justifyContent:  'center',
     },
@@ -42,10 +42,7 @@ const EnableAppleHealthKit = ({
         isVisible={isModalOpen}
     >
         <View style={{flex: 1,}}>
-            <ImageBackground
-                source={require('../../../assets/images/standard/tutorial_background_white.png')}
-                style={[styles.imageBackgroundStyle]}
-            >
+            <View style={[styles.imageBackgroundStyle]}>
                 <View style={{flex: 1, justifyContent: 'space-between', paddingTop: AppSizes.statusBarHeight,}}>
                     <View style={{flex: 1,}}>
                         <TouchableHighlight
@@ -57,7 +54,7 @@ const EnableAppleHealthKit = ({
                         </TouchableHighlight>
                     </View>
                     <View style={{flex: 9, justifyContent: 'space-between', marginBottom: AppSizes.iphoneXBottomBarPadding, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.padding,}}>
-                        <Text oswaldMedium style={{color: AppColors.zeplin.splash, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'APPLE HEALTH'}</Text>
+                        <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(40), textAlign: 'center',}}>{'Apple Health'}</Text>
                         <Spacer size={AppSizes.paddingSml} />
                         <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>{healthKitText}</Text>
                         <Spacer size={AppSizes.paddingSml} />
@@ -80,7 +77,7 @@ const EnableAppleHealthKit = ({
                         </View>
                     </View>
                 </View>
-            </ImageBackground>
+            </View>
         </View>
     </FathomModal>
 )

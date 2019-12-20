@@ -107,10 +107,10 @@ const onboardingUtils = {
             let newError = 'Your Activity Level is required';
             errorsArray.push(newError);
             isValid = false;
-        } else if(surveyValues.wearable_devices.length === 0) {
-            let newError = 'Your Wearable Device is required';
-            errorsArray.push(newError);
-            isValid = false;
+        // } else if(surveyValues.wearable_devices.length === 0) {
+        //     let newError = 'Your Wearable Device is required';
+        //     errorsArray.push(newError);
+        //     isValid = false;
         } else {
             errorsArray = [];
             isValid = true;
@@ -322,7 +322,7 @@ const onboardingUtils = {
                 },
                 {
                     backgroundImage: require('../../../assets/images/standard/tutorial_background.png'),
-                    doneLabel:       'skip',
+                    doneLabel:       'enable',
                     icon:            require('../../../assets/images/standard/logo_inline_white.png'),
                     key:             'tutorial-4',
                     image:           require('../../../assets/images/standard/tutorial4.png'),
