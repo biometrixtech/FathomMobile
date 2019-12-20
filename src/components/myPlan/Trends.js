@@ -713,7 +713,7 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Body Response data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Pain & Soreness data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
                                     </View>
                                 </View>
                             }
