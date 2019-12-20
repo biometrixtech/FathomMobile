@@ -153,6 +153,9 @@ class Login extends Component {
             let parseMaintenanceWindow = ErrorMessages.getScheduledMaintenanceMessage(apiMaintenanceWindow);
             AppUtil.handleScheduledMaintenanceAlert(parseMaintenanceWindow.displayAlert, parseMaintenanceWindow.header, parseMaintenanceWindow.message);
         }
+        if(this.inputs && this.inputs.email) {
+            this.inputs.email.focus();
+        }
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -294,7 +297,7 @@ class Login extends Component {
             <Wrapper>
 
                 <ImageBackground
-                    source={require('../../../assets/images/standard/welcome_background.png')}
+                    source={require('../../../assets/images/standard/onboarding_background.png')}
                     style={[AppStyles.containerCentered, {flex: 1, flexDirection: 'column', paddingBottom: AppSizes.paddingXLrg, width: AppSizes.screen.width,}]}
                 >
 
@@ -322,12 +325,12 @@ class Login extends Component {
                         <View style={{flex: 1, justifyContent: 'center', paddingRight: AppSizes.paddingSml,}} />
                     </View>
 
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'space-between', marginTop: AppSizes.padding,}}>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-start', marginTop: AppSizes.padding,}}>
                         <View>
                             <View style={{alignItems: 'center', justifyContent: 'space-between',}}>
                                 <Alerts
                                     error={this.state.resultMsg.error}
-                                    extraStyles={{width: AppSizes.screen.widthTwoThirds,}}
+                                    extraStyles={{width: AppSizes.screen.widthFourFifths,}}
                                     showEmptyState={true}
                                     success={this.state.resultMsg.success}
                                 />
@@ -338,7 +341,7 @@ class Login extends Component {
                                 autoCompleteType={'username'}
                                 blurOnSubmit={false}
                                 clearButtonMode={'never'}
-                                containerStyle={{borderBottomColor: AppColors.zeplin.slateLight, borderBottomWidth: 2, width: AppSizes.screen.widthTwoThirds,}}
+                                containerStyle={{borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 2, width: AppSizes.screen.widthFourFifths,}}
                                 inputRef={ref => this.inputs.email = ref}
                                 inputStyle={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20), paddingVertical: AppSizes.paddingSml,}}
                                 keyboardType={'email-address'}
@@ -356,7 +359,7 @@ class Login extends Component {
                                 autoCompleteType={'password'}
                                 blurOnSubmit={true}
                                 clearButtonMode={'never'}
-                                containerStyle={{borderBottomColor: AppColors.zeplin.slateLight, borderBottomWidth: 2, width: AppSizes.screen.widthTwoThirds,}}
+                                containerStyle={{borderBottomColor: AppColors.zeplin.slateXLight, borderBottomWidth: 2, width: AppSizes.screen.widthFourFifths,}}
                                 inputRef={ref => this.inputs.password = ref}
                                 inputStyle={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20), paddingVertical: AppSizes.paddingSml,}}
                                 keyboardType={'default'}
@@ -369,7 +372,7 @@ class Login extends Component {
                                 rightIcon={
                                     <View style={{flexDirection: 'row',}}>
                                         <TabIcon
-                                            color={AppColors.zeplin.slateLight}
+                                            color={AppColors.zeplin.slateXLight}
                                             containerStyle={[{paddingRight: AppSizes.paddingSml,}]}
                                             icon={this.state.isPasswordSecure ? 'visibility-off' : 'visibility'}
                                             onPress={() => this._toggleShowPassword()}
@@ -383,10 +386,10 @@ class Login extends Component {
                             />
                             <TouchableOpacity
                                 onPress={() => this.state.resultMsg.status && this.state.resultMsg.status.length > 0 ? null : AppUtil.pushToScene('forgotPassword')}
-                                style={{width: AppSizes.screen.widthTwoThirds,}}
+                                style={{width: AppSizes.screen.widthFourFifths,}}
                             >
                                 <Text
-                                    robotoBold
+                                    robotoRegular
                                     style={{
                                         color:             AppColors.zeplin.slateLight,
                                         fontSize:          AppFonts.scaleFont(11),
@@ -402,9 +405,9 @@ class Login extends Component {
                         </View>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
-                            containerStyle={{alignItems: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            containerStyle={{alignItems: 'center', width: AppSizes.screen.widthFourFifths,}}
                             disabled={isLoginBtnDisabled}
-                            disabledStyle={{backgroundColor: AppColors.zeplin.slateLight,}}
+                            disabledStyle={{backgroundColor: AppColors.zeplin.slateXLight,}}
                             disabledTitleStyle={{color: AppColors.white,}}
                             loading={this.state.loading}
                             loadingProps={{color: AppColors.white,}}
@@ -415,6 +418,7 @@ class Login extends Component {
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
                         />
                     </View>
+
                 </ImageBackground>
 
                 <FathomModal

@@ -10,7 +10,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, Platform, StyleSheet, View, findNodeHandle, } from 'react-native';
+import { Image, Keyboard, Platform, StyleSheet, View, findNodeHandle, } from 'react-native';
 
 // Consts and Libs
 import { AppColors, AppFonts, AppSizes, AppStyles, UserAccount as UserAccountConstants, } from '../../../constants';
@@ -19,6 +19,7 @@ import { FormInput, FathomPicker, Text, } from '../../custom';
 // import third-party libraries
 import { KeyboardAwareScrollView, } from 'react-native-keyboard-aware-scroll-view';
 import DatePicker from 'react-native-datepicker';
+import _ from 'lodash';
 
 /* Styles ==================================================================== */
 const styles = StyleSheet.create({
@@ -28,21 +29,21 @@ const styles = StyleSheet.create({
     },
     inputLabel: {
         ...AppFonts.robotoRegular,
-        color:       AppColors.white,
+        color:       AppColors.zeplin.slateLight,
         fontSize:    AppFonts.scaleFont(12),
         paddingLeft: AppSizes.paddingSml,
         paddingTop:  AppSizes.paddingSml,
     },
     pickerSelectAndroid: {
         ...AppFonts.robotoRegular,
-        color:          AppColors.white,
+        color:          AppColors.zeplin.slateLight,
         fontSize:       AppFonts.scaleFont(20),
         height:         50,
         justifyContent: 'center',
     },
     pickerSelectIOS: {
         ...AppFonts.robotoRegular,
-        color:          AppColors.white,
+        color:          AppColors.zeplin.slateLight,
         fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
@@ -61,9 +62,38 @@ const styles = StyleSheet.create({
 class UserAccountAbout extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            hasHealthKitBeenChecked: Platform.OS === 'ios' ? false : true,
+            isDOBHealthKit:          false,
+            isSexHealthKit:          false,
+            isWeightHealthKit:       false,
+        };
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
         this.scrollViewRef = {};
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        const { user, } = this.props;
+        if(
+            Platform.OS === 'ios' &&
+            !_.isEqual(prevProps, this.props) &&
+            (
+                !this.state.hasHealthKitBeenChecked ||
+                (
+                    prevProps.user.personal_data.birth_date !== user.personal_data.birth_date ||
+                    prevProps.user.biometric_data.sex !== user.biometric_data.sex ||
+                    prevProps.user.biometric_data.mass.lb !== user.biometric_data.mass.lb
+                )
+            )
+        ) {
+            this.setState({
+                hasHealthKitBeenChecked: true,
+                isDOBHealthKit:          user.personal_data.birth_date.length > 0,
+                isSexHealthKit:          user.biometric_data.sex.length > 0,
+                isWeightHealthKit:       user.biometric_data.mass.lb.length > 0,
+            });
+        }
     }
 
     focusNextField = (id, isPicker, isModal) => {
@@ -84,6 +114,11 @@ class UserAccountAbout extends Component {
             surveyValues,
             user,
         } = this.props;
+        const {
+            isDOBHealthKit,
+            isSexHealthKit,
+            isWeightHealthKit,
+        } = this.state;
         /*eslint no-return-assign: 0*/
         return(
             <KeyboardAwareScrollView
@@ -103,17 +138,29 @@ class UserAccountAbout extends Component {
                         confirmBtnText={'Confirm'}
                         customStyles={{
                             dateInput:       [styles.reusableCustomSpacing, AppStyles.onboardingInputStyle, user.personal_data.birth_date.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
-                            dateText:        {...AppFonts.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20),},
-                            placeholderText: {...AppFonts.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20),},
+                            dateText:        {...AppFonts.robotoRegular, color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20),},
+                            placeholderText: {...AppFonts.robotoRegular, color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),},
                             btnTextConfirm:  {color: AppColors.zeplin.yellow,},
                         }}
                         date={user.personal_data.birth_date || ''}
                         format={'MM/DD/YYYY'}
+                        iconComponent={isDOBHealthKit ?
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../../assets/images/standard/health-kit.png')}
+                                style={{height: 30, marginRight: AppSizes.paddingSml, width: 30,}}
+                            />
+                            :
+                            null
+                        }
                         mode={'date'}
-                        onDateChange={date => handleFormChange('personal_data.birth_date', date)}
+                        onDateChange={date => this.setState(
+                            { isDOBHealthKit: false, },
+                            () => handleFormChange('personal_data.birth_date', date)
+                        )}
                         placeholder={'Date of birth'}
                         ref={input => {this.inputs.birth_date = input;}}
-                        showIcon={false}
+                        showIcon={isDOBHealthKit}
                         style={{width: '100%',}}
                     />
                 </View>
@@ -124,15 +171,32 @@ class UserAccountAbout extends Component {
                         </Text>
                     }
                     <FathomPicker
-                        hideIcon={true}
+                        Icon={isSexHealthKit ?
+                            <Image
+                                resizeMode={'contain'}
+                                source={require('../../../../assets/images/standard/health-kit.png')}
+                                style={{height: 30, marginRight: AppSizes.paddingSml, width: 30,}}
+                            />
+                            :
+                            null
+                        }
+                        hideIcon={!isSexHealthKit}
                         items={UserAccountConstants.possibleGenders}
                         onDonePress={() => Keyboard.dismiss()}
-                        onValueChange={value => value ? handleFormChange('biometric_data.sex', value) : null}
+                        onValueChange={value => value ?
+                            this.setState(
+                                { isSexHealthKit: false, },
+                                () => handleFormChange('biometric_data.sex', value)
+                            )
+                            :
+                            null
+                        }
                         placeholder={{
-                            color: AppColors.white,
+                            color: AppColors.zeplin.slateLight,
                             label: 'Sex',
                             value: null,
                         }}
+                        placeholderTextColor={AppColors.zeplin.slateLight}
                         ref={ref => this.inputs.sex = ref}
                         style={{
                             inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, user.biometric_data.sex.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
@@ -151,12 +215,24 @@ class UserAccountAbout extends Component {
                     keyboardType={'number-pad'}
                     label={user.biometric_data.mass.lb.length > 0 ? 'Weight (lbs)' : null}
                     labelStyle={[styles.inputLabel,]}
-                    onChangeText={text => handleFormChange('biometric_data.mass.lb', text)}
+                    onChangeText={text => this.setState(
+                        { isWeightHealthKit: false, },
+                        () => handleFormChange('biometric_data.mass.lb', text)
+                    )}
                     onFocus={event => this._scrollToInput(findNodeHandle(event.target))}
                     onSubmitEditing={() => Keyboard.dismiss()}
                     placeholder={'Weight (lbs)'}
-                    placeholderTextColor={AppColors.white}
+                    placeholderTextColor={AppColors.zeplin.slateLight}
                     returnKeyType={'done'}
+                    rightIcon={isWeightHealthKit ?
+                        <Image
+                            resizeMode={'contain'}
+                            source={require('../../../../assets/images/standard/health-kit.png')}
+                            style={{height: 30, width: 30,}}
+                        />
+                        :
+                        null
+                    }
                     value={user.biometric_data.mass.lb}
                 />
                 <View style={[AppStyles.onboardingInputContainer, {paddingLeft: AppSizes.paddingSml,}, surveyValues.typical_weekly_sessions.length > 0 ? {} : {paddingVertical: AppSizes.paddingXSml,}]}>
@@ -171,10 +247,11 @@ class UserAccountAbout extends Component {
                         onDonePress={() => Keyboard.dismiss()}
                         onValueChange={value => value ? handleFormChange('typical_weekly_sessions', value, true) : null}
                         placeholder={{
-                            color: AppColors.white,
+                            color: AppColors.zeplin.slateLight,
                             label: 'Activity Level',
                             value: null,
                         }}
+                        placeholderTextColor={AppColors.zeplin.slateLight}
                         ref={ref => this.inputs.typical_weekly_sessions = ref}
                         style={{
                             inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, surveyValues.typical_weekly_sessions.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
@@ -185,7 +262,7 @@ class UserAccountAbout extends Component {
                         value={surveyValues.typical_weekly_sessions}
                     />
                 </View>
-                <View style={[AppStyles.onboardingInputContainer, {paddingLeft: AppSizes.paddingSml,}, surveyValues.wearable_devices.length > 0 ? {} : {paddingVertical: AppSizes.paddingXSml,}]}>
+                {/*<View style={[AppStyles.onboardingInputContainer, {paddingLeft: AppSizes.paddingSml,}, surveyValues.wearable_devices.length > 0 ? {} : {paddingVertical: AppSizes.paddingXSml,}]}>
                     { surveyValues.wearable_devices.length > 0 &&
                         <Text style={[styles.inputLabel, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {}]}>
                             {'Wearable Device'}
@@ -197,10 +274,11 @@ class UserAccountAbout extends Component {
                         onDonePress={() => Keyboard.dismiss()}
                         onValueChange={value => value ? handleFormChange('wearable_devices', value, true) : null}
                         placeholder={{
-                            color: AppColors.white,
+                            color: AppColors.zeplin.slateLight,
                             label: 'Wearable Device',
                             value: null,
                         }}
+                        placeholderTextColor={AppColors.zeplin.slateLight}
                         ref={ref => this.inputs.wearable_devices = ref}
                         style={{
                             inputAndroid:  [AppStyles.onboardingInputStyle, styles.pickerSelectAndroid, surveyValues.wearable_devices.length > 0 ? {paddingTop: AppSizes.paddingXSml,} : {paddingVertical: AppSizes.paddingSml,}],
@@ -210,7 +288,7 @@ class UserAccountAbout extends Component {
                         useNativeAndroidPickerStyle={false}
                         value={surveyValues.wearable_devices}
                     />
-                </View>
+                </View>*/}
             </KeyboardAwareScrollView>
         )
     }

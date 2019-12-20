@@ -74,7 +74,7 @@ const TopNav = ({ formFields, isUpdatingUser, onBack, resultMsg, surveyValues, t
                 }
             </View>
             <View style={{flex: 8,}}>
-                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
+                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
             </View>
             <View style={{flex: 1,}} />
         </View>
@@ -150,20 +150,20 @@ class Onboarding extends Component {
                         sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
                     cleared_to_play:       false, // boolean
-                    confirm_password:      '',
+                    confirm_password:      'Fathom123!', // TODO: REVERT ME
                     first_time_experience: user.first_time_experience ? user.first_time_experience : [],
                     health_enabled:        user.health_enabled ? user.health_enabled : false,
                     injuries:              {}, // COMING SOON
                     injury_status:         user.injury_status ? user.injury_status : '',
                     onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:              '',
+                    password:              'Fathom123!', // TODO: REVERT ME
                     personal_data:         {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
-                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
-                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
-                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        email:          'mazen+mvp@fathomai.com', // TODO: REVERT ME user.personal_data && user.personal_data.email ? user.personal_data.email : '',
+                        first_name:     'Mazen', // TODO: REVERT ME user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      'Chami', // TODO: REVERT ME user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
@@ -558,7 +558,7 @@ class Onboarding extends Component {
         return (
             <View style={[styles.background,]}>
                 <ImageBackground
-                    source={require('../../../assets/images/standard/tutorial_background_white.png')}
+                    source={require('../../../assets/images/standard/onboarding_background.png')}
                     style={{flex: 1,}}
                 >
                     <TopNav
@@ -567,7 +567,7 @@ class Onboarding extends Component {
                         onBack={pageIndex === 0 ? () => Actions.pop() : () => this._validateWholeForm(() => this._renderPreviousPage())}
                         resultMsg={resultMsg}
                         surveyValues={survey_values}
-                        title={pageIndex === 0 ? 'CREATE YOUR ACCOUNT' : 'ABOUT YOU'}
+                        title={pageIndex === 0 ? 'Create Your Account' : 'About You'}
                     />
 
                     <Pages
@@ -641,9 +641,9 @@ class Onboarding extends Component {
                                     <TouchableOpacity
                                         activeOpacity={1}
                                         onPress={() => this._togglePrivacyPolicyWebView()}
-                                        style={[{marginTop: AppSizes.padding,}]}
+                                        style={[{marginHorizontal: AppSizes.padding, marginTop: AppSizes.padding,}]}
                                     >
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
                                             {'By signing up you agree to our '}
                                             <Text robotoBold>{'Terms of Use.'}</Text>
                                         </Text>

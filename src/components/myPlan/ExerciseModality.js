@@ -308,7 +308,9 @@ class ExerciseModality extends Component {
                                 />
                                 :
                                 <View style={{backgroundColorflex: 1, paddingHorizontal: AppSizes.paddingXLrg, paddingVertical: AppSizes.padding,}}>
-                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>{'Add at least one goal to receive your Mobilize.'}</Text>
+                                    <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), textAlign: 'center',}}>
+                                        {'Add at least one goal to receive exercises.'}
+                                    </Text>
                                 </View>
                             }
                         </View>

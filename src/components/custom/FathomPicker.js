@@ -401,10 +401,14 @@ export default class RNPickerSelect extends PureComponent {
     }
 
     renderIcon() {
-        const { hideIcon, style } = this.props;
+        const { Icon, hideIcon, style } = this.props;
 
         if (hideIcon) {
             return null;
+        }
+
+        if(Icon) {
+            return ( Icon );
         }
 
         // return <View testID="icon_ios" style={[defaultStyles.icon, style.icon]} />;
@@ -430,7 +434,7 @@ export default class RNPickerSelect extends PureComponent {
             );
         }
         return (
-            <View pointerEvents="box-only" style={[containerStyle, !hideIcon ? {flexDirection: 'row',} : {}]}>
+            <View pointerEvents="box-only" style={[containerStyle, !hideIcon ? {flexDirection: 'row', justifyContent: 'space-between',} : {}]}>
                 <TextInput
                     allowFontScaling={false}
                     style={[
