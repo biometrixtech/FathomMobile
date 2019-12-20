@@ -541,7 +541,6 @@ class Trends extends PureComponent {
                                         flex:           1,
                                         flexDirection:  'row',
                                         justifyContent: 'center',
-                                        paddingTop:     AppSizes.padding,
                                     }}
                                     horizontal={true}
                                     style={{}}
@@ -550,7 +549,7 @@ class Trends extends PureComponent {
                                         <TouchableOpacity
                                             key={i}
                                             onPress={() => this.setState({ selectedTimeIndex: i, })}
-                                            style={{marginHorizontal: AppSizes.paddingXLrg,}}
+                                            style={{marginHorizontal: AppSizes.paddingXLrg, padding: AppSizes.paddingSml,}}
                                         >
                                             <Text
                                                 robotoBold={i === selectedTimeIndex}
