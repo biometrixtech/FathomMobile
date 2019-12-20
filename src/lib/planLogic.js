@@ -1469,7 +1469,7 @@ const PlanLogic = {
             [];
         if(dailyPlanObj.training_sessions && dailyPlanObj.training_sessions.length > 0 && filteredTrainingSessions.length > 0) {
             filteredTrainingSessions = _.map(filteredTrainingSessions, o =>
-                o.source === 3 ?// TODO: FIX ME && (!o.asymmetry || (o.asymmetry && o.last_updated && o.last_updated > dailyPlanObj.last_updated)) ?
+                o.source === 3 && (!o.asymmetry || (o.asymmetry && o.last_updated && o.last_updated > dailyPlanObj.last_updated)) ?
                     null
                     :
                     o
