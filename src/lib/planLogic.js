@@ -3042,29 +3042,29 @@ const PlanLogic = {
 
     returnTrendsTabs: () => [
         {
-            dataType: 0,
-            index:    'apt',
-            page:     0,
+            data_type: 0,
+            index:     'apt',
+            page:      0,
         },
         {
-            dataType: 2,
-            index:    'hip_drop',
-            page:     1,
+            data_type: 2,
+            index:     'hip_drop',
+            page:      1,
         },
         {
-            dataType: 1,
-            index:    'ankle_pitch',
-            page:     2,
+            data_type: 1,
+            index:     'ankle_pitch',
+            page:      2,
         },
         {
-            dataType: 3,
-            index:    'knee_valgus',
-            page:     4,
+            data_type: 3,
+            index:     'knee_valgus',
+            page:      4,
         },
         {
-            dataType: 4,
-            index:    'hip_rotation',
-            page:     5,
+            data_type: 4,
+            index:     'hip_rotation',
+            page:      5,
         }
     ],
 
