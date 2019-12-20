@@ -2593,6 +2593,8 @@ const PlanLogic = {
                     smallerPieData = _.map(smallerPieData, (data, key) => {
                         let newData = _.cloneDeep(data);
                         newData.x = key;
+                        newData.y = key === 0 ? newData.y : key === 1 ? smallerPieData[2].y : smallerPieData[1].y;
+                        newData.color = key === 0 ? newData.color : key === 1 ? smallerPieData[2].color : smallerPieData[1].color;
                         return newData;
                     });
                 }

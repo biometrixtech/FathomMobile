@@ -282,7 +282,7 @@ const ActivityTab = ({
                             }
                         </AnimatedCircularProgress>
                         <View style={[{alignSelf: 'flex-end', flex: 1, flexDirection: 'row',}, Platform.OS === 'ios' ? {} : {marginRight: AppSizes.padding,}]}>
-                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(16),}}>
+                            <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(20),}}>
                                 {asymmetry.score.text}
                             </Text>
                         </View>
