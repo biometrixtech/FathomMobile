@@ -1201,7 +1201,7 @@ describe('Handle Insight Render Logic', () => {
     it('Pain & Soreness', () => {
         let expectedResult = {
             cardTitle:           'DAILY SUMMARY',
-            insightTitle:        'BODY RESPONSE',
+            insightTitle:        'PAIN & SORENESS',
             selectedDate:        'Mon. Aug 5th',
             sessions:            undefined,
             showLeftDateButton:  true,
