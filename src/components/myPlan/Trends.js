@@ -292,6 +292,7 @@ class Trends extends PureComponent {
             return newObj;
         });
         this.state = {
+            counter:                 0,
             dates:                   datesAsArray,
             isCoachModalOpen:        false,
             isContactUsOpen:         false,
@@ -312,12 +313,16 @@ class Trends extends PureComponent {
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
-        if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
-            let newIndex = this.state.sessionDateIndex === 0 || this.state.sessionDateIndex < 0 ? this.state.sessionDateIndex : (this.state.sessionDateIndex - 1);
-            this._timer = _.delay(() =>
-                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({ animated: true, index: newIndex, viewOffset: -AppSizes.paddingMed, })
-            , 500);
-        }
+        this._timer = _.delay(() => {
+            if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
+                let newIndex = this.state.sessionDateIndex === 0 || this.state.sessionDateIndex < 0 ? this.state.sessionDateIndex : (this.state.sessionDateIndex - 1);
+                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({
+                    animated:   true,
+                    index:      newIndex,
+                    viewOffset: -AppSizes.paddingMed,
+                });
+            }
+        }, 500);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -330,14 +335,17 @@ class Trends extends PureComponent {
         this._checkAppState('background');
     }
 
-    _checkAppState = nextAppState => {
-        if(nextAppState === 'background') {
-            // clear timers
-            clearInterval(this._timer);
-        } else if(nextAppState === 'active') {
-            this._timer = null;
-        }
-    }
+    _checkAppState = nextAppState => this.setState(
+        { counter: (this.state.counter + 1), },
+        () => {
+            if(nextAppState === 'background') {
+                // clear timers
+                clearInterval(this._timer);
+            } else if(nextAppState === 'active') {
+                this._timer = null;
+            }
+        },
+    )
 
     _handleAppStateChange = nextAppState => {
         this._checkAppState(nextAppState);

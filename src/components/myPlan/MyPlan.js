@@ -1582,6 +1582,16 @@ class MyPlan extends Component {
         );
     }
 
+    _updatePlan = userId => {
+        const { updatePlan, } = this.props;
+        this.setState(
+            { apiIndex: 2, isPageCalculating: true, },
+            () =>
+                updatePlan(userId)
+                    .then(res => this.setState({ apiIndex: null, isPageCalculating: false, }))
+                    .catch(() => this.setState({ apiIndex: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
+        );
+    }
     render = () => {
         let {
             activityIdLoading,
@@ -1614,7 +1624,6 @@ class MyPlan extends Component {
             handleReadInsight,
             network,
             plan,
-            updatePlan,
             updateSensorSession,
             updateUser,
             user,
@@ -1821,7 +1830,7 @@ class MyPlan extends Component {
                                             activity={activity}
                                             activityIdLoading={activityIdLoading}
                                             askForNewMobilize={askForNewMobilize}
-                                            handleGetMobilize={() => updatePlan(user.id)}
+                                            handleGetMobilize={() => this._updatePlan(user.id)}
                                             handeRefresh={this._handleSensorFilesRefresh}
                                             key={key}
                                             onLayout={ev => (key + 1) === sensorSessions.length && activity.status !== 'PROCESSING_COMPLETE' ? this._onLayoutOfActivityTabs(ev) : null}
