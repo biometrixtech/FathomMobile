@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
     },
     pickerSelectAndroid: {
         ...AppFonts.robotoRegular,
-        color:          AppColors.zeplin.slateLight,
+        color:          AppColors.zeplin.slate,
         fontSize:       AppFonts.scaleFont(20),
         height:         50,
         justifyContent: 'center',
     },
     pickerSelectIOS: {
         ...AppFonts.robotoRegular,
-        color:          AppColors.zeplin.slateLight,
+        color:          AppColors.zeplin.slate,
         fontSize:       AppFonts.scaleFont(16),
         height:         40,
         justifyContent: 'center',
