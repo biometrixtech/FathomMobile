@@ -150,20 +150,20 @@ class Onboarding extends Component {
                         sex: user.biometric_data && user.biometric_data.sex ? user.biometric_data.sex : '',
                     },
                     cleared_to_play:       false, // boolean
-                    confirm_password:      'Fathom123!', // TODO: REVERT ME
+                    confirm_password:      '',
                     first_time_experience: user.first_time_experience ? user.first_time_experience : [],
                     health_enabled:        user.health_enabled ? user.health_enabled : false,
                     injuries:              {}, // COMING SOON
                     injury_status:         user.injury_status ? user.injury_status : '',
                     onboarding_status:     user.onboarding_status ? user.onboarding_status : [], // 'account_setup', 'sport_schedule', 'activities', 'injuries', 'cleared_to_play', 'pair_device', 'completed'
-                    password:              'Fathom123!', // TODO: REVERT ME
+                    password:              '',
                     personal_data:         {
                         account_status: 'active', // 'active', 'pending', 'past_due', 'expired'
                         account_type:   'free', // 'paid', 'free'
                         birth_date:     user.personal_data && user.personal_data.birth_date ? moment(user.personal_data.birth_date, 'MM/DD/YYYY').format('MM/DD/YYYY') : '',
-                        email:          'mazen+mvp@fathomai.com', // TODO: REVERT ME user.personal_data && user.personal_data.email ? user.personal_data.email : '',
-                        first_name:     'Mazen', // TODO: REVERT ME user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
-                        last_name:      'Chami', // TODO: REVERT ME user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
+                        email:          user.personal_data && user.personal_data.email ? user.personal_data.email : '',
+                        first_name:     user.personal_data && user.personal_data.first_name ? user.personal_data.first_name : '',
+                        last_name:      user.personal_data && user.personal_data.last_name ? user.personal_data.last_name : '',
                         phone_number:   user.personal_data && user.personal_data.phone_number ? user.personal_data.phone_number : '',
                         zip_code:       user.personal_data && user.personal_data.zip_code ? user.personal_data.zip_code : '',
                     },
