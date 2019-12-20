@@ -1479,9 +1479,18 @@ const PlanLogic = {
         const completedHeat = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_heat, 'Heat', true, false, false, 'heat');
         const completedCWI = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_cold_water_immersion, 'Cold Water Bath', true, false, false, 'cwi');
         const completedIce = PlanLogic.addTitleToCompletedModalitiesHelper(dailyPlanObj.completed_ice, 'Ice', true, false, false, 'ice');
-        const completedCurrentHeat = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', true, true, false, 'heat');
-        const completedCurrentCWI = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', true, true, false, 'cwi');
-        const completedCurrentIce = PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', true, true, false, 'ice');
+        const completedCurrentHeat = dailyPlanObj.heat && dailyPlanObj.heat.active && !dailyPlanObj.heat.completed ?
+            PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.heat], 'Heat', true, true, false, 'heat')
+            :
+            [];
+        const completedCurrentCWI = dailyPlanObj.cold_water_immersion && dailyPlanObj.cold_water_immersion.active && !dailyPlanObj.cold_water_immersion.completed ?
+            PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.cold_water_immersion], 'Cold Water Bath', true, true, false, 'cwi')
+            :
+            [];
+        const completedCurrentIce = dailyPlanObj.ice && dailyPlanObj.ice.active && !dailyPlanObj.ice.completed ?
+            PlanLogic.addTitleToCompletedModalitiesHelper([dailyPlanObj.ice], 'Ice', true, true, false, 'ice')
+            :
+            [];
         const completedBodyModalities = _.concat(completedHeat, completedCWI, completedIce, completedCurrentHeat, completedCurrentCWI, completedCurrentIce);
         const activeHeat = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.heat], 'Heat', 'within 30 min of training', false, 'heat', require('../../assets/images/standard/heat_tab.png'));
         const activeIce = PlanLogic.addTitleToActiveModalitiesHelper([dailyPlanObj.ice], 'Ice', 'after all training is complete', false, 'ice', require('../../assets/images/standard/ice_tab.png'));
@@ -1489,7 +1498,7 @@ const PlanLogic = {
         const activeBodyModalities = _.concat(activeHeat, activeIce, activeCWI);
         const completedExerciseModalities = _.filter(dailyPlanObj.modalities, modality => modality.completed);
         const completedModalities = _.concat(dailyPlanObj.completed_modalities, completedBodyModalities, completedExerciseModalities);
-        const activeExerciseModalities = PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj.modalities, 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
+        const activeExerciseModalities = PlanLogic.addTitleToActiveModalitiesHelper(_.filter(dailyPlanObj.modalities, modality => modality.active && !modality.completed), 'Mobilize', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../assets/images/standard/mobilize_tab.png'));
         const mergedActiveModalities = _.concat(activeExerciseModalities, activeBodyModalities);
         const cleanedModalities = _.map(mergedActiveModalities, activeModality => {
             let newModality = _.cloneDeep(activeModality);
@@ -2642,17 +2651,17 @@ const PlanLogic = {
                 let leftColor = PlanLogic.returnInsightColorString(dataType === 2 ? newPieData.left_y_legend_color : newPieData.right_y_legend_color);
                 let rightColor = PlanLogic.returnInsightColorString(dataType === 2 ? newPieData.right_y_legend_color : newPieData.left_y_legend_color);
                 const ANKLE_PITCH_CHART_RATIO = (360 / 6);
-                let largerValue = _.round(newPieData.right_y * newPieData.multiplier);
-                let smallerValue = _.round(newPieData.left_y * newPieData.multiplier);
+                let largerValue = _.round(dataType === 2 ? newPieData.right_y : newPieData.left_y * newPieData.multiplier);
+                let smallerValue = _.round(dataType === 2 ? newPieData.left_y : newPieData.right_y * newPieData.multiplier);
                 let largerFullValue = (ANKLE_PITCH_CHART_RATIO - largerValue);
                 let smallerFullValue = (ANKLE_PITCH_CHART_RATIO - smallerValue);
                 largerPieData = [
-                    { color: leftColor, x: 0, y: largerValue, },
+                    { color: rightColor, x: 0, y: largerValue, },
                     { color: AppColors.transparent, x: 1, y: largerFullValue, },
                 ];
                 smallerPieData = [
                     { color: AppColors.transparent, x: 0, y: smallerFullValue, },
-                    { color: rightColor, x: 1, y: smallerValue, },
+                    { color: leftColor, x: 1, y: smallerValue, },
                 ];
                 if(dataType === 4) {
                     rotateDeg = '255deg';
