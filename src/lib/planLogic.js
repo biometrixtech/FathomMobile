@@ -1205,7 +1205,6 @@ const PlanLogic = {
             return [];
         }
         let newDailyPlanObj = _.cloneDeep(dailyPlanObj);
-        newDailyPlanObj = _.filter(newDailyPlanObj, o => o.active && !o.completed);
         return _.map(newDailyPlanObj, activity => {
             let newCompletedActivity = _.cloneDeep(activity);
             newCompletedActivity.isBodyModality = modality === 'heat' || modality === 'ice' || modality === 'cwi';
@@ -1602,6 +1601,8 @@ const PlanLogic = {
         const hasActive3SensorSession = _.filter(sensorSessions, o => o.status === 'CREATE_COMPLETE' && !o.end_date).length > 0;
         const userHas3SensorSystem = userObj && userObj.sensor_data && userObj.sensor_data.system_type && userObj.sensor_data.system_type === '3-sensor' && userObj.sensor_data.mobile_udid && userObj.sensor_data.sensor_pid ? true : false;
         const networkName = userObj && userObj.sensor_data && userObj.sensor_data.sensor_networks && userObj.sensor_data.sensor_networks[0] ? userObj.sensor_data.sensor_networks[0] : false;
+        console.log('activeModalities',activeModalities);
+        console.log('completedLockedModalities',completedLockedModalities);
         return {
             activeAfterModalities:           [],
             activeBeforeModalities:          activeModalities,
