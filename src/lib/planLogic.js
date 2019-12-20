@@ -1205,7 +1205,6 @@ const PlanLogic = {
             return [];
         }
         let newDailyPlanObj = _.cloneDeep(dailyPlanObj);
-        newDailyPlanObj = _.filter(newDailyPlanObj, o => o.active && !o.completed);
         return _.map(newDailyPlanObj, activity => {
             let newCompletedActivity = _.cloneDeep(activity);
             newCompletedActivity.isBodyModality = modality === 'heat' || modality === 'ice' || modality === 'cwi';
@@ -2164,7 +2163,7 @@ const PlanLogic = {
       * - Insight
       */
     handleInsightRenderLogic: (currentAlert, currentDataIndex, insightType) => {
-        let insightTitle = insightType === 7 ? 'BODY RESPONSE' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
+        let insightTitle = insightType === 7 ? 'PAIN & SORENESS' : insightType === 8 ? 'WORKOUTS' : 'BIOMECHANICS';
         let showRightDateButton = currentDataIndex !== (currentAlert.data.length - 1);
         let showLeftDateButton = currentDataIndex > 0 && currentDataIndex < 7;
         let selectedDate = currentAlert.data[currentDataIndex] ? moment(currentAlert.data[currentDataIndex].date, 'YYYY-MM-DD').format('ddd. MMM Do') : '';
@@ -2593,6 +2592,10 @@ const PlanLogic = {
                     smallerPieData = _.map(smallerPieData, (data, key) => {
                         let newData = _.cloneDeep(data);
                         newData.x = key;
+                        if(smallerPieData.length === 3) {
+                            newData.y = key === 0 ? newData.y : key === 1 ? smallerPieData[2].y : smallerPieData[1].y;
+                            newData.color = key === 0 ? newData.color : key === 1 ? smallerPieData[2].color : smallerPieData[1].color;
+                        }
                         return newData;
                     });
                 }
@@ -2636,8 +2639,8 @@ const PlanLogic = {
                 }
             } else if(dataType === 2 || dataType === 4) {
                 rotateDeg = '75deg';
-                let leftColor = PlanLogic.returnInsightColorString(newPieData.left_y_legend_color);
-                let rightColor = PlanLogic.returnInsightColorString(newPieData.right_y_legend_color);
+                let leftColor = PlanLogic.returnInsightColorString(dataType === 2 ? newPieData.left_y_legend_color : newPieData.right_y_legend_color);
+                let rightColor = PlanLogic.returnInsightColorString(dataType === 2 ? newPieData.right_y_legend_color : newPieData.left_y_legend_color);
                 const ANKLE_PITCH_CHART_RATIO = (360 / 6);
                 let largerValue = _.round(newPieData.right_y * newPieData.multiplier);
                 let smallerValue = _.round(newPieData.left_y * newPieData.multiplier);
@@ -3039,29 +3042,29 @@ const PlanLogic = {
 
     returnTrendsTabs: () => [
         {
-            dataType: 0,
-            index:    'apt',
-            page:     0,
+            data_type: 0,
+            index:     'apt',
+            page:      0,
         },
         {
-            dataType: 2,
-            index:    'hip_drop',
-            page:     1,
+            data_type: 2,
+            index:     'hip_drop',
+            page:      1,
         },
         {
-            dataType: 1,
-            index:    'ankle_pitch',
-            page:     2,
+            data_type: 1,
+            index:     'ankle_pitch',
+            page:      2,
         },
         {
-            dataType: 3,
-            index:    'knee_valgus',
-            page:     4,
+            data_type: 3,
+            index:     'knee_valgus',
+            page:      4,
         },
         {
-            dataType: 4,
-            index:    'hip_rotation',
-            page:     5,
+            data_type: 4,
+            index:     'hip_rotation',
+            page:      5,
         }
     ],
 

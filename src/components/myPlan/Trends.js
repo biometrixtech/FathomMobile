@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     },
     lockedCardWrapper: {
         backgroundColor: `${AppColors.zeplin.slateLight}B3`,
-        borderRadius:    6,
+        borderRadius:    12,
         bottom:          0,
         flex:            1,
         left:            0,
@@ -91,10 +91,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
     }),
-    sessionDataLineWrapper: (isFirst, isLast) => ({
+    sessionDataLineWrapper: (isFirst, isLast, isLockedState) => ({
         borderTopColor:    AppColors.zeplin.superLight,
         borderTopWidth:    2,
-        marginTop:         isFirst ? AppSizes.padding : 0,
+        marginTop:         !isLockedState && isFirst ? AppSizes.padding : 0,
         paddingBottom:     isLast ? 0 : AppSizes.paddingXSml,
         paddingHorizontal: AppSizes.padding,
         paddingTop:        AppSizes.paddingXSml,
@@ -102,21 +102,31 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSlideUpPanel = () => {}, }) => {
+const BiomechanicsSummary = ({ extraWrapperStyles = {}, isLockedState, plan, session, toggleSlideUpPanel = () => {}, }) => {
     const dataToDisplay = session.data_points;
     return (
         <View
             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}, extraWrapperStyles,]}
         >
 
-            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+            <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: isLockedState ? 0 : AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(24),}}>
                     {_.find(MyPlanConstants.teamSports, o => o.index === session.sport_name) ? _.find(MyPlanConstants.teamSports, o => o.index === session.sport_name).label : ''}
                 </Text>
-                <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
-                    {`${moment(session.event_date_time.replace('Z', '')).format('hh:mma')}, ${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`}
-                </Text>
+                {!isLockedState &&
+                    <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(11),}}>
+                        {`${moment(session.event_date_time.replace('Z', '')).format('hh:mma')}, ${SensorLogic.convertMinutesToHrsMins(session.duration, true)}`}
+                    </Text>
+                }
             </View>
+
+            {isLockedState &&
+                <View style={{paddingBottom: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+                    <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(12),}}>
+                        {'No data to create score'}
+                    </Text>
+                </View>
+            }
 
             { session.score.active &&
                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
@@ -158,7 +168,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                 </View>
             }
 
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingTop: isLockedState ? 0 : AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 { _.map(session.summary_pills, (pill, i) =>
                     <View key={i} style={[styles.pillsWrapper(pill.color, (i + 1) === session.summary_pills.length),]}>
                         <Text robotoRegular style={{color: PlanLogic.returnInsightColorString(pill.color), fontSize: AppFonts.scaleFont(12),}}>
@@ -186,7 +196,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                             activeOpacity={0.2}
                             key={i}
                             onPress={() => AppUtil.pushToScene('biomechanics', {dataType: data.data_type, index: data.index, session: session,})}
-                            style={[styles.sessionDataLineWrapper(i === 0, (i + 1) === dataToDisplay.length),]}
+                            style={[styles.sessionDataLineWrapper(i === 0, (i + 1) === dataToDisplay.length, isLockedState),]}
                         >
                             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between',}}>
                                 <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center',}}>
@@ -233,7 +243,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, plan, session, toggleSli
                                         </View>
                                     </View>
                                 </View>
-                                { sessionData.active &&
+                                { (sessionData.active && !isLockedState) &&
                                     <TabIcon
                                         color={`${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.8)}`}
                                         containerStyle={[{alignItems: 'flex-end', justifyContent: 'center',}]}
@@ -282,6 +292,7 @@ class Trends extends PureComponent {
             return newObj;
         });
         this.state = {
+            counter:                 0,
             dates:                   datesAsArray,
             isCoachModalOpen:        false,
             isContactUsOpen:         false,
@@ -302,12 +313,16 @@ class Trends extends PureComponent {
         if(!user.first_time_experience.includes('trends_coach')) {
             this._timer = _.delay(() => this.setState({ isCoachModalOpen: true, }), 1000);
         }
-        if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
-            let newIndex = this.state.sessionDateIndex === 0 || this.state.sessionDateIndex < 0 ? this.state.sessionDateIndex : (this.state.sessionDateIndex - 1);
-            this._timer = _.delay(() =>
-                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({ animated: true, index: newIndex, viewOffset: -AppSizes.paddingMed, })
-            , 500);
-        }
+        this._timer = _.delay(() => {
+            if(this._smoothPickerRef && this._smoothPickerRef.refs && this._smoothPickerRef.refs.smoothPicker) {
+                let newIndex = this.state.sessionDateIndex === 0 || this.state.sessionDateIndex < 0 ? this.state.sessionDateIndex : (this.state.sessionDateIndex - 1);
+                this._smoothPickerRef.refs.smoothPicker.scrollToIndex({
+                    animated:   true,
+                    index:      newIndex,
+                    viewOffset: -AppSizes.paddingMed,
+                });
+            }
+        }, 500);
     }
 
     componentDidUpdate = (prevProps, prevState, snapshot) => {
@@ -320,14 +335,17 @@ class Trends extends PureComponent {
         this._checkAppState('background');
     }
 
-    _checkAppState = nextAppState => {
-        if(nextAppState === 'background') {
-            // clear timers
-            clearInterval(this._timer);
-        } else if(nextAppState === 'active') {
-            this._timer = null;
-        }
-    }
+    _checkAppState = nextAppState => this.setState(
+        { counter: (this.state.counter + 1), },
+        () => {
+            if(nextAppState === 'background') {
+                // clear timers
+                clearInterval(this._timer);
+            } else if(nextAppState === 'active') {
+                this._timer = null;
+            }
+        },
+    )
 
     _handleAppStateChange = nextAppState => {
         this._checkAppState(nextAppState);
@@ -357,7 +375,10 @@ class Trends extends PureComponent {
     _returnEmptyBiomechanicsSummaryData = (active, title) => {
         let object = {
             active,
-            score:        {active: false},
+            body_side:    0,
+            change:       {active: false,},
+            description:  {active: false,},
+            score:        {active: false,},
             summary_data: {
                 right_y:              0,
                 right_y_legend:       0,
@@ -368,9 +389,11 @@ class Trends extends PureComponent {
                 left_y_legend_color:  10,
                 left_start_angle:     0,
             },
+            summary_text: {active: false,},
         };
         if(title) {
             object.child_title = title;
+            object.dashboard_title = title;
         }
         return object;
     }
@@ -541,7 +564,6 @@ class Trends extends PureComponent {
                                         flex:           1,
                                         flexDirection:  'row',
                                         justifyContent: 'center',
-                                        paddingTop:     AppSizes.padding,
                                     }}
                                     horizontal={true}
                                     style={{}}
@@ -550,7 +572,7 @@ class Trends extends PureComponent {
                                         <TouchableOpacity
                                             key={i}
                                             onPress={() => this.setState({ selectedTimeIndex: i, })}
-                                            style={{marginHorizontal: AppSizes.paddingXLrg,}}
+                                            style={{marginHorizontal: AppSizes.paddingXLrg, padding: AppSizes.paddingSml,}}
                                         >
                                             <Text
                                                 robotoBold={i === selectedTimeIndex}
@@ -585,6 +607,7 @@ class Trends extends PureComponent {
                             <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.padding, paddingVertical: 0,}]}>
                                 <BiomechanicsSummary
                                     extraWrapperStyles={{marginBottom: 0, paddingBottom: 0,}}
+                                    isLockedState={true}
                                     plan={plan}
                                     session={{
                                         ankle_pitch:     this._returnEmptyBiomechanicsSummaryData(true, 'Leg Extension'),
@@ -713,7 +736,7 @@ class Trends extends PureComponent {
                                         />
                                     </View>
                                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Body Response data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
+                                        <Text robotoRegular style={[styles.lockedCardText,]}>{'No Pain & Soreness data yet.\nKeep logging symptoms for insight into how your body responds to training.'}</Text>
                                     </View>
                                 </View>
                             }

@@ -312,7 +312,7 @@ class Start extends Component {
                             {'Optimal recovery,\ndesigned for your body.'}
                         </Text>
                     </View>
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
+                    <View style={{alignItems: 'center', justifyContent: 'flex-end',}}>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
@@ -326,7 +326,7 @@ class Start extends Component {
                             buttonStyle={{backgroundColor: AppColors.transparent, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
                             onPress={() => this._routeToLogin()}
-                            raised={true}
+                            raised={false}
                             title={'Login'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(20), width: '100%',}}
                         />

@@ -52,7 +52,7 @@ class UserAccountInfo extends Component {
     }
 
     _scrollToInput = reactNode => {
-        this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
+        // this.scrollViewRef.props.scrollToFocusedInput(reactNode, (75 + AppSizes.paddingLrg));
     }
 
     _toggleShowPassword = isConfirmPassword => {
