@@ -1295,11 +1295,10 @@ class MyPlan extends Component {
             newFormFields = _.update(newSensorData, 'post_session_survey.RPE', () => null);
         }
         newSensorData = newFormFields;
-        this.setState({
-            sensorSession: newSensorData,
-        }, () => {
-            if(callback) { callback(); }
-        });
+        this.setState(
+            { sensorSession: newSensorData, },
+            () => callback && callback()
+        );
     }
 
     _handleSingleSensorPostSessionSurveySubmit = async () => {
@@ -1323,6 +1322,7 @@ class MyPlan extends Component {
             newRecoverObject,
             newTrainObject,
         } = PlanLogic.handlePostSessionSurveySubmitLogic(updatedPostSession, train, recover, healthData, user);
+        newPostSession.sessions = _.filter(newPostSession.sessions, s => s.source === 3);
         this.setState(
             {
                 apiIndex:                     1,
@@ -1341,12 +1341,15 @@ class MyPlan extends Component {
                 sensorSession: null,
             },
             () =>
-                updateSensorSession(newPostSession.sessions[0].end_date, false, savedSensorSession.id || savedSensorSession.session_id, user, newPostSession.sessions[0].set_end_date)
+                updateSensorSession(
+                    newPostSession.sessions[0].end_date,
+                    false,
+                    savedSensorSession.id || savedSensorSession.session_id,
+                    user,
+                    newPostSession.sessions[0].set_end_date
+                )
                     .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
-                    .then(() => {
-                        newPostSession.sessions[0].end_date = `${moment().toISOString(true).split('.')[0]}Z`;
-                        return postSessionSurvey(newPostSession, user.id);
-                    })
+                    .then(() => postSessionSurvey(newPostSession, user.id))
                     .then(() => getSensorFiles(user))
                     .then(response => {
                         this.setState(
