@@ -195,7 +195,7 @@ const SensorLogic = {
                                 : session.status === 'CREATE_COMPLETE' && session.end_date ?
                                     'Return kit to wifi to upload data.'
                                     :
-                                    'Hmm...something went wrong. We\'re working on it!';
+                                    'This session was too short to process.';
         let iconName = session.status === 'UPLOAD_IN_PROGRESS' ?
             'sync'
             : session.status === 'PROCESSING_COMPLETE' ?
