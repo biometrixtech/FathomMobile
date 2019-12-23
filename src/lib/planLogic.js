@@ -1545,7 +1545,7 @@ const PlanLogic = {
             }
             return newTrainingSession;
         });
-        const missedModalities = _.filter(cleanedModalities, modality => !modality.active && !modality.completed);
+        const missedModalities = _.filter(dailyPlanObj.modalities, modality => !modality.active && !modality.completed);
         const filteredCompletedModalities = _.filter(cleanedModalities, modality => modality.completed);
         let completedLockedModalities = _.concat(trainingSessions, cleanedCompletedModalities, missedModalities, filteredCompletedModalities);
         completedLockedModalities = _.map(completedLockedModalities, modality => {

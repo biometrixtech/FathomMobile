@@ -1074,12 +1074,12 @@ const ReturnSensors = ({ currentPage, onBack, onClose, nextBtn, page, }) => {
                         repeat={true}
                         resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                         source={{uri: content.video}}
-                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: Platform.OS === 'android' ? AppSizes.screen.heightOneThird : AppSizes.screen.heightTwoFifths,}]}
                     />
                     :
                     null
             }
-            <View style={{alignItems: 'center', flex: 1, paddingTop: AppSizes.padding,}}>
+            <View style={{alignItems: 'center', flex: 1, paddingTop: Platform.OS === 'android' ? 0 : AppSizes.padding,}}>
                 <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                     <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                         {content.subtitle}
