@@ -181,6 +181,7 @@ const ActivityTab = ({
     asymmetry,
     backgroundImage = false,
     completed,
+    dateTime,
     duration,
     id,
     isSensorSession,
@@ -196,7 +197,11 @@ const ActivityTab = ({
             <ActivityTabWrapper
                 asymmetry={asymmetry}
                 isSensorSession={isSensorSession}
-                onPress={asymmetry && isSensorSession ? () => AppUtil.pushToScene('trends') : null}
+                onPress={asymmetry && isSensorSession ?
+                    () => AppUtil.pushToScene('trends')
+                    :
+                    null
+                }
             >
                 <View style={{flexDirection: 'row',}}>
                     { completed ?
@@ -1592,6 +1597,7 @@ class MyPlan extends Component {
                     .catch(() => this.setState({ apiIndex: null, isPageCalculating: false, }, () => AppUtil.handleAPIErrorAlert(ErrorMessages.noSessions)))
         );
     }
+
     render = () => {
         let {
             activityIdLoading,
@@ -1816,6 +1822,7 @@ class MyPlan extends Component {
                                         <ActivityTab
                                             asymmetry={completedLockedModality.asymmetry}
                                             completed={completedLockedModality.completed}
+                                            dateTime={completedLockedModality.event_date}
                                             duration={completedLockedModality.duration_minutes}
                                             isSensorSession={completedLockedModality.source === 3 ? completedLockedModality.event_date : false}
                                             key={key}

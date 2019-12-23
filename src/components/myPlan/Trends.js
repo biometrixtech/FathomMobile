@@ -17,7 +17,7 @@ import { Actions as DispatchActions, } from '../../constants';
 import { AppColors, AppFonts, AppSizes, AppStyles, MyPlan as MyPlanConstants, } from '../../constants';
 import { BiomechanicsCharts, InsightsCharts, } from './graphs';
 import { AppUtil, PlanLogic, SensorLogic, } from '../../lib';
-import { AnimatedCircularProgress, Button, FathomModal, ParsedText, SmoothPicker, TabIcon, Text, } from '../custom';
+import { AnimatedCircularProgress, Button, FathomModal, ParsedText, TabIcon, Text, } from '../custom';
 import { ContactUsModal, } from '../general';
 import { store } from '../../store';
 
@@ -44,14 +44,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: AppSizes.padding,
     },
     datesWrapper: (isDateActive, sessionIndex, dateObjLength) => ({
-        // borderBottomColor:       AppColors.zeplin.slateLight,
-        // borderBottomLeftRadius:  2, // i need to be half of borderBottomWidth
-        // borderBottomRightRadius: 2, // i need to be half of borderBottomWidth
-        // borderBottomWidth:       isDateActive ? 4 : 0,
-        // borderTopLeftRadius:     2, // i need to be half of borderBottomWidth
-        // borderTopRightRadius:    2, // i need to be half of borderBottomWidth
         marginLeft:        AppSizes.paddingLrg,
-        // marginRight:       isDateActive ? AppSizes.paddingLrg : 0,
         paddingHorizontal: AppSizes.paddingSml,
         paddingVertical:   AppSizes.paddingXSml,
     }),
@@ -72,6 +65,7 @@ const styles = StyleSheet.create({
         right:           0,
         top:             0,
         width:           '100%',
+        zIndex:          100,
     },
     modalTouchable: {
         backgroundColor:   AppColors.white,
@@ -102,12 +96,47 @@ const styles = StyleSheet.create({
 });
 
 /* Component ==================================================================== */
-const BiomechanicsSummary = ({ extraWrapperStyles = {}, isLockedState, plan, session, toggleSlideUpPanel = () => {}, }) => {
+const BiomechanicsSummary = ({
+    extraWrapperStyles = {},
+    isLockedState,
+    plan,
+    session,
+    toggleSlideUpPanel = () => {},
+    userHas3SensorSystem,
+}) => {
     const dataToDisplay = session.data_points;
     return (
         <View
             style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {paddingBottom: AppSizes.paddingXSml, paddingTop: AppSizes.paddingLrg,}, extraWrapperStyles,]}
         >
+
+            {isLockedState &&
+                <View style={[styles.lockedCardWrapper, {paddingVertical: 0,}]}>
+                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
+                        <TabIcon
+                            color={AppColors.white}
+                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
+                            icon={'lock'}
+                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
+                            size={40}
+                        />
+                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginVertical: AppSizes.padding, textAlign: 'center',}}>
+                            {'Wear Fathom PRO in your workout to unlock your session analysis.'}
+                        </Text>
+                        <Button
+                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
+                            containerStyle={{alignItems: 'center', alignSelf: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
+                            onPress={userHas3SensorSystem ?
+                                () => AppUtil.pushToScene('myPlan')
+                                :
+                                () => AppUtil.pushToScene('bluetoothConnect')
+                            }
+                            title={userHas3SensorSystem ? 'Start a PRO Session' : 'Re-Connect Fathom PRO'}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
+                        />
+                    </View>
+                </View>
+            }
 
             <View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: isLockedState ? 0 : AppSizes.paddingSml, paddingHorizontal: AppSizes.padding,}}>
                 <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(24),}}>
@@ -267,38 +296,21 @@ class Trends extends PureComponent {
 
     constructor(props) {
         super(props);
-        const dailyPlanObj = props.plan.dailyPlan[0] || false;
-        let trends = dailyPlanObj ? dailyPlanObj.trends : false;
-        let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : { active: false, };
-        let dates = {};
-        if(biomechanicsSummary && biomechanicsSummary.sessions && biomechanicsSummary.sessions.length > 0) {
-            let newSessionsObj = _.orderBy(_.cloneDeep(biomechanicsSummary.sessions), session => moment(session.event_date_time.replace('Z', '')), ['asc']);
-            _.map(newSessionsObj, (session, key) => {
-                const sessionDateMoment = moment(session.event_date_time.replace('Z', ''));
-                let isToday = moment().isSame(sessionDateMoment, 'day');
-                let sessionDate = isToday ? 'Today' : sessionDateMoment.format('MMM DD');
-                let sessionTime = sessionDateMoment.format('hh:mma');
-                dates[sessionDate] = dates[sessionDate] ? dates[sessionDate] : [];
-                dates[sessionDate].push({
-                    sessionId: session.id,
-                    timeText:  sessionTime,
-                });
-            });
-        }
-        let datesAsArray = _.map(dates, (date, key) => {
-            let newObj = {};
-            newObj.text = key;
-            newObj.data = date;
-            return newObj;
-        });
+        const {
+            datesAsArray,
+            paginagedDates,
+        } = this._handleComponentMount();
         this.state = {
             counter:                 0,
             dates:                   datesAsArray,
+            datesPage:               _.findLastIndex(paginagedDates),
             isCoachModalOpen:        false,
             isContactUsOpen:         false,
+            isMounted:               true,
             isSlideUpPanelModalOpen: false,
             sessionDateIndex:        _.findLastIndex(datesAsArray),
             selectedTimeIndex:       0,
+            visualDates:             paginagedDates,
         };
         this._carousel = {};
         this._panel = {};
@@ -335,20 +347,72 @@ class Trends extends PureComponent {
         this._checkAppState('background');
     }
 
-    _checkAppState = nextAppState => this.setState(
-        { counter: (this.state.counter + 1), },
-        () => {
-            if(nextAppState === 'background') {
-                // clear timers
-                clearInterval(this._timer);
-            } else if(nextAppState === 'active') {
-                this._timer = null;
-            }
-        },
-    )
+    _checkAppState = nextAppState => {
+        const {
+            datesAsArray,
+            paginagedDates,
+        } = this._handleComponentMount();
+        this.setState(
+            {
+                counter:                 (this.state.counter + 1),
+                dates:                   datesAsArray,
+                datesPage:               _.findLastIndex(paginagedDates),
+                isCoachModalOpen:        false,
+                isContactUsOpen:         false,
+                isMounted:               nextAppState === 'active',
+                isSlideUpPanelModalOpen: false,
+                sessionDateIndex:        _.findLastIndex(datesAsArray),
+                selectedTimeIndex:       0,
+                visualDates:             paginagedDates,
+            },
+            () => {
+                if(nextAppState === 'background') {
+                    // clear timers
+                    clearInterval(this._timer);
+                } else if(nextAppState === 'active') {
+                    this._timer = null;
+                }
+            },
+        );
+    }
 
     _handleAppStateChange = nextAppState => {
         this._checkAppState(nextAppState);
+    }
+
+    _handleComponentMount = () => {
+        const dailyPlanObj = this.props.plan.dailyPlan[0] || false;
+        let trends = dailyPlanObj ? dailyPlanObj.trends : false;
+        let biomechanicsSummary = trends && trends.biomechanics_summary ? trends.biomechanics_summary : { active: false, };
+        let dates = {};
+        if(biomechanicsSummary && biomechanicsSummary.sessions && biomechanicsSummary.sessions.length > 0) {
+            let newSessionsObj = _.orderBy(_.cloneDeep(biomechanicsSummary.sessions), session => moment(session.event_date_time.replace('Z', '')), ['asc']);
+            _.map(newSessionsObj, (session, key) => {
+                const sessionDateMoment = moment(session.event_date_time.replace('Z', ''));
+                let isToday = moment().isSame(sessionDateMoment, 'day');
+                let sessionDate = isToday ? 'Today' : sessionDateMoment.format('MMM DD');
+                let sessionTime = sessionDateMoment.format('hh:mma');
+                dates[sessionDate] = dates[sessionDate] ? dates[sessionDate] : [];
+                dates[sessionDate].push({
+                    sessionId: session.id,
+                    timeText:  sessionTime,
+                });
+            });
+        }
+        let datesAsArray = _.map(dates, (date, key,) => {
+            let newObj = {};
+            newObj.data = date;
+            newObj.text = key;
+            return newObj;
+        });
+        let paginagedDates = _.map(
+            _.reverse(_.chunk(_.reverse(_.cloneDeep(datesAsArray)), 4)),
+            item => _.reverse(item)
+        );
+        return {
+            datesAsArray,
+            paginagedDates,
+        };
     }
 
     _handleUpdateFirstTimeExperience = (value, callback) => {
@@ -401,7 +465,17 @@ class Trends extends PureComponent {
     _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
 
     render = () => {
-        const { dates, isCoachModalOpen, isContactUsOpen, isSlideUpPanelModalOpen, sessionDateIndex, selectedTimeIndex, } = this.state;
+        const {
+            dates,
+            datesPage,
+            isCoachModalOpen,
+            isContactUsOpen,
+            isMounted,
+            isSlideUpPanelModalOpen,
+            sessionDateIndex,
+            selectedTimeIndex,
+            visualDates,
+        } = this.state;
         const { plan, user, } = this.props;
         let {
             biomechanicsSummary,
@@ -427,6 +501,9 @@ class Trends extends PureComponent {
             workloadSportName,
             workloadSubtitleColor,
         } = PlanLogic.handleTrendsRenderLogic(plan, user, dates, sessionDateIndex, selectedTimeIndex);
+        if(!isMounted) {
+            return(<View style={{flex: 1,}} />);
+        }
         return (
             <View style={{flex: 1,}}>
 
@@ -520,59 +597,78 @@ class Trends extends PureComponent {
                     {((userHas3SensorSystem || biomechanicsSummary.has_three_sensor_data) && biomechanicsSummary.active) ?
                         <View>
 
-                            <SmoothPicker
-                                bounces={true}
-                                data={dates}
-                                initialScrollToIndex={sessionDateIndex}
-                                keyExtractor={(item, index) => index.toString()}
-                                onScrollToIndexFailed={() => {}}
-                                ref={ref => (this._smoothPickerRef = ref)}
-                                renderItem={({ item, index}) => {
-                                    let dateObjLength = _.size(dates);
-                                    let sessionIndex = index;
-                                    let isDateActive = index === sessionDateIndex;
-                                    return (
-                                        <TouchableOpacity
-                                            key={sessionIndex}
-                                            onPress={() => this.setState({ sessionDateIndex: index, selectedTimeIndex: 0, })}
-                                            style={[styles.datesWrapper(isDateActive, sessionIndex, dateObjLength),]}
-                                        >
-                                            <Text
-                                                robotoBold={isDateActive}
-                                                robotoRegular={!isDateActive}
+                            <View
+                                style={{
+                                    alignItems:        'center',
+                                    flex:              1,
+                                    flexDirection:     'row',
+                                    justifyContent:    visualDates.length === 0 ? 'center' : 'space-between',
+                                    paddingHorizontal: AppSizes.paddingMed,
+                                }}
+                            >
+                                <TabIcon
+                                    color={datesPage === 0 ? AppColors.white : AppColors.zeplin.slateXLight}
+                                    icon={'chevron-left'}
+                                    onPress={visualDates.length > 1 && datesPage === 0 ? () => null : () => this.setState({ datesPage: (this.state.datesPage - 1), })}
+                                    size={30}
+                                />
+                                <View
+                                    style={{
+                                        alignItems:     'center',
+                                        flexDirection:  'row',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    {_.map(visualDates[datesPage], (date, i) => {
+                                        let isDateActive = dates[sessionDateIndex].text === date.text;
+                                        let selectedIndex = _.findIndex(dates, ['text', date.text]);
+                                        return(
+                                            <TouchableOpacity
+                                                key={i}
+                                                onPress={() => this.setState({ sessionDateIndex: selectedIndex, })}
                                                 style={{
-                                                    color:    isDateActive ? AppColors.zeplin.slateLight : `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.5)}`,
-                                                    fontSize: AppFonts.scaleFont(isDateActive ? 18 : 15),
+                                                    marginHorizontal:  AppSizes.paddingXSml,
+                                                    paddingHorizontal: AppSizes.paddingSml,
+                                                    paddingVertical:   AppSizes.paddingXSml,
                                                 }}
                                             >
-                                                {item.text}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    );
-                                }}
-                                scrollAnimation={true}
-                                showsHorizontalScrollIndicator={false}
-                                snapToAlignment={'end'}
-                            />
+                                                <Text
+                                                    robotoBold={isDateActive}
+                                                    robotoRegular={!isDateActive}
+                                                    style={{
+                                                        color:    isDateActive ? AppColors.zeplin.slateLight : `${AppColors.zeplin.slateLight}${PlanLogic.returnHexOpacity(0.5)}`,
+                                                        fontSize: AppFonts.scaleFont(isDateActive ? 19 : 14),
+                                                    }}
+                                                >
+                                                    {date.text}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
+                                <TabIcon
+                                    color={visualDates.length === (datesPage + 1) ? AppColors.white : AppColors.zeplin.slateXLight}
+                                    icon={'chevron-right'}
+                                    onPress={visualDates.length > 1 && visualDates.length === (datesPage + 1) ? () => null : () => this.setState({ datesPage: (this.state.datesPage + 1), })}
+                                    size={30}
+                                />
+                            </View>
 
                             {(times.length > 1) &&
-                                <ScrollView
-                                    automaticallyAdjustContentInsets={true}
-                                    centerContent={true}
-                                    contentContainerStyle={{
-                                        alignItems:     'center',
-                                        flex:           1,
-                                        flexDirection:  'row',
-                                        justifyContent: 'center',
+                                <View
+                                    style={{
+                                        alignItems:       'center',
+                                        flex:             1,
+                                        flexDirection:    'row',
+                                        justifyContent:   times.length >= 3 ? 'space-between' : 'center',
+                                        marginHorizontal: AppSizes.paddingLrg,
                                     }}
-                                    horizontal={true}
-                                    style={{}}
                                 >
                                     {_.map(times, (time, i) =>
                                         <TouchableOpacity
                                             key={i}
                                             onPress={() => this.setState({ selectedTimeIndex: i, })}
-                                            style={{marginHorizontal: AppSizes.paddingXLrg, padding: AppSizes.paddingSml,}}
+                                            style={[times.length >= 3 ? {} : {marginHorizontal: AppSizes.paddingXLrg,}, {padding: AppSizes.paddingSml,}]}
                                         >
                                             <Text
                                                 robotoBold={i === selectedTimeIndex}
@@ -586,7 +682,7 @@ class Trends extends PureComponent {
                                             </Text>
                                         </TouchableOpacity>
                                     )}
-                                </ScrollView>
+                                </View>
                             }
 
                             <View style={{paddingHorizontal: AppSizes.paddingMed, paddingTop: AppSizes.padding,}}>
@@ -603,7 +699,7 @@ class Trends extends PureComponent {
                             </View>
 
                         </View>
-                        : (biomechanicsSummary.has_three_sensor_data && !biomechanicsSummary.active) ?
+                        : ((biomechanicsSummary.has_three_sensor_data || !biomechanicsSummary.has_three_sensor_data) && !biomechanicsSummary.active) ?
                             <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.padding, paddingVertical: 0,}]}>
                                 <BiomechanicsSummary
                                     extraWrapperStyles={{marginBottom: 0, paddingBottom: 0,}}
@@ -622,32 +718,8 @@ class Trends extends PureComponent {
                                         score:           this._returnEmptyBiomechanicsSummaryData(false),
                                         sport_name:      17,
                                     }}
+                                    userHas3SensorSystem={userHas3SensorSystem}
                                 />
-                                <View style={[styles.lockedCardWrapper, {paddingVertical: 0,}]}>
-                                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.padding,}}>
-                                        <TabIcon
-                                            color={AppColors.white}
-                                            containerStyle={[{marginRight: AppSizes.paddingSml,}]}
-                                            icon={'lock'}
-                                            iconStyle={[{shadowColor: AppColors.zeplin.slateLight, shadowOffset: { height: 1, width: 0, }, shadowOpacity: 1, shadowRadius: 1,}]}
-                                            size={40}
-                                        />
-                                        <Text robotoRegular style={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), marginVertical: AppSizes.padding, textAlign: 'center',}}>
-                                            {'Wear Fathom PRO in your workout to unlock your session analysis.'}
-                                        </Text>
-                                        <Button
-                                            buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingSml, width: AppSizes.screen.widthTwoThirds,}}
-                                            containerStyle={{alignItems: 'center', alignSelf: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
-                                            onPress={userHas3SensorSystem ?
-                                                () => AppUtil.pushToScene('myPlan')
-                                                :
-                                                () => AppUtil.pushToScene('bluetoothConnect')
-                                            }
-                                            title={userHas3SensorSystem ? 'Start a PRO Session' : 'Re-Connect Fathom PRO'}
-                                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
-                                        />
-                                    </View>
-                                </View>
                             </View>
                             :
                             null
