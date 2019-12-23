@@ -1581,7 +1581,7 @@ class MyPlan extends Component {
                             postSession:                  _.cloneDeep(defaultPlanState.postSession),
                             showLoadingText:              false,
                         });
-                    }, 500);
+                    }, 1000);
                 }
             }
         );
