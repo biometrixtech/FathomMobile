@@ -1357,7 +1357,7 @@ class MyPlan extends Component {
                     .then(() => postSessionSurvey(newPostSession, user.id))
                     .then(() => getSensorFiles(user))
                     .then(response => {
-                        this.setState(
+                        this._timer = _.delay(() => this.setState(
                             {
                                 apiIndex:                 null,
                                 isPageCalculating:        false,
@@ -1373,7 +1373,7 @@ class MyPlan extends Component {
                                     this._timer = _.delay(() => this._checkCoachStatus(), 500);
                                 }
                             },
-                        );
+                        ), 500);
                     })
                     .catch(error =>
                         this.setState(
@@ -1574,14 +1574,20 @@ class MyPlan extends Component {
                     clearCompletedExercises();
                     clearCompletedCoolDownExercises();
                     this.goToPageTimer = _.delay(() => {
-                        this.setState({
-                            isPSSCloseLocked:             false,
-                            isPostSessionSurveyModalOpen: false,
-                            loading:                      false,
-                            postSession:                  _.cloneDeep(defaultPlanState.postSession),
-                            showLoadingText:              false,
-                        });
-                    }, 1000);
+                        this.setState(
+                            {
+                                isPostSessionSurveyModalOpen: false,
+                                loading:                      false,
+                                postSession:                  _.cloneDeep(defaultPlanState.postSession),
+                                showLoadingText:              false,
+                            },
+                            () => {
+                                this.goToPageTiimer = _.delay(() =>
+                                    this.setState({ isPSSCloseLocked: false, })
+                                , 1000);
+                            }
+                        );
+                    }, 500);
                 }
             }
         );
