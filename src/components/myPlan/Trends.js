@@ -625,7 +625,7 @@ class Trends extends PureComponent {
                                         return(
                                             <TouchableOpacity
                                                 key={i}
-                                                onPress={() => this.setState({ sessionDateIndex: selectedIndex, })}
+                                                onPress={() => this.setState({ sessionDateIndex: selectedIndex, selectedTimeIndex: 0, })}
                                                 style={{
                                                     marginHorizontal:  AppSizes.paddingXSml,
                                                     paddingHorizontal: AppSizes.paddingSml,
