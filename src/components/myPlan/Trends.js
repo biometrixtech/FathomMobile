@@ -8,7 +8,7 @@
     />
  *
  */
-import React, { Component, } from 'react';
+import React, { PureComponent, } from 'react';
 import PropTypes from 'prop-types';
 import { AppState, Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 
@@ -263,7 +263,7 @@ const BiomechanicsSummary = ({ extraWrapperStyles = {}, isLockedState, plan, ses
     );
 }
 
-class Trends extends Component {
+class Trends extends PureComponent {
 
     constructor(props) {
         super(props);
