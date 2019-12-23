@@ -699,7 +699,7 @@ class Trends extends PureComponent {
                             </View>
 
                         </View>
-                        : ((biomechanicsSummary.has_three_sensor_data || !biomechanicsSummary.has_three_sensor_data) && !biomechanicsSummary.active) ?
+                        : (userHas3SensorSystem && (biomechanicsSummary.has_three_sensor_data || !biomechanicsSummary.has_three_sensor_data) && !biomechanicsSummary.active) ?
                             <View style={[styles.cardContainer, AppStyles.scaleButtonShadowEffect, {marginHorizontal: AppSizes.paddingMed, marginTop: AppSizes.padding, paddingVertical: 0,}]}>
                                 <BiomechanicsSummary
                                     extraWrapperStyles={{marginBottom: 0, paddingBottom: 0,}}
