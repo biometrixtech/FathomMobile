@@ -501,7 +501,7 @@ const SensorLogic = {
                         <Text robotoBold>{'Firmly close the lid.'}</Text>
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(you\'ll here a '}
+                        {'(you\'ll hear a '}
                         <Text robotoBold>{'"click"'}</Text>
                         {' when fully closed)'}
                     </Text>

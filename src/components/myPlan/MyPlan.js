@@ -1357,11 +1357,10 @@ class MyPlan extends Component {
                     .then(() => postSessionSurvey(newPostSession, user.id))
                     .then(() => getSensorFiles(user))
                     .then(response => {
-                        this._timer = _.delay(() => this.setState(
+                        this.setState(
                             {
-                                apiIndex:                 null,
-                                isPageCalculating:        false,
-                                isReturnSensorsModalOpen: !this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL'),
+                                apiIndex:          null,
+                                isPageCalculating: false,
                             },
                             () => {
                                 clearCompletedExercises();
@@ -1372,9 +1371,20 @@ class MyPlan extends Component {
                                 if(!this.state.isTrainSessionsCompletionModalOpen) {
                                     this._timer = _.delay(() => this._checkCoachStatus(), 500);
                                 }
-                            },
-                        ), 500);
+                            }
+                        )
                     })
+                    .then(() => {
+                        if(!this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL')) {
+                            this._timer = _.delay(() => this.setState(
+                                {
+                                    isReturnSensorsModalOpen: true,
+                                },
+                                () => {},
+                            ), 2250);
+                        }
+                    })
+                    
                     .catch(error =>
                         this.setState(
                             { apiIndex: null, isPageCalculating: false, },
