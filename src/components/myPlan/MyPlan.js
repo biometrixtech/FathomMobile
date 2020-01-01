@@ -1545,17 +1545,26 @@ class MyPlan extends Component {
 
     _toggleContactUsWebView = () => this.setState({ isContactUsOpen: !this.state.isContactUsOpen, })
 
-    _togglePostSessionSurveyModal = () => {
+    _togglePostSessionSurveyModal = (clearSession = false) => {
         const { clearCompletedCoolDownExercises, clearCompletedExercises, getSoreBodyParts, user, } = this.props;
         const { isPSSCloseLocked, isPostSessionSurveyModalOpen, } = this.state;
         let isLoading = Platform.OS === 'ios';
+
+        let postSessionObj = _.cloneDeep(defaultPlanState.postSession);
+
+        if (clearSession === true) {
+            this.setState({
+                sensorSession: null,
+            });
+        }
+
         this.setState(
             { isPSSCloseLocked: true, loading: isLoading, showLoadingText: true, },
             () => {
                 if (!isPostSessionSurveyModalOpen && !isPSSCloseLocked) {
                     getSoreBodyParts(user.id)
                         .then(soreBodyParts => {
-                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            let newPostSession = postSessionObj
                             newPostSession.soreness = PlanLogic.handleNewSoreBodyPartLogic(soreBodyParts.readiness);
                             this.goToPageTimer = _.delay(() =>
                                 this.setState({
@@ -1569,7 +1578,7 @@ class MyPlan extends Component {
                         })
                         .catch(err => {
                             // if there was an error, maybe the survey wasn't created for yesterday so have them do it as a blank
-                            let newPostSession = _.cloneDeep(defaultPlanState.postSession);
+                            let newPostSession = postSessionObj
                             newPostSession.soreness = [];
                             this.setState({
                                 isPSSCloseLocked:             false,
@@ -1588,7 +1597,7 @@ class MyPlan extends Component {
                             {
                                 isPostSessionSurveyModalOpen: false,
                                 loading:                      false,
-                                postSession:                  _.cloneDeep(defaultPlanState.postSession),
+                                postSession:                  postSessionObj,
                                 showLoadingText:              false,
                             },
                             () => {
@@ -1722,7 +1731,7 @@ class MyPlan extends Component {
                     fixNativeFeedbackRadius={true}
                     hideShadow={true}
                     key={'log-training'}
-                    onPress={() => this._togglePostSessionSurveyModal()}
+                    onPress={() => this._togglePostSessionSurveyModal(true)}
                     spaceBetween={Platform.OS === 'android' ? 0 : AppSizes.paddingMed}
                     textContainerStyle={{backgroundColor: AppColors.white, borderRadius: 12, height: (AppFonts.scaleFont(22) + 12),}}
                     textStyle={[AppStyles.robotoRegular, {color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(22),}]}
