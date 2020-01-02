@@ -1407,7 +1407,7 @@ class MyPlan extends Component {
                                     isReturnSensorsModalOpen: true,
                                 },
                                 () => {},
-                            ), 2250);
+                            ), 2750);
                         }
                     })
                     
