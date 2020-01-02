@@ -824,8 +824,8 @@ class MyPlan extends Component {
     _checkThreeSensorSessions = () => {
         const { plan, user, } = this.props;
         const dailyPlan = plan.dailyPlan[0] || false;
-        let planTrainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
-        let sensorDataSessions = user.sensor_data && user.sensor_data.sessions ? user.sensor_data.sessions : false;
+
+        let sensorDataSessions = user.sensor_data && user.sensor_data.sessions && user.sensor_data.sessions.length > 0 ? user.sensor_data.sessions : false;
         let processingSessions = sensorDataSessions ?
             _.filter(
                 sensorDataSessions,
@@ -836,34 +836,48 @@ class MyPlan extends Component {
             )
             :
             false;
-        let inProcessSession = processingSessions ?
-            _(processingSessions)
-                .orderBy(['event_date'], ['desc'])
-                .first()
+        if(processingSessions){
+            processingSessions =  _.orderBy(processingSessions,['event_date'], ['desc']);        
+        }
+
+        let planTrainingSessions = dailyPlan && dailyPlan.training_sessions && dailyPlan.training_sessions.length > 0 ? dailyPlan.training_sessions : false;
+
+        let trainingSessionsWithSurvey = planTrainingSessions && planTrainingSessions.length > 0 ?
+            _.filter(planTrainingSessions, session => session.source === 3 && session.post_session_survey)
             :
             false;
-        let trainingSessions = planTrainingSessions ?
+
+        let trainingSessionsWithoutSurvey = planTrainingSessions && planTrainingSessions.length > 0 ?
             _.filter(planTrainingSessions, session => session.source === 3 && !session.post_session_survey)
             :
             false;
-        let nonCompleteThreeSensorSession = trainingSessions ?
-            _(trainingSessions)
+        
+        let nonCompleteThreeSensorSession = trainingSessionsWithoutSurvey && trainingSessionsWithoutSurvey.length > 0 ?
+            _(trainingSessionsWithoutSurvey)
                 .orderBy(['event_date'], ['desc'])
                 .first()
             :
             false;
-        if(processingSessions && inProcessSession) {
-            let plansSession = trainingSessions ?
-                _.filter(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.id)
-                :
-                false;
-            if(trainingSessions && plansSession) {
-                return false;
-            }
-            return this._preparePSSurvey(inProcessSession);
-        } else if(trainingSessions && nonCompleteThreeSensorSession) {
+        
+        if(nonCompleteThreeSensorSession) {
             return this._preparePSSurvey(nonCompleteThreeSensorSession);
         }
+        else if(processingSessions && processingSessions.length > 0) {
+
+            if(trainingSessionsWithSurvey && trainingSessionsWithSurvey.length > 0){
+                for(let p=0; p < processingSessions.length; p++) {
+                    let pssSessions = _.filter(trainingSessionsWithSurvey, session => session.source === 3 && session.session_id === processingSessions[p].id);
+                    if(pssSessions.length === 0) {
+                        return this._preparePSSurvey(processingSessions[p]);
+                    }
+                }
+            } 
+            else {
+                let inProcessSession = _.first(processingSessions);
+                return this._preparePSSurvey(inProcessSession);    
+            }
+        }
+        
         return false;
     }
 
