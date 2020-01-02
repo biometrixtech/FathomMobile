@@ -824,11 +824,11 @@ class MyPlan extends Component {
     _checkThreeSensorSessions = () => {
         const { plan, user, } = this.props;
         const dailyPlan = plan.dailyPlan[0] || false;
-        let trainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
-        let processingSessions = user.sensor_data && user.sensor_data.sessions ? user.sensor_data.sessions : false;
-        let inProcessSession = processingSessions ?
-            _.find(
-                processingSessions,
+        let planTrainingSessions = dailyPlan && dailyPlan.training_sessions ? dailyPlan.training_sessions : false;
+        let sensorDataSessions = user.sensor_data && user.sensor_data.sessions ? user.sensor_data.sessions : false;
+        let processingSessions = sensorDataSessions ?
+            _.filter(
+                sensorDataSessions,
                 session =>
                     session.status === 'PROCESSING_IN_PROGRESS' ||
                     session.status === 'UPLOAD_IN_PROGRESS' ||
@@ -836,8 +836,20 @@ class MyPlan extends Component {
             )
             :
             false;
+        let inProcessSession = processingSessions ?
+            _(processingSessions)
+                .orderBy(['event_date'], ['desc'])
+                .first()
+            :
+            false;
+        let trainingSessions = planTrainingSessions ?
+            _.filter(planTrainingSessions, session => session.source === 3 && !session.post_session_survey)
+            :
+            false;
         let nonCompleteThreeSensorSession = trainingSessions ?
-            _.find(trainingSessions, session => session.source === 3 && !session.post_session_survey)
+            _(trainingSessions)
+                .orderBy(['event_date'], ['desc'])
+                .first()
             :
             false;
         if(processingSessions && inProcessSession) {
@@ -1356,7 +1368,7 @@ class MyPlan extends Component {
                     .then(() => clearHealthKitWorkouts()) // clear HK workouts right away
                     .then(() => postSessionSurvey(newPostSession, user.id))
                     .then(() => getSensorFiles(user))
-                    .then(response => {
+                    .then(response => 
                         this.setState(
                             {
                                 apiIndex:          null,
@@ -1373,7 +1385,7 @@ class MyPlan extends Component {
                                 }
                             }
                         )
-                    })
+                    )
                     .then(() => {
                         if(!this.props.user.first_time_experience.includes('RETURN_SENSORS_MODAL')) {
                             this._timer = _.delay(() => this.setState(
