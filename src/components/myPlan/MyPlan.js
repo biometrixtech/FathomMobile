@@ -854,7 +854,7 @@ class MyPlan extends Component {
             false;
         if(processingSessions && inProcessSession) {
             let plansSession = trainingSessions ?
-                _.find(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.id)
+                _.filter(trainingSessions, session => session.source === 3 && session.session_id === inProcessSession.id)
                 :
                 false;
             if(trainingSessions && plansSession) {
