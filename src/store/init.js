@@ -13,7 +13,7 @@ export default {
     currentSelectedTab:   'myPlan',
     device:               null,
     email:                null,
-    environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
+    environment:          'PROD', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
     expires:              null,
     jwt:                  null,
     notification:         false,

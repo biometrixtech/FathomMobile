@@ -17,10 +17,10 @@ export default {
         PROD: 'https://apis.production.fathomai.com'
     },
     // The URL we're connecting to
-    // hostname: 'https://apis.production.fathomai.com', // deployment
+    hostname: 'https://apis.production.fathomai.com', // deployment
     // hostname: 'https://apis.qa.fathomai.com', // qa
-    hostname: 'https://apis.test.fathomai.com', // test
-    // hostname: 'https://apis.dev.fathomai.com', // development
+    // hostname: 'https://apis.test.fathomai.com', // test
+    //hostname: 'https://apis.dev.fathomai.com', // development
 
     // Map shortnames to the actual endpoints, so that we can
     // use them like so: AppAPI.ENDPOINT_NAME.METHOD()
@@ -109,9 +109,9 @@ export default {
         PROD: 'https://apis.production.fathomai.com',
     },
 
-    // preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
+    preprocessingHostname: 'https://apis.production.fathomai.com', // deployment
     // preprocessingHostname: 'https://apis.qa.fathomai.com', // qa
-    preprocessingHostname: 'https://apis.test.fathomai.com', // test
+    // preprocessingHostname: 'https://apis.test.fathomai.com', // test
     // preprocessingHostname: 'https://apis.dev.fathomai.com', // development
 
     preprocessingEndpoints: new Map([
@@ -128,9 +128,9 @@ export default {
         PROD: 'https://apis.production.fathomai.com',
     },
 
-    // hardwareHostname: 'https://apis.production.fathomai.com', // deployment
+    hardwareHostname: 'https://apis.production.fathomai.com', // deployment
     // hardwareHostname: 'https://apis.qa.fathomai.com', // qa
-    hardwareHostname: 'https://apis.test.fathomai.com', // test
+    // hardwareHostname: 'https://apis.test.fathomai.com', // test
     // hardwareHostname: 'https://apis.dev.fathomai.com', // development
 
     hardwareEndpoints: new Map([
