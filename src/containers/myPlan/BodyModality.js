@@ -42,7 +42,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = {
     handleBodyPartClick:     PlanActions.handleBodyPartClick,
-    markStartedRecovery:     PlanActions.markStartedRecovery,
+    markStartedRecovery:     PlanActions.patchBodyActiveRecovery,
     patchBodyActiveRecovery: PlanActions.patchBodyActiveRecovery,
 };
 

@@ -195,7 +195,7 @@ const SensorLogic = {
                                 : session.status === 'CREATE_COMPLETE' && session.end_date ?
                                     'Return kit to wifi to upload data.'
                                     :
-                                    'Hmm...something went wrong. We\'re working on it!';
+                                    'This session was too short to process.';
         let iconName = session.status === 'UPLOAD_IN_PROGRESS' ?
             'sync'
             : session.status === 'PROCESSING_COMPLETE' ?
@@ -501,7 +501,7 @@ const SensorLogic = {
                         <Text robotoBold>{'Firmly close the lid.'}</Text>
                     </Text>,
                     <Text key={1} robotoLight style={[styles.subtitleStyle, {fontSize: AppFonts.scaleFont(15),}]}>
-                        {'(you\'ll here a '}
+                        {'(you\'ll hear a '}
                         <Text robotoBold>{'"click"'}</Text>
                         {' when fully closed)'}
                     </Text>

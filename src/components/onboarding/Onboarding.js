@@ -74,7 +74,7 @@ const TopNav = ({ formFields, isUpdatingUser, onBack, resultMsg, surveyValues, t
                 }
             </View>
             <View style={{flex: 8,}}>
-                <Text oswaldRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
+                <Text robotoRegular style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(28), textAlign: 'center',}}>{title}</Text>
             </View>
             <View style={{flex: 1,}} />
         </View>
@@ -558,7 +558,7 @@ class Onboarding extends Component {
         return (
             <View style={[styles.background,]}>
                 <ImageBackground
-                    source={require('../../../assets/images/standard/tutorial_background_white.png')}
+                    source={require('../../../assets/images/standard/onboarding_background.png')}
                     style={{flex: 1,}}
                 >
                     <TopNav
@@ -567,7 +567,7 @@ class Onboarding extends Component {
                         onBack={pageIndex === 0 ? () => Actions.pop() : () => this._validateWholeForm(() => this._renderPreviousPage())}
                         resultMsg={resultMsg}
                         surveyValues={survey_values}
-                        title={pageIndex === 0 ? 'CREATE YOUR ACCOUNT' : 'ABOUT YOU'}
+                        title={pageIndex === 0 ? 'Create Your Account' : 'About You'}
                     />
 
                     <Pages
@@ -641,9 +641,9 @@ class Onboarding extends Component {
                                     <TouchableOpacity
                                         activeOpacity={1}
                                         onPress={() => this._togglePrivacyPolicyWebView()}
-                                        style={[{marginTop: AppSizes.padding,}]}
+                                        style={[{marginHorizontal: AppSizes.padding, marginTop: AppSizes.padding,}]}
                                     >
-                                        <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(13), textAlign: 'center',}}>
+                                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(15), textAlign: 'center',}}>
                                             {'By signing up you agree to our '}
                                             <Text robotoBold>{'Terms of Use.'}</Text>
                                         </Text>

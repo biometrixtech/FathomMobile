@@ -302,9 +302,26 @@ build() {
     esac
 }
 
+lazyGit() {
+    echo
+    read -p "${grey}What's the comment: " commentvar
+    read -p "${grey}What's the branch: " branchvar
+    if [ ${#commentvar} -eq 0 ];
+    then
+        echo "${red}ERROR: you did not pass any comment string"
+    elif [ ${#branchvar} -eq 0 ];
+    then
+        echo "${red}ERROR: you did not pass any branch string"
+    else
+        git add .
+        git commit -m "$commentvar"
+        git push origin $branchvar
+    fi
+}
+
 main() {
     echo
-    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
+    read -p "${grey}Choose what you want to do:${normal}`echo $'\n\n '`[1]: initialize project`echo $'\n '`[2]: start packager`echo $'\n '`[3]: create release build for Android/iOS`echo $'\n '`[4]: Lazy Git`echo $'\n\n '`${standout}Enter selection:${normal} " -n 1 -r
     echo
     case "$REPLY" in
         1)
@@ -315,6 +332,9 @@ main() {
             ;;
         3)
             build
+            ;;
+        4)
+            lazyGit
             ;;
         *)
             echo "${red}Invalid selection${normal}"

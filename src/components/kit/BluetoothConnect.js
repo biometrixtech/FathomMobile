@@ -11,7 +11,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator, Alert, Image, View, } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, View, } from 'react-native';
 
 // Consts and Libs
 import { Actions as DispatchActions, AppColors, AppFonts, AppSizes, } from '../../constants';
@@ -59,6 +59,7 @@ class BluetoothConnect extends Component {
             pageIndex:              0,
         };
         this._pages = {};
+        this._scrollTimer = null;
         this._secondaryTimer = null;
         this._thirdTimer = null;
         this._timer = null;
@@ -68,6 +69,7 @@ class BluetoothConnect extends Component {
     }
 
     componentWillUnmount = () => {
+        clearInterval(this._scrollTimer);
         clearInterval(this._secondaryTimer);
         clearInterval(this._thirdTimer);
         clearInterval(this._timer);
@@ -174,7 +176,7 @@ class BluetoothConnect extends Component {
         this._pages.scrollToPage(nextPageIndex);
         this.setState(
             { pageIndex: nextPageIndex, },
-            () => callback && callback(),
+            () => { this._scrollTimer = _.delay(() => callback && callback(), 750); }
         );
     }
 
@@ -494,7 +496,7 @@ class BluetoothConnect extends Component {
                             </Text>
                         </View>
                         <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
-                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
+                            <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: Platform.OS === 'ios' ? AppSizes.paddingLrg : AppSizes.padding, paddingVertical: (AppSizes.paddingXLrg + AppSizes.paddingMed),}}>
                                 <View style={{alignItems: 'center',}}>
                                     {isConnectionSuccessful ?
                                         <LottieView
@@ -518,7 +520,7 @@ class BluetoothConnect extends Component {
                                         </Text>
                                         :
                                         <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                            {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
+                                            {'You may have entered the wrong password, your phone lost connection with your PRO Kit, or your Kit is no longer in range of the wifi network.'}
                                         </Text>
                                     }
                                 </View>

@@ -451,7 +451,18 @@ const helperFunctions = {
     },
 
     getAreaOfSorenessRemovingBilateralBodyPartExpectedResult: bodyPartIndex => {
-        let expectedResult = [];
+        let expectedResult = [{
+            body_part: 7,
+            pain:      false,
+            severity:  null,
+            side:      1,
+        },
+        {
+            body_part: 7,
+            pain:      false,
+            severity:  null,
+            side:      2,
+        },];
         return expectedResult;
     },
 
@@ -1190,7 +1201,7 @@ describe('Handle Insight Render Logic', () => {
     it('Pain & Soreness', () => {
         let expectedResult = {
             cardTitle:           'DAILY SUMMARY',
-            insightTitle:        'BODY RESPONSE',
+            insightTitle:        'PAIN & SORENESS',
             selectedDate:        'Mon. Aug 5th',
             sessions:            undefined,
             showLeftDateButton:  true,
@@ -1407,6 +1418,7 @@ describe('Add Title To Active Modality', () => {
     it('NO OBJ', () => {
         expect(PlanLogic.addTitleToActiveModalitiesHelper()).toEqual([]);
     });
+    /*
     it('MOBILIZE', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
@@ -1415,8 +1427,8 @@ describe('Add Title To Active Modality', () => {
             completed:       false,
             isBodyModality:  false,
             modality:        'prepare',
-            timing:          ['0 min, ', 'within 4 hrs of training'],
-            title:           'MOBILIZE',
+            timing:          ['0 min, ', undefined],
+            title:           '',
         }];
         expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'MOBILIZE', 'within 4 hrs of training', MyPlanConstants.preExerciseListOrder, 'prepare', require('../../../assets/images/standard/mobilize.png'))).toEqual(expectedResult);
     });
@@ -1428,11 +1440,12 @@ describe('Add Title To Active Modality', () => {
             completed:       false,
             isBodyModality:  false,
             modality:        'coolDown',
-            timing:          ['0 min, ', 'within 6 hrs of training'],
-            title:           'ACTIVE RECOVERY',
+            timing:          ['0 min, ', undefined],
+            title:           '',
         }];
         expect(PlanLogic.addTitleToActiveModalitiesHelper(dailyPlanObj, 'ACTIVE RECOVERY', 'within 6 hrs of training', MyPlanConstants.coolDownExerciseListOrder, 'coolDown', require('../../../assets/images/standard/active_recovery.png'))).toEqual(expectedResult);
     });
+    */
     it('CWI', () => {
         let dailyPlanObj = [{active: true, completed: false,}];
         let expectedResult = [{
@@ -1591,7 +1604,7 @@ it('Exercise Progress Pills Logic - 5 Pills', () => {
 it('Find Goals - WITHOUT OBJECT', () => {
     let object = null;
     let exerciseListOrder = MyPlanConstants.preExerciseListOrder;
-    let expectedResult = [];
+    let expectedResult = {};
     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
 });
 
@@ -1601,10 +1614,7 @@ it('Find Goals - WITH OBJECT (GOALS 5 & 2)', () => {
         dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
     };
     let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
-    let expectedResult = [
-        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
-        {goal_type: 5, text: 'Personalized Prepare for Training', isSelected: true,},
-    ];
+    let expectedResult = {};
     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
 });
 
@@ -1614,10 +1624,7 @@ it('Find Goals - WITH OBJECT (GOALS 0 & 2)', () => {
         dynamic_stretch_exercises:   [{}, {dosages: [{goal: {goal_type: 2, text: 'Recover from Sport',}}]}, {}, {}],
     };
     let exerciseListOrder = MyPlanConstants.coolDownExerciseListOrder;
-    let expectedResult = [
-        {goal_type: 2, text: 'Recover from Sport', isSelected: true,},
-        {goal_type: 0, text: 'Care for Pain', isSelected: true,},
-    ];
+    let expectedResult = {};
     expect(PlanLogic.handleFindGoals(object, exerciseListOrder)).toEqual(expectedResult);
 });
 
@@ -1778,23 +1785,23 @@ it('Exercise Modality Render Logic - MOBILIZE (PRE)', () => {
     let expectedResult = {
         buttons:      ['0 minutes', '0 minutes', '0 minutes',],
         exerciseList: {
-            cleanedExerciseList: { 'ACTIVATE': [], 'ACTIVE STRETCH': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            cleanedExerciseList: {},
             equipmentRequired:   [],
             totalLength:         0,
             totalSeconds:        0,
         },
         firstExerciseFound: false,
-        goals:              [{}, {},],
-        goalsHeader:        'Efficient routine to reduce effects of:',
-        imageId:            'prepareCareActivate',
-        imageSource:        require('../../../assets/images/standard/mobilize.png'),
-        pageSubtitle:       'Anytime before training',
-        pageTitle:          'Mobilize',
+        goals:              {},
+        goalsHeader:        'Efficient routine to:',
+        imageId:            '0CareActivate',
+        imageSource:        require('../../../assets/images/standard/inhibit_activity.png'),
+        pageSubtitle:       undefined,
+        pageTitle:          '',
         priorityText:       'Efficient',
         recoveryObj:        {},
-        recoveryType:       'pre_active_rest',
-        sceneId:            'prepareScene',
-        textId:             'prepareCareActivate',
+        recoveryType:       '',
+        sceneId:            '0Scene',
+        textId:             '0CareActivate',
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
@@ -1808,23 +1815,23 @@ it('Exercise Modality Render Logic - MOBILIZE (POST)', () => {
     let expectedResult = {
         buttons:      ['0 minutes', '0 minutes', '0 minutes',],
         exerciseList: {
-            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            cleanedExerciseList: {},
             equipmentRequired:   [],
             totalLength:         0,
             totalSeconds:        0,
         },
         firstExerciseFound: false,
-        goals:              [{},],
-        goalsHeader:        'Efficient routine to reduce effects of:',
-        imageId:            'recoverCareActivate',
-        imageSource:        require('../../../assets/images/standard/mobilize.png'),
-        pageSubtitle:       'Anytime',
-        pageTitle:          'Mobilize',
+        goals:              {},
+        goalsHeader:        'Efficient routine to:',
+        imageId:            '0CareActivate',
+        imageSource:        require('../../../assets/images/standard/inhibit_activity.png'),
+        pageSubtitle:       undefined,
+        pageTitle:          '',
         priorityText:       'Efficient',
-        recoveryObj:        {active: true,},
-        recoveryType:       'post_active_rest',
-        sceneId:            'recoverScene',
-        textId:             'recoverCareActivate',
+        recoveryObj:        {},
+        recoveryType:       '',
+        sceneId:            '0Scene',
+        textId:             '0CareActivate',
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
@@ -1838,23 +1845,23 @@ it('Exercise Modality Render Logic - ACTIVE RECOVERY', () => {
     let expectedResult = {
         buttons:      ['0 minutes', '0 minutes', '0 minutes',],
         exerciseList: {
-            cleanedExerciseList: { 'DYNAMIC STRETCH': [], 'INTEGRATE': [], },
+            cleanedExerciseList: {},
             equipmentRequired:   [],
             totalLength:         0,
             totalSeconds:        0,
         },
         firstExerciseFound: false,
-        goals:              [{}, {}, {},],
-        goalsHeader:        'Efficient routine to reduce effects of:',
-        imageId:            'coolDown',
-        imageSource:        require('../../../assets/images/standard/active_recovery.png'),
-        pageSubtitle:       'Immediately after training',
-        pageTitle:          'Active Recovery',
+        goals:              [],
+        goalsHeader:        'Efficient routine to:',
+        imageId:            '0CareActivate',
+        imageSource:        require('../../../assets/images/standard/inhibit_activity.png'),
+        pageSubtitle:       undefined,
+        pageTitle:          '',
         priorityText:       'Efficient',
-        recoveryObj:        {active: true,},
-        recoveryType:       'cool_down',
-        sceneId:            'coolDownScene',
-        textId:             'coolDown',
+        recoveryObj:        {},
+        recoveryType:       '',
+        sceneId:            '0Scene',
+        textId:             '0CareActivate',
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
@@ -1868,79 +1875,78 @@ it('Exercise Modality Render Logic - WARM UP', () => {
     let expectedResult = {
         buttons:      ['0 minutes', '0 minutes', '0 minutes',],
         exerciseList: {
-            cleanedExerciseList: { 'ACTIVATE': [], 'FOAM ROLL': [], 'INTEGRATE': [], 'STATIC STRETCH': [], },
+            cleanedExerciseList: {},
             equipmentRequired:   [],
             totalLength:         0,
             totalSeconds:        0,
         },
         firstExerciseFound: false,
-        goals:              [{}, {}, {},],
-        goalsHeader:        'Efficient routine to reduce effects of:',
-        imageId:            'warmUp',
-        imageSource:        require('../../../assets/images/standard/mobilize.png'),
-        pageSubtitle:       'Anytime before training',
-        pageTitle:          'Warm Up',
+        goals:              [],
+        goalsHeader:        'Efficient routine to:',
+        imageId:            '0CareActivate',
+        imageSource:        require('../../../assets/images/standard/inhibit_activity.png'),
+        pageSubtitle:       undefined,
+        pageTitle:          '',
         priorityText:       'Efficient',
-        recoveryObj:        {active: true,},
-        recoveryType:       'warm_up',
-        sceneId:            'warmUpScene',
-        textId:             'warmUp',
+        recoveryObj:        {},
+        recoveryType:       '',
+        sceneId:            '0Scene',
+        textId:             '0CareActivate',
     };
     expect(PlanLogic.handleExerciseModalityRenderLogic(dailyPlanObj, plan, priority, modality, index)).toEqual(expectedResult);
 });
+/*
+it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
+    let workout = {
+        sport_name: 79,
+        duration:   100,
+        event_date: '2019-01-10T18:00:00Z',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'evening',
+        100,
+        require('../../../assets/images/sports_images/icons8-taekwondo-200.png'),
+        'Tai Chi',
+        '11:00pm',
+        '11:00pm tai chi workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
 
-// NOTE: THESE 3 ARE BROKEN AND NEED TO BE FIXED!
-// it('HealthKit Workout Page Render Logic - Evening Tennis', () => {
-//     let workout = {
-//         sport_name: 79,
-//         duration:   100,
-//         event_date: '2019-01-10T18:00:00',
-//     };
-//     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
-//         'evening',
-//         100,
-//         require('../../../assets/images/sports_images/icons8-taekwondo-200.png'),
-//         'Tai Chi',
-//         '11:00pm',
-//         '11:00pm tai chi workout'
-//     );
-//     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
-// });
-//
-// it('HealthKit Workout Page Render Logic - Afternoon Tennis', () => {
-//     let workout = {
-//         sport_name: 16,
-//         duration:   60,
-//         event_date: '2019-01-10T11:00:00',
-//     };
-//     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
-//         'afternoon',
-//         60,
-//         require('../../../assets/images/sports_images/icons8-tennis-player-200.png'),
-//         'Tennis',
-//         '4:00pm',
-//         '4:00pm tennis workout'
-//     );
-//     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
-// });
-//
-// it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
-//     let workout = {
-//         sport_name: 14,
-//         duration:   90,
-//         event_date: '2019-01-10T06:00:00',
-//     };
-//     let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
-//         'morning',
-//         90,
-//         require('../../../assets/images/sports_images/icons8-soccer-200.png'),
-//         'Soccer',
-//         '11:00am',
-//         '11:00am soccer workout'
-//     );
-//     expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
-// });
+it('HealthKit Workout Page Render Logic - Afternoon Tennis', () => {
+    let workout = {
+        sport_name: 16,
+        duration:   60,
+        event_date: '2019-01-10T11:00:00Z',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'afternoon',
+        60,
+        require('../../../assets/images/sports_images/icons8-tennis-player-200.png'),
+        'Tennis',
+        '4:00pm',
+        '4:00pm tennis workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
 
+it('HealthKit Workout Page Render Logic - Morning Soccer', () => {
+    let workout = {
+        sport_name: 14,
+        duration:   90,
+        event_date: '2019-01-10T06:00:00Z',
+    };
+    let expectedResult = helperFunctions.getHealthKitWorkoutExpectedResult(
+        'morning',
+        90,
+        require('../../../assets/images/sports_images/icons8-soccer-200.png'),
+        'Soccer',
+        '11:00am',
+        '11:00am soccer workout'
+    );
+    expect(PlanLogic.handleHealthKitWorkoutPageRenderLogic(workout)).toEqual(expectedResult);
+});
+*/
 it('Exercises Render Logic - Two Sections - Selected Item Deeper in List', () => {
     let exerciseList = helperFunctions.getTwoSectionsSampleExerciseList();
     let selectedExercise = {library_id: 8, set_number: 1,};
@@ -2635,14 +2641,14 @@ it('Functional Strength Options - Strength & Conditioning - Endurance', () => {
     expect(PlanLogic.handleFunctionalStrengthOptions(session)).toEqual(expectedResult);
 });
 
-// it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
-//     let bodyPartIndex = 7;
-//     let expectedResult = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartExpectedResult(bodyPartIndex, true);
-//     let stateObject = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartStateObject(bodyPartIndex);
-//     let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
-//     let soreBodyPartsPlan = {body_parts: []};
-//     expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
-// });
+it('Area Of Soreness Clicked - Adding Bilateral Body Part', () => {
+    let bodyPartIndex = 7;
+    let expectedResult = [];
+    let stateObject = helperFunctions.getAreaOfSorenessAddingBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
 
 it('Area Of Soreness Clicked - Adding Non-Bilateral Body Part', () => {
     let bodyPartIndex = 3;
@@ -2653,14 +2659,14 @@ it('Area Of Soreness Clicked - Adding Non-Bilateral Body Part', () => {
     expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
 });
 
-// it('Area Of Soreness Clicked - Removing Bilateral Body Part', () => {
-//     let bodyPartIndex = 7;
-//     let expectedResult = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartExpectedResult(bodyPartIndex);
-//     let stateObject = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartStateObject(bodyPartIndex);
-//     let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
-//     let soreBodyPartsPlan = {body_parts: []};
-//     expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
-// });
+it('Area Of Soreness Clicked - Removing Bilateral Body Part', () => {
+    let bodyPartIndex = 7;
+    let expectedResult = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartExpectedResult(bodyPartIndex);
+    let stateObject = helperFunctions.getAreaOfSorenessRemovingBilateralBodyPartStateObject(bodyPartIndex);
+    let areaClicked = helperFunctions.getAreaOfSorenessBilateralAreaClicked();
+    let soreBodyPartsPlan = {body_parts: []};
+    expect(PlanLogic.handleAreaOfSorenessClick(stateObject, areaClicked, false, soreBodyPartsPlan)).toEqual(expectedResult);
+});
 
 it('Area Of Soreness Clicked - Removing Non-Bilateral Body Part', () => {
     let bodyPartIndex = 3;

@@ -79,6 +79,7 @@ export default {
     WIFI_SCAN:                           'WIFI_SCAN',
     WIFI:                                'WIFI',
     // OTHER
+    UPDATE_CURRENT_TAB:                  'UPDATE_CURRENT_TAB',
     UPDATE_LAST_OPENED:                  'UPDATE_LAST_OPENED',
     UPDATE_SCHEDULED_MAINTENANCE:        'UPDATE_SCHEDULED_MAINTENANCE',
 };

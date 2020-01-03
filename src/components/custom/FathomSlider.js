@@ -25,10 +25,6 @@ import { Text, } from '../custom';
 import { PlanLogic, } from '../../lib';
 
 const THUMB_SIZE = 40;
-const noneValues = [0];
-const mildValues = [1, 2, 3];
-const moderateValues = [4, 5, 6];
-const severeValues = [7, 8, 9, 10];
 
 /* Styles ==================================================================== */
 const customStyles = StyleSheet.create({
@@ -40,11 +36,11 @@ const customStyles = StyleSheet.create({
     },
     textStyle: (isValid, isSelected) => ({
         color:    isSelected ? AppColors.zeplin.yellow : isValid ? AppColors.zeplin.slateLight : AppColors.zeplin.slateXLight,
-        fontSize: AppFonts.scaleFont(12),
+        fontSize: AppFonts.scaleFont(isSelected ? 16 : 12),
     }),
     thumbStyle: isValid => ({
         ...AppStyles.scaleButtonShadowEffect,
-        backgroundColor: isValid ? AppColors.zeplin.yellow : AppColors.zeplin.slateXLight,
+        backgroundColor: isValid ? AppColors.zeplin.splashLight : AppColors.zeplin.slateXLight,
         borderRadius:    (THUMB_SIZE / 2),
         height:          THUMB_SIZE,
         width:           THUMB_SIZE,
@@ -67,13 +63,19 @@ const FathomSlider = ({
     value,
 }) => {
     let updatedValue = sliderValue || 0;
+    const {
+        mildValues,
+        moderateValues,
+        severeValues,
+        maxValues,
+    } = PlanLogic.returnSliderValues();
     return (
         <View>
             <View style={[customStyles.severityTextWrapper,]}>
                 <Text
                     style={[
-                        (!disabled && noneValues.includes(updatedValue)) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
-                        customStyles.textStyle(isValid, (!disabled && noneValues.includes(updatedValue))),
+                        {...AppStyles.robotoRegular},
+                        customStyles.textStyle(!disabled, false),
                     ]}
                 >
                     {'None'}
@@ -82,6 +84,7 @@ const FathomSlider = ({
                     style={[
                         mildValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
                         customStyles.textStyle(isValid, mildValues.includes(updatedValue)),
+                        mildValues.includes(updatedValue) ? {color: AppColors.zeplin.yellowLight,} : {},
                     ]}
                 >
                     {'Mild'}
@@ -90,6 +93,7 @@ const FathomSlider = ({
                     style={[
                         moderateValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
                         customStyles.textStyle(isValid, moderateValues.includes(updatedValue)),
+                        moderateValues.includes(updatedValue) ? {color: AppColors.zeplin.warningLight,} : {},
                     ]}
                 >
                     {'Moderate'}
@@ -98,17 +102,19 @@ const FathomSlider = ({
                     style={[
                         severeValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
                         customStyles.textStyle(isValid, severeValues.includes(updatedValue)),
+                        severeValues.includes(updatedValue) ? {color: AppColors.zeplin.errorLight,} : {},
                     ]}
                 >
                     {'Severe'}
                 </Text>
                 <Text
-                    robotoRegular
                     style={[
-                        customStyles.textStyle(isValid, updatedValue),
+                        maxValues.includes(updatedValue) ? {...AppStyles.robotoBold} : {...AppStyles.robotoRegular},
+                        customStyles.textStyle(isValid, maxValues.includes(updatedValue)),
+                        maxValues.includes(updatedValue) ? {color: AppColors.zeplin.error,} : {},
                     ]}
                 >
-                    {''}
+                    {'Max'}
                 </Text>
             </View>
             <ImageBackground
@@ -121,7 +127,7 @@ const FathomSlider = ({
                     disabled={disabled}
                     maximumTrackTintColor={AppColors.zeplin.superLight}
                     maximumValue={maximumValue}
-                    minimumTrackTintColor={`${AppColors.zeplin.yellow}${PlanLogic.returnHexOpacity(0.5)}`}
+                    minimumTrackTintColor={`${AppColors.zeplin.splashLight}${PlanLogic.returnHexOpacity(0.5)}`}
                     minimumValue={minimumValue}
                     onSlidingComplete={val => handleFormChange(val)}
                     orientation={orientation}

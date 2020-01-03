@@ -43,7 +43,7 @@ const getUser = userId => {
   * Update My User Data
   * - Receives complete user data in return
   */
-const updateUser = (payload, userId, updateLogin = true) => {
+const updateUser = (payload, userId, updateLogin = true, updateSensorData = true) => {
     let userSensorData = _.cloneDeep(store.getState().user.sensor_data);
     return dispatch => AppAPI.update_user.patch({userId}, payload)
         .then(userData => {
@@ -55,7 +55,9 @@ const updateUser = (payload, userId, updateLogin = true) => {
                 });
             }
             let newUserObj = _.cloneDeep(userData.user);
-            newUserObj.sensor_data = userSensorData;
+            if(updateSensorData) {
+                newUserObj.sensor_data = userSensorData;
+            }
             dispatch({
                 type: Actions.USER_REPLACE,
                 data: newUserObj

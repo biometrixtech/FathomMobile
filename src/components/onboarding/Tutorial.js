@@ -3,7 +3,7 @@
  */
 import React, { Component, } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, Platform, View, } from 'react-native';
+import { Image, ImageBackground, Platform, TouchableOpacity, View, } from 'react-native';
 
 // import third-party libraries
 import { Actions, } from 'react-native-router-flux';
@@ -57,6 +57,18 @@ class Tutorial extends Component {
         });
     }
 
+    _enablePushNotification = () => {
+        if(Platform.OS === 'ios') {
+            return PushNotification
+                .requestPermissions()
+                .then(grant => this._onDone())
+                .catch(err => this._onDone());
+        }
+        PushNotification
+            .requestPermissions();
+        return _.delay(() => this._onDone(), 250);
+    }
+
     _onDone = () => {
         AppUtil.pushToScene('onboarding');
     }
@@ -75,7 +87,7 @@ class Tutorial extends Component {
                     style={{flex: 1, flexDirection: 'column', width: AppSizes.screen.width,}}
                 >
                     <View style={{flexDirection: 'row', marginHorizontal: AppSizes.padding, marginTop: AppSizes.statusBarHeight,}}>
-                        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center',}}>
+                        <View style={{alignItems: 'center', flex: props.key === 'tutorial-4' ? 2 : 1, justifyContent: 'center',}}>
                             { props.key === 'tutorial-1' &&
                                 <TabIcon
                                     color={AppColors.white}
@@ -89,10 +101,21 @@ class Tutorial extends Component {
                         { props.icon &&
                             <Image
                                 source={props.icon}
-                                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: 8, justifyContent: 'center',}]}
+                                style={[AppStyles.navbarImageTitle, {alignSelf: 'center', flex: props.key === 'tutorial-4' ? 6 : 8, justifyContent: 'center',}]}
                             />
                         }
-                        <View style={{flex: 1,}} />
+                        { props.key === 'tutorial-4' ?
+                            <TouchableOpacity
+                                onPress={this._onDone}
+                                style={{alignItems: 'center', flex: 2, justifyContent: 'center',}}
+                            >
+                                <Text robotoLight style={{color: AppColors.white, fontSize: AppFonts.scaleFont(15),}}>
+                                    {'Not now'}
+                                </Text>
+                            </TouchableOpacity>
+                            :
+                            <View style={{flex: 1,}} />
+                        }
                     </View>
                     <View style={{alignItems: 'center', flex: 1, justifyContent: 'center', marginBottom: 16 + 26 + (AppSizes.isIphoneX ? 34 : 0), marginHorizontal: AppSizes.paddingLrg,}}>
                         { props.title &&
@@ -106,7 +129,7 @@ class Tutorial extends Component {
                         }
                         { props.showEnableBtn &&
                             <Button
-                                buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                                buttonStyle={{backgroundColor: AppColors.transparent, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                                 containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
                                 onPress={() => {
                                     if(Platform.OS === 'ios') {
@@ -119,7 +142,7 @@ class Tutorial extends Component {
                                         .requestPermissions();
                                     return _.delay(() => this._onDone(), 250);
                                 }}
-                                raised={true}
+                                raised={false}
                                 title={'Enable Notifications'}
                                 titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(22), width: '100%',}}
                             />
@@ -149,7 +172,7 @@ class Tutorial extends Component {
                     doneLabel={this.state.doneLabel}
                     dotStyle={this.state.dotStyle}
                     nextLabel={'next'}
-                    onDone={this._onDone}
+                    onDone={this._enablePushNotification}
                     onSlideChange={(index, lastIndex) => this._onSlideChange(index, lastIndex, this.state.slides)}
                     prevLabel={'back'}
                     ref={ref => {this._appIntroSlider = ref;}}
