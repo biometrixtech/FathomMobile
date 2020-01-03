@@ -119,7 +119,7 @@ class LogSymptomsModal extends Component {
                             handleAreaOfSorenessClick={(body, isAllGood, showFAB, resetSections, side, callback) => handleAreaOfSorenessClick(body, false, isAllGood, resetSections, side, callback, true)}
                             handleFormChange={handleFormChange}
                             handleUpdateFirstTimeExperience={value => console.log(value)}
-                            headerTitle={'Do you have any areas of discomfort?'}
+                            headerTitle={'Do you have any pain and soreness today?'}
                             isBodyOverlayFront={isBodyOverlayFront}
                             ref={areasOfSorenessRef => {this.areasOfSorenessRef = areasOfSorenessRef;}}
                             newSoreBodyParts={newSoreBodyParts}

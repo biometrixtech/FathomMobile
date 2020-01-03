@@ -332,8 +332,10 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                         </Text>
                     </View>
                     :
-                    <View style={{flex: 1,}}>
-                        <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>{'Calibrate & start workout'}</Text>
+                    <View style={{flex: 1, paddingHorizontal: AppSizes.padding,}}>
+                        <Text robotoRegular style={[styles.titleStyle, {paddingBottom: AppSizes.padding,}]}>
+                            {page === 2 ? 'Where to Start a Workout' : 'Calibrate Before Every Workout'}
+                        </Text>
                         <View>
                             {/*<TabIcon
                                 color={AppColors.zeplin.slateLight}
@@ -343,16 +345,21 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                                 size={20}
                             />*/}
                             <Video
-                                paused={isVideoPaused}
+                                //paused={isVideoPaused}
+                                paused={!currentPage}
                                 repeat={true}
                                 resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
-                                source={{uri: 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4'}}
+                                source={{uri: page === 2 ? 'https://d2xll36aqjtmhz.cloudfront.net/startworkout.mp4' : 'https://d2xll36aqjtmhz.cloudfront.net/calibration.mp4'}}
                                 style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
                             />
                         </View>
                         <View style={{flex: 1, justifyContent: 'flex-end', marginHorizontal: AppSizes.paddingLrg, marginTop: AppSizes.padding,}}>
                             <Text robotoLight style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(20), textAlign: 'center',}}>
-                                {'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'}
+                                {page === 2 ?
+                                    'Start a Workout by tapping the "+" button on the Plan page & follow along with calibration.'
+                                    :
+                                    'Stand up. Stand still. Then March.  After that, your workout has started.'
+                                }
                             </Text>
                         </View>
                     </View>
@@ -382,7 +389,7 @@ const Calibration = ({ currentPage, handleUpdatePauseState, isVideoPaused, nextB
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: '75%',}}
                             onPress={() => nextBtn()}
                             raised={true}
-                            title={nextBtnText ? nextBtnText : page === 1 ? 'Next' : 'Done'}
+                            title={nextBtnText ? nextBtnText : (page === 1 || page === 2) ? 'Next' : 'Done'}
                             titleStyle={{color: AppColors.white, fontSize: AppFonts.scaleFont(18), width: '100%',}}
                         />
                     </View>
@@ -846,6 +853,7 @@ const Connect = ({
         );
     }
     let content = SensorLogic.getConnectContent(styles)[page];
+    let platformVideoMultiplier = Platform.OS === 'ios' ? 1 : 0.85;
     if(page > 0) {
         return (
             <View style={{flex: 1,}}>
@@ -865,7 +873,7 @@ const Connect = ({
                             repeat={true}
                             resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                             source={content.video.localFile ? content.video.localFile : {uri: content.video}}
-                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                            style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: (AppSizes.screen.heightTwoFifths * platformVideoMultiplier),}]}
                         />
                         :
                         null
@@ -1066,12 +1074,12 @@ const ReturnSensors = ({ currentPage, onBack, onClose, nextBtn, page, }) => {
                         repeat={true}
                         resizeMode={Platform.OS === 'ios' ? 'none' : 'contain'}
                         source={{uri: content.video}}
-                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: AppSizes.screen.heightTwoFifths,}]}
+                        style={[Platform.OS === 'ios' ? {backgroundColor: AppColors.white,} : {}, {height: Platform.OS === 'android' ? AppSizes.screen.heightOneThird : AppSizes.screen.heightTwoFifths,}]}
                     />
                     :
                     null
             }
-            <View style={{alignItems: 'center', flex: 1, paddingTop: AppSizes.padding,}}>
+            <View style={{alignItems: 'center', flex: 1, paddingTop: Platform.OS === 'android' ? 0 : AppSizes.padding,}}>
                 <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.padding,}}>
                     <View style={{flex: 1, justifyContent: 'space-between', paddingHorizontal: AppSizes.paddingLrg, paddingVertical: AppSizes.padding,}}>
                         {content.subtitle}

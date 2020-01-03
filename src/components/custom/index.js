@@ -3,6 +3,7 @@
  */
 
 import Alerts from './Alerts';
+import AnimatedCircularProgress from './AnimatedCircularProgress';
 import AnimatedProgressBar from './AnimatedProgressBar';
 import BodyOverlay from './BodyOverlay';
 import Button from './Button';
@@ -10,6 +11,7 @@ import Card from './Card';
 import Checkbox from './Checkbox';
 import Coach from './Coach';
 import CoachesDashboardTabBar from './CoachesDashboardTabBar';
+import CustomCalendarStrip from './CustomCalendarStrip';
 import CustomMyPlanNavBar from './CustomMyPlanNavBar';
 import CustomNavBar from './CustomNavBar';
 import CustomTabBar from './CustomTabBar';
@@ -27,16 +29,19 @@ import ProgressBar from './ProgressBar';
 import ProgressCircle from './CustomProgressCircle';
 import RadioButton from './RadioButton';
 import Slider from './Slider';
+import SmoothPicker from './SmoothPicker';
 import Spacer from './Spacer';
 import SVGImage from './SVGImage';
 import TabIcon from './TabIcon';
 import Text from './Text';
 import Tooltip from './Tooltip';
+import TrendsTabBar from './TrendsTabBar';
 import WebViewPage from './WebViewPage';
 import WheelScrollPicker from './WheelScrollPicker';
 
 export {
     Alerts,
+    AnimatedCircularProgress,
     AnimatedProgressBar,
     BodyOverlay,
     Button,
@@ -44,6 +49,7 @@ export {
     Checkbox,
     Coach,
     CoachesDashboardTabBar,
+    CustomCalendarStrip,
     CustomMyPlanNavBar,
     CustomNavBar,
     CustomTabBar,
@@ -61,11 +67,13 @@ export {
     ProgressCircle,
     RadioButton,
     Slider,
+    SmoothPicker,
     Spacer,
     SVGImage,
     TabIcon,
     Text,
     Tooltip,
+    TrendsTabBar,
     WebViewPage,
     WheelScrollPicker,
 };

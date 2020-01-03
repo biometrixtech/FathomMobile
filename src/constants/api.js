@@ -5,7 +5,7 @@
 // what {version} are we on?
 const hardwareAPIVersion = '/hardware/2_0';
 const metaAPIVersion = '/meta/1_0';
-const plansAPIVersion = '/plans/4_6';
+const plansAPIVersion = '/plans/4_7';
 const preprocessingAPIVersion = '/preprocessing/2_0';
 const usersAPIVersion = '/users/2_4';
 
@@ -49,7 +49,7 @@ export default {
         ['active_recovery',       `${plansAPIVersion}/active_recovery/{userId}/exercise_modalities`], // POST/PATCH
         ['active_time',           `${plansAPIVersion}/active_recovery/{userId}/active_time`], // PATCH
         ['app_logs',              `${plansAPIVersion}/misc/{userId}/app_logs`], // POST
-        ['biomechanics_detail',   `${plansAPIVersion}/three_sensor/{userId}/biomechanics_detail`], // POST
+        ['biomechanics_detail',   `${plansAPIVersion}/three_sensor/{userId}/biomechanics_detail/{sessionId}`], // GET
         ['body_active_recovery',  `${plansAPIVersion}/active_recovery/{userId}/body_part_modalities`], // POST/PATCH
         ['clear_fte_category',    `${plansAPIVersion}/trends/{userId}/first_time_experience/category`], // POST
         ['clear_fte_view',        `${plansAPIVersion}/trends/{userId}/first_time_experience/view`], // POST
@@ -57,7 +57,7 @@ export default {
         ['clear_user_data',       `${plansAPIVersion}/misc/{userId}/clear_user_data`], // POST
         ['coach_dashboard',       `${plansAPIVersion}/coach/{userId}/dashboard`], // GET
         ['functional_strength',   `${plansAPIVersion}/functional_strength/{userId}`], // POST/PATCH
-        ['get_mobilize',          `${plansAPIVersion}/active_recovery/{userId}/get_mobilize`], // POST
+        ['get_modality',          `${plansAPIVersion}/active_recovery/{userId}/get_modality`], // POST
         ['get_my_plan',           `${plansAPIVersion}/daily_plan/{userId}`], // POST
         ['get_sore_body_parts',   `${plansAPIVersion}/daily_readiness/{userId}/previous`], // POST
         ['health_data',           `${plansAPIVersion}/health_data/{userId}`], // POST
@@ -69,6 +69,7 @@ export default {
         ['post_session_survey',   `${plansAPIVersion}/session/{userId}`], // POST
         ['post_symptoms',         `${plansAPIVersion}/symptoms/{userId}`], // POST
         ['survey',                `${plansAPIVersion}/athlete/{userId}/survey`], // POST
+        ['update_plan',           `${plansAPIVersion}/daily_plan/{userId}/update`], // POST
         // other routes
         ['maintenance_status', `${metaAPIVersion}/maintenance`], // GET
         // systems test routes

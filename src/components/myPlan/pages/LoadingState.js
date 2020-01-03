@@ -60,7 +60,7 @@ const mobilizeData = [
     { progress: 50, text: 'Analyzing personal data', time: 3100, },
     { progress: 50, text: 'Estimating mobility needs', time: 3200, },
     { progress: 75, text: 'Estimating mobility needs', time: 4700, },
-    { progress: 75, text: 'Creating your Mobilize', time: 4800, },
+    { progress: 75, text: 'Creating your plan', time: 4800, },
     { isFinalStep: true, progress: 100, text: 'All done!', time: null, },
 ]; // apiIndex === 3
 

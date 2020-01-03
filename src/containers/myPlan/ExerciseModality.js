@@ -36,7 +36,7 @@ const ExerciseModality = ({
 );
 
 ExerciseModality.propTypes = {
-    index:                         PropTypes.number.isRequired,
+    index:                         PropTypes.string.isRequired,
     markStartedRecovery:           PropTypes.func.isRequired,
     modality:                      PropTypes.string.isRequired,
     patchActiveRecovery:           PropTypes.func.isRequired,

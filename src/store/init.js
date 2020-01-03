@@ -10,6 +10,7 @@ export default {
     account_code:         '',
     account_role:         'athlete',
     certificate:          null,
+    currentSelectedTab:   'myPlan',
     device:               null,
     email:                null,
     environment:          'TEST', // process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',

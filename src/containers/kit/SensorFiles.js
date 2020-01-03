@@ -10,11 +10,13 @@ import { ble as BluetoothActions, user as UserActions, } from '../../actions';
 
 const SensorFiles = ({
     Layout,
+    assignKitIndividual,
     getSensorFiles,
     updateUser,
     user,
 }) => (
     <Layout
+        assignKitIndividual={assignKitIndividual}
         getSensorFiles={getSensorFiles}
         updateUser={updateUser}
         user={user}
@@ -22,9 +24,10 @@ const SensorFiles = ({
 );
 
 SensorFiles.propTypes = {
-    getSensorFiles: PropTypes.func.isRequired,
-    updateUser:     PropTypes.func.isRequired,
-    user:           PropTypes.shape({}).isRequired,
+    assignKitIndividual: PropTypes.func.isRequired,
+    getSensorFiles:      PropTypes.func.isRequired,
+    updateUser:          PropTypes.func.isRequired,
+    user:                PropTypes.shape({}).isRequired,
 };
 
 SensorFiles.defaultProps = {
@@ -36,8 +39,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    getSensorFiles: BluetoothActions.getSensorFiles,
-    updateUser:     UserActions.updateUser,
+    assignKitIndividual: BluetoothActions.assignKitIndividual,
+    getSensorFiles:      BluetoothActions.getSensorFiles,
+    updateUser:          UserActions.updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SensorFiles);

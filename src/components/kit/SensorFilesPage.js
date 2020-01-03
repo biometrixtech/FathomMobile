@@ -54,11 +54,14 @@ class SensorFilesPage extends Component {
 
     static propTypes = {
         pageStep:   PropTypes.string.isRequired,
+        startPage:  PropTypes.number,
         updateUser: PropTypes.func.isRequired,
         user:       PropTypes.shape({}).isRequired,
     }
 
-    static defaultProps = {}
+    static defaultProps = {
+        startPage: 0,
+    }
 
     constructor(props) {
         super(props);
@@ -70,7 +73,7 @@ class SensorFilesPage extends Component {
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
             isVideoPaused:          false,
-            pageIndex:              0,
+            pageIndex:              props.startPage,
         };
         this.defaultState = {
             currentAccessoryData:   {},
@@ -80,9 +83,10 @@ class SensorFilesPage extends Component {
             isConnectionBtnLoading: false,
             isConnectionSuccessful: true,
             isVideoPaused:          false,
-            pageIndex:              0,
+            pageIndex:              props.startPage,
         };
         this._pages = {};
+        this._scrollTimer = null;
         this._secondaryTimer = null;
         this._thirdTimer = null;
         this._timer = null;
@@ -98,6 +102,7 @@ class SensorFilesPage extends Component {
     }
 
     componentWillUnmount = () => {
+        clearInterval(this._scrollTimer);
         clearInterval(this._secondaryTimer);
         clearInterval(this._thirdTimer);
         clearInterval(this._timer);
@@ -236,7 +241,7 @@ class SensorFilesPage extends Component {
         this._pages.scrollToPage(nextPageIndex);
         this.setState(
             { pageIndex: nextPageIndex, },
-            () => callback && callback(),
+            () => { this._scrollTimer = _.delay(() => callback && callback(), 750); }
         );
     }
 
@@ -499,7 +504,7 @@ class SensorFilesPage extends Component {
                                                 </Text>
                                                 :
                                                 <Text robotoRegular style={{color: AppColors.zeplin.slate, fontSize: AppFonts.scaleFont(18), lineHeight: AppFonts.scaleFont(24), marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>
-                                                    {'This may be due to a wrong password, or weak wifi strength because the Kit is too far from the router.'}
+                                                    {'You may have entered the wrong password, your phone lost connection with your PRO Kit, or your Kit is no longer in range of the wifi network.'}
                                                 </Text>
                                             }
                                         </View>
@@ -540,8 +545,15 @@ class SensorFilesPage extends Component {
                                     currentPage={pageIndex === 0}
                                     handleUpdatePauseState={() => this.setState({ isVideoPaused: !this.state.isVideoPaused, })}
                                     isVideoPaused={isVideoPaused}
-                                    nextBtn={() => Actions.pop()}
+                                    nextBtn={() => this._renderNextPage()}
                                     page={2}
+                                    showTopNavStep={false}
+                                />
+                                <Calibration
+                                    currentPage={pageIndex === 1}
+                                    nextBtn={() => Actions.pop()}
+                                    onBack={() => this._renderPreviousPage()}
+                                    page={3}
                                     showTopNavStep={false}
                                 />
                             </Pages>

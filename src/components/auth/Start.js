@@ -308,11 +308,11 @@ class Start extends Component {
                             source={require('../../../assets/images/standard/fathom_logo_yellow_stacked.png')}
                             style={{height: 150, width: 150,}}
                         />
-                        <Text robotoRegular style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
+                        <Text robotoLight style={{color: AppColors.zeplin.slateLight, fontSize: AppFonts.scaleFont(22), marginTop: AppSizes.padding, textAlign: 'center',}}>
                             {'Optimal recovery,\ndesigned for your body.'}
                         </Text>
                     </View>
-                    <View style={{alignItems: 'center', flex: 1, justifyContent: 'flex-end',}}>
+                    <View style={{alignItems: 'center', justifyContent: 'flex-end',}}>
                         <Button
                             buttonStyle={{backgroundColor: AppColors.zeplin.yellow, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', marginTop: AppSizes.paddingLrg, justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
@@ -321,14 +321,14 @@ class Start extends Component {
                             title={'Create account'}
                             titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
                         />
-                        <Text robotoBold style={{color: AppColors.zeplin.splashLight, fontSize: AppFonts.scaleFont(11), fontStyle: 'italic', marginBottom: AppSizes.paddingXSml, marginTop: AppSizes.paddingLrg, textAlign: 'center',}}>{'Already a user?'}</Text>
+                        <Spacer size={AppSizes.padding} />
                         <Button
-                            buttonStyle={{backgroundColor: AppColors.zeplin.splashLight, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
+                            buttonStyle={{backgroundColor: AppColors.transparent, borderRadius: AppSizes.paddingLrg, paddingHorizontal: AppSizes.padding, paddingVertical: AppSizes.paddingMed, width: '100%',}}
                             containerStyle={{alignItems: 'center', justifyContent: 'center', width: AppSizes.screen.widthTwoThirds,}}
                             onPress={() => this._routeToLogin()}
-                            raised={true}
+                            raised={false}
                             title={'Login'}
-                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.white, fontSize: AppFonts.scaleFont(20), width: '100%',}}
+                            titleStyle={{...AppStyles.robotoRegular, color: AppColors.zeplin.yellow, fontSize: AppFonts.scaleFont(20), width: '100%',}}
                         />
                     </View>
                 </ImageBackground>

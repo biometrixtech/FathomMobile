@@ -4,6 +4,7 @@
 
 import AreasOfSoreness from './AreasOfSoreness';
 import BackNextButtons from './BackNextButtons';
+import BiomechanicsDataCard from './BiomechanicsDataCard';
 import BodyPartSelector from './BodyPartSelector';
 import DefaultListGap from './DefaultListGap';
 import ExerciseCompletionModal from './ExerciseCompletionModal';
@@ -36,6 +37,7 @@ export {
     AreasOfSoreness,
     BackNextButtons,
     BodyPartSelector,
+    BiomechanicsDataCard,
     DefaultListGap,
     ExerciseCompletionModal,
     ExerciseList,

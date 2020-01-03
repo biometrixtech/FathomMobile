@@ -10,6 +10,7 @@ const MyPlan = ({
     clearCompletedExercises,
     clearHealthKitWorkouts,
     createSensorSession,
+    currentSelectedTab,
     getMobilize,
     getMyPlan,
     getSensorFiles,
@@ -26,6 +27,7 @@ const MyPlan = ({
     postSymptoms,
     scheduledMaintenance,
     setAppLogs,
+    updatePlan,
     updateSensorSession,
     updateUser,
     user,
@@ -35,6 +37,7 @@ const MyPlan = ({
         clearCompletedExercises={clearCompletedExercises}
         clearHealthKitWorkouts={clearHealthKitWorkouts}
         createSensorSession={createSensorSession}
+        currentSelectedTab={currentSelectedTab}
         getMobilize={getMobilize}
         getMyPlan={getMyPlan}
         getSensorFiles={getSensorFiles}
@@ -51,6 +54,7 @@ const MyPlan = ({
         postSymptoms={postSymptoms}
         scheduledMaintenance={scheduledMaintenance}
         setAppLogs={setAppLogs}
+        updatePlan={updatePlan}
         updateSensorSession={updateSensorSession}
         updateUser={updateUser}
         user={user}
@@ -63,6 +67,7 @@ MyPlan.propTypes = {
     clearCompletedExercises:         PropTypes.func.isRequired,
     clearHealthKitWorkouts:          PropTypes.func.isRequired,
     createSensorSession:             PropTypes.func.isRequired,
+    currentSelectedTab:              PropTypes.string.isRequired,
     getMobilize:                     PropTypes.func.isRequired,
     getMyPlan:                       PropTypes.func.isRequired,
     getSensorFiles:                  PropTypes.func.isRequired,
@@ -82,6 +87,7 @@ MyPlan.propTypes = {
     postSymptoms:         PropTypes.func.isRequired,
     scheduledMaintenance: PropTypes.object,
     setAppLogs:           PropTypes.func.isRequired,
+    updatePlan:           PropTypes.func.isRequired,
     updateSensorSession:  PropTypes.func.isRequired,
     updateUser:           PropTypes.func.isRequired,
     user:                 PropTypes.object.isRequired,
@@ -92,6 +98,7 @@ MyPlan.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    currentSelectedTab:   state.init.currentSelectedTab,
     healthData:           state.plan.healthData,
     lastOpened:           state.plan.lastOpened,
     network:              state.network,
@@ -116,6 +123,7 @@ const mapDispatchToProps = {
     postSessionSurvey:               PlanActions.postSessionSurvey,
     postSymptoms:                    PlanActions.postSymptoms,
     setAppLogs:                      PlanActions.setAppLogs,
+    updatePlan:                      PlanActions.updatePlan,
     updateSensorSession:             BLEActions.updateSensorSession,
     updateUser:                      UserActions.updateUser,
 };

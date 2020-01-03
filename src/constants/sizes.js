@@ -34,6 +34,7 @@ export default {
         widthHalf:          screenWidth * 0.5,
         widthThird:         screenWidth * 0.333,
         widthTwoThirds:     screenWidth * 0.666,
+        widthFifth:         screenWidth * 0.2,
         widthQuarter:       screenWidth * 0.25,
         widthThreeQuarters: screenWidth * 0.75,
         widthFourFifths:    screenWidth * 0.8,
